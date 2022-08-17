@@ -56,7 +56,7 @@ echo "\n"; ?>
                             echo 2;
                         }
                         ?></medicallyconfirm>
-    <patientinitial><?php echo $aefi['Aefi']['patient_name']; ?></patientinitial>
+    <patientinitial><?php if(!empty($aefi['Aefi']['patient_name'])){echo substr($aefi['Aefi']['patient_name'],0,2);}else echo "N/A"; ?></patientinitial>
     <patientgpmedicalrecordnumb><?php echo $aefi['Aefi']['ip_no']; ?></patientgpmedicalrecordnumb>
     <?php
     if (!empty($aefi['Aefi']['date_of_birth'])) {
@@ -142,18 +142,7 @@ echo "\n"; ?>
   <reaction>
 
         <id><?php echo $i++; ?></id>
-        <primarysourcereaction> <?php
-                                if ($aefi['Aefi']['local_reaction']) echo 'Severe, ';
-                                if ($aefi['Aefi']['convulsion']) echo 'Seizures, ';
-                                if ($aefi['Aefi']['abscess']) echo 'Abscess, ';
-                                if ($aefi['Aefi']['bcg']) echo 'BCG Lymphadenitis, ';
-                                if ($aefi['Aefi']['meningitis']) echo 'Encephalopathy, ';
-                                if ($aefi['Aefi']['toxic_shock']) echo 'Toxic, ';
-                                if ($aefi['Aefi']['anaphylaxis']) echo 'Anaphylaxis, ';
-                                if ($aefi['Aefi']['high_fever']) echo 'Fever, ';
-                                if ($aefi['Aefi']['paralysis']) echo 'Paralysis, ';
-                                if ($aefi['Aefi']['urticaria']) echo 'Generalized urticaria, ';
-                                ?> </primarysourcereaction>
+        <primarysourcereaction><?php echo $aefi['Aefi']['aefi_symptoms']; ?></primarysourcereaction>
         <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
         <reactionmeddrallt><?php echo $aefi['Aefi']['aefi_symptoms']; ?></reactionmeddrallt>
         <?php
@@ -169,7 +158,7 @@ echo "\n"; ?>
         ?>
         <reactionenddateformat></reactionenddateformat>
         <reactionenddate></reactionenddate>
-        <reactionoutcome><?php $outcomes =  ['Recovered/Resolved' => 1,'Recovering/Resolving' => 2,'Recovered/Resolved with sequelae' => 3,'Not recovered/Not resolved/Ongoing' => 4,'Fatal' => 5,'Unknown' => 6];
+        <reactionoutcome><?php $outcomes =  ['Recovered/Resolved' => 1,'Recovering/Resolving' => 2,'Not recovered/Not resolved/Ongoing' => 3,'Fatal' => 4,'Unknown' => 5];
                 if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];?></reactionoutcome>
     </reaction>
  

@@ -329,6 +329,7 @@
             <hr>
 
             <?php echo $this->element('multi/list_of_vaccines');?>
+ 
 
             <div class="row-fluid">
                 <div class="span12">

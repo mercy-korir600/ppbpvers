@@ -88,6 +88,8 @@ class AefisController extends AppController {
                 'report'=>$report
                          
             );
+        //    debug($payload);
+        //    exit();
             
             $results = $HttpSocket->post(Configure::read('mhra_api'),
                        $payload,
@@ -97,7 +99,7 @@ class AefisController extends AppController {
          if ($results->isOk()) {
             $body = $results->body;
             $resp = json_decode($body, true);
-            // $this->Aefi->saveField('webradr_message', $body);
+            $this->Aefi->saveField('webradr_message', $body);
            $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
            $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
             $this->Flash->success('Yello Card Scheme integration success!!');
@@ -106,15 +108,15 @@ class AefisController extends AppController {
 
          }else{
             $body = $results->body;
-                // $this->Aefi->saveField('webradr_message', $body);
+                $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
          }
         }else{
             $body = $initiate->body;
-            // $this->Aefi->saveField('webradr_message', $body);
-            $this->Flash->error('Error sending report to Yello Card Scheme:');
+            $this->Aefi->saveField('webradr_message', $body);
+            $this->Flash->error('Error initiating report to Yello Card Scheme:');
             $this->Flash->error($body);
             $this->redirect($this->referer());
         }
