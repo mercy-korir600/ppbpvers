@@ -312,6 +312,14 @@ class Aefi extends AppModel {
                 'message'  => 'Please specify the seriousness of the event!!'
             ),
         ),
+// Don't allow date to be blank
+        'date_aefi_started' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please specify the seriousness of the event!!'
+            ),
+        ),
         'serious_yes' => array(
             'seriousYes' => array(
                 'rule'     => 'seriousYes',

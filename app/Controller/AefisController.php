@@ -44,24 +44,58 @@ class AefisController extends AppController {
 
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
-            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation'),
+            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation','AefiListOfVaccine.Vaccine'),
          
         ));
         $aefi = Sanitize::clean($aefi, array('escape' => true));
- 
-  
+
+        if($aefi['Aefi']['bcg']=='1'){
+            $reactions[] = "BCG Lymphadenitis";
+        }
+        if($aefi['Aefi']['convulsion']=='1'){
+            $reactions[] = "Generalized urticaria (hives)";
+        }
+        if($aefi['Aefi']['urticaria']=='1'){
+            $reactions[]= "High Fever";
+        }
+        if($aefi['Aefi']['high_fever']=='1'){
+            $reactions[] = "High Fever";
+        }
+        if($aefi['Aefi']['abscess']=='1'){
+            $reactions[] = "Injection site abscess";
+        }
+        if($aefi['Aefi']['local_reaction']=='1'){
+            $reactions[]= "Severe Local Reaction";
+        }
+        if($aefi['Aefi']['anaphylaxis']=='1'){
+            $reactions[] ="Anaphylaxis";
+        }
+        if($aefi['Aefi']['meningitis']=='1'){
+            $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+        }
+        if($aefi['Aefi']['paralysis']=='1'){
+            $reactions[] = "Paralysis";
+        } 
+        if($aefi['Aefi']['toxic_shock']=='1'){ 
+            $reactions[] = "Toxic shock"; 
+        }  
+        if($aefi['Aefi']['complaint_other']=='1'){ 
+            $reactions[] = $aefi['Aefi']['complaint_other_specify'];
+        }    
+        $reactions[] = $aefi['Aefi']['aefi_symptoms'];
 
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
         $view->layout = false; // if you want to disable layout 
         $view->set('aefi', $aefi); // set your variables for view here
+        $view->set('reactions',$reactions);
         $html = $view->render('json');   
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
-        $report = json_decode($json,TRUE);  
+        $report = json_decode($json,TRUE);   
      
-        // debug($report);
-        //  exit;
+        //  debug($report);
+        //   exit;
 
         $HttpSocket = new HttpSocket();
 
@@ -100,8 +134,8 @@ class AefisController extends AppController {
             $body = $results->body;
             $resp = json_decode($body, true);
             $this->Aefi->saveField('webradr_message', $body);
-           $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
-           $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+            $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
+            // $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
             $this->Flash->success('Yello Card Scheme integration success!!');
             $this->Flash->success($body);
             $this->redirect($this->referer());

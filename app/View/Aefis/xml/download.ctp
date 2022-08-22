@@ -246,6 +246,9 @@
                 if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];
                 ?></reactionoutcome>
             </reaction>
+
+
+            
             <?php foreach ($aefi['AefiListOfVaccine'] as $num => $listOfVaccine): ?>
             <drug>
                 <drugcharacterization><?php

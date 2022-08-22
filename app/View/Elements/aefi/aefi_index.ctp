@@ -315,7 +315,7 @@
         <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($aefi['Aefi']['patient_name']) : $aefi['Aefi']['gender']; ?>&nbsp;</td>
         <?php if($redir == 'manager') { ?>
           <td><?php echo h($aefi['Aefi']['vigiflow_ref']); echo "\n".$aefi['Aefi']['vigiflow_date']; ?></td>
-          <!-- <td> <?php echo h($aefi['Aefi']['webradr_ref']); echo "\n" . $aefi['Aefi']['webradr_date']; ?></td> -->
+           <td> <?php echo h($aefi['Aefi']['webradr_ref']); echo "\n" . $aefi['Aefi']['webradr_date']; ?>
            <?php } ?>
         <td><?php echo h($aefi['Aefi']['reporter_date']); ?>&nbsp;</td>
         <td><?php echo h($aefi['Aefi']['submitted_date']); ?>&nbsp;</td>

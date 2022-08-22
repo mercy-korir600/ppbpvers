@@ -131,20 +131,15 @@ echo "\n"; ?>
     <patientautopsyyesno/>
     <messagetype>ichicsr</messagetype>
     <messagenumb>KE-PPB-<?php echo date('Y') . '-' . $aefi['Aefi']['id']; ?></messagenumb>
-    
-    <reaction></reaction> 
+     
    <?php 
-    $i = 0;
-    $reaction=array(array('only'=>'reaction'));
-    foreach ($reaction as $n => $re) :?>
-      
-  <reaction></reaction>
-  <reaction>
-
+    $i = 0; 
+    foreach ($reactions as $n => $re) :?> 
+    <reaction>
         <id><?php echo $i++; ?></id>
-        <primarysourcereaction><?php echo $aefi['Aefi']['aefi_symptoms']; ?></primarysourcereaction>
+        <primarysourcereaction><?php echo $re ?></primarysourcereaction>
         <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
-        <reactionmeddrallt><?php echo $aefi['Aefi']['aefi_symptoms']; ?></reactionmeddrallt>
+        <reactionmeddrallt><?php echo $re ?></reactionmeddrallt>
         <?php
 
         if (!empty($aefi['Aefi']['date_aefi_started'])) {
@@ -156,8 +151,8 @@ echo "\n"; ?>
         }
 
         ?>
-        <reactionenddateformat></reactionenddateformat>
-        <reactionenddate></reactionenddate>
+        <reactionenddateformat/>
+        <reactionenddate/>
         <reactionoutcome><?php $outcomes =  ['Recovered/Resolved' => 1,'Recovering/Resolving' => 2,'Not recovered/Not resolved/Ongoing' => 3,'Fatal' => 4,'Unknown' => 5];
                 if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];?></reactionoutcome>
     </reaction>
@@ -200,7 +195,7 @@ echo "\n"; ?>
 
             <id><?php echo $i++; ?></id>
             <drugcharacterization><?php if($num == 0) echo 1; else echo 2;?></drugcharacterization>
-            <medicinalproduct><?php echo $listOfVaccine['vaccine_name'];?></medicinalproduct>
+            <medicinalproduct><?php if(!empty($listOfVaccine['vaccine_name'])) echo $listOfVaccine['vaccine_name']; else echo $listOfVaccine['Vaccine']['vaccine_name'];?></medicinalproduct>
             <obtaindrugcountry></obtaindrugcountry>
             <drugbatchnumb><?php echo $listOfVaccine['batch_number']; ?></drugbatchnumb>
             <drugauthorizationnumb></drugauthorizationnumb>
