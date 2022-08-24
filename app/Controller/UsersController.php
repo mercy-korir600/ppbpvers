@@ -30,9 +30,40 @@ class UsersController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         // remove initDb
+         $this->_clear_cache();
         $this->Auth->allow('register', 'login', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
     }
+    function _clear_cache()
+    {
 
+        Cache::clear();
+        clearCache();
+
+        $files = array();
+        $files = array_merge($files, glob(CACHE . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'css' . DS . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'js' . DS . '*'));  // remove cached js
+        $files = array_merge($files, glob(CACHE . 'models' . DS . '*'));  // remove cached models
+        $files = array_merge($files, glob(CACHE . 'persistent' . DS . '*'));  // remove cached persistent
+
+        foreach ($files as $f) {
+            if (is_file($f)) {
+                try {
+                    @unlink($f);
+                } catch (Exception $ex) {
+                    $files['errors'][] = $ex->getMessage();
+                }
+            }
+        }
+
+        if (function_exists('apc_clear_cache')):
+            apc_clear_cache();
+            apc_clear_cache('user');
+        endif;
+
+        return $files;
+
+    }
 
     public function login() {
         if ($this->Session->read('Auth.User')) {

@@ -93,8 +93,15 @@ echo "\n"; ?>
         echo "<patientonsetage>" . $aefi['Aefi']['age_months'] . "</patientonsetage>";
         echo "<patientonsetageunit>802</patientonsetageunit>";
     } else {
+        // if (!empty($aefi['Aefi']['date_of_birth'])) {
+        //     echo '<patientonsetage>'; 
+        //     echo $aefi['Aefi']['date_of_birth']['year']; 
+        //     echo '</patientonsetage>'; 
+        //     echo "<patientonsetageunit>602</patientonsetageunit>";
+        // } else {
         echo "<patientonsetage/>";
         echo "<patientonsetageunit/>";
+        // }
     }
     ?>
     <gestationperiod/>

@@ -84,6 +84,21 @@ class AefisController extends AppController {
         }    
         $reactions[] = $aefi['Aefi']['aefi_symptoms'];
 
+        // added reactions
+
+        $multiple=$aefi['AefiDescription'];
+        if(!empty($multiple)){
+            foreach($multiple as $other){
+                $reactions[]=$other['description'];
+            }
+        }
+
+        // Only add unique
+        $reactions=array_unique($reactions);
+
+        //   debug($reactions);
+        //   exit;
+
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
         $view->layout = false; // if you want to disable layout 

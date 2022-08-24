@@ -2,27 +2,27 @@ $(function() {
     // Multi Drugs Handling
     $("#addAefiDescription").on("click", addAefiDescriptions);
     $(document).on('click', '.removeAefiDescription', removeAefiDescription);
-	reloadStuff();
-    function reloadStuff(){
-      	var cache001 = {},    lastXhr001;
-	    $( ".other_reactions" ).autocomplete({
-	        source: function( request, response ) {
-	            var term = request.term;
-	            if ( term in cache001 ) {
-	                response( cache001[ term ] );
-	                return;
-	            }
+	// reloadStuff();
+    // function reloadStuff(){
+    //   	var cache001 = {},    lastXhr001;
+	//     $( ".other_reactions" ).autocomplete({
+	//         source: function( request, response ) {
+	//             var term = request.term;
+	//             if ( term in cache001 ) {
+	//                 response( cache001[ term ] );
+	//                 return;
+	//             }
 
-	            lastXhr001 = $.getJSON( "/meddras/terminology.json", request, function( data, status, xhr ) {
-	                cache001[ term ] = data;
-	                if ( xhr === lastXhr001 ) {
-	                    response( data );
-	                }
-	            });
-	        }
-	    });
+	//             lastXhr001 = $.getJSON( "/meddras/terminology.json", request, function( data, status, xhr ) {
+	//                 cache001[ term ] = data;
+	//                 if ( xhr === lastXhr001 ) {
+	//                     response( data );
+	//                 }
+	//             });
+	//         }
+	//     });
       
-    }
+    // }
     // Multi Drugs Handling
     function addAefiDescriptions() {
         var se = $("#aefi-descriptions .aefi-description-group").last().find('button').attr('id');

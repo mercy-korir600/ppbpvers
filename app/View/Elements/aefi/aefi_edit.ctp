@@ -5,6 +5,7 @@
     $this->Html->script('aefi', array('inline' => false));
     $this->Html->css('jquery.datetimepicker', false, array('inline' => false));
     $this->Html->script('jquery/jquery.datetimepicker.full', array('inline' => false));
+   
 ?>
 
 <?php
@@ -300,15 +301,18 @@
                         echo $this->Form->input('date_aefi_started', array('type' => 'text','class' => 'required', 'class' => 'span11 date-pick-field', 'label' => array('class' => 'control-label required', 'text' => 'DATE AEFI STARTED'),));
                         echo $this->Form->input('time_aefi_started', array('type' => 'time', 'timeFormat' => 24, 'interval' => 5, 'class' => 'span4', 'style' => 'display: inline;', 
                             'label' => array('class' => 'control-label required', 'text' => 'TIME'),));
-                        // echo $this->Form->input('aefi_symptoms', array('label' => array('class' => 'control-label required', 'text' => 'Describe AEFI (Signs & Symptoms)'),));
-                        echo $this->Form->input('aefi_symptoms', array(
+                         echo $this->Form->input('aefi_symptoms', array(
                                 'label' => array('class' => 'required', 'text' => 'Describe AEFI <span style="color:red;">*</span>'),
                                 'between' => false, 'div' => false,
                                 'after'=>'<p class="help-block">  (Signs & Symptoms) </p>',
                                 'class' => 'span12', 'rows' => '1'
                             ));
-                        echo $this->element('multi/aefi_descriptions');
+                          echo $this->element('multi/aefi_descriptions');
+                        
                     ?>
+                    <!-- <button title="add reaction" id="addReactionDetail"
+                                class="btn btn-primary btn-xs multiple_reactions" type="button">Add
+                                Reaction</button></small><b></b></h5> -->
                 </div>
                 <div class="span4">
                     <div style="padding-left: 10px;">                        
