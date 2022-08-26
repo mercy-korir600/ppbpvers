@@ -30,7 +30,7 @@ class UsersController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         // remove initDb
-         $this->_clear_cache();
+        //  $this->_clear_cache();
         $this->Auth->allow('register', 'login', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
     }
     function _clear_cache()

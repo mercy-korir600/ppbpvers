@@ -13,8 +13,7 @@
           <div class="aefi-description-group">
             <div class="row-fluid">
                 <div class="span12">
-                <?php
-                    // echo $this->Form->input('AefiDescription.'.$i.'.id', ['templates' => 'table_form']);
+                <?php 
                     echo $this->Form->input('AefiDescription.'.$i.'.id');
                     echo $this->Form->input('AefiDescription.'.$i.'.description',
                                 array('label' => false, 'rows' => 3));
