@@ -80,7 +80,10 @@ class AefisController extends AppController {
             $reactions[] = "Toxic shock"; 
         }  
         if($aefi['Aefi']['complaint_other']=='1'){ 
-            $reactions[] = $aefi['Aefi']['complaint_other_specify'];
+            $other= $aefi['Aefi']['complaint_other_specify'];
+            if(!empty($other)){
+            $reactions[] =$other;
+            }
         }    
         $reactions[] = $aefi['Aefi']['aefi_symptoms'];
 
@@ -150,8 +153,8 @@ class AefisController extends AppController {
             $resp = json_decode($body, true);
             $this->Aefi->saveField('webradr_message', $body);
             $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
-            // $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
-            $this->Flash->success('Yello Card Scheme integration success!!');
+            $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+            $this->Flash->success('Yellow Card Scheme integration success!!');
             $this->Flash->success($body);
             $this->redirect($this->referer());
 
@@ -165,7 +168,7 @@ class AefisController extends AppController {
         }else{
             $body = $initiate->body;
             $this->Aefi->saveField('webradr_message', $body);
-            $this->Flash->error('Error initiating report to Yello Card Scheme:');
+            $this->Flash->error('Error initiating report to Yellow Card Scheme:');
             $this->Flash->error($body);
             $this->redirect($this->referer());
         }

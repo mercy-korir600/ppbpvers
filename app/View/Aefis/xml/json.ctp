@@ -113,7 +113,7 @@ echo "\n"; ?>
     <lastmenstrualdateformat/>
     <patientlastmenstrualdate/>
     <patientmedicalhistorytext><?php echo $aefi['Aefi']['medical_history']; ?></patientmedicalhistorytext>
-    <resultstestsprocedures></resultstestsprocedures>
+    <resultstestsprocedures><?php echo $aefi['Aefi']['specimen_collected']; ?></resultstestsprocedures> 
     <?php
     if (!empty($aefi['Aefi']['guardian_name'])) {
     
