@@ -908,9 +908,11 @@ public function generateJsonData($report)
         //Manager will always edit a copied report
         $aefi = $this->Aefi->find('first', array(
                 'conditions' => array('Aefi.id' => $aefi['Aefi']['aefi_id']),
-                'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
+                'contain' => array('AefiListOfVaccine', 'AefiDescription','AefiReaction', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
             ));
         $this->set('aefi', $aefi);
+
+        // debug($aefi);
 
         $counties = $this->Aefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
         $this->set(compact('counties'));

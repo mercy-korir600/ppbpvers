@@ -31,10 +31,11 @@
 	$("#AefiAefiSymptoms").autocomplete({
 			source: "/meddras/autocomplete.json"
 	});
-
-	$("#AefiDescriptions").autocomplete({
+	$("#AefiAefiDescriptionDescription").autocomplete({
 		source: "/meddras/autocomplete.json"
 });
+
+ 
 
 	//If not serious disable criteria
     if(!$('input[name="data[Aefi][serious]"][value="Yes"]').is(':checked')){ $('input[name="data[Aefi][serious_yes]"]').attr('disabled', true).attr('checked', false); }

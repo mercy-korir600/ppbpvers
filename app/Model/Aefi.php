@@ -170,6 +170,13 @@ class Aefi extends AppModel {
             'dependent' => true,
             'conditions' => '',
         ),
+
+        'AefiReaction' => array(
+            'className' => 'AefiReaction',
+            'foreignKey' => 'aefi_id',
+            'dependent' => true,
+            'conditions' => '',
+        ),
 		'Attachment' => array(
             'className' => 'Attachment',
             'foreignKey' => 'foreign_key',
