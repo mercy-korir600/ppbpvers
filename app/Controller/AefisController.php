@@ -97,7 +97,7 @@ class AefisController extends AppController {
         }
 
         // Only add unique
-        $reactions=array_unique($reactions);
+        // $reactions=array_unique($reactions);
 
         //   debug($reactions);
         //   exit;
@@ -153,7 +153,7 @@ class AefisController extends AppController {
             $resp = json_decode($body, true);
             $this->Aefi->saveField('webradr_message', $body);
             $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
-            $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+            // $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
             $this->Flash->success('Yellow Card Scheme integration success!!');
             $this->Flash->success($body);
             $this->redirect($this->referer());

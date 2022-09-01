@@ -160,7 +160,7 @@ echo "\n"; ?>
         ?>
         <reactionenddateformat/>
         <reactionenddate/>
-        <reactionoutcome><?php $outcomes =  ['Recovered/Resolved' => 1,'Recovering/Resolving' => 2,'Not recovered/Not resolved/Ongoing' => 3,'Fatal' => 4,'Unknown' => 5];
+        <reactionoutcome><?php $outcomes =  ['Recovered/Resolved' => 1,'Recovering/Resolving' => 2,'Not recovered/Not resolved/Ongoing' => 3,'Recovered/Resolved with sequelae'=>4,'Fatal' => 5,'Unknown' => 6];
                 if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];?></reactionoutcome>
     </reaction>
  
@@ -236,7 +236,7 @@ echo "\n"; ?>
             <actiondrug></actiondrug>
             <drugrecurreadministration></drugrecurreadministration>
             <drugadditional><?php echo $listOfVaccine['diluent_batch_number'];?></drugadditional>
-            <activesubstance><?php echo $listOfVaccine['vaccine_name'];?></activesubstance>
+            <activesubstance><?php if(!empty($listOfVaccine['vaccine_name'])) echo $listOfVaccine['vaccine_name']; else echo $listOfVaccine['Vaccine']['vaccine_name'];?></activesubstance>
             <drugrecuraction></drugrecuraction>
 
         </drug>

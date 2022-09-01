@@ -324,7 +324,12 @@ class Aefi extends AppModel {
             'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
-                'message'  => 'Please specify the seriousness of the event!!'
+                'message'  => 'Please specify when reaction started'
+            ),
+            'afterVaccination' => array(
+                'rule'     => 'afterVaccination',
+                'required' => true,
+                'message'  => 'Date reaction started should be after the vaccination dates!!'
             ),
         ),
         'serious_yes' => array(
@@ -384,6 +389,35 @@ class Aefi extends AppModel {
 
     public function treatOrSpecimen($field = null) {
         return !empty($this->data['Aefi']['treatment_given']) || !empty($this->data['Aefi']['specimen_collected']);
+    }
+    public function afterVaccination($field = null)
+    {
+        if (!empty($this->data['AefiListOfVaccine'])) {
+            $vaccines=$this->data['AefiListOfVaccine'];
+            $proceed=true;
+            foreach($vaccines as $va){
+                $date=$va['vaccination_date'];
+                // if vacination if after then return false;
+               $vacination_date= date('Ymd', strtotime($date));
+               $vacc=$this->data['Aefi']['date_aefi_started'];
+               $start_date= date('Ymd', strtotime($vacc));
+
+               $date1=date_create($vacination_date);
+               $date2=date_create($start_date);
+               
+               $diff=date_diff($date1,$date2);
+               $answ= $diff->format("%R%a");
+ 
+               if($answ>0){
+                $proceed=true;
+               }else{
+                $proceed=false;
+               }
+
+            }
+			return $proceed;
+		} 
+		return false;
     }
 
 	public function seriousYes($field = null) {
