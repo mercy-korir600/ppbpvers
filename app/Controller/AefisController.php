@@ -139,19 +139,22 @@ class AefisController extends AppController {
                 'organisationId'=>$organisationId,
                 'report'=>$report
                          
-            );
-        //    debug($payload);
-        //    exit();
+            ); 
             
-            $results = $HttpSocket->post(Configure::read('mhra_api'),
+            $results = $HttpSocket->post( 
+                Configure::read('mhra_incidents'),            
                        $payload,
-            array('header' => array('Authorization' => 'Bearer '.$token))
-        );
+            array('header' => array(  
+                'X-App-Id' => Configure::read('mhra_xapp_id'),
+                'Authorization' => 'Bearer '.$token, //original 
+                'Authorization' => 'API_KEY '.Configure::read('mhra_api_key'), 
+                ))
+        ); 
 
          if ($results->isOk()) {
             $body = $results->body;
             $resp = json_decode($body, true);
-            $this->Aefi->saveField('webradr_message', $body);
+            // $this->Aefi->saveField('webradr_message', $body);
             $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
             // $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
             $this->Flash->success('Yellow Card Scheme integration success!!');
@@ -160,7 +163,7 @@ class AefisController extends AppController {
 
          }else{
             $body = $results->body;
-                $this->Aefi->saveField('webradr_message', $body);
+                // $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
