@@ -37,13 +37,17 @@ class CommentsController extends AppController {
                       'contain' => array(),
                       'conditions' => array('OR' => array('User.id' => $entity[$model]['user_id'], 'User.group_id' => 2))
                   ));
+ 
+                  // check the model if Aefi use aefis else sadrs
+                  $controller = ($model == 'Aefi') ? 'aefis' : 'sadrs';
+ 
                   foreach ($users as $user) {
                       $actioner = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
                       $variables = array(
                         'name' => $user['User']['name'], 'reference_no' => $entity[$model]['reference_no'], 
                         'comment_subject' => $this->request->data['Comment']['subject'],
                         'comment_content' => $this->request->data['Comment']['content'],
-                        'reference_link' => $html->link($entity[$model]['reference_no'], array('controller' => 'sadrs', 'action' => 'view', $entity[$model]['id'], $actioner => true, 'full_base' => true), 
+                        'reference_link' => $html->link($entity[$model]['reference_no'], array('controller' => $controller, 'action' => 'view', $entity[$model]['id'], $actioner => true, 'full_base' => true), 
                           array('escape' => false)),
                       );
                       $datum = array(

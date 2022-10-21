@@ -154,16 +154,16 @@ class AefisController extends AppController {
          if ($results->isOk()) {
             $body = $results->body;
             $resp = json_decode($body, true);
-            // $this->Aefi->saveField('webradr_message', $body);
+              $this->Aefi->saveField('webradr_message', $body);
             $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
-            // $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+             $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
             $this->Flash->success('Yellow Card Scheme integration success!!');
             $this->Flash->success($body);
             $this->redirect($this->referer());
 
          }else{
             $body = $results->body;
-                // $this->Aefi->saveField('webradr_message', $body);
+                 $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
