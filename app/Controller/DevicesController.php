@@ -359,6 +359,25 @@ class DevicesController extends AppController {
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';                
             }
+            $data=$this->request->data;
+            $device=$data['ListOfDevice'];
+            //check if $device array is not empty
+            if(!empty($device)){
+                //loop through the array
+                foreach($device as $key=>$value){
+                    //check if the value is empty
+                    if(!empty($value['expiry_date'])){
+                        //convert this date to datetime
+                        $device[$key]['expiry_date']=date('Y-m-d H:i:s',strtotime($value['expiry_date']));
+
+                        //add it back to the origin array
+                        $data['ListOfDevice']=$device; 
+                        $this->request->data=$data;
+
+                    }
+                }
+            }
+            
             if ($this->Device->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Device->saveField('submitted', 2);

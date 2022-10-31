@@ -30,9 +30,12 @@ class UsersController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         // remove initDb
-        //  $this->_clear_cache();
+         $this->_clear_cache();
+        //  $this->initDb();
         $this->Auth->allow('register', 'login', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
     }
+
+   
     function _clear_cache()
     {
 
@@ -66,6 +69,10 @@ class UsersController extends AppController {
     }
 
     public function login() {
+    //    $this-> initDB();
+    //     debug('user');
+    //     exit;
+
         if ($this->Session->read('Auth.User')) {
             $this->Session->setFlash('You are logged in!', 'alerts/flash_success');
             $this->redirect('/', null, false);
@@ -228,6 +235,7 @@ class UsersController extends AppController {
     }
 
     public function logout() {
+        // $this->initDb();
         $this->Session->setFlash('Good-Bye','flash_info');
         $this->redirect($this->Auth->logout());
     }
@@ -437,6 +445,8 @@ class UsersController extends AppController {
  * @return void
  */
     public function index() {
+       
+        $this->initDb();
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
     }

@@ -633,6 +633,7 @@ public function generateJsonData($report)
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';                
             }
+           
             if ($this->Aefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Aefi->saveField('submitted', 2);                    
