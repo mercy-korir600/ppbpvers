@@ -104,6 +104,10 @@ class UsersController extends AppController {
                 // if(strlen($this->Auth->redirect()) > 12) {
                 //     return $this->redirect($this->Auth->redirect());           
                 // }
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                // debug($token);
+                // exit;
                 if($this->Auth->User('group_id') == '1') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
                 if($this->Auth->User('group_id') == '2') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'manager' => true));
                 if($this->Auth->User('group_id') == '3') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reporter' => true));
@@ -1063,7 +1067,8 @@ class UsersController extends AppController {
         $this->Acl->deny($group, 'controllers');
         $this->Acl->allow($group, 'controllers/Users/manager_dashboard'); 
         $this->Acl->allow($group, 'controllers/Sadrs');
-        $this->Acl->allow($group, 'controllers/Aefis');
+        $this->Acl->allow($group, 'controllers/Aefis');  
+        $this->Acl->allow($group, 'controllers/Aefis/yellowcard'); 
         $this->Acl->allow($group, 'controllers/SadrFollowups');
         $this->Acl->allow($group, 'controllers/Pqmps');
         $this->Acl->allow($group, 'controllers/Devices');
