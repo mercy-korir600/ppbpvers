@@ -333,7 +333,8 @@
                   array('controller' => 'aefis', 'action' => 'vigiflow', $aefi['Aefi']['id'], 'manager' => false),
                   array('escape' => false));
                 echo "&nbsp;";
-                if ($redir == 'manager' && empty($aefi['Aefi']['webradr_ref']) && $aefi['Aefi']['copied'] == 2) echo $this->Html->link(
+                if ($redir == 'manager' && empty($aefi['Aefi']['webradr_ref'])
+                 && $aefi['Aefi']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-info tooltipper" title="Send to yello card"><i class="fa fa-upload" aria-hidden="true"></i> Yellow Card </span>',
                   array('controller' => 'aefis', 'action' => 'yellowcard', $aefi['Aefi']['id'], 'manager' => false),
                   array('escape' => false)

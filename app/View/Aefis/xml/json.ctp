@@ -201,8 +201,9 @@ echo "\n"; ?>
             <reportertitle></reportertitle>
             <?php $arr = preg_split("/[\s]+/", $aefi['Aefi']['reporter_name']); ?>
             <reportergivename><?php if (isset($arr[0])) echo $arr[0]; ?></reportergivename>
-            <reporterfamilyname><?php if (isset($arr[1])) echo $arr[1] . ' ';
-                                if (isset($arr[2])) echo $arr[2];  ?></reporterfamilyname>
+            <reporterfamilyname><?php if (isset($arr[1])){
+                if(!empty($arr[1]))echo $arr[1];else echo "N/A";
+            }else echo $arr[0]; ?></reporterfamilyname>
             <reporterorganization><?php echo $aefi['Aefi']['name_of_institution']; ?></reporterorganization>
             <reporterstreet></reporterstreet>
             <reportercity></reportercity>

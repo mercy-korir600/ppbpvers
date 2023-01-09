@@ -94,13 +94,7 @@ class AefisController extends AppController
             foreach ($multiple as $other) {
                 $reactions[] = $other['description'];
             }
-        }
-
-        // Only add unique
-        // $reactions=array_unique($reactions);
-
-        //   debug($reactions);
-        //   exit;
+        } 
 
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
@@ -108,14 +102,10 @@ class AefisController extends AppController
         $view->set('aefi', $aefi); // set your variables for view here
         $view->set('reactions', $reactions);
         $html = $view->render('json');
-        
+        libxml_use_internal_errors(TRUE);
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
-        $report = json_decode($json, TRUE);
-
-        //  debug($report);
-        //   exit;
-
+        $report = json_decode($json, TRUE); 
         $HttpSocket = new HttpSocket();
 
         //Request Access Token
@@ -141,6 +131,9 @@ class AefisController extends AppController
                 'organisationId' => $organisationId,
                 'report' => $report
             );
+
+            // debug($report);
+            // exit;
             $results = $HttpSocket->post(
                 Configure::read('mhra_incidents'),
                 $payload,
@@ -163,7 +156,7 @@ class AefisController extends AppController
                 $this->redirect($this->referer());
             } else {
                 $body = $results->body;
-                $this->Aefi->saveField('webradr_message', $body);
+               // $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
