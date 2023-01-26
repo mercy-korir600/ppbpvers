@@ -38,7 +38,7 @@ class PadrsController extends AppController
         // remove initDb
         $this->Auth->allow('add', 'view', 'followup', 'edit');
     }
-   
+
     /**
      * index method
      *
@@ -315,7 +315,7 @@ class PadrsController extends AppController
     }
     public function api_counties()
     {
-        if ($this->request->is('get')){
+        if ($this->request->is('get')) {
             $counties = $this->Padr->County->find('list', array('order' => array('County.county_name')));
             $this->set([
                 'status' => 'success',
@@ -323,8 +323,7 @@ class PadrsController extends AppController
                 'counties' => $counties,
                 '_serialize' => ['status', 'message', 'counties']
             ]);
-
-        }else{
+        } else {
             throw new MethodNotAllowedException();
         }
     }
@@ -335,8 +334,8 @@ class PadrsController extends AppController
             $this->_attachments('Padr');
 
             //add the sender flag
-            $this->request->data['Padr']['device']="3";
-           
+            $this->request->data['Padr']['device'] = "3"; 
+
             if ($this->Padr->saveAssociated($this->request->data)) {
                 $count = $this->Padr->find('count',  array('conditions' => array(
                     'Padr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s"))
@@ -345,6 +344,7 @@ class PadrsController extends AppController
                 $count = ($count < 10) ? "0$count" : $count;
                 $this->Padr->saveField('reference_no', 'PADR/' . date('Y') . '/' . $count);
                 $this->Padr->saveField('token', Security::hash($this->Padr->id));
+                $this->Padr->saveField('submitted_date', date("Y-m-d H:i:s"));
 
                 //******************       Send Emails to Reporter and Managers          *****************************
                 $this->loadModel('Message');
@@ -405,7 +405,7 @@ class PadrsController extends AppController
                 }
                 //**********************************    END   *********************************
 
-                $hey=array('reference'=>$padr['Padr']['reference_no']);
+                $hey = array('reference' => $padr['Padr']['reference_no']);
 
                 $this->set([
                     'status' => 'success',
