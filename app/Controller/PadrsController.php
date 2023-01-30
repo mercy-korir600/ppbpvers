@@ -354,8 +354,8 @@ class PadrsController extends AppController {
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                       );
 
-					  $this->QueuedTask->createJob('GenericEmail', $datum);
-					  $this->QueuedTask->createJob('GenericNotification', $datum);
+					 $this->QueuedTask->createJob('GenericEmail', $datum);
+					 $this->QueuedTask->createJob('GenericNotification', $datum);
                     }
                 //**********************************    END   *********************************
 

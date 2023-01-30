@@ -237,7 +237,7 @@ public function generateJsonData($report)
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
           $this->csv_export($this->Aefi->find('all', 
-                  array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 1000)
+                  array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 10000)
               ));
         }
         //end pdf export

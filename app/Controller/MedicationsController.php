@@ -139,7 +139,8 @@ class MedicationsController extends AppController {
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
           $this->csv_export($this->Medication->find('all', 
-                  array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'])
+                  array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'],
+                   'contain' => $this->paginate['contain'])
               ));
         }
         //end pdf export
