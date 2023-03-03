@@ -322,17 +322,15 @@
                 echo "&nbsp;";
                 if($redir == 'manager') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'sadrs' , 'action' => 'download', $sadr['Sadr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
                 echo "&nbsp;";
-                if($redir == 'manager' && empty($sadr['Sadr']['vigiflow_ref']) && $sadr['Sadr']['copied'] == 2) echo $this->Html->link('<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>' ,
-                  array('controller' => 'sadrs', 'action' => 'vigiflow', $sadr['Sadr']['id'], 'manager' => false),
-                  array('escape' => false)); 
-                echo "&nbsp;";
-                
+              
+                if ($redir == 'manager' && is_null($sadr['Sadr']['vigiflow_ref']) && $sadr['Sadr']['copied'] == 2) {
+                        echo $this->Html->link('<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
+                          array('controller' => 'sadrs', 'action' => 'vigiflow', $sadr['Sadr']['id'], 'manager' => false),
+                          array('escape' => false));
+                 
+              }
 
-                // if($redir == 'manager' && empty($sadr['Sadr']['webradr_ref']) && $sadr['Sadr']['copied'] == 2) echo $this->Html->link('<span class="label label-info tooltipper" title="Send to Yellow Card"><i class="fa fa-upload" aria-hidden="true"></i> Yellow Card </span>' ,
-                //   array('controller' => 'sadrs', 'action' => 'yellowcard', $sadr['Sadr']['id'], 'manager' => false),
-                //   array('escape' => false));
-                // echo "&nbsp;";
-
+              echo "&nbsp;"; 
                 if($redir == 'manager' && $sadr['Sadr']['copied'] == 2) echo $this->Html->link('<span class="label label-success tooltipper" title="Copy & Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>' ,
                   array('controller' => 'sadrs', 'action' => 'edit', $sadr['Sadr']['id']),
                   array('escape' => false));
