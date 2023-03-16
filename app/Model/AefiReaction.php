@@ -1,11 +1,11 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * ListOfDevice Model
+ * AefiReaction Model
  *
- * @property Device $Device
+ * @property Aefi $Aefi
  */
-class ListOfDevice extends AppModel {
+class AefiReaction extends AppModel {
 
 
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -16,9 +16,9 @@ class ListOfDevice extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Device' => array(
-			'className' => 'Device',
-			'foreignKey' => 'device_id',
+		'Aefi' => array(
+			'className' => 'Aefi',
+			'foreignKey' => 'aefi_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

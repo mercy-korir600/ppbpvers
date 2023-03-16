@@ -126,9 +126,21 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-Configure::write('vigiflow_api', 'https://api.who-umc.org/vigiflow/icsrs'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
+Configure::write('vigiflow_api', 'https://api.who-umc.org/demo/vigiflow/icsrs'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
 Configure::write('vigiflow_key', '5ab835c4-3179-4590-bcd2-ff3c27d6b8ff'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
 Configure::write('API.token.pepper', 'touch2d34asdfpad'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
+
+
+// Configure Yellow Card
+Configure::write('mhra_auth_api', 'https://digital-store-api-mhr-uat.herokuapp.com/v1/login'); 
+Configure::write('mhra_api', 'https://digital-store-api-mhr-uat.herokuapp.com/v1/report'); 
+Configure::write('mhra_platform', 'ab1057ca-8e5d-4470-a595-36e7a3901697'); 
+Configure::write('mhra_incidents', 'https://digital-store-api-mhr-uat.herokuapp.com/v1/integration/incidents/reports/e2bjs'); //added
+Configure::write('mhra_organization', '4e470e88-9c70-41bc-a761-e6ba172b1a00');  
+Configure::write('mhra_xapp_id', '5d3298a9-14dc-4ee1-8318-4a3f25b04a99');  
+Configure::write('mhra_api_key', 'd04aa2d0-92f8-480a-a3b9-54beb746e399');  
+Configure::write('mhra_password', 'Change4me'); 
+Configure::write('mhra_username', 'gmurimi@pharmacyboardkenya.org');
 
 // usernameAT=afyamoja
 // apiKey=6347d9066545048e3d0ec2cc11034186861dc47c96c4bc268f9bac61899a357c

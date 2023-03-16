@@ -170,6 +170,13 @@ class Aefi extends AppModel {
             'dependent' => true,
             'conditions' => '',
         ),
+
+        'AefiReaction' => array(
+            'className' => 'AefiReaction',
+            'foreignKey' => 'aefi_id',
+            'dependent' => true,
+            'conditions' => '',
+        ),
 		'Attachment' => array(
             'className' => 'Attachment',
             'foreignKey' => 'foreign_key',
@@ -312,6 +319,19 @@ class Aefi extends AppModel {
                 'message'  => 'Please specify the seriousness of the event!!'
             ),
         ),
+// Don't allow date to be blank
+        'date_aefi_started' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please specify when reaction started'
+            ),
+            'afterVaccination' => array(
+                'rule'     => 'afterVaccination',
+                'required' => true,
+                'message'  => 'Date reaction started should be after the vaccination dates!!'
+            ),
+        ),
         'serious_yes' => array(
             'seriousYes' => array(
                 'rule'     => 'seriousYes',
@@ -369,6 +389,35 @@ class Aefi extends AppModel {
 
     public function treatOrSpecimen($field = null) {
         return !empty($this->data['Aefi']['treatment_given']) || !empty($this->data['Aefi']['specimen_collected']);
+    }
+    public function afterVaccination($field = null)
+    {
+        if (!empty($this->data['AefiListOfVaccine'])) {
+            $vaccines=$this->data['AefiListOfVaccine'];
+            $proceed=true;
+            foreach($vaccines as $va){
+                $date=$va['vaccination_date'];
+                // if vacination if after then return false;
+               $vacination_date= date('Ymd', strtotime($date));
+               $vacc=$this->data['Aefi']['date_aefi_started'];
+               $start_date= date('Ymd', strtotime($vacc));
+
+               $date1=date_create($vacination_date);
+               $date2=date_create($start_date);
+               
+               $diff=date_diff($date1,$date2);
+               $answ= $diff->format("%R%a");
+ 
+               if($answ>0){
+                $proceed=true;
+               }else{
+                $proceed=false;
+               }
+
+            }
+			return $proceed;
+		} 
+		return false;
     }
 
 	public function seriousYes($field = null) {

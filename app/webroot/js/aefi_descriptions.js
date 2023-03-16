@@ -2,7 +2,34 @@ $(function() {
     // Multi Drugs Handling
     $("#addAefiDescription").on("click", addAefiDescriptions);
     $(document).on('click', '.removeAefiDescription', removeAefiDescription);
+    $(document).on("click", "#addAefiDescription", reloadStuff);
+    // Multi reactions Handling
+    reloadStuff();
+    function reloadStuff() {
+        var cache001 = {},
+            lastXhr001;
+        $(".other_reactions").autocomplete({
+            source: function (request, response) {
+                var term = request.term;
+                if (term in cache001) {
+                    response(cache001[term]);
+                    return;
+                }
 
+                lastXhr001 = $.getJSON(
+                    "/meddras/autocomplete.json",
+                    request,
+                    function (data, status, xhr) {
+                        cache001[term] = data;
+                        if (xhr === lastXhr001) {
+                            response(data);
+                        }
+                    }
+                );
+            },
+        });
+    }
+    	 
     // Multi Drugs Handling
     function addAefiDescriptions() {
         var se = $("#aefi-descriptions .aefi-description-group").last().find('button').attr('id');
@@ -15,10 +42,10 @@ $(function() {
             var new_aefidescription = $('<div class="aefi-description-group">\
                 <div class="row-fluid">\
                     <div class="span12">\
-                      <input type="hidden" name="data[AefiDescription][{i}][id]" class="" id="AefiDescription{i}Id">\
+                      <input type="hidden" name="data[AefiDescription][{i}][id]" class="" id="AefiDescription{i}id">\
                       <div class="control-group">\
-                        <textarea name="data[AefiDescription][{i}][description]" class="span12" rows="2" id="AefiDescription{i}Description"></textarea>\
-                      </div>\
+                      <textarea name="data[AefiDescription][{i}][description]" class="span12 other_reactions" rows="2" id="AefiDescription{i}description"></textarea>\
+                  </div> \
                     </div>\
                     <div class="row-fluid">\
                       <div class="span12">\

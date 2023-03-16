@@ -16,12 +16,16 @@ class TestShell extends AppShell {
        //$email->template('default');
        //$email->emailFormat('html');
        //$email->from(array('eddyokemwa@gmail.com' => 'My test'));
-       $email->to('omondi.ken@gmail.com');
+       $email->to('kiprotich.japheth19@gmail.com');
        // $email->subject(Configure::read('Emails.registration.subject'));
        $email->subject('test email');
        //$email->viewVars(array('message' => 'This is a dummy message. seen'));
        if(!$email->send('My message to youhouhou')) {
            $this->log($email, 'test_email');
+           $this->out('Experienced problems!!.');
+       }else{
+        $this->out('Successfully Sent!!!.');
        }
+
     }
 }

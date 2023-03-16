@@ -1,11 +1,11 @@
 <?php
-    $this->Html->script('aefi_descriptions', array('inline' => false));
+   $this->Html->script('aefi_descriptions', array('inline' => false));  
 ?>
 <h5> <small>
 <button type="button" class="btn btn-small btn-primary" id="addAefiDescription">Add description</button></small> </h5>
 
 <div>
-  <div id="aefi-descriptions">
+  <div id="aefi-descriptions"> 
     <?php
       if (!empty($this->request->data['AefiDescription'])) {
           for ($i = 0; $i <= count($this->request->data['AefiDescription'])-1; $i++) {
@@ -13,13 +13,12 @@
           <div class="aefi-description-group">
             <div class="row-fluid">
                 <div class="span12">
-                <?php
-                    // echo $this->Form->input('AefiDescription.'.$i.'.id', ['templates' => 'table_form']);
+                <?php 
                     echo $this->Form->input('AefiDescription.'.$i.'.id');
                     echo $this->Form->input('AefiDescription.'.$i.'.description',
                                 array('label' => false, 'rows' => 3));
                     
-
+          
                 ?>
               
                 </div> 

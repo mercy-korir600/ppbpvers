@@ -8,7 +8,7 @@ App::uses('HtmlHelper', 'View/Helper');
 // use Firebase\JWT\JWT;
 // App::import('Vendor', 'firebase/php-jwt/src/JWT');
 // App::uses('JWT', 'JWT');
-require_once(ROOT . DS . 'app' . DS .'Vendor' . DS  . 'firebase' . DS . 'php-jwt' . DS. 'src' . DS . 'JWT.php');
+require_once(ROOT . DS . 'app' . DS . 'Vendor' . DS  . 'firebase' . DS . 'php-jwt' . DS . 'src' . DS . 'JWT.php');
 // use JWT;
 
 // App::import('Vendor', 'JWT', array('file' => 'firebase/phpa-jwt/src/JWT.php'));
@@ -19,29 +19,120 @@ use Firebase\JWT\JWT;
  *
  * @property User $User
  */
-class UsersController extends AppController {
+class UsersController extends AppController
+{
     public $components = array('Search.Prg');
     public $uses = array('User', 'Message');
     public $paginate = array();
     public $presetVars = true;
 
     public $helpers = array('Tools.Captcha' => array('type' => 'active'));
+
     
-    public function beforeFilter() {
+
+    public function beforeFilter()
+    {
         parent::beforeFilter();
         // remove initDb
-        $this->Auth->allow('register', 'login', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
+        $this->_clear_cache();
+        //  $this->initDb();
+        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
     }
 
 
-    public function login() {
+    function _clear_cache()
+    {
+
+        Cache::clear();
+        clearCache();
+
+        $files = array();
+        $files = array_merge($files, glob(CACHE . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'css' . DS . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'js' . DS . '*'));  // remove cached js
+        $files = array_merge($files, glob(CACHE . 'models' . DS . '*'));  // remove cached models
+        $files = array_merge($files, glob(CACHE . 'persistent' . DS . '*'));  // remove cached persistent
+
+        foreach ($files as $f) {
+            if (is_file($f)) {
+                try {
+                    @unlink($f);
+                } catch (Exception $ex) {
+                    $files['errors'][] = $ex->getMessage();
+                }
+            }
+        }
+
+        if (function_exists('apc_clear_cache')) :
+            apc_clear_cache();
+            apc_clear_cache('user');
+        endif;
+
+        return $files;
+    }
+
+    public function api_auth()
+    {
+        # code...
+        $this->RequestHandler->renderAs($this, 'json');
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            if (!isset($data['username']) || !isset($data['password']) || empty($data['username']) || empty($data['password'])) {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Missing username or password', '_serialize' => ['message']]);
+                return;
+            }
+
+            // unset the request and apend new values
+
+            $this->request->data['User']['username'] = $this->request->data['username'];
+            $this->request->data['User']['password'] = $this->request->data['password'];
+            unset($this->request->data['username']);
+            unset($this->request->data['password']);
+
+            if ($this->Auth->login()) {
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                                
+                if ($user) {
+                    // only add the neccessary fields from the user 
+                    $datum=array('id'=>$user['id'],'name'=>$user['name'],'created'=>$user['created']);
+                    $this->set('user', $datum);
+                    $this->set('token', $token);
+                    $this->set('_serialize', array('user', 'token'));
+                } else {
+                    $this->set([
+                        'success' => false,
+                        'data' => $this->request->data,
+                        '_serialize' => ['success', 'data']
+                    ]);
+                }
+            } else {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Invalid username or password', '_serialize' => ['message']]);
+                return;
+            }
+        } else {
+            $this->response->statusCode(405);
+            $this->set([
+                'error' => 'Only POST Request Allowed',
+                '_serialize' => ['error']
+            ]);
+        }
+    }
+    public function login()
+    {
+        //    $this-> initDB();
+        //     debug('user');
+        //     exit;
+
         if ($this->Session->read('Auth.User')) {
             $this->Session->setFlash('You are logged in!', 'alerts/flash_success');
             $this->redirect('/', null, false);
         }
 
         if ($this->request->is('post')) {
-            if (Validation::email($this->request->data['User']['username'])) {                
+            if (Validation::email($this->request->data['User']['username'])) {
                 $this->Auth->authenticate = array(
                     'Form' => ['fields' => ['username' => 'email']]
                 );
@@ -52,7 +143,7 @@ class UsersController extends AppController {
 
             if ($this->Auth->login()) {
 
-                if($this->Auth->User('is_active') == 0) {
+                if ($this->Auth->User('is_active') == 0) {
                     $this->Session->setFlash('Your account is not activated! If you have just registered, please click the activation link
                         sent to your email. Remember to check you spam folder too!', 'alerts/flash_error');
                     $this->redirect($this->Auth->logout());
@@ -61,59 +152,65 @@ class UsersController extends AppController {
                     $this->redirect($this->Auth->logout());
                 }
 
-                 
+
                 // $this->redirect($this->Auth->redirect());
                 // if(strlen($this->Auth->redirect()) > 12) {
                 //     return $this->redirect($this->Auth->redirect());           
                 // }
-                if($this->Auth->User('group_id') == '1') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
-                if($this->Auth->User('group_id') == '2') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'manager' => true));
-                if($this->Auth->User('group_id') == '3') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reporter' => true));
-                if($this->Auth->User('group_id') == '4') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'partner' => true));
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                // debug($token);
+                // exit;
+                if ($this->Auth->User('group_id') == '1') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
+                if ($this->Auth->User('group_id') == '2') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'manager' => true));
+                if ($this->Auth->User('group_id') == '3') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reporter' => true));
+                if ($this->Auth->User('group_id') == '4') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'partner' => true));
             } else {
                 $this->Session->setFlash('Your username or password is incorrect.', 'alerts/flash_error');
             }
         }
-
     }
 
-    public function api_restricted() {
+    public function api_restricted()
+    {
         $user = $this->Auth->User();
         $this->set([
-                'success' => true,
-                'data' => $user,
-                '_serialize' => ['success', 'data']
-            ]);
+            'success' => true,
+            'data' => $user,
+            '_serialize' => ['success', 'data']
+        ]);
     }
 
-    public function api_login() {
+    public function api_login()
+    {
         // if (!class_exists('JWT')) {
         //     throw new RuntimeException('Your desired vendor library cannot be found');
         // }
         if ($this->request->is('post')) {
-            if($this->Auth->login()) {
+            if ($this->Auth->login()) {
                 $user = $this->Auth->User();
                 $token = JWT::encode($user['id'], Configure::read('Security.salt'));;
-                if($user) {
+                if ($user) {
                     $this->set('user', $user);
                     $this->set('token', $token);
                     $this->set('_serialize', array('user', 'token'));
                 } else {
                     $this->set([
-                            'success' => false,
-                            'data' => $this->request->data,
-                            '_serialize' => ['success', 'data']
-                        ]);
+                        'success' => false,
+                        'data' => $this->request->data,
+                        '_serialize' => ['success', 'data']
+                    ]);
                 }
             } else {
                 throw new UnauthorizedException('Invalid username or password');
-            }            
+            }
         } else {
             throw new MethodNotAllowedException();
         }
     }
 
-    public function api_token() {
+    public function api_token()
+    {
         // Find user using username and hashed password
         // return user object for now
         //$user = $this->User->find('first', array('conditions' => array('User.username' => $this->request->data['User']['username'])));
@@ -131,15 +228,17 @@ class UsersController extends AppController {
                 ]);
         }*/
         $this->set([
-                'aefi' => $this->User->Aefi->find('first', array('conditions' => array('Aefi.id' => 619))), 
-                // 'aefi' => $this->User->find('first', array('conditions' => array('User.id' => 2397), 'recursive' => -1, 'contian' => null)), 
-                '_serialize' => ['aefi']]);
+            'aefi' => $this->User->Aefi->find('first', array('conditions' => array('Aefi.id' => 619))),
+            // 'aefi' => $this->User->find('first', array('conditions' => array('User.id' => 2397), 'recursive' => -1, 'contian' => null)), 
+            '_serialize' => ['aefi']
+        ]);
     }
 
-    public function apis_login() {
+    public function apis_login()
+    {
         if ($this->request->is('post')) {
 
-            if (Validation::email($this->request->data['User']['username'])) {              
+            if (Validation::email($this->request->data['User']['username'])) {
                 $this->Auth->authenticate = array(
                     'Form' => ['fields' => ['username' => 'email']]
                 );
@@ -173,7 +272,6 @@ class UsersController extends AppController {
                     ],
                     '_serialize' => ['status', 'user', 'data']
                 ]);
-
             } else {
                 // $this->Session->setFlash('Your username or password is incorrect.', 'alerts/flash_error');
                 $this->set([
@@ -193,15 +291,17 @@ class UsersController extends AppController {
         } else {
             throw new NotAcceptableException(__('Email or password is wrong.'));
         }*/
-
     }
 
-    public function logout() {
-        $this->Session->setFlash('Good-Bye','flash_info');
+    public function logout()
+    {
+        // $this->initDb();
+        $this->Session->setFlash('Good-Bye', 'flash_info');
         $this->redirect($this->Auth->logout());
     }
 
-    public function changePassword() {
+    public function changePassword()
+    {
         if (!$this->Auth->User('id')) {
             $this->Session->setFlash(__('You are NOT logged in! Please login to change your password'), 'flash_info');
             $this->redirect('/', null, false);
@@ -224,13 +324,14 @@ class UsersController extends AppController {
         $this->set('county', $this->User->County->findById($this->Auth->user('county_id'), array('county_name')));
     }
 
-    public function api_changePassword() {
+    public function api_changePassword()
+    {
         if (!$this->Auth->User('id')) {
             $this->set([
-                    'status' => 'failed',
-                    'message' => 'You are not logged in!!',
-                    '_serialize' => ['status', 'message']
-                ]);
+                'status' => 'failed',
+                'message' => 'You are not logged in!!',
+                '_serialize' => ['status', 'message']
+            ]);
             return;
         }
         if ($this->request->is('post')  || $this->request->is('put')) {
@@ -256,7 +357,8 @@ class UsersController extends AppController {
         }
     }
 
-    public function forgotPassword() {
+    public function forgotPassword()
+    {
         if ($this->Auth->user('id')) {
             $this->Session->setFlash(__('You are logged in! Please logout to request password change'), 'flash_info');
             $this->redirect('/', null, false);
@@ -271,12 +373,15 @@ class UsersController extends AppController {
                 $html = new HtmlHelper(new ThemeView());
                 $user_email = $this->Message->find('first', array('conditions' => array('name' => 'forgot_password')));
                 $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reset_link' => $html->link('RESET', array('controller' => 'users', 'action' => 'resetPassword', $user['User']['id'], 'full_base' => true), 
-                          array('escape' => false)),
-                        'password' => date('Ymdhis', strtotime($user['User']['created'])),
-                      );
+                    'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                    'email' => $user['User']['email'],
+                    'reset_link' => $html->link(
+                        'RESET',
+                        array('controller' => 'users', 'action' => 'resetPassword', $user['User']['id'], 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                    'password' => date('Ymdhis', strtotime($user['User']['created'])),
+                );
                 $datum = array(
                     'email' => $user['User']['email'], 'cc' => ((!empty($user['User']['sponsor_email'])) ? $user['User']['sponsor_email'] : null),
                     'id' => $user['User']['id'], 'user_id' => $user['User']['id'], 'type' => 'user_registration', 'model' => 'User',
@@ -295,13 +400,14 @@ class UsersController extends AppController {
         }
     }
 
-    public function api_forgotPassword() {
+    public function api_forgotPassword()
+    {
         if ($this->Auth->user('id')) {
             $this->set([
-                    'status' => 'failed',
-                    'message' => 'You alre logged in! Please logout to request password change.',
-                    '_serialize' => ['status', 'message']
-                ]);
+                'status' => 'failed',
+                'message' => 'You alre logged in! Please logout to request password change.',
+                '_serialize' => ['status', 'message']
+            ]);
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             $user = $this->User->find('first', array('conditions' => array('User.email' => $this->request->data['User']['email'])));
@@ -313,12 +419,15 @@ class UsersController extends AppController {
                 $html = new HtmlHelper(new ThemeView());
                 $user_email = $this->Message->find('first', array('conditions' => array('name' => 'forgot_password')));
                 $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reset_link' => $html->link('RESET', array('controller' => 'users', 'action' => 'resetPassword', $user['User']['id'], 'full_base' => true), 
-                          array('escape' => false)),
-                        'password' => date('Ymdhis', strtotime($user['User']['created'])),
-                      );
+                    'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                    'email' => $user['User']['email'],
+                    'reset_link' => $html->link(
+                        'RESET',
+                        array('controller' => 'users', 'action' => 'resetPassword', $user['User']['id'], 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                    'password' => date('Ymdhis', strtotime($user['User']['created'])),
+                );
                 $datum = array(
                     'email' => $user['User']['email'], 'cc' => ((!empty($user['User']['sponsor_email'])) ? $user['User']['sponsor_email'] : null),
                     'id' => $user['User']['id'], 'user_id' => $user['User']['id'], 'type' => 'user_registration', 'model' => 'User',
@@ -372,7 +481,8 @@ class UsersController extends AppController {
         }
     }*/
 
-    public function resetPassword($id = null) {
+    public function resetPassword($id = null)
+    {
         //confirm user id hash for authenticity
         $this->User->id = $id;
         if (!$this->User->exists()) {
@@ -386,10 +496,10 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('The password has not been reset.'), 'alerts/flash_error');
                 $this->redirect('/');
             }
-                $password = date('Ymdhis', strtotime($user['User']['created']));
-            if($this->User->save(
-                                array('User' => array('password' =>  $password, 'confirm_password' => $password, 'forgot_password' => 0))
-                                , array('fieldList' =>  array('password', 'confirm_password', 'forgot_password'))
+            $password = date('Ymdhis', strtotime($user['User']['created']));
+            if ($this->User->save(
+                array('User' => array('password' =>  $password, 'confirm_password' => $password, 'forgot_password' => 0)),
+                array('fieldList' =>  array('password', 'confirm_password', 'forgot_password'))
             )) {
                 $this->Session->setFlash(__('The password has been reset. You may login using your new password.'), 'alerts/flash_success');
                 $this->redirect(array('controller' => 'users', 'action' => 'login'));
@@ -400,17 +510,21 @@ class UsersController extends AppController {
         }
     }
 
-/**
- * index method
- *
- * @return void
- */
-    public function index() {
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function index()
+    {
+
+        $this->initDb();
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
     }
 
-    public function admin_index() {
+    public function admin_index()
+    {
         $this->Prg->commonProcess();
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
         if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
@@ -423,13 +537,14 @@ class UsersController extends AppController {
         $this->set('users', $this->paginate());
     }
 
-    public function partner_index() {
+    public function partner_index()
+    {
         $this->Prg->commonProcess();
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
         if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
         else $this->paginate['limit'] = 20;
         $criteria = $this->User->parseCriteria($this->passedArgs);
-        $criteria['User.name_of_institution'] = $this->Auth->User('name_of_institution');       
+        $criteria['User.name_of_institution'] = $this->Auth->User('name_of_institution');
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('User.created' => 'desc');
         $this->User->recursive = -1;
@@ -437,21 +552,23 @@ class UsersController extends AppController {
         $this->set('users', $this->paginate());
     }
 
-    public function admin_user_activate($id = null) {
+    public function admin_user_activate($id = null)
+    {
         if ($id) {
             $this->User->id = $id;
             if ($this->User->saveField('is_active', 1)) {
-                return $this->redirect(array( 'controller' => 'users', 'action' => 'index', 'admin' => true ));
+                return $this->redirect(array('controller' => 'users', 'action' => 'index', 'admin' => true));
             }
         }
     }
-/**
- * view method
- *
- * @param string $id
- * @return void
- */
-    public function view($id = null) {
+    /**
+     * view method
+     *
+     * @param string $id
+     * @return void
+     */
+    public function view($id = null)
+    {
         $this->User->id = $id;
         if (!$this->User->exists()) {
             throw new NotFoundException(__('Invalid user'));
@@ -459,12 +576,13 @@ class UsersController extends AppController {
         $this->set('user', $this->User->read(null, $id));
     }
 
-/**
- * add method
- *
- * @return void
- */
-    public function add() {
+    /**
+     * add method
+     *
+     * @return void
+     */
+    public function add()
+    {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
@@ -478,7 +596,8 @@ class UsersController extends AppController {
         $this->set(compact('groups'));
     }
 
-    public function admin_add() {
+    public function admin_add()
+    {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
@@ -496,13 +615,14 @@ class UsersController extends AppController {
         $this->set(compact('counties'));
     }
 
-/**
- * register method
- *
- * @return void
- */
+    /**
+     * register method
+     *
+     * @return void
+     */
 
-    public function register() {
+    public function register()
+    {
         if ($this->Session->read('Auth.User')) {
             $this->Session->setFlash('You are logged in!', 'alerts/flash_warning');
             $this->redirect('/', null, false);
@@ -514,18 +634,21 @@ class UsersController extends AppController {
             if (empty($this->data['User']['bot_stop']) && $this->User->save($this->request->data)) {
                 $id = $this->User->id;
                 $user['User'] = array_merge($this->request->data['User'], array('id' => $id));
-                
+
                 //******************       Send Email and Notifications to Reporter and Managers          *****************************
                 $this->loadModel('Message');
                 $html = new HtmlHelper(new ThemeView());
                 $user_email = $this->Message->find('first', array('conditions' => array('name' => 'user_registration')));
                 $manager_nt = $this->Message->find('first', array('conditions' => array('name' => 'manager_registration')));
                 $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reference_link' => $html->link('Activate', array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true), 
-                          array('escape' => false)),
-                      );
+                    'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                    'email' => $user['User']['email'],
+                    'reference_link' => $html->link(
+                        'Activate',
+                        array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                );
                 $datum = array(
                     'email' => $user['User']['email'],
                     'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'user_registration', 'model' => 'User',
@@ -545,10 +668,13 @@ class UsersController extends AppController {
                 ));
                 foreach ($managers as $manager) {
                     $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reference_link' => $html->link('Activate', array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true), 
-                          array('escape' => false)),
+                        'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                        'email' => $user['User']['email'],
+                        'reference_link' => $html->link(
+                            'Activate',
+                            array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true),
+                            array('escape' => false)
+                        ),
                     );
                     $datum = array(
                         'email' => $user['User']['email'],
@@ -575,25 +701,29 @@ class UsersController extends AppController {
     }
 
 
-    public function api_register() {
+    public function api_register()
+    {
         if ($this->request->is('post')) {
             $this->User->create();
             $this->request->data['User']['group_id'] = 3;
             if ($this->User->save($this->request->data)) {
                 $id = $this->User->id;
                 $user['User'] = array_merge($this->request->data['User'], array('id' => $id));
-                
+
                 //******************       Send Email and Notifications to Reporter and Managers          *****************************
                 $this->loadModel('Message');
                 $html = new HtmlHelper(new ThemeView());
                 $user_email = $this->Message->find('first', array('conditions' => array('name' => 'user_registration')));
                 $manager_nt = $this->Message->find('first', array('conditions' => array('name' => 'manager_registration')));
                 $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reference_link' => $html->link('Activate', array('controller' => 'users', 'action' => 'activate_account', 'admin' => false, $id, $this->Auth->password($user['User']['email']), 'full_base' => true), 
-                          array('escape' => false)),
-                      );
+                    'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                    'email' => $user['User']['email'],
+                    'reference_link' => $html->link(
+                        'Activate',
+                        array('controller' => 'users', 'action' => 'activate_account', 'admin' => false, $id, $this->Auth->password($user['User']['email']), 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                );
                 $datum = array(
                     'email' => $user['User']['email'],
                     'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'user_registration', 'model' => 'User',
@@ -613,10 +743,13 @@ class UsersController extends AppController {
                 ));
                 foreach ($managers as $manager) {
                     $variables = array(
-                        'name' => $user['User']['name'], 'username' => $user['User']['username'], 
-                        'email' => $user['User']['email'], 
-                        'reference_link' => $html->link('Activate', array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true), 
-                          array('escape' => false)),
+                        'name' => $user['User']['name'], 'username' => $user['User']['username'],
+                        'email' => $user['User']['email'],
+                        'reference_link' => $html->link(
+                            'Activate',
+                            array('controller' => 'users', 'action' => 'activate_account', $id, $this->Auth->password($user['User']['email']), 'full_base' => true),
+                            array('escape' => false)
+                        ),
                     );
                     $datum = array(
                         'email' => $user['User']['email'],
@@ -633,7 +766,7 @@ class UsersController extends AppController {
                     'user' => $this->request->data,
                     '_serialize' => ['status', 'user']
                 ]);
-            } else {                
+            } else {
                 $this->set([
                     'status' => 'failed',
                     'user' => $this->request->data,
@@ -648,15 +781,18 @@ class UsersController extends AppController {
         $this->set(compact('designations'));
     }
 
-    public function activate_account($id = null, $activation_key = null) {
-        if($activation_key) {
+    public function activate_account($id = null, $activation_key = null)
+    {
+        if ($activation_key) {
             $user = $this->User->find('first', array('conditions' => array('User.id' => $id), 'contain' => array()));
-            if($user) {
+            if ($user) {
                 $this->User->create();
                 $data['User'] = array('id' => $user['User']['id'], 'is_active' => 1);
-                if($this->User->save($data, true, array('id', 'is_active'))) {
-                    $this->Session->setFlash(__('You have successfully activated your account. Please login to continue.'),
-                        'alerts/flash_success');
+                if ($this->User->save($data, true, array('id', 'is_active'))) {
+                    $this->Session->setFlash(
+                        __('You have successfully activated your account. Please login to continue.'),
+                        'alerts/flash_success'
+                    );
                     $this->redirect(array('action' => 'login'));
                 } else {
                     $this->Session->setFlash(__('Unable to activate account.'), 'alerts/flash_error');
@@ -673,68 +809,68 @@ class UsersController extends AppController {
     }
 
     // Dashboard Methods
-    public function reporter_dashboard() {
+    public function reporter_dashboard()
+    {
         $sadrs = $this->User->Sadr->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Sadr.id','Sadr.user_id', 'Sadr.created', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
+            'fields' => array('Sadr.id', 'Sadr.user_id', 'Sadr.created', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
             'order' => array('Sadr.created' => 'desc'),
             'conditions' => array('Sadr.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('sadrs', $sadrs);        
+        $this->set('sadrs', $sadrs);
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Aefi.id','Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => array('Aefi.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('aefis', $aefis);        
+        $this->set('aefis', $aefis);
 
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Pqmp.id','Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
+            'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
             'order' => array('Pqmp.created' => 'desc'),
             'conditions' => array('Pqmp.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('pqmps', $pqmps);        
+        $this->set('pqmps', $pqmps);
 
         $devices = $this->User->Device->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Device.id','Device.user_id', 'Device.created', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
+            'fields' => array('Device.id', 'Device.user_id', 'Device.created', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
             'order' => array('Device.created' => 'desc'),
             'conditions' => array('Device.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('devices', $devices);        
+        $this->set('devices', $devices);
 
         $medications = $this->User->Medication->find('all', array(
             'limit' => 7, 'contain' => array('MedicationProduct'),
-            'fields' => array('Medication.id','Medication.user_id', 'Medication.submitted', 'Medication.created', 'Medication.reference_no', 'Medication.created'),
+            'fields' => array('Medication.id', 'Medication.user_id', 'Medication.submitted', 'Medication.created', 'Medication.reference_no', 'Medication.created'),
             'order' => array('Medication.created' => 'desc'),
             'conditions' => array('Medication.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('medications', $medications);        
+        $this->set('medications', $medications);
 
         $transfusions = $this->User->Transfusion->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Transfusion.id','Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
+            'fields' => array('Transfusion.id', 'Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
             'order' => array('Transfusion.created' => 'desc'),
             'conditions' => array('Transfusion.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('transfusions', $transfusions);        
+        $this->set('transfusions', $transfusions);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
-            )));
+        )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
-        
-
     }
 
-    public function manager_dashboard() {
+    public function manager_dashboard()
+    {
         $sadrs = $this->User->Sadr->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Sadr.id','Sadr.user_id', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
+            'fields' => array('Sadr.id', 'Sadr.user_id', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
             'order' => array('Sadr.created' => 'desc'),
             'conditions' => array('Sadr.submitted >' => 1),
         ));
@@ -742,40 +878,40 @@ class UsersController extends AppController {
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Aefi.id','Aefi.user_id', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => array('Aefi.submitted >' => 1),
         ));
-        $this->set('aefis', $aefis);        
+        $this->set('aefis', $aefis);
 
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Pqmp.id','Pqmp.user_id', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
+            'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
             'order' => array('Pqmp.created' => 'desc'),
             'conditions' => array('Pqmp.submitted >' => 1),
         ));
-        $this->set('pqmps', $pqmps);        
+        $this->set('pqmps', $pqmps);
 
         $devices = $this->User->Device->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Device.id','Device.user_id', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
+            'fields' => array('Device.id', 'Device.user_id', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
             'order' => array('Device.created' => 'desc'),
             'conditions' => array('Device.submitted >' => 1),
         ));
-        $this->set('devices', $devices);        
+        $this->set('devices', $devices);
 
         $medications = $this->User->Medication->find('all', array(
             'limit' => 7, 'contain' => array('MedicationProduct'),
-            'fields' => array('Medication.id','Medication.user_id', 'Medication.submitted', 'Medication.reference_no', 'Medication.created'),
+            'fields' => array('Medication.id', 'Medication.user_id', 'Medication.submitted', 'Medication.reference_no', 'Medication.created'),
             'order' => array('Medication.created' => 'desc'),
             'conditions' => array('Medication.submitted >' => 1),
         ));
-        $this->set('medications', $medications);        
+        $this->set('medications', $medications);
 
         $transfusions = $this->User->Transfusion->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Transfusion.id','Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
+            'fields' => array('Transfusion.id', 'Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
             'order' => array('Transfusion.created' => 'desc'),
             'conditions' => array('Transfusion.submitted >' => 1),
         ));
@@ -797,78 +933,81 @@ class UsersController extends AppController {
 
         $this->set('notifications', $this->User->Notification->find('all', array(
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
-            )));
+        )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }
 
-    public function partner_dashboard() {
+    public function partner_dashboard()
+    {
         $sadrs = $this->User->Sadr->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Sadr.id','Sadr.user_id', 'Sadr.created', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
+            'fields' => array('Sadr.id', 'Sadr.user_id', 'Sadr.created', 'Sadr.report_title', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.created', 'Sadr.serious'),
             'order' => array('Sadr.created' => 'desc'),
             'conditions' => array('Sadr.name_of_institution' => $this->Auth->User('name_of_institution')),
         ));
-        $this->set('sadrs', $sadrs);        
+        $this->set('sadrs', $sadrs);
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Aefi.id','Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => array('Aefi.name_of_institution' => $this->Auth->User('name_of_institution')),
         ));
-        $this->set('aefis', $aefis);        
+        $this->set('aefis', $aefis);
 
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Pqmp.id','Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
+            'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),
             'order' => array('Pqmp.created' => 'desc'),
             'conditions' => array('Pqmp.facility_name' => $this->Auth->User('name_of_institution')),
         ));
-        $this->set('pqmps', $pqmps);        
+        $this->set('pqmps', $pqmps);
 
         $devices = $this->User->Device->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Device.id','Device.user_id', 'Device.created', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
+            'fields' => array('Device.id', 'Device.user_id', 'Device.created', 'Device.submitted', 'Device.report_title', 'Device.reference_no', 'Device.created', 'Device.serious'),
             'order' => array('Device.created' => 'desc'),
             'conditions' => array('Device.name_of_institution' => $this->Auth->User('name_of_institution')),
         ));
-        $this->set('devices', $devices);        
+        $this->set('devices', $devices);
 
         $medications = $this->User->Medication->find('all', array(
             'limit' => 7, 'contain' => array('MedicationProduct'),
-            'fields' => array('Medication.id','Medication.user_id', 'Medication.submitted', 'Medication.created', 'Medication.reference_no', 'Medication.created'),
+            'fields' => array('Medication.id', 'Medication.user_id', 'Medication.submitted', 'Medication.created', 'Medication.reference_no', 'Medication.created'),
             'order' => array('Medication.created' => 'desc'),
             'conditions' => array('Medication.name_of_institution' => $this->Auth->User('name_of_institution')),
         ));
-        $this->set('medications', $medications);        
+        $this->set('medications', $medications);
 
         $transfusions = $this->User->Transfusion->find('all', array(
             'limit' => 7, 'contain' => array(),
-            'fields' => array('Transfusion.id','Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
+            'fields' => array('Transfusion.id', 'Transfusion.user_id', 'Transfusion.reference_no', 'Transfusion.diagnosis', 'Transfusion.submitted', 'Transfusion.created', 'Transfusion.created'),
             'order' => array('Transfusion.created' => 'desc'),
             'conditions' => array('Transfusion.user_id' => $this->Auth->User('id')),
         ));
-        $this->set('transfusions', $transfusions);        
+        $this->set('transfusions', $transfusions);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
-            )));
+        )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }
 
-    public function admin_dashboard() {
+    public function admin_dashboard()
+    {
         $this->request->data['Feedback']['user_id'] = $this->Auth->User('id');
         $this->User->Feedback->recursive = -1;
-        $this->set('previous_messages' , $this->User->Feedback->find('all', array('limit' => 3, 'order' => array('id' => 'desc'))));
+        $this->set('previous_messages', $this->User->Feedback->find('all', array('limit' => 3, 'order' => array('id' => 'desc'))));
     }
-/**
- * edit method
- *
- * @param string $id
- * @return void
- */
-    public function edit($id = null) {
+    /**
+     * edit method
+     *
+     * @param string $id
+     * @return void
+     */
+    public function edit($id = null)
+    {
         $this->User->id = $id;
         if (!$this->User->exists()) {
             $this->Session->setFlash(__('The user does not exist.'), 'flash_info');
@@ -898,17 +1037,18 @@ class UsersController extends AppController {
         $this->set(compact('counties'));
     }
 
-    public function api_profile($id = null) {
+    public function api_profile($id = null)
+    {
         $this->User->id = $id;
         if (!$this->User->exists()) {
             throw new NotFoundException(__('Invalid user'));
         }
         if ($this->Auth->User('id') != $id) {
             $this->set([
-                    'status' => 'failed',
-                    'message' => 'You do not have permission to edit this user!',
-                    '_serialize' => ['status', 'message']
-                ]);
+                'status' => 'failed',
+                'message' => 'You do not have permission to edit this user!',
+                '_serialize' => ['status', 'message']
+            ]);
             return;
         }
         if ($this->request->is('post') || $this->request->is('put')) {
@@ -933,20 +1073,22 @@ class UsersController extends AppController {
             }
         } else {
             $this->set([
-                        'status' => 'success',
-                        'message' => 'User profile details!',
-                        'user' => $this->User->find('first', ['conditions' => ['User.id' => $id], 'contain' => ['Designation', 'County'],
-                            //'fields' => ['User.id', 'User.designation_id', 'User.county_id', 'User.username', 'User.name', 'User.email', 'User.group_id', 'User.name_of_institution', 'User.institution_address', 'User.institution_code', 'User.institution_contact', 'User.institution_email', 'User.ward', 'User.user_type', 'User.sponsor_email', 'User.phone_no', 'User.forgot_password', 'User.initial_email', 'User.is_active',  'User.created', 'User.modified', 'User.health_program']
-                            ]),
-                        '_serialize' => ['status', 'message', 'user']
-                    ]);
+                'status' => 'success',
+                'message' => 'User profile details!',
+                'user' => $this->User->find('first', [
+                    'conditions' => ['User.id' => $id], 'contain' => ['Designation', 'County'],
+                    //'fields' => ['User.id', 'User.designation_id', 'User.county_id', 'User.username', 'User.name', 'User.email', 'User.group_id', 'User.name_of_institution', 'User.institution_address', 'User.institution_code', 'User.institution_contact', 'User.institution_email', 'User.ward', 'User.user_type', 'User.sponsor_email', 'User.phone_no', 'User.forgot_password', 'User.initial_email', 'User.is_active',  'User.created', 'User.modified', 'User.health_program']
+                ]),
+                '_serialize' => ['status', 'message', 'user']
+            ]);
         }
     }
 
-    public function admin_edit($id = null) {
+    public function admin_edit($id = null)
+    {
         $this->User->id = $id;
         if (!$this->User->exists()) {
-            $this->Session->setFlash(__('The user '.$id.' does not exist.'), 'flash_error');
+            $this->Session->setFlash(__('The user ' . $id . ' does not exist.'), 'flash_error');
             $this->redirect('/', null, false);
         }
 
@@ -973,13 +1115,14 @@ class UsersController extends AppController {
         $this->set(compact('counties'));
     }
 
-/**
- * delete method
- *
- * @param string $id
- * @return void
- */
-    public function delete($id = null) {
+    /**
+     * delete method
+     *
+     * @param string $id
+     * @return void
+     */
+    public function delete($id = null)
+    {
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
@@ -995,7 +1138,8 @@ class UsersController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 
-    public function admin_delete($id = null) {
+    public function admin_delete($id = null)
+    {
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         }
@@ -1011,7 +1155,9 @@ class UsersController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 
-    /**/public function initDB() {
+    /**/
+    public function initDB()
+    {
         $group = $this->User->Group;
         //Allow admins to everything
         $group->id = 1;
@@ -1020,9 +1166,10 @@ class UsersController extends AppController {
         //Allow managers to some
         $group->id = 2;
         $this->Acl->deny($group, 'controllers');
-        $this->Acl->allow($group, 'controllers/Users/manager_dashboard'); 
+        $this->Acl->allow($group, 'controllers/Users/manager_dashboard');
         $this->Acl->allow($group, 'controllers/Sadrs');
         $this->Acl->allow($group, 'controllers/Aefis');
+        $this->Acl->allow($group, 'controllers/Aefis/yellowcard');
         $this->Acl->allow($group, 'controllers/SadrFollowups');
         $this->Acl->allow($group, 'controllers/Pqmps');
         $this->Acl->allow($group, 'controllers/Devices');
@@ -1061,7 +1208,7 @@ class UsersController extends AppController {
         //Allow reporters to some
         $group->id = 3;
         $this->Acl->deny($group, 'controllers');
-        $this->Acl->allow($group, 'controllers/Users/reporter_dashboard'); 
+        $this->Acl->allow($group, 'controllers/Users/reporter_dashboard');
         $this->Acl->allow($group, 'controllers/Users/edit');
         $this->Acl->allow($group, 'controllers/Sadrs/sadrIndex');
         $this->Acl->allow($group, 'controllers/Sadrs/reporter_index');
@@ -1114,7 +1261,7 @@ class UsersController extends AppController {
         //Allow institution administrators to some
         $group->id = 4;
         $this->Acl->deny($group, 'controllers');
-        $this->Acl->allow($group, 'controllers/Users/partner_dashboard'); 
+        $this->Acl->allow($group, 'controllers/Users/partner_dashboard');
         $this->Acl->allow($group, 'controllers/Sadrs/sadrIndex');
         $this->Acl->allow($group, 'controllers/Sadrs/institutionCodes');
         $this->Acl->allow($group, 'controllers/Sadrs/partner_index');

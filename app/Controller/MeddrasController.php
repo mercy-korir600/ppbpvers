@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('HttpSocket', 'Network/Http');
 /**
  * Meddras Controller
  *
@@ -21,7 +22,7 @@ class MeddrasController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('autocomplete', 'api_autocomplete');
+		$this->Auth->allow('autocomplete', 'api_autocomplete','autosync');
 	}
 
 	public function autocomplete($query = null) {
@@ -33,6 +34,30 @@ class MeddrasController extends AppController {
 		}
 		$this->set('groups', array_values($groups));
         $this->set('_serialize', 'groups');
+	}
+
+	public function autosync()
+	{
+		$HttpSocket = new HttpSocket();
+
+        //Request Access Token
+        $initiate = $HttpSocket->get('https://umc-ext-dev-apim-01.azure-api.net/global-api/v1/regional-drugs'
+           ,array('header' => array('umc-client-key' => '1f47dbc26c524fbbb8d6f3e2b9244434',
+		   'umc-license-key'=>'7013477',
+		   'subscription key'=>'uu'))
+        );
+        if ($initiate->isOk()) {
+           
+            $body = $initiate->body;           
+            $this->Flash->success($body);
+            $this->redirect($this->referer());
+			 
+		}else{
+			$body = $initiate->body; 
+            $this->Flash->error($body);
+            $this->redirect($this->referer());
+
+		}
 	}
 
 	public function api_autocomplete($query = null) {
