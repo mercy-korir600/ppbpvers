@@ -4,7 +4,7 @@
 		'counties' => 'County',
 		// 'patient_name' => 'Patient name', 
 		'date_born' => 'Date of birth',
-		'age_months' => 'Age in months', 'gender' => 'Gender',
+		'age_months' => 'Age in months','age_group'=>'Age Group', 'gender' => 'Gender',
 		'patient_county' => 'Patient county', 'vaccination_center' => 'Vaccination center',
 		'vaccination_type' => 'Vaccination service', 'vaccination_county' => 'Vaccination county',
 		'bcg' => 'BCG Lymphadenitis', 'convulsion' => 'Convulsion',
