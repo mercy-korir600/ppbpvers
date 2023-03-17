@@ -78,7 +78,9 @@
 				($tas) ? $row[$key] = $tas : $row[$key] = '""';
 			} elseif ($key == 'vaccines') {
 				foreach ($caefi['AefiListOfVaccine'] as $aefiListOfVaccine) {
-					$val = (!empty($aefiListOfVaccine['Vaccine']['vaccine_name'])) ? $aefiListOfVaccine['Vaccine']['vaccine_name'] : '';
+					// display other if there's no vaccine name::::
+					$other= $aefiListOfVaccine['vaccine_name'];
+					$val = (!empty($aefiListOfVaccine['Vaccine']['vaccine_name'])) ? $aefiListOfVaccine['Vaccine']['vaccine_name'] : $other;
 					(isset($row[$key])) ? $row[$key] .= '; '.$val : $row[$key] = $val;
 				}
 				(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/','""',$row[$key]) . '"' : $row[$key] = '""';

@@ -12,4 +12,6 @@ ALTER TABLE `aefis`  ADD `submitted_date` DATETIME  NULL DEFAULT NULL AFTER `sub
 ALTER TABLE `padrs`  ADD `submitted_date` DATETIME  NULL DEFAULT NULL AFTER `submitted`;
 ALTER TABLE `saes`  ADD `submitted_date` DATETIME  NULL DEFAULT NULL AFTER `report_date`;
 
+ALTER TABLE `aefis` ADD `age_group` VARCHAR(255) NULL AFTER `age_months`;
+
  
