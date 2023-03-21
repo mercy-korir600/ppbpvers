@@ -436,6 +436,7 @@ class SadrsController extends AppController {
 
         // debug($results->code);
         // debug($results->body);
+        // exit;
         if ($results->isOk()) {
             $body = $results->body;
            
