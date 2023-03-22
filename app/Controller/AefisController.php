@@ -30,6 +30,7 @@ class AefisController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
+        $this->Auth->allow('yellowcard');
     }
 
     public function yellowcard($id = null)
@@ -106,18 +107,40 @@ class AefisController extends AppController
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
         $report = json_decode($json, TRUE); 
-        $HttpSocket = new HttpSocket();
 
-        //Request Access Token
-        $initiate = $HttpSocket->post(
-            Configure::read('mhra_auth_api'),
-            array(
-                'email' => Configure::read('mhra_username'),
-                'password' => Configure::read('mhra_password'),
-                'platformId' => Configure::read('mhra_platform')
-            ),
-            array('header' => array('umc-client-key' => '5ab835c4-3179-4590-bcd2-ff3c27d6b8ff'))
-        );
+        // debug($report);
+        // exit;
+        $live = new HttpSocket();
+
+        // //Request Access Token
+        // $initiate = $live->post('https://med-safety-hub-api.redant.cloud/v1/login',
+        //     array(
+        //         "email"=>"gmurimi@pharmacyboardkenya.org",
+        //         "password"=>"uxLPyc3FM1",
+        //         "platformId"=>"ab1057ca-8e5d-4470-a595-36e7a3901697"
+        //     )
+        // );
+        $httpSocket = new HttpSocket();
+        $request = array(
+                'method' => 'POST',
+                'uri' => array(
+                            'schema' => 'https',
+                            'host' => 'med-safety-hub-api.redant.cloud',
+                            'path' => 'v1/login',
+                            'email'=>'gmurimi@pharmacyboardkenya.org',
+                            'password'=>'uxLPyc3FM1',
+                            'platformId'=>'ab1057ca-8e5d-4470-a595-36e7a3901697'
+                            )
+                            ,
+                            'body'=>array(
+                                'email'=>'gmurimi@pharmacyboardkenya.org',
+                                'password'=>'uxLPyc3FM1',
+                                'platformId'=>'ab1057ca-8e5d-4470-a595-36e7a3901697'
+                            )
+            );
+        $initiate = $httpSocket->request($request);
+        // debug($initiate);
+        // exit;
         if ($initiate->isOk()) {
 
             $body = $initiate->body;
@@ -132,18 +155,41 @@ class AefisController extends AppController
                 'report' => $report
             );
 
-            // debug($report);
+            // debug($token);
             // exit;
-            $results = $HttpSocket->post(
-                Configure::read('mhra_incidents'),
-                $payload,
-                array('header' => array(
-                    'X-App-Id' => Configure::read('mhra_xapp_id'),
-                    'Authorization' => 'Bearer ' . $token, //original 
-                    'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
+            // $results = $httpSocket->post(
+            //     Configure::read('mhra_incidents'),
+            //     $payload,
+            //     array('header' => array(
+            //         'X-App-Id' => Configure::read('mhra_xapp_id'),
+            //         'Authorization' => 'Bearer ' . $token, //original 
+            //         'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
                    
-                ))
-            );
+            //     ))
+            // );
+            // debug($token);
+            // exit;
+            $httpSocket = new HttpSocket();
+            $request2 = array(
+                    'method' => 'POST',
+                    'uri' => array(
+                                'schema' => 'https',
+                                'host' => 'med-safety-hub-api.redant.cloud',
+                                'path' => 'v1/integration/incidents/reports/e2bjs', 
+                                )
+                                ,
+                                'body'=>$payload,
+                                'header'=>[ 
+                                    'X-App-Id' => '5d3298a9-14dc-4ee1-8318-4a3f25b04a99',
+                                    'Authorization' => 'Bearer ' . $token, //original 
+                                    'Authorization' => 'API_KEY d04aa2d0-92f8-480a-a3b9-54beb746e399'
+                                   
+                                ],
+                                
+                );
+            $results = $httpSocket->request($request2);
+            //    debug($results);
+            // exit;
 
             if ($results->isOk()) {
                 $body = $results->body;
