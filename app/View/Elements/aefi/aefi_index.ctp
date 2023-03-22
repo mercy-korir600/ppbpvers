@@ -337,6 +337,7 @@
                   array('controller' => 'aefis', 'action' => 'vigiflow', $aefi['Aefi']['id'], 'manager' => false),
  
                   array('escape' => false));
+                }
                 echo "&nbsp;";
                 if ($redir == 'manager' && is_null($aefi['Aefi']['webradr_ref']) && $aefi['Aefi']['copied'] == 2) {
                   echo $this->Html->link(
@@ -345,7 +346,7 @@
                   array('escape' => false)
                 ); 
               }
-                }
+                
                  
                 echo "&nbsp;";
                 if($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis' , 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
