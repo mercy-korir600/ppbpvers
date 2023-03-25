@@ -94,7 +94,7 @@ class AefisController extends AppController
             foreach ($multiple as $other) {
                 $reactions[] = $other['description'];
             }
-        } 
+        }
 
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
@@ -105,7 +105,7 @@ class AefisController extends AppController
         libxml_use_internal_errors(TRUE);
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
-        $report = json_decode($json, TRUE); 
+        $report = json_decode($json, TRUE);
 
         // stream_context_set_default(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
         $options = array(
@@ -146,7 +146,7 @@ class AefisController extends AppController
                     'X-App-Id' => Configure::read('mhra_xapp_id'),
                     'Authorization' => 'Bearer ' . $token, //original 
                     'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
-                   
+
                 ))
             );
 
@@ -161,7 +161,7 @@ class AefisController extends AppController
                 $this->redirect($this->referer());
             } else {
                 $body = $results->body;
-               // $this->Aefi->saveField('webradr_message', $body);
+                // $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
@@ -237,7 +237,7 @@ class AefisController extends AppController
             foreach ($multiple as $other) {
                 $reactions[] = $other['description'];
             }
-        } 
+        }
 
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
@@ -248,7 +248,7 @@ class AefisController extends AppController
         libxml_use_internal_errors(TRUE);
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
-        $report = json_decode($json, TRUE); 
+        $report = json_decode($json, TRUE);
 
         // debug($report);
         // exit;
@@ -264,22 +264,21 @@ class AefisController extends AppController
         // );
         $httpSocket = new HttpSocket();
         $request = array(
-                'method' => 'POST',
-                'uri' => array(
-                            'schema' => 'https',
-                            'host' => 'med-safety-hub-api.redant.cloud',
-                            'path' => 'v1/login',
-                            'email'=>'gmurimi@pharmacyboardkenya.org',
-                            'password'=>'uxLPyc3FM1',
-                            'platformId'=>'ab1057ca-8e5d-4470-a595-36e7a3901697'
-                            )
-                            ,
-                            'body'=>array(
-                                'email'=>'gmurimi@pharmacyboardkenya.org',
-                                'password'=>'uxLPyc3FM1',
-                                'platformId'=>'ab1057ca-8e5d-4470-a595-36e7a3901697'
-                            )
-            );
+            'method' => 'POST',
+            'uri' => array(
+                'schema' => 'https',
+                'host' => 'med-safety-hub-api.redant.cloud',
+                'path' => 'v1/login',
+                'email' => 'gmurimi@pharmacyboardkenya.org',
+                'password' => 'uxLPyc3FM1',
+                'platformId' => 'ab1057ca-8e5d-4470-a595-36e7a3901697'
+            ),
+            'body' => array(
+                'email' => 'gmurimi@pharmacyboardkenya.org',
+                'password' => 'uxLPyc3FM1',
+                'platformId' => 'ab1057ca-8e5d-4470-a595-36e7a3901697'
+            )
+        );
         $initiate = $httpSocket->request($request);
         // debug($initiate);
         // exit;
@@ -306,31 +305,30 @@ class AefisController extends AppController
             //         'X-App-Id' => Configure::read('mhra_xapp_id'),
             //         'Authorization' => 'Bearer ' . $token, //original 
             //         'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
-                   
+
             //     ))
             // );
             // debug($token);
             // exit;
             $httpSocket = new HttpSocket();
             $request2 = array(
-                    'method' => 'POST',
-                    'uri' => array(
-                                'schema' => 'https',
-                                'host' => 'med-safety-hub-api.redant.cloud',
-                                'path' => 'v1/integration/incidents/reports/e2bjs', 
-                                )
-                                ,
-                                'body'=>$payload,
-                                'header'=>[ 
-                                    'X-App-Id' => '5d3298a9-14dc-4ee1-8318-4a3f25b04a99',
-                                    'Authorization' => 'Bearer ' . $token, //original 
-                                    'Authorization' => 'API_KEY d04aa2d0-92f8-480a-a3b9-54beb746e399'
-                                   
-                                ],
-                                
-                );
+                'method' => 'POST',
+                'uri' => array(
+                    'schema' => 'https',
+                    'host' => 'med-safety-hub-api.redant.cloud',
+                    'path' => 'v1/integration/incidents/reports/e2bjs',
+                ),
+                'body' => $payload,
+                'header' => [
+                    'X-App-Id' => '5d3298a9-14dc-4ee1-8318-4a3f25b04a99',
+                    'Authorization' => 'Bearer ' . $token, //original 
+                    'Authorization' => 'API_KEY d04aa2d0-92f8-480a-a3b9-54beb746e399'
+
+                ],
+
+            );
             $results = $httpSocket->request($request2);
-               debug($results);
+            debug($results);
             exit;
 
             if ($results->isOk()) {
@@ -344,7 +342,7 @@ class AefisController extends AppController
                 $this->redirect($this->referer());
             } else {
                 $body = $results->body;
-               // $this->Aefi->saveField('webradr_message', $body);
+                // $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
@@ -479,10 +477,10 @@ class AefisController extends AppController
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
 
-          $this->csv_export($this->Aefi->find('all', 
-                  array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 10000)
-              ));
- 
+            $this->csv_export($this->Aefi->find(
+                'all',
+                array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 10000)
+            ));
         }
         //end pdf export
         $this->set('page_options', $this->page_options);
@@ -821,6 +819,27 @@ class AefisController extends AppController
      * @return void
      */
 
+    public function generate_reference()
+    {
+        # code...
+
+        $count = $this->Aefi->find('count',  array(
+            'fields' => 'Aefi.reference_no',
+            'conditions' => array(
+                'Aefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+            )
+        ));
+        $count++;
+        $count = ($count < 10) ? "0$count" : $count;
+        $reference_no = 'AEFI/' . date('Y') . '/' . $count;
+        $existing = $this->Aefi->find('count', ['conditions' => ['Aefi.reference_no' => $reference_no]]);
+
+        if ($existing > 0) {
+            return  $this->generate_reference();
+        } else {
+            return $reference_no;
+        }
+    }
     public function reporter_edit($id = null)
     {
 
@@ -851,19 +870,8 @@ class AefisController extends AppController
                     $this->Aefi->saveField('submitted_date', date("Y-m-d H:i:s"));
                     //lucian
                     if (!empty($aefi['Aefi']['reference_no']) && $aefi['Aefi']['reference_no'] == 'new') {
-
-                        // debug($aefi->id);
-                        // debug($this->request->data);
-                        // exit;                   
-                        $count = $this->Aefi->find('count',  array(
-                            'fields' => 'Aefi.reference_no',
-                            'conditions' => array(
-                                'Aefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
-                            )
-                        ));
-                        $count++;
-                        $count = ($count < 10) ? "0$count" : $count;
-                        $this->Aefi->saveField('reference_no', 'AEFI/' . date('Y') . '/' . $count);
+                        $reference = $this->generate_reference();
+                        $this->Aefi->saveField('reference_no', $reference);
                     }
                     //bokelo
                     $aefi = $this->Aefi->read(null, $id);
