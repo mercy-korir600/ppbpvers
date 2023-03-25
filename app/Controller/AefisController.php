@@ -32,8 +32,150 @@ class AefisController extends AppController
         parent::beforeFilter();
         $this->Auth->allow('yellowcard');
     }
-
     public function yellowcard($id = null)
+    {
+        $this->autoRender = false;
+
+        $this->Aefi->id = $id;
+        if (!$this->Aefi->exists()) {
+            $this->Session->setFlash(__('Could not verify the AEFI report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->redirect('/');
+        }
+
+        $aefi = $this->Aefi->find('first', array(
+            'conditions' => array('Aefi.id' => $id),
+            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation', 'AefiListOfVaccine.Vaccine'),
+
+        ));
+        $aefi = Sanitize::clean($aefi, array('escape' => true));
+
+        if ($aefi['Aefi']['bcg'] == '1') {
+            $reactions[] = "BCG Lymphadenitis";
+        }
+        if ($aefi['Aefi']['convulsion'] == '1') {
+            $reactions[] = "Generalized urticaria (hives)";
+        }
+        if ($aefi['Aefi']['urticaria'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['high_fever'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['abscess'] == '1') {
+            $reactions[] = "Injection site abscess";
+        }
+        if ($aefi['Aefi']['local_reaction'] == '1') {
+            $reactions[] = "Severe Local Reaction";
+        }
+        if ($aefi['Aefi']['anaphylaxis'] == '1') {
+            $reactions[] = "Anaphylaxis";
+        }
+        if ($aefi['Aefi']['meningitis'] == '1') {
+            $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+        }
+        if ($aefi['Aefi']['paralysis'] == '1') {
+            $reactions[] = "Paralysis";
+        }
+        if ($aefi['Aefi']['toxic_shock'] == '1') {
+            $reactions[] = "Toxic shock";
+        }
+        if ($aefi['Aefi']['complaint_other'] == '1') {
+            $other = $aefi['Aefi']['complaint_other_specify'];
+            if (!empty($other)) {
+                $reactions[] = $other;
+            }
+        }
+        $reactions[] = $aefi['Aefi']['aefi_symptoms'];
+
+        // added reactions
+
+        $multiple = $aefi['AefiDescription'];
+        if (!empty($multiple)) {
+            foreach ($multiple as $other) {
+                $reactions[] = $other['description'];
+            }
+        } 
+
+        $view = new View($this, false);
+        $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
+        $view->layout = false; // if you want to disable layout 
+        $view->set('aefi', $aefi); // set your variables for view here
+        $view->set('reactions', $reactions);
+        $html = $view->render('json');
+        libxml_use_internal_errors(TRUE);
+        $xml = simplexml_load_string($html);
+        $json = json_encode($xml);
+        $report = json_decode($json, TRUE); 
+
+        // stream_context_set_default(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        $options = array(
+            'ssl_verify_peer' => false
+        );
+        $HttpSocket = new HttpSocket($options);
+
+        //Request Access Token
+        $initiate = $HttpSocket->post(
+            Configure::read('mhra_auth_api'),
+            array(
+                'email' => Configure::read('mhra_username'),
+                'password' => Configure::read('mhra_password'),
+                'platformId' => Configure::read('mhra_platform')
+            ),
+            array('header' => array('umc-client-key' => '5ab835c4-3179-4590-bcd2-ff3c27d6b8ff'))
+        );
+        if ($initiate->isOk()) {
+
+            $body = $initiate->body;
+            $resp = json_decode($body, true);
+            $userId = $resp['id'];
+            $token = $resp['token'];
+            $organisationId = $resp['organisationId'];
+
+            $payload = array(
+                'userId' => $userId,
+                'organisationId' => $organisationId,
+                'report' => $report
+            );
+
+            // debug($report);
+            // exit;
+            $results = $HttpSocket->post(
+                Configure::read('mhra_incidents'),
+                $payload,
+                array('header' => array(
+                    'X-App-Id' => Configure::read('mhra_xapp_id'),
+                    'Authorization' => 'Bearer ' . $token, //original 
+                    'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
+                   
+                ))
+            );
+
+            if ($results->isOk()) {
+                $body = $results->body;
+                $resp = json_decode($body, true);
+                $this->Aefi->saveField('webradr_message', $body);
+                $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
+                $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+                $this->Flash->success('Yellow Card Scheme integration success!!');
+                $this->Flash->success($body);
+                $this->redirect($this->referer());
+            } else {
+                $body = $results->body;
+               // $this->Aefi->saveField('webradr_message', $body);
+                $this->Flash->error('Error sending report to Yello Card Scheme:');
+                $this->Flash->error($body);
+                $this->redirect($this->referer());
+            }
+        } else {
+            $body = $initiate->body;
+            $this->Aefi->saveField('webradr_message', $body);
+            $this->Flash->error('Error initiating report to Yellow Card Scheme:');
+            $this->Flash->error($body);
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function yellowcard_recent($id = null)
     {
         $this->autoRender = false;
 
@@ -188,8 +330,8 @@ class AefisController extends AppController
                                 
                 );
             $results = $httpSocket->request($request2);
-            //    debug($results);
-            // exit;
+               debug($results);
+            exit;
 
             if ($results->isOk()) {
                 $body = $results->body;
@@ -590,7 +732,7 @@ class AefisController extends AppController
             $this->Aefi->saveField('vigiflow_date', date('Y-m-d H:i:s'));
             $resp = json_decode($body, true);
             if (json_last_error() == JSON_ERROR_NONE) {
-                $this->Aefi->saveField('vigiflow_ref', $resp['MessageId']);
+                $this->Aefi->saveField('vigiflow_ref', $resp);
             }
             $this->Flash->success('Vigiflow integration success!!');
             $this->Flash->success($body);

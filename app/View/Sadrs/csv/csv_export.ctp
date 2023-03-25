@@ -94,8 +94,6 @@
 					(isset($row[$key])) ? $row[$key] .= '; '.$sadrListOfDrug['stop_date'] : $row[$key] = $sadrListOfDrug['stop_date'];
 				}
 				(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/','""',$row[$key]) . '"' : $row[$key] = '""';
-			}
- 
 			
 			}elseif ($key == 'indications') {
 				foreach ($csadr['SadrListOfDrug'] as $sadrListOfDrug) {

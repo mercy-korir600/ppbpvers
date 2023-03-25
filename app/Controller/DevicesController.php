@@ -29,7 +29,7 @@ class DevicesController extends AppController {
         $criteria['Device.user_id'] = $this->Auth->User('id');
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -87,7 +87,7 @@ class DevicesController extends AppController {
         $criteria['Device.submitted'] = array(1, 2); 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -115,7 +115,7 @@ class DevicesController extends AppController {
         if (!isset($this->passedArgs['submit'])) $criteria['Device.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -130,6 +130,8 @@ class DevicesController extends AppController {
 
     private function csv_export($cdevices = ''){
         //todo: check if data exists in $users
+        // debug($cdevices);
+        // exit;
         $this->response->download('DEVICES_'.date('Ymd_Hi').'.csv'); // <= setting the file name
         $this->set(compact('cdevices'));
         $this->layout = false;
