@@ -714,6 +714,7 @@ class AefisController extends AppController
         $html = $view->render('download');
 
         // debug($html);
+        // exit;
         $HttpSocket = new HttpSocket();
         // string data
         $results = $HttpSocket->post(

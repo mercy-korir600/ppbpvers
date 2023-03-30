@@ -449,7 +449,7 @@ class Aefi extends AppModel
                 $diff = date_diff($date1, $date2);
                 $answ = $diff->format("%R%a");
 
-                if ($answ > 0) {
+                if ($answ >= 0) {
                     $proceed = true;
                 } else {
                     $proceed = false;
