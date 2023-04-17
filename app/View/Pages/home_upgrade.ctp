@@ -16,7 +16,7 @@ $this->Html->css('landing', false, array('inline' => false));
       <img src="/img/home/aefi5.jpg" alt="">
       <div class="container">
         <div class="carousel-caption">
-          <h1>AEFI</h1>
+          <h1>Adverse Event Following Immunization</h1>
           <p class="lead" style="background-color: #c14a4a;">Adverse Event Following Immunization.</p>
         </div>
       </div>
@@ -52,7 +52,7 @@ $this->Html->css('landing', false, array('inline' => false));
       <img src="/img/home/pqmp.jpg" alt="">
       <div class="container">
         <div class="carousel-caption">
-          <h1>PQHPT</h1>
+          <h1>Poor-Quality Health Products and Technologies</h1>
           <p class="lead" style="background-color: #c14a4a;">Poor-Quality Medical Products and Health Technologies.</p>
         </div>
       </div>

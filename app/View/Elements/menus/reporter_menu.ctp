@@ -14,14 +14,14 @@
                 array('controller' => 'sadrs', 'action'=>'index', 'reporter' => true ), array('escape' => false ));
             ?>
      </li>             
-     <li class="<?php echo $this->fetch('AEFI') ?>">
+     <li class="<?php echo $this->fetch('Adverse Event Following Immunization') ?>">
         <?php
         if($this->Session->read('Auth.User.health_program')!="Cancer/Oncology program"){
             echo $this->Html->link('<i class="fa fa-child" aria-hidden="true"></i> AEFIs',
                 array('controller' => 'aefis', 'action'=>'index', 'reporter' => true ), array('escape' => false ));
          } ?>
      </li>
-     <li class="<?php echo $this->fetch('PQHPT') ?>">
+     <li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
         <?php
          if($this->Session->read('Auth.User.health_program')!="Cancer/Oncology program"){
             echo $this->Html->link('<i class="fa fa-medkit" aria-hidden="true"></i> PQHPTs',

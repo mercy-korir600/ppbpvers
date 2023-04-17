@@ -1,5 +1,5 @@
 <?php
-    $this->assign('AEFI', 'active');
+    $this->assign('Adverse Event Following Immunization', 'active');
     $this->Html->script('jquery.ui.core', array('inline' => false));
     $this->Html->script('jquery.ui.widget', array('inline' => false));
     $this->Html->script('jquery.ui.mouse', array('inline' => false));
@@ -14,7 +14,7 @@
     $this->Html->script('jquery.datetimepicker.full', array('inline' => false));
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="medicationsadd">
     <div class="row-fluid">

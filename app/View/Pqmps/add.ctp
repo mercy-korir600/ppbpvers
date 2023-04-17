@@ -1,5 +1,5 @@
 <?php
-	$this->assign('PQHPT', 'active');
+	$this->assign('Poor-Quality Health Products and Technologies', 'active');
 	// pr($this->Session->read('Auth.User.initial_email'));
  ?>
  
@@ -51,8 +51,8 @@
 						'label' => 'Go to report',
 						'value' => 'Save',
 						'class' => 'btn btn-primary',
-						'id' => 'SadrSubmitEmail', 'title'=>'Start a New PQHPT', 
-						'data-content' => 'Please provide us with your email address to start filling in the PQHPT.',
+						'id' => 'SadrSubmitEmail', 'title'=>'Start a New Poor-Quality Health Products and Technologies', 
+						'data-content' => 'Please provide us with your email address to start filling in the Poor-Quality Health Products and Technologies.',
 						'div' => array(
 							'class' => 'form-actions',
 						)

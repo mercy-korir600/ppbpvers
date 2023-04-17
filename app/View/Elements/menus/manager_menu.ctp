@@ -19,13 +19,13 @@
                         array('controller' => 'padrs', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                     ?>
              </li>            
-             <li class="<?php echo $this->fetch('AEFI') ?>">
+             <li class="<?php echo $this->fetch('Adverse Event Following Immunization') ?>">
                 <?php
                     echo $this->Html->link('<i class="fa fa-child" aria-hidden="true"></i> AEFIs',
                         array('controller' => 'aefis', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                     ?>
              </li>
-             <li class="<?php echo $this->fetch('PQHPT') ?>">
+             <li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
                 <?php
                     echo $this->Html->link('<i class="fa fa-medkit" aria-hidden="true"></i> PQHPTs',
                         array('controller' => 'pqmps', 'action'=>'index', 'manager' => true ), array('escape' => false ));

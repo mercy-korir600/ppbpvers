@@ -9,7 +9,7 @@
             <h4 class="text-success">Reports</h4>
             <div class="row-fluid">
                 <div class="span4 formback" style="padding: 4px;">
-                  <h5>SADRS</h5>
+                  <h5>Suspected Adverse Drug Reaction</h5>
                   <?php
                     echo '<ol>';
                     foreach ($sadrs as $sadr) {
@@ -26,7 +26,7 @@
                   ?>
                 </div>
                 <div class="span4 formbacka" style="padding: 4px;">   
-                  <h5>AEFI</h5>                 
+                  <h5>Adverse Event Following Immunization</h5>                 
                     <?php
                       echo '<ol>';
                       foreach ($aefis as $aefi) {
@@ -43,7 +43,7 @@
                     ?>
                 </div>
                 <div class="span4 formbackp" style="padding: 4px;">
-                  <h5>PQHPT</h5>
+                  <h5>Poor-Quality Health Products and Technologies</h5>
                     <?php
                       echo '<ol>';
                       foreach ($pqmps as $pqmp) {

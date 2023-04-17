@@ -1,5 +1,5 @@
 <?php
-$this->assign('AEFI', 'active');
+$this->assign('Adverse Event Following Immunization', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
 // $this->Html->script('jquery/jquery.datetimepicker.full', array('inline' => false));
 $this->Html->script('aefi', array('inline' => false));
@@ -35,19 +35,19 @@ echo $this->Form->create('Aefi', array(
         <div class="row-fluid">
             <div class="span2">
                 <?php
-                echo $this->Html->image('header-object.png', array('alt' => 'AEFI'));
+                echo $this->Html->image('header-object.png', array('alt' => 'Adverse Event Following Immunization'));
                 ?>
             </div>
             <div class="span8" style="text-align: center;">
                 <h2>MINISTRY OF HEALTH</h2>
                 <p class="lead">National Vaccines and Immunization Program</p>
-                <h3>AEFI Reporting Form</h3>
+                <h3>Adverse Event Following Immunization Reporting Form</h3>
             </div>
             <div class="span2">
                 <?php
-                echo $this->Html->image('vaccinate2.png', array('alt' => 'AEFI'));
+                echo $this->Html->image('vaccinate2.png', array('alt' => 'Adverse Event Following Immunization'));
                 echo "<br>";
-                echo $this->Html->image('confidence.png', array('alt' => 'AEFI'));
+                echo $this->Html->image('confidence.png', array('alt' => 'Adverse Event Following Immunization'));
                 ?>
             </div>
         </div><br>
@@ -228,7 +228,7 @@ echo $this->Form->create('Aefi', array(
         <!--/row-->
         <hr class="darker">
 
-        <h4 style="text-align: center;">TYPE OF AEFI</h4>
+        <h4 style="text-align: center;">TYPE OF Adverse Event Following Immunization</h4>
         <div class="row-fluid">
             <div class="span4">
                 <div style="padding-left: 30px;">
@@ -318,14 +318,14 @@ echo $this->Form->create('Aefi', array(
             <!--/span-->
             <div class="span4">
                 <?php
-                echo $this->Form->input('date_aefi_started', array('type' => 'text', 'class' => 'span11 date-pick-field', 'label' => array('class' => 'control-label required', 'text' => 'DATE AEFI STARTED'),));
+                echo $this->Form->input('date_aefi_started', array('type' => 'text', 'class' => 'span11 date-pick-field', 'label' => array('class' => 'control-label required', 'text' => 'DATE Adverse Event Following Immunization STARTED'),));
                 echo $this->Form->input('time_aefi_started', array(
                     'type' => 'time', 'timeFormat' => 24, 'interval' => 5, 'class' => 'span4', 'style' => 'display: inline;',
                     'label' => array('class' => 'control-label required', 'text' => 'TIME'),
                 ));
-                // echo $this->Form->input('aefi_symptoms', array('label' => array('class' => 'control-label required', 'text' => 'Describe AEFI (Signs & Symptoms)'),));
+                // echo $this->Form->input('aefi_symptoms', array('label' => array('class' => 'control-label required', 'text' => 'Describe Adverse Event Following Immunization (Signs & Symptoms)'),));
                 echo $this->Form->input('aefi_symptoms', array(
-                    'label' => array('class' => 'required', 'text' => 'Describe AEFI <span style="color:red;">*</span>'),
+                    'label' => array('class' => 'required', 'text' => 'Describe Adverse Event Following Immunization <span style="color:red;">*</span>'),
                     'between' => false, 'div' => false,
                     'after' => '<p class="help-block">  (Signs & Symptoms) </p>',
                     'class' => 'span12', 'rows' => '1'
@@ -468,7 +468,7 @@ echo $this->Form->create('Aefi', array(
             </div>
             <!--/span-->
             <div class="span6">
-                <div class="required"><label class="required"><strong>AEFI Outcome:</strong><span style="color:red;">*</span></label></div> <br />
+                <div class="required"><label class="required"><strong>Adverse Event Following Immunization Outcome:</strong><span style="color:red;">*</span></label></div> <br />
                 <!-- <h5>OUTCOME:</h5>  <br> -->
                 <?php
                 //Recovered/Resolved, Recovering/Resolving, Not recovered/Not resolved/Ongoing, Recovered/Resolved with sequelae, Fatal, unknown

@@ -4,7 +4,7 @@
     $this->Html->script('medication', array('inline' => false));
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="medicationsadd">
     <div class="row-fluid">

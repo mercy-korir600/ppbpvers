@@ -1,8 +1,8 @@
 <?php
-  $this->assign('PQHPT', 'active');
+  $this->assign('Poor-Quality Health Products and Technologies', 'active');
  ?>
 
-      <!-- PQHPT
+      <!-- Poor-Quality Health Products and Technologies
     ================================================== -->
 <section id="pqmpsview">
   <ul id="reviewer_tab" class="nav nav-tabs">

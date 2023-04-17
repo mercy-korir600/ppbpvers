@@ -1,5 +1,5 @@
 <?php
-$this->assign('AEFI', 'active');
+$this->assign('Adverse Event Following Immunization', 'active');
 ?>
 
 <div class="row-fluid">
@@ -13,7 +13,7 @@ $this->assign('AEFI', 'active');
         <div class="span12">
           <?php
           if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')  echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> New AEFI',
+            '<i class="fa fa-file-o" aria-hidden="true"></i>  New AEFI',
             array('controller' => 'aefis', 'action' => 'add'),
             array('escape' => false, 'class' => 'btn btn-success')
           );
@@ -25,7 +25,7 @@ $this->assign('AEFI', 'active');
     <div class="marketing">
       <div class="row-fluid">
         <div class="span12">
-          <h3>AEFI:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
+          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
           <hr class="soften" style="margin: 7px 0px;">
         </div>
       </div>

@@ -12,7 +12,7 @@
     <thead>
         <tr>
             <th>Outcome</th>
-            <th>AEFI</th>
+            <th>Adverse Event Following Immunization</th>
         </tr>
     </thead>
     <tbody>

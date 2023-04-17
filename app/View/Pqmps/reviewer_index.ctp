@@ -1,5 +1,5 @@
 <?php
-    $this->assign('PQHPT', 'active');
+    $this->assign('Poor-Quality Health Products and Technologies', 'active');
 ?>
 
 

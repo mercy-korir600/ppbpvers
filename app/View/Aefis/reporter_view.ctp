@@ -1,8 +1,8 @@
 <?php
-  $this->assign('AEFI', 'active');
+  $this->assign('Adverse Event Following Immunization', 'active');
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="aefisview">
   <ul id="reviewer_tab" class="nav nav-tabs">

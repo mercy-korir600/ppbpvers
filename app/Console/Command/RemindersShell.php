@@ -24,7 +24,7 @@ class RemindersShell extends AppShell {
                 $html = new HtmlHelper(new ThemeView());
                 $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_reminder_email')));
                 $variables = array(
-                  'name' => $aefi['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'], 'type' => 'AEFI', 'created' => $aefi['Aefi']['created'],
+                  'name' => $aefi['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'], 'type' => 'Adverse Event Following Immunization', 'created' => $aefi['Aefi']['created'],
                   'reference_link' => $html->link($aefi['Aefi']['reference_no'], array('controller' => 'aefis', 'action' => 'edit', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true), 
                     array('escape' => false)),
                   'modified' => $aefi['Aefi']['modified']
@@ -48,7 +48,7 @@ class RemindersShell extends AppShell {
             }            
         }
 
-        //SADRS
+        //Suspected Adverse Drug Reaction
         $sadrs = $this->Sadr->find('all',
                 array(
                         'conditions' => array('ifnull(Sadr.submitted, 0)' => '0', 'Sadr.created <=' => date("Y-m-d", strtotime('-1 day')), 'reminders.id' => null),
@@ -105,7 +105,7 @@ class RemindersShell extends AppShell {
                 $html = new HtmlHelper(new ThemeView());
                 $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_reminder_email')));
                 $variables = array(
-                  'name' => $pqmp['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'], 'type' => 'PQHPT', 'created' => $pqmp['Pqmp']['created'],
+                  'name' => $pqmp['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'], 'type' => 'Poor-Quality Health Products and Technologies', 'created' => $pqmp['Pqmp']['created'],
                   'reference_link' => $html->link($pqmp['Pqmp']['reference_no'], array('controller' => 'pqmps', 'action' => 'edit', $pqmp['Pqmp']['id'], 'reporter' => true, 'full_base' => true), 
                     array('escape' => false)),
                   'modified' => $pqmp['Pqmp']['modified']

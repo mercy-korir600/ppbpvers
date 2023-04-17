@@ -1,5 +1,5 @@
 <?php
-	$this->assign('PQHPT', 'active');
+	$this->assign('Poor-Quality Health Products and Technologies', 'active');
  ?>
  
   <!-- SADR
@@ -37,8 +37,8 @@
 						'label' => 'Submit',
 						'value' => 'Save',
 						'class' => 'btn btn-primary',
-						'id' => 'SadrSubmitEmail', 'title'=>'Start a New PQHPT', 
-						'data-content' => 'Please provide us with your email address to start filling in the PQHPT.',
+						'id' => 'SadrSubmitEmail', 'title'=>'Start a New Poor-Quality Health Products and Technologies', 
+						'data-content' => 'Please provide us with your email address to start filling in the Poor-Quality Health Products and Technologies.',
 						'div' => array(
 							'class' => 'form-actions',
 						)
@@ -47,7 +47,7 @@
 		</div> <!-- /span6 -->
 
 		<div class="span6 feature-block">
-			<h2><span class="slash">//</span> Search PQHPT by UNIQUE ID</h2>
+			<h2><span class="slash">//</span> Search Poor-Quality Health Products and Technologies by UNIQUE ID</h2>
 			<?php 	
 				echo $this->Form->create('Pqmp', array(
 					'action' => 'find',

@@ -6,7 +6,7 @@
 		'bcg' => 'BCG Lymphadenitis', 'convulsion' => 'Convulsion','urticaria' => 'Generalized urticaria', 'high_fever' => 'High Fever',
 		'abscess' => 'Injection site abscess', 'local_reaction' => 'Severe Local Reaction','anaphylaxis' => 'Anaphylaxis', 'meningitis' => 'Encephalopathy',
 		'paralysis' => 'Paralysis', 'toxic_shock' => 'Toxic shock','complaint_other' => 'Other', 'complaint_other_specify' => 'Specify',
-		'date_aefi_started' => 'Date AEFI started','times_aefi_started' => 'Time AEFI started','vaccines' => 'Vaccines','vaccination_doses' => 'Vaccination doses',
+		'date_aefi_started' => 'Date Adverse Event Following Immunization started','times_aefi_started' => 'Time Adverse Event Following Immunization started','vaccines' => 'Vaccines','vaccination_doses' => 'Vaccination doses',
 		'vaccination_dates' => 'Vaccination dates','vaccination_times' => 'Vaccination times','vaccination_routes' => 'Vaccination routes',
 		'vaccination_sites' => 'Vaccination sites','vaccination_batch' => 'Batch/Lot No.','manufacturers' => 'Vaccine Manufacturers',
 		'vaccination_expiry' => 'Vaccine expiry','diluent_batch' => 'Diluent batch','diluent_manufacturers' => 'Diluent manufacturers',
@@ -22,7 +22,7 @@
 	}
 	
 	//Additional free text columns
-	$header['aefi_symptoms'] = 'Describe AEFI';
+	$header['aefi_symptoms'] = 'Describe Adverse Event Following Immunization';
 	$header['description_of_reaction'] = 'Brief details on the event';
 	$header['medical_history'] = 'Past medical history';
 	$header['treatment_given'] = 'Treatment given';

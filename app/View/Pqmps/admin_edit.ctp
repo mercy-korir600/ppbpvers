@@ -1,5 +1,5 @@
 <?php
-	$this->assign('PQHPT', 'active');
+	$this->assign('Poor-Quality Health Products and Technologies', 'active');
 	$this->Html->script('jquery.ui.core', array('inline' => false));
 	$this->Html->script('jquery.ui.widget', array('inline' => false));
 	$this->Html->script('jquery.ui.button', array('inline' => false));
@@ -8,7 +8,7 @@
  	$this->Html->script('widgets', array('inline' => false));
  	$this->Html->script('pqmp', array('inline' => false));
 ?>
-  <!-- PQHPT EDIT
+  <!-- Poor-Quality Health Products and Technologies EDIT
 ================================================== -->
 <section id="pqmpsedit">
 	<div class="row-fluid">
@@ -38,7 +38,7 @@
 			<div class="row-fluid">
 				<div class="span12">
 					<?php
-						echo $this->Html->image('pqmp_header.gif', array('alt' => 'PQHPT'));
+						echo $this->Html->image('pqmp_header.gif', array('alt' => 'Poor-Quality Health Products and Technologies'));
 					?>
 				</div>
 			</div><br>

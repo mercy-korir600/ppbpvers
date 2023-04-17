@@ -1,8 +1,8 @@
 <?php 
-	$this->assign('AEFI', 'active');
+	$this->assign('Adverse Event Following Immunization', 'active');
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
     <section id="aefisadd">
 	<div class="page-header" id="aefi_add_header">
@@ -195,7 +195,7 @@
 						'value' => 'Save',
 						'class' => 'btn',
 						'id' => 'DeviceFollowupSearchForm', 
-						'title'=>'Search for a Follow up AEFI report', 
+						'title'=>'Search for a Follow up Adverse Event Following Immunization report', 
 						'data-content' => 'Input a Form Id to search for.',
 						'div' => false,
 					));

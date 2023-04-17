@@ -5,9 +5,9 @@
 	$this->Html->script('jquery.jeditable', array('inline' => false));
 	// pr($this->request->url);
 ?>
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
-	<h3>ADVERSE EVENT FOLLOWING IMMUNIZATION REPORTS<small> Filter, Search, and export AEFI Reports</small></h3>
+	<h3>ADVERSE EVENT FOLLOWING IMMUNIZATION REPORTS<small> Filter, Search, and export Adverse Event Following Immunization Reports</small></h3>
 		<hr>
 		
 <div id="tabs">
@@ -287,10 +287,10 @@
 									<?php
 										if(!$eC) {
 											echo $this->Form->postLink(__('<span class="label tooltipper" title="Archive"><i class="icon-folder-close icon-white"></i> </span>'),
-											array('action' => 'archive', $aefi['Aefi']['id']), array('escape' => false), __('Are you sure you want to Archive the AEFI Report Number %s?', $aefi['Aefi']['id']));
+											array('action' => 'archive', $aefi['Aefi']['id']), array('escape' => false), __('Are you sure you want to Archive the Adverse Event Following Immunization Report Number %s?', $aefi['Aefi']['id']));
 										}?>&nbsp;
 									<?php echo $this->Form->postLink(__('<span class="label label-important tooltipper" title="Delete"><i class="icon-trash icon-white"></i> </span>'),
-											array('action' => 'delete', $aefi['Aefi']['id']), array('escape' => false), __('Are you sure you want to Delete the AEFI Report Number %s?', $aefi['Aefi']['id'])); ?>&nbsp;
+											array('action' => 'delete', $aefi['Aefi']['id']), array('escape' => false), __('Are you sure you want to Delete the Adverse Event Following Immunization Report Number %s?', $aefi['Aefi']['id'])); ?>&nbsp;
 
 								</td>
 							</tr>
@@ -357,7 +357,7 @@ $(document).ready(function() {
 	});
 
 	$('.tabCreator').click(function () {
-		var tab_title = "AEFI " + this.id;
+		var tab_title = "Adverse Event Following Immunization " + this.id;
 		$tabs.tabs( "add", '/admin/aefis/view/'+this.id, tab_title );
 	});
 

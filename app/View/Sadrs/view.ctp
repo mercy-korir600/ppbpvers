@@ -43,8 +43,8 @@
 						'label' => 'Submit',
 						'value' => 'Save',
 						'class' => 'btn btn-primary',
-						'id' => 'SadrFeedback', 'title'=>'Start a New PQHPT',
-						'data-content' => 'Please provide us with your email address to start filling in the PQHPT.',
+						'id' => 'SadrFeedback', 'title'=>'Start a New Poor-Quality Health Products and Technologies',
+						'data-content' => 'Please provide us with your email address to start filling in the Poor-Quality Health Products and Technologies.',
 						'div' => array(
 							'class' => 'form-actions',
 						)

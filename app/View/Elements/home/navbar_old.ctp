@@ -18,8 +18,8 @@
 					<li class="<?php echo $this->fetch('SADR') ?>">
 						<?php echo $this->Html->link('SADR', array('controller' => 'sadrs', 'action' => 'add'));?>
 					</li>
-					<li class="<?php echo $this->fetch('PQHPT') ?>">
-						<?php echo $this->Html->link('PQHPT', array('controller' => 'pqmps', 'action' => 'add'));?>
+					<li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
+						<?php echo $this->Html->link('Poor-Quality Health Products and Technologies', array('controller' => 'pqmps', 'action' => 'add'));?>
 					</li>
 					<li class="<?php echo $this->fetch('LOGIN') ?>">
 						<?php 

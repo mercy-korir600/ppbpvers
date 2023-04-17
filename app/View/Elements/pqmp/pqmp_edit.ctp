@@ -1,5 +1,5 @@
 <?php
-$this->assign('PQHPT', 'active');
+$this->assign('Poor-Quality Health Products and Technologies', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
 $this->Html->script('pqmp?v=2', array('inline' => false));
 ?>
@@ -22,7 +22,7 @@ echo $this->Form->create('Pqmp', array(
 ));
 ?>
 
-<!-- PQHPT EDIT
+<!-- Poor-Quality Health Products and Technologies EDIT
 ================================================== -->
 <div class="row-fluid">
 	<div class="span10 formbackp">

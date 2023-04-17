@@ -1,6 +1,6 @@
 <?php
 	$this->Html->script('jqprint.0.3', array('inline' => false));
-	$this->assign('PQHPT', 'active');
+	$this->assign('Poor-Quality Health Products and Technologies', 'active');
  ?>
 
 
@@ -38,8 +38,8 @@
 						'label' => 'Submit',
 						'value' => 'Save',
 						'class' => 'btn btn-primary',
-						'id' => 'SadrFeedback', 'title'=>'Start a New PQHPT',
-						'data-content' => 'Please provide us with your email address to start filling in the PQHPT.',
+						'id' => 'SadrFeedback', 'title'=>'Start a New Poor-Quality Health Products and Technologies',
+						'data-content' => 'Please provide us with your email address to start filling in the Poor-Quality Health Products and Technologies.',
 						'div' => array(
 							'class' => 'form-actions',
 						)
@@ -92,7 +92,7 @@
 	   <div id="pqmpPrintArea">
 			<div class="vformbackp">
 				<?php
-					echo $this->Html->image('pqmp_header.gif', array('alt' => 'PQHPT'));
+					echo $this->Html->image('pqmp_header.gif', array('alt' => 'Poor-Quality Health Products and Technologies'));
 				?>
 				<br>
 				<br>

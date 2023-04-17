@@ -1,5 +1,5 @@
 <?php
-    $this->assign('PQHPT', 'active');        
+    $this->assign('Poor-Quality Health Products and Technologies', 'active');        
     echo $this->Session->flash();
 ?>
 
@@ -7,7 +7,7 @@
   // echo $this->element('pqmp/pqmp_edit'); 
 ?>
 
-      <!-- PQHPT
+      <!-- Poor-Quality Health Products and Technologies
     ================================================== -->
 <section id="pqmpsview">
     <ul class="nav nav-tabs">

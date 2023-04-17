@@ -12,7 +12,7 @@
         <div class="row-fluid">
             
             <div class="span4 formback" style="padding: 4px;">
-              <h5>SADRS</h5>
+              <h5>Suspected Adverse Drug Reaction</h5>
               <?php
                 echo '<ol>';
                 foreach ($sadrs as $sadr) {
@@ -68,7 +68,7 @@
             <div class="row-fluid">
             
                 <div class="span4 formback" style="padding: 4px;">
-                  <h5>SADRS</h5>
+                  <h5>Suspected Adverse Drug Reaction</h5>
                   <?php
                     echo '<ol>';
                     foreach ($sadrs as $sadr) {
@@ -95,7 +95,7 @@
                 </div>
                  
                 <div class="span4 formbacka" style="padding: 4px;">    
-                  <h5>AEFI </h5>                  
+                  <h5>Adverse Event Following Immunization </h5>                  
                     <?php
                       echo '<ol>';
                       foreach ($aefis as $aefi) {
@@ -117,13 +117,13 @@
                       }
                       echo '</ol>';
                     echo $this->Html->link('All AEFIs >>', array('controller' => 'aefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-                    if($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report AEFI', array('controller' => 'aefis' , 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report New AEFI?'));
+                    if($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report AEFI', array('controller' => 'aefis' , 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report  New AEFI?'));
                     ?>
                    
                 </div>
                 
                 <div class="span4 formbackp" style="padding: 4px;">
-                  <h5>PQHPT</h5>
+                  <h5>Poor-Quality Health Products and Technologies</h5>
                     <?php
                       echo '<ol>';
                       foreach ($pqmps as $pqmp) {
@@ -142,7 +142,7 @@
                       }
                       echo '</ol>';
                     echo $this->Html->link('All PQHPTs >>', array('controller' => 'pqmps', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-                    if($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report PQHPT', array('controller' => 'pqmps' , 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report New PQHPT?'));
+                    if($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report  PQHPT', array('controller' => 'pqmps' , 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('ReportPoor-Quality Health Products and Technologies?'));
                     ?>
                 </div>
             </div>

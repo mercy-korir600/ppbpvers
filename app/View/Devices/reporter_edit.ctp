@@ -3,7 +3,7 @@
     $this->Html->script('device', array('inline' => false));
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="devicesadd">
     <div class="row-fluid">

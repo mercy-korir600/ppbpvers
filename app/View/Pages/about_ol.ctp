@@ -54,7 +54,7 @@
             </div><!--/span-->
             <div class="span4">
               <h4>ADVERSE EVENT FOLLOWING IMMUNIZATION</h4>
-              <p>An adverse event following immunization (AEFI) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
+              <p>An adverse event following immunization (Adverse Event Following Immunization) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
               <p><a class="btn" href="#">View details &raquo;</a></p>
             </div><!--/span-->
           </div><!--/row-->

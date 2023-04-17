@@ -1,9 +1,9 @@
 <?php
-	$this->assign('AEFI', 'active');
+	$this->assign('Adverse Event Following Immunization', 'active');
 	$this->Html->script('jqprint.0.3', array('inline' => false));
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="aefisview">
 	<div class="row-fluid">

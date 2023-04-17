@@ -71,14 +71,14 @@
 			<li class="art-hmenu-li-separator"><span class="art-hmenu-separator"> </span></li>
 			<li>
 				<?php 	
-						// echo $this->Html->link('<span class="l"></span><span class="r"></span> <span class="t">Report PQHPT</span>', 
+						// echo $this->Html->link('<span class="l"></span><span class="r"></span> <span class="t">Report Poor-Quality Health Products and Technologies</span>', 
 						// array('controller' => 'pqmps', 'action' => 'add') , array('escape' => false)); 
 				?>			
 			</li>
 			<li class="art-hmenu-li-separator"><span class="art-hmenu-separator"> </span></li>
 			<li>
 				<?php 	
-						echo $this->Html->link('<span class="l"></span><span class="r"></span> <span class="t">AEFI</span>', 
+						echo $this->Html->link('<span class="l"></span><span class="r"></span> <span class="t">Adverse Event Following Immunization</span>', 
 						array('controller' => 'aefis', 'action' => 'add') , array('escape' => false)); 
 				?>			
 			</li>
@@ -123,13 +123,13 @@
 						</li>
 						<li>
 							<?php 	
-								echo $this->Html->link('<span>PQHPT Reports</span>', 
+								echo $this->Html->link('<span>Poor-Quality Health Products and Technologies Reports</span>', 
 								array('controller' => 'pqmps', 'action' => 'pqmpIndex') , array('escape' => false)); 
 							?>
 						</li>
 						<li>
 							<?php 	
-								echo $this->Html->link('<span>AEFI Reports</span>', 
+								echo $this->Html->link('<span>Adverse Event Following Immunization Reports</span>', 
 								array('controller' => 'aefis', 'action' => 'aefiIndex') , array('escape' => false)); 
 							?>
 						</li>

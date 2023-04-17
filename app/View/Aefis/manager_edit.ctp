@@ -1,5 +1,5 @@
 <?php
-    $this->assign('AEFI', 'active');        
+    $this->assign('Adverse Event Following Immunization', 'active');        
     echo $this->Session->flash();
 ?>
 
@@ -7,7 +7,7 @@
   // echo $this->element('aefi/aefi_edit'); 
 ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="aefisview">
     <ul class="nav nav-tabs">

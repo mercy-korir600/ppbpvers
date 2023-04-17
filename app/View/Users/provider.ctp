@@ -103,9 +103,9 @@ $this->Html->css('upgrade', false, array('inline' => false));
                     <div id="collapseThree" class="collapse" data-parent="#accordion">
                         <div class="card-body">
                             <br>
-                            <p style="text-align: left;"> An adverse event following immunization (AEFI) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
+                            <p style="text-align: left;"> An adverse event following immunization (Adverse Event Following Immunization) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
                             <br>
-                            <p style="text-align: left;">Report any AEFI that is of concern, both minor and serious cases. They include:</p>
+                            <p style="text-align: left;">Report any Adverse Event Following Immunization that is of concern, both minor and serious cases. They include:</p>
                             <p style="text-align: left;">a. Serious AEFIs i.e. adverse events or reactions that result in death, hospitalization (or prolongation of existing hospital stay), persistent or significant disability or incapacity (e.g. paralysis), or are potentially life threatening</p>
                             <p style="text-align: left;">b. Signals and events associated with a newly introduced vaccine</p>
                             <p style="text-align: left;">c. AEFIs that may have been caused by immunization error (e.g. Injection site abscesses, severe local reaction, high fever or sepsis, BCG toxic shock syndrome, clusters of AEFIs)</p>

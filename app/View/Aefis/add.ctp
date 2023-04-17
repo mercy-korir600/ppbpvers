@@ -1,8 +1,8 @@
 <?php 
-	$this->assign('AEFI', 'active');
+	$this->assign('Adverse Event Following Immunization', 'active');
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
     <section id="aefisadd">
 	<div class="page-header" id="aefi_add_header">
@@ -27,9 +27,9 @@
 									<div class="span12">
 									  	<h3>GUIDELINES ON COMPLETION OF THE FORM	</h3>
 										<h4>WHEN TO COMPLETE THIS FORM	</h4>
-										<p>An <em>adverse event following immunization (AEFI)</em> is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.	</p>								
+										<p>An <em>adverse event following immunization (Adverse Event Following Immunization)</em> is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.	</p>								
 										
-										<p><b>Complete the AEFI reporting form when any Adverse Event Following Immunization (AEFI) occurs and especially those of parental and/or health worker concern e.g.</b>
+										<p><b>Complete the Adverse Event Following Immunization reporting form when any Adverse Event Following Immunization (Adverse Event Following Immunization) occurs and especially those of parental and/or health worker concern e.g.</b>
 											
 										<br>1. Serious Events (results in death, hospitalization or prolongation of hospitalization) persistent or significant disability/incapacity, or is life-threatening	
 											
@@ -46,8 +46,8 @@
 											
 										<br>- Indicate if it is an <b>initial</b> or <b>follow-up</b> report	
 										<br>- Information on the Manufacturer and Expiry dates of the Vaccine and/or diluents may be obtained from the label of its container. If multiple vaccines are suspected, provide the required information on each of them.
-										<br>- Enter date of birth if available, if not enter the age at the time the AEFI began 
-										<br>- Where more than one AEFI if they occur in the same patient and same time tick the multiple options provided, also provide a description of the AEFI in the space provided
+										<br>- Enter date of birth if available, if not enter the age at the time the Adverse Event Following Immunization began 
+										<br>- Where more than one Adverse Event Following Immunization if they occur in the same patient and same time tick the multiple options provided, also provide a description of the Adverse Event Following Immunization in the space provided
 										</p>
 											
 										<h4>WHAT HAPPENS TO SUBMITTED REPORTS	</h4>
@@ -142,7 +142,7 @@
 						'label' => 'Go to report',
 						'value' => 'Save',
 						'class' => 'btn btn-primary tooltipper',
-						'id' => 'AefiSubmitEmail', 'title'=>'Start a New AEFI', 
+						'id' => 'AefiSubmitEmail', 'title'=>'Start a  New AEFI', 
 						'div' => array(
 							'class' => 'form-actions',
 						)
@@ -168,7 +168,7 @@
 						'value' => 'Save',
 						'class' => 'btn',
 						'id' => 'AefiSearchForm', 
-						'title'=>'Search for an AEFI', 
+						'title'=>'Search for an Adverse Event Following Immunization', 
 						'data-content' => 'Input a Form Id to search for.',
 						'div' => false,
 					));
@@ -191,7 +191,7 @@
 						'value' => 'Save',
 						'class' => 'btn',
 						'id' => 'AefiFollowupSearchForm', 
-						'title'=>'Search for a Follow up AEFI report', 
+						'title'=>'Search for a Follow up Adverse Event Following Immunization report', 
 						'data-content' => 'Input a Form Id to search for.',
 						'div' => false,
 					));
@@ -215,7 +215,7 @@
 						'value' => 'Save',
 						'class' => 'btn',
 						'id' => 'AefiFollowupSearchForm', 
-						'title'=>'Search for a Follow up AEFI report', 
+						'title'=>'Search for a Follow up Adverse Event Following Immunization report', 
 						'data-content' => 'Input a Form Id to search for.',
 						'div' => false,
 					));

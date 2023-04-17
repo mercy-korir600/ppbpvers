@@ -1,6 +1,6 @@
 
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
     <section id="aefisadd">
     <div class="row-fluid">

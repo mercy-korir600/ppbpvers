@@ -573,7 +573,7 @@ public function index()
     }
 
     /**
-     * AEFI reports methods
+     * Adverse Event Following Immunization reports methods
      * 
      */
     public function aefis_by_designation()
@@ -817,7 +817,7 @@ public function index()
     }
 
     /**
-     * PQHPT reports methods
+     * Poor-Quality Health Products and Technologies reports methods
      * 
      */
     public function pqmps_by_designation()

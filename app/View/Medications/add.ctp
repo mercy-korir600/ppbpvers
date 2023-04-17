@@ -28,7 +28,7 @@
 									<div class="span12">
 									  	<h3>GUIDELINES ON COMPLETION OF THE FORM	</h3>
 										<h4>WHEN TO COMPLETE THIS FORM	</h4>
-										<p>An <em>adverse event following immunization (AEFI)</em> is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.	</p>								
+										<p>An <em>adverse event following immunization (Adverse Event Following Immunization)</em> is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.	</p>								
 										
 										<p>Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event.
 Patient’s identity is held in strict confidence and program staff is not is not expected to and will not disclose reporter’s identity in response to any public request. Information supplied by you will contribute to the improvement of medicine safety and therapy in Kenya.
@@ -99,8 +99,8 @@ Patient’s identity is held in strict confidence and program staff is not is no
 						'label' => 'Go to report',
 						'value' => 'Save',
 						'class' => 'btn btn-primary',
-						'id' => 'SadrSubmitEmail', 'title'=>'Start a New PQHPT', 
-						'data-content' => 'Please provide us with your email address to start filling in the PQHPT.',
+						'id' => 'SadrSubmitEmail', 'title'=>'Start a New Poor-Quality Health Products and Technologies', 
+						'data-content' => 'Please provide us with your email address to start filling in the Poor-Quality Health Products and Technologies.',
 						'div' => array(
 							'class' => 'form-actions',
 						)

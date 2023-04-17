@@ -9,13 +9,13 @@
 					<tr>
 						<td>
 						<?php
-							echo($this->Html->image('header-object.png', array('alt' => 'AEFI', 'fullBase' => true)));
+							echo($this->Html->image('header-object.png', array('alt' => 'Adverse Event Following Immunization', 'fullBase' => true)));
 						?>
 					</td>
 					<td style="text-align: center;">
 						<h2>MINISTRY OF HEALTH</h2>
 						<p class="lead">UNIT OF VACCINES AND IMMUNIZATION SERVICES</p>
-						<h3>AEFI Reporting Form</h3>
+						<h3>Adverse Event Following Immunization Reporting Form</h3>
 					</td>
 					<td>
 						<?php
@@ -109,7 +109,7 @@
 
 				<table style="width: 100%;">
 					<tr>
-						<td colspan="4"><h5 style="text-align: center; color: #884805;">TYPE OF AEFI</h5> </td>
+						<td colspan="4"><h5 style="text-align: center; color: #884805;">TYPE OF Adverse Event Following Immunization</h5> </td>
 					</tr>
 					<tr>
 						<td style="width: 5%;"></td>
@@ -131,7 +131,7 @@
 							<table>
 								<tbody>
 								<tr>
-									<td style="width: 50%;">DATE AEFI STARTED </td>
+									<td style="width: 50%;">DATE Adverse Event Following Immunization STARTED </td>
 									<td><strong><?php echo $aefi['Aefi']['date_aefi_started'] ?>	</strong></td>
 								</tr>
 								<tr>
@@ -145,7 +145,7 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-									  Describe AEFI (Signs & Symptoms) <br>
+									  Describe Adverse Event Following Immunization (Signs & Symptoms) <br>
 									  <strong><?php echo $aefi['Aefi']['aefi_symptoms'] ?>	</strong><br>
 									  <?php
 					                     foreach ($aefi['AefiDescription'] as $aefiDescription): 
@@ -242,7 +242,7 @@
 				<table style="width: 100%;">
 					<tr>
 						<td colspan="2"><p style="text-align: center;">Action Taken:</p></td>
-						<td colspan="2"><p style="text-align: center;">AEFI Outcome:</p></td>
+						<td colspan="2"><p style="text-align: center;">Adverse Event Following Immunization Outcome:</p></td>
 					</tr>
 					<tr>
 						<td style="width: 25%;">Treatment given</td>

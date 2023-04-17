@@ -7,7 +7,7 @@
 <div id="aefis-by-gender"></div>
 
 <hr>
-<h4>AEFI by Sex</h4>
+<h4>Adverse Event Following Immunization by Sex</h4>
 <table class="table table-condensed table-bordered" id="datatable8">
     <thead>
         <tr>
@@ -36,7 +36,7 @@ Highcharts.chart('aefis-by-gender', {
         type: 'bar'
     },
     title: {
-        text: 'AEFI by Sex'
+        text: 'Adverse Event Following Immunization by Sex'
     },
     yAxis: {
         allowDecimals: false,

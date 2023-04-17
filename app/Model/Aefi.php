@@ -245,7 +245,7 @@ class Aefi extends AppModel {
             'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
-                'message'  => 'Please describe the AEFI'
+                'message'  => 'Please describe the Adverse Event Following Immunization'
             ),
         ),
 		'date_of_birth' => array(
@@ -304,7 +304,7 @@ class Aefi extends AppModel {
             'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
-                'message'  => 'Please specify the AEFI outcome'
+                'message'  => 'Please specify the Adverse Event Following Immunization outcome'
             ),
         ),
         'serious' => array(

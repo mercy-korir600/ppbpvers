@@ -1,11 +1,11 @@
 <?php
-	$this->assign('AEFI', 'active');
+	$this->assign('Adverse Event Following Immunization', 'active');
 	$this->Html->script('jqprint.0.3', array('inline' => false));
     $ichecked = "&#x2611;";
     $nchecked = "&#x2610;";
  ?>
 
-      <!-- AEFI
+      <!-- Adverse Event Following Immunization
     ================================================== -->
 <section id="aefisview">
 	<div class="row-fluid">
@@ -66,17 +66,17 @@
 				<div class="row-fluid">
 					<div class="span2">
 						<?php
-							echo $this->Html->image('header-object.png', array('alt' => 'AEFI'));
+							echo $this->Html->image('header-object.png', array('alt' => 'Adverse Event Following Immunization'));
 						?>
 					</div>
 					<div class="span8" style="text-align: center;">
 						<h2>MINISTRY OF HEALTH</h2>
 						<p class="lead">UNIT OF VACCINES AND IMMUNIZATION SERVICES</p>
-						<h3>AEFI Reporting Form</h3>
+						<h3>Adverse Event Following Immunization Reporting Form</h3>
 					</div>
 					<div class="span2">
 						<?php
-							echo $this->Html->image('med-blue.png', array('alt' => 'AEFI'));
+							echo $this->Html->image('med-blue.png', array('alt' => 'Adverse Event Following Immunization'));
 						?>
 					</div>
 				</div><br>
@@ -246,7 +246,7 @@
 				<table style="width: 100%;">
 					<tr>
 						<td colspan="2"><p style="text-align: center;">Action Taken:</p></td>
-						<td colspan="2"><p style="text-align: center;">AEFI Outcome:</p></td>
+						<td colspan="2"><p style="text-align: center;">Adverse Event Following Immunization Outcome:</p></td>
 					</tr>
 					<tr>
 						<td style="width: 25%;">Treatment given</td>
