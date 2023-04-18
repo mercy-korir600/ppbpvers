@@ -23,9 +23,52 @@ class SadrsController extends AppController
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 
+    public function beforeFilter()
+    {
+        parent::beforeFilter(); 
+        $this->Auth->allow('manager_reset_reference_numbers','reset_reference_numbers');
+    }
+
+
+    public function reset_reference_numbers($id = null)
+    {
+        # code...
+        $this->Sadr->id = $id;
+        if (!$this->Sadr->exists()) {
+            throw new NotFoundException(__('Invalid SADR'));
+        }
+        $this->Sadr->saveField('submitted', 2);
+        $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
+        //lucian
+        $sadr = $this->Sadr->read(null, $id);
+         
+        if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
+            $reference = $this->generate_inner_reference();
+            $this->Sadr->saveField('reference_no', $reference); 
+        }
+        //bokelo
+        $sadr = $this->Sadr->read(null, $id);
+        debug($sadr);
+        exit;
+    }
+    public function generate_inner_reference()
+    {
+        # code...
+        $count = $this->Sadr->find('count',  array(
+            'fields' => 'Sadr.reference_no',
+            'conditions' => array(
+                'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+            )
+        ));
+        $count++; 
+  $count = ($count < 10) ? "0$count" : $count;
+          return $reference_number = 'SADR/' . date('Y') . '/' . $count;
+    }
     /**
      * index method
      */
+
+
 
     public function reporter_index()
     {
@@ -517,11 +560,12 @@ class SadrsController extends AppController
             if ($this->Sadr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Sadr->saveField('submitted', 2);
+                    $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
                     //lucian
                     // if(empty($sadr->reference_no)) {
                     if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
-                        $reference = $this->generate_reference($sadr);
-                        $this->Sadr->saveField('reference_no', $reference);
+                        $reference = $this->generate_reference();
+                        $this->Sadr->saveField('reference_no', $reference); 
                     }
                     //bokelo
                     $sadr = $this->Sadr->read(null, $id);
@@ -615,21 +659,43 @@ class SadrsController extends AppController
         $this->set(compact('dose'));
     }
 
+    public function manager_reset_reference_numbers($id=null)
+    {
+
+        $this->Sadr->id = $id;
+        if (!$this->Sadr->exists()) {
+            throw new NotFoundException(__('Invalid SADR'));
+        }
+        $this->Sadr->saveField('submitted', 2);
+        $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
+        //lucian
+        $sadr = $this->Sadr->read(null, $id);
+         
+        if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
+            $reference = $this->generate_reference();
+            $this->Sadr->saveField('reference_no', $reference); 
+        }
+        //bokelo
+        $sadr = $this->Sadr->read(null, $id);
+        debug($sadr);
+        exit;
+            
+    }
+
     public function generate_reference()
     {
         # code...
-        $count = $this->Sadr->find('count',  array(
+          $count = $this->Sadr->find('count',  array(
             'fields' => 'Sadr.reference_no',
             'conditions' => array(
                 'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
             )
         ));
-        $count++;
+        $count++; 
+  $count = ($count < 10) ? "0$count" : $count;
+          $reference_number = 'SADR/' . date('Y') . '/' . $count;
 
-        $count = ($count < 10) ? "0$count" : $count;
-        $reference_number = 'SADR/' . date('Y') . '/' . $count;
-
-        $existing = $this->Sadr->find('count', ['conditions' => ['Sadr.reference_no' => $reference_number]]);
+           $existing = $this->Sadr->find('count', ['conditions' => ['Sadr.reference_no' => $reference_number]]);
 
         if ($existing > 0) {
             return  $this->generate_reference();
