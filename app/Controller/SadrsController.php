@@ -48,7 +48,40 @@ class SadrsController extends AppController
         }
         //bokelo
         $sadr = $this->Sadr->read(null, $id);
-        debug($sadr);
+       
+
+        $user = $this->Sadr->User->find('first', array(
+            'contain' => array(),
+            'conditions' => array('User.id' =>  $sadr['Sadr']['user_id'])
+        ));
+       
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_sadr_submit')));
+        $variables = array(
+            'name' => $user['User']['name'],//$this->Auth->User('name'), 
+            'reference_no' => $sadr['Sadr']['reference_no'],
+            'reference_link' => $html->link(
+                $sadr['Sadr']['reference_no'],
+                array('controller' => 'sadrs', 'action' => 'view', $sadr['Sadr']['id'], 'reporter' => true, 'full_base' => true),
+                array('escape' => false)
+            ),
+            'modified' => $sadr['Sadr']['modified']
+        );
+        $datum = array(
+            'email' => $sadr['Sadr']['reporter_email'],
+            'id' => $id, 
+            'user_id' => $sadr['Sadr']['user_id'],//$this->Auth->User('id'), 
+            'type' => 'reporter_sadr_submit', 'model' => 'Sadr',
+            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+            'message' => CakeText::insert($message['Message']['content'], $variables)
+        );
+
+        $this->loadModel('Queue.QueuedTask');
+        $this->QueuedTask->createJob('GenericEmail', $datum);
+        $this->QueuedTask->createJob('GenericNotification', $datum);
+        debug($user); 
+        debug($datum);
         exit;
     }
     public function generate_inner_reference()
