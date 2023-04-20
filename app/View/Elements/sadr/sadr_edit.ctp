@@ -5,7 +5,8 @@ $this->Html->script('jquery/combobox', array('inline' => false));
 //    $this->Html->script('jUpload/jquery.iframe-transport.js', array('inline' => false));
 //    $this->Html->script('jUpload/jquery.fileupload.js', array('inline' => false));
 //    $this->Html->script('jquery/jquery.blockUI.js', array('inline' => false));
-$this->Html->script('sadr', array('inline' => false));
+$this->Html->script('sadr', array('inline' => false)); 
+$this->Html->css('sadr', false, array('inline' => false));
 ?>
 
 <!-- SADR
@@ -99,34 +100,77 @@ $this->Html->script('sadr', array('inline' => false));
 				<div class="span6">
 					<?php
 					echo "<h4>Product category (Tick appropriate box) <span style='color:red;'>*</span></h4>";
-					echo $this->Form->input('medicinal_product', array(
-						'format' => array('error', 'before', 'label', 'between', 'input', 'after'),
-						'type' => 'checkbox',  'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-						'between' => '<input type="hidden" value="0" id="Sadr_medicinal_product_" name="data[Sadr][medicinal_product]">
-                                                                    <label class="checkbox">',
-						'after' => 'Medicinal product </label>',
+					echo $this->Form->input('product_category', array(
+						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
+						'before' => '<label class="radio inline">',	'after' => '</label>',
+						'options' => array('Medicinal product' => 'Medicinal product'),
+						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")', 
 					));
-					echo $this->Form->input('herbal_product', array(
-						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-						'between' => '<input type="hidden" value="0" id="Sadr_herbal_product_" name="data[Sadr][herbal_product]">
-                                                                    <label class="checkbox">',
-						'after' => 'Herbal product </label>',
+					echo $this->Form->input('product_category', array(
+						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
+						'before' => '<label class="radio inline">',	'after' => '</label>',
+						'options' => array('Herbal product' => 'Herbal product'),
+						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")',
 					));
-					echo $this->Form->input('cosmeceuticals', array(
-						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-						'between' => '<input type="hidden" value="0" id="Sadr_cosmeceuticals_" name="data[Sadr][cosmeceuticals]">
-                                                                    <label class="checkbox">',
-						'after' => 'Cosmeceuticals </label>',
+					echo $this->Form->input('product_category', array(
+						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
+						'before' => '<label class="radio inline">',	'after' => '</label>',
+						'options' => array('Cosmeceuticals' => 'Cosmeceuticals'), 
+						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")',
 					));
-					echo $this->Form->input('product_other', array(
-						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-						'between' => '<input type="hidden" value="0" id="Sadr_product_other_" name="data[Sadr][product_other]">
-                                                                    <label class="checkbox">',
-						'after' => 'Others </label>',
+					echo $this->Form->input('product_category', array(
+						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
+						'before' => '<label class="radio inline">',	'after' => '</label><br>',
+						'options' => array('Others' => 'Others'), 
+						'onclick' => '$("#SadrProductSpecify").removeAttr("disabled")',
 					));
-					echo $this->Form->input('product_specify', array(
-						'label' => false, 'placeholder' => '(If others, specify)', 'div' => false, 'between' => false, 'after' => false, 'class' => false,
-					));
+
+				 
+
+					// echo $this->Form->input('medicinal_product', array(
+					// 	'format' => array('error', 'before', 'label', 'between', 'input', 'after'),
+					// 	'type' => 'checkbox',  
+					// 	'class' => 'circle-checkbox',
+					// 	'style' => 'width: 14px; height: 14px; border-radius: 50%; border: 2px solid #999; outline: none; vertical-align: middle; cursor: pointer;',
+					// 	'before' => '<i class="fa fa-check" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #007bff; border-radius: 50%;"></i>',			
+					// 	'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+					// 	'between' => '<input type="hidden" value="0" id="Sadr_medicinal_product_" name="data[Sadr][medicinal_product]">
+                    //                                                 <label class="checkbox">',
+					// 	'after' => 'Medicinal product </label>',
+					// ));
+					// echo $this->Form->input('herbal_product', array(
+					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+					// 	'between' => '<input type="hidden" value="0" id="Sadr_herbal_product_" name="data[Sadr][herbal_product]">
+                    //                                                 <label class="checkbox">',
+					// 	'after' => 'Herbal product </label>',
+					// ));
+					// echo $this->Form->input('cosmeceuticals', array(
+					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+					// 	'between' => '<input type="hidden" value="0" id="Sadr_cosmeceuticals_" name="data[Sadr][cosmeceuticals]">
+                    //                                                 <label class="checkbox">',
+					// 	'after' => 'Cosmeceuticals </label>',
+					// ));
+					// echo $this->Form->input('product_other', array(
+					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+					// 	'between' => '<input type="hidden" value="0" id="Sadr_product_other_" name="data[Sadr][product_other]">
+                    //                                                 <label class="checkbox">',
+					// 	'after' => 'Others </label>',
+					// ));
+					
+				
+					?>
+					<br>
+					<?php
+						echo $this->Form->input('product_specify', array(
+							'label' => false, 
+							'placeholder' => '(If others, specify)', 
+							'div' => false, 
+							'between' => false, 
+							'after' => false, 
+							'class' => false,
+							'disabled' => true, 
+						));
+					 
 					?>
 				</div>
 			</div>
@@ -253,8 +297,7 @@ $this->Html->script('sadr', array('inline' => false));
 						'onclick' => '$("#SadrKnownAllergySpecify").attr("disabled","disabled")',
 					));
 
-					echo $this->Form->input('known_allergy_specify', array(
-						// 'label' => array('class' => 'control-label', 'text' => '(specify)'),
+					echo $this->Form->input('known_allergy_specify', array( 
 						'label' => false, 'disabled' => true, 'placeholder' => 'If yes, specify',
 						'after' => '<p class="help-block"> (specify) </p></div>'
 					));

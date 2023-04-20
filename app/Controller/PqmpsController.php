@@ -475,7 +475,7 @@ class PqmpsController extends AppController
         $this->Pqmp->create();
         $this->Pqmp->save(['Pqmp' => [
             'user_id' => $this->Auth->User('id'),
-            'reference_no' => 'new', //'Poor-Quality Health Products and Technologies/'.date('Y').'/'.$count,
+            'reference_no' => 'new', //'PQHPT/'.date('Y').'/'.$count,
             'report_type' => 'Initial',
             'designation_id' => $this->Auth->User('designation_id'),
             'county_id' => $this->Auth->User('county_id'),
@@ -502,7 +502,7 @@ class PqmpsController extends AppController
         ));
         $count++;
         $count = ($count < 10) ? "0$count" : $count;
-        $reference = 'Poor-Quality Health Products and Technologies/' . date('Y') . '/' . $count;
+        $reference = 'PQHPT/' . date('Y') . '/' . $count;
 
         //ensure this reference number is unique
         $exists = $this->Pqmp->find('count', array('conditions' => array('Pqmp.reference_no' => $reference)));
@@ -688,7 +688,7 @@ class PqmpsController extends AppController
             ));
             $count++;
             $count = ($count < 10) ? "0$count" : $count;
-            $save_data['Pqmp']['reference_no'] = 'Poor-Quality Health Products and Technologies/' . date('Y') . '/' . $count;
+            $save_data['Pqmp']['reference_no'] = 'PQHPT/' . date('Y') . '/' . $count;
         }
         // $save_data['Pqmp']['report_type'] = 'Initial';
         //bokelo
@@ -843,6 +843,8 @@ class PqmpsController extends AppController
                     $this->Pqmp->saveField('submitted', 2);
                     $this->Pqmp->saveField('submitted_date', date("Y-m-d H:i:s"));
                     $pqmp = $this->Pqmp->read(null, $id);
+                    debug($pqmp);
+                    exit;
 
                     $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Pqmp->id));

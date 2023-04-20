@@ -33,3 +33,6 @@ CREATE TABLE `imports` (
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE `sadrs` ADD `product_category` VARCHAR(255) NULL DEFAULT NULL AFTER `report_therapeutic`;
