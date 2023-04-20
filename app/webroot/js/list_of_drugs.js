@@ -78,9 +78,8 @@ $(document).ready(function() {
 		var brandName = $('<td data-title="Brand Name"><div class="control-group"><input type="text" id="SadrListOfDrug' + intId + 'BrandName" maxlength="100" class="span11 autoComblete2 autosave-ignore" name="data[SadrListOfDrug][' + intId + '][brand_name]"></div></td>');
 		var batchNo = $('<td><div class="control-group"><input type="text" id="SadrListOfDrug' + intId + 'BatchNo" maxlength="100" class="span11" name="data[SadrListOfDrug][' + intId + '][batch_no]"></div></td>');
 		var manufacturer = $('<td><div class="control-group"><input type="text" id="SadrListOfDrug' + intId + 'Manufacturer" maxlength="100" class="span11" name="data[SadrListOfDrug][' + intId + '][manufacturer]"></div></td>');
-
-		var dose = $('<td/>').attr("data-title", "Dose *").append($('<div class="control-group"/>').append($('#SadrListOfDrug0Dose').clone()
-						.attr({'id': 'SadrListOfDrug' + intId + 'Dose', 'name': 'data[SadrListOfDrug][' + intId + '][dose]'}).val('')));
+		var dose = $('<td><div class="control-group"><input type="number" id="SadrListOfDrug' + intId + 'Dose" maxlength="100" class="span11" name="data[SadrListOfDrug][' + intId + '][dose]"></div></td>');
+		// var dose = $('<td/>').attr("data-title", "Dose *").append($('<div class="control-group"/>').append($('#SadrListOfDrug0Dose').clone().attr({'id': 'SadrListOfDrug' + intId + 'Dose', 'name': 'data[SadrListOfDrug][' + intId + '][dose]'}).val('')));
 		var dose_id = $('<td style="border-left:0px;"/>').append($('<div class="control-group"/>').append($('#SadrListOfDrug0DoseId').clone()
 						.attr({'id': 'SadrListOfDrug' + intId + 'DoseId', 'name': 'data[SadrListOfDrug][' + intId + '][dose_id]'}).val('')));
 		// var route = $('<td><div class="control-group"><input type="text" id="SadrListOfDrug' + intId + 'Route" maxlength="100" class="span7" name="data[SadrListOfDrug][' + intId + '][route]"></div>');

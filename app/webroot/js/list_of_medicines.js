@@ -39,7 +39,7 @@ $(function() {
       if ($('#listOfMedicinesTable tbody tr').length < 10) {            
           trVar = $.parseHTML(constructLODTr(intId));
           // trVar = constructLODTr(intId);
-          $(trVar).find('[name*="dose_id"]').append($("#SadrListOfDrug0DoseId > option").clone()).val('');
+          // $(trVar).find('[name*="dose_id"]').append($("#SadrListOfDrug0DoseId > option").clone()).val('');
           $(trVar).find('[name*="route_id"]').append($("#SadrListOfDrug0RouteId > option").clone()).val('');
           $(trVar).find('[name*="frequency_id"]').append($("#SadrListOfDrug0FrequencyId > option").clone()).val('');
 
