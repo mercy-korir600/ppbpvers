@@ -686,11 +686,11 @@ echo $this->Form->create('Pqmp', array(
 					'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
 					'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
 					'before' => '<label class="radio inline">',
-					'after' => '</label>', 
+					'after' => '</label>',
 					'options' => array('No' => 'No'),
 				));
 				?>
-		 
+
 				<?php
 				echo "<h5>Did the product result in a medication error?</h5>";
 
@@ -738,7 +738,10 @@ echo $this->Form->create('Pqmp', array(
 				);
 				echo $this->Form->input('reporter_phone', array(
 					'div' => array('class' => 'control-group'),
-					'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
+					'label' => array(
+						'class' => 'control-label',
+						'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>'
+					)
 				));
 
 				echo $this->Form->input('reporter_date', array(
@@ -835,9 +838,11 @@ echo $this->Form->create('Pqmp', array(
 				<?php
 				echo $this->Form->button('<i class="fa fa-paper-plane-o" aria-hidden="true"></i> Submit', array(
 					'name' => 'submitReport',
-					'onclick' => "return confirm('Are you sure you wish to submit the report?');",
+					// 'onclick' => "return confirm('Are you sure you wish to submit the report?');",
+					'onclick' => 'return confirmReportSubmission();',
 					'class' => 'btn btn-primary btn-block mapop',
-					'id' => 'SiteInspectionSubmitReport', 'title' => 'Save and Submit Report',
+					'id' => 'SiteInspectionSubmitReport',
+					'title' => 'Save and Submit Report',
 					'data-content' => 'Submit report for peer review and approval.',
 					'div' => false,
 				));
@@ -869,3 +874,22 @@ echo $this->Form->create('Pqmp', array(
 		</div>
 	</div>
 </div>
+
+<script>
+	function confirmReportSubmission() {
+		var additionalMessage = '';
+		if ($("#PqmpAdverseReactionYes").is(':checked')) { 
+			additionalMessage = "You'll be required to submit a Suspected Drug reaction Form"
+		}
+		if ($("#PqmpMedicationErrorYes").is(':checked')) { 
+			additionalMessage = "You'll be required to submit a Medication Error Form"
+		}
+
+		// Show the confirm dialog with the additional message
+		if (additionalMessage != '') {
+			return confirm('Are you sure you wish to submit the report?\n\n' + additionalMessage);
+		} else {
+			return confirm('Are you sure you wish to submit the report?');
+		}
+	}
+</script>
