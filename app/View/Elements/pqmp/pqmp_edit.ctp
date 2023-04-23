@@ -207,6 +207,7 @@ echo $this->Form->create('Pqmp', array(
 				echo $this->Form->input('receipt_date', array(
 					'div' => array('class' => 'control-group required'),
 					'type' => 'text',
+					'class' => 'date-pick-expire',
 					'label' => array('class' => 'control-label required', 'text' => 'Date of Receipt' . ' '),
 					'after' => '<p class="help-block">	Date format (dd-mm-yyyy) </p></div>',
 				));

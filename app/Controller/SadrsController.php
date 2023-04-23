@@ -139,6 +139,7 @@ class SadrsController extends AppController
             $criteria['Sadr.submitted'] = array(2);
         } else {
             if (isset($this->request->query['submitted'])) {
+                
                 if ($this->request->query['submitted'] == 1) {
                     $criteria['Sadr.submitted'] = array(0, 1);
                 } else {

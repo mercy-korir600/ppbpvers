@@ -51,15 +51,28 @@ class PqmpsController extends AppController
 
         $criteria = $this->Pqmp->parseCriteria($this->passedArgs);
         if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Pqmp.user_id'] = $this->Auth->User('id');
-        if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Pqmp.submitted'] = array(2);
-        // $criteria['Pqmp.user_id'] = $this->Auth->User('id');
-        // add deleted to criteria
-        $criteria['Pqmp.deleted'] = false;
-        if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
-            $criteria['Pqmp.submitted'] = array(0, 1);
+        if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') {
+
+            $criteria['Pqmp.submitted'] = array(2);
         } else {
-            $criteria['Pqmp.submitted'] = array(2, 3);
+            if (isset($this->request->query['submitted'])) {
+
+                if ($this->request->query['submitted'] == 1) {
+                    $criteria['Pqmp.submitted'] = array(0, 1);
+                } else {
+                    $criteria['Pqmp.submitted'] = array(2, 3);
+                }
+            } else {
+                $criteria['Pqmp.submitted'] = array(0, 1, 2, 3);
+            }
         }
+
+        $criteria['Pqmp.deleted'] = false;
+        // if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
+        //     $criteria['Pqmp.submitted'] = array(0, 1);
+        // } else {
+        //     $criteria['Pqmp.submitted'] = array(2, 3);
+        // }
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Pqmp.created' => 'desc');
         $this->paginate['contain'] = array('County', 'Country', 'Designation');
@@ -532,6 +545,13 @@ class PqmpsController extends AppController
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
+                $facility_phone = $this->request->data['Pqmp']['facility_phone'];
+                $reporter_phone = $this->request->data['Pqmp']['reporter_phone'];
+                if (empty($facility_phone) && empty($reporter_phone)) {
+
+                    $this->Session->setFlash(__('Please enter either facility or reporter phone'), 'alerts/flash_error');
+                    $this->redirect($this->referer());
+                }
                 $validate = 'first';
             }
             if ($this->Pqmp->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {

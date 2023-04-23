@@ -186,6 +186,8 @@ class Pqmp extends AppModel
     );
 
     public $validate = array(
+        
+       
         'complaint' => array(
             'atLeastOne' => array(
                 'rule'     => 'atLeastOne',
@@ -193,7 +195,7 @@ class Pqmp extends AppModel
                 'message'  => 'Please tick at least one complaint'
             ),
         ),
-      
+
         'brand_name' => array(
             'notBlank' => array(
                 'rule'     => 'notBlank',
@@ -228,13 +230,7 @@ class Pqmp extends AppModel
                 'message'  => 'The expiry date must be greater than the date of manufacture'
             ),
         ),
-        // 'receipt_date' => array(
-        // 	'notBlank' => array(
-        //               'rule'     => 'notBlank',
-        //               'required' => true,
-        //               'message'  => 'Please provide date of receipt'
-        //           ),
-        // ),
+        
         'product_formulation' => array(
             'notBlank' => array(
                 'rule'     => 'notBlank',
@@ -283,57 +279,18 @@ class Pqmp extends AppModel
                 'required' => true,
                 'message'  => 'Please provide a valid email address'
             ),
-        ),
-        // 'reporter_phone' => array(
-        //     'facilityOrReporter' => array(
-        //         'rule'     => 'facilityOrReporter',
-        //         // 'required' => true,
-        //         'allowEmpty' => true,
-        //         'message'  => 'Please provide facility/reporter phone number'
-        //     ),
-        // ),
-        // 'facility_phone' => array(
-        //     'notEmptyIf' => array(
-        //         'rule' => array('notEmptyIf', 'reporter_phone', true),
-        //         'message' => 'Facility phone is required if Reporter phone is not provided'
-        //     )
-        // ),
-        // 'reporter_phone' => array(
-        //     'notEmptyIf' => array(
-        //         'rule' => array('notEmptyIf', 'facility_phone', true),
-        //         'message' => 'Reporter phone is required if Facility phone is not provided'
-        //     )
-        // )
-        //ensure reporter phone is numeric and 10 digits
-        // 'reporter_phone' => array(
-        //     'numeric' => array(
-        //         'rule' => array('numeric'),
-        //         'message' => 'Please provide a valid phone number',
-        //     ),
-        //     'minLength' => array(
-        //         'rule' => array('minLength', 10),
-        //         'message' => 'Please provide a valid phone number',
-        //     ),
-        //     'maxLength' => array(
-        //         'rule' => array('maxLength', 10),
-        //         'message' => 'Please provide a valid phone number',
-        //     ),
-        // ),
+        ), 
+       
     );
-    public function notEmptyIf($check, $otherField, $otherFieldValue) {
+   
+    public function notEmptyIf($check, $otherField, $otherFieldValue)
+    {
         $value = reset($check);
         $otherValue = $this->data[$this->name][$otherField];
         return !($otherFieldValue && !$value && !$otherValue);
     }
 
-    public function facilityOrReporter($field = null)
-    {
-        # code...
-        if (!empty($this->data['Pqmp']['facility_phone']) || !empty($this->data['Pqmp']['reporter_phone'])) {
-        }
 
-        return true;
-    }
     public function atLeastOne($field = null)
     {
         return $this->data['Pqmp']['colour_change'] + $this->data['Pqmp']['separating'] + $this->data['Pqmp']['caking'] + $this->data['Pqmp']['powdering'] +
