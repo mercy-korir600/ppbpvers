@@ -247,7 +247,10 @@ class SadrsController extends AppController
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
         if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
         else $this->paginate['limit'] = reset($this->page_options);
-        //  $criteria['Sadr.submitted'] = 2;
+ 
+
+        $criteria = $this->Sadr->parseCriteria($this->passedArgs);
+       
         $criteria['Sadr.copied !='] = '1';
         // check if the user has select unsubmited sadrs
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {

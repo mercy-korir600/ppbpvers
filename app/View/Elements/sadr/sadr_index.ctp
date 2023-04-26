@@ -245,16 +245,31 @@ echo $this->Session->flash();
         </tr>
         <tr>
           <td>
-          <h5>Report Status</h5>
+            <h5>Report Status</h5>
             <?php
-            
+
             echo $this->Form->input('submitted', array(
               'options' => array('1' => 'UnSubmitted', '2' => 'Submitted'), 'legend' => false,
               'type' => 'radio'
             ));
             ?>
           </td>
-          <td></td>  <td></td>  <td></td>  <td></td>  <td></td>  <td></td>
+          <td> <?php
+                echo $this->Form->input('health_program', array(
+                  'type' => 'select', 'options' => [
+                    'Malaria program' => 'Malaria program', 'National Vaccines and immunisation program' => 'National Vaccines and immunisation program',
+                    'Neglected tropical diseases program' => 'Neglected tropical diseases program', 'MNCAH Priority Medicines' => 'MNCAH Priority Medicines', 'TB program' => 'TB program',
+                    'NASCOP program' => 'NASCOP program', 'Cancer/Oncology program' => 'Cancer/Oncology program'
+                  ], 'empty' => true,
+                  'label' => array('class' => 'control-label', 'text' => 'Public Health Program'),
+                  'class' => 'input-xlarge'
+                ));  ?>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
         </tr>
         <tr>
           <td><label for="SadrPages" class="required">Pages</label></td>
@@ -269,7 +284,7 @@ echo $this->Session->flash();
             ?>
           </td>
           <td>
-           
+
 
           </td>
           <td></td>
@@ -324,7 +339,7 @@ echo $this->Session->flash();
           <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
           <th><?php echo $this->Paginator->sort('report_title'); ?></th>
           <th><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? $this->Paginator->sort('patient_name') : $this->Paginator->sort('gender'); ?></th>
-          <?php if ($redir == 'manager'||$redir == 'reviewer') { ?><th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th> <?php } ?>
+          <?php if ($redir == 'manager' || $redir == 'reviewer') { ?><th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th> <?php } ?>
           <th><?php echo $this->Paginator->sort('reporter_date', 'Date reported'); ?></th>
           <th><?php echo $this->Paginator->sort('created', 'Date created'); ?></th>
           <th><?php echo $this->Paginator->sort('submitted_date', 'Date Submitted'); ?></th>
@@ -358,8 +373,8 @@ echo $this->Session->flash();
                 ?>&nbsp;
             </td>
             <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($sadr['Sadr']['patient_name']) : h($sadr['Sadr']['gender']); ?>&nbsp;</td>
-            <?php if ($redir == 'manager'||$redir == 'reviewer') { ?><td><?php echo h($sadr['Sadr']['vigiflow_ref']);
-                                                    echo "\n" . $sadr['Sadr']['vigiflow_date']; ?></td> <?php } ?>
+            <?php if ($redir == 'manager' || $redir == 'reviewer') { ?><td><?php echo h($sadr['Sadr']['vigiflow_ref']);
+                                                                          echo "\n" . $sadr['Sadr']['vigiflow_date']; ?></td> <?php } ?>
             <td><?php echo h($sadr['Sadr']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($sadr['Sadr']['created']); ?>&nbsp;</td>
             <td><?php echo h($sadr['Sadr']['submitted_date']); ?>&nbsp;</td>
@@ -374,22 +389,22 @@ echo $this->Session->flash();
                 echo "&nbsp;";
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'sadrs', 'action' => 'followup', $sadr['Sadr']['id']), array('escape' => false), __('Add a followup report?'));
                 echo "&nbsp;";
-                if ($redir == 'manager'||$redir == 'reviewer') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'sadrs', 'action' => 'download', $sadr['Sadr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
+                if ($redir == 'manager' || $redir == 'reviewer') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'sadrs', 'action' => 'download', $sadr['Sadr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
                 echo "&nbsp;";
-                if (($redir == 'manager'||$redir == 'reviewer') && empty($sadr['Sadr']['vigiflow_ref']) && $sadr['Sadr']['copied'] == 2) echo $this->Html->link(
+                if (($redir == 'manager' || $redir == 'reviewer') && empty($sadr['Sadr']['vigiflow_ref']) && $sadr['Sadr']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                   array('controller' => 'sadrs', 'action' => 'vigiflow', $sadr['Sadr']['id'], 'manager' => false),
                   array('escape' => false)
                 );
-                echo "&nbsp;"; 
+                echo "&nbsp;";
 
-                if (($redir == 'manager'||$redir == 'reviewer') && $sadr['Sadr']['copied'] == 2) echo $this->Html->link(
+                if (($redir == 'manager' || $redir == 'reviewer') && $sadr['Sadr']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Copy & Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                   array('controller' => 'sadrs', 'action' => 'edit', $sadr['Sadr']['id']),
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if (($redir == 'manager'||$redir == 'reviewer') && $sadr['Sadr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'sadrs', 'action' => 'copy', $sadr['Sadr']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                if (($redir == 'manager' || $redir == 'reviewer') && $sadr['Sadr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'sadrs', 'action' => 'copy', $sadr['Sadr']['id']), array('escape' => false), __('Create a clean copy to edit?'));
               } else {
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
@@ -397,7 +412,7 @@ echo $this->Session->flash();
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if ($redir == 'manager'||$redir == 'reviewer') echo $this->Html->link(
+                if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                   '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
                   array('controller' => 'sadrs', 'action' => 'view', $sadr['Sadr']['id']),
                   array('escape' => false)

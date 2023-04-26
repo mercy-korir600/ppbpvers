@@ -312,7 +312,11 @@ $this->assign('TRN', 'active');
             ));
             ?>
           </td>
-          <td></td>
+          <td>
+            <?php
+            
+            ?>
+          </td>
           <td></td>
           <td></td>
           <td></td>

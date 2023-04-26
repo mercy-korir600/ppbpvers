@@ -21,7 +21,7 @@ echo $this->Session->flash();
     <h3>Public ADRs:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
       <?php
       if ($redir == 'manager') { ?>
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-plus" aria-hidden="true"></i> Upload Excel</button>
+        <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-plus" aria-hidden="true"></i> Upload Excel</button> -->
       <?php  }
       //  echo $this->Html->link('<i class="fa fa-plus" aria-hidden="true"></i> Upload Excel', array('action' => 'upload'), array('class' => 'btn btn-success', 'escape' => false));
       ?>
@@ -184,7 +184,18 @@ echo $this->Session->flash();
           ));
           ?>
         </td>
-        <td></td>
+        <td>
+          <?php
+          echo $this->Form->input('health_program', array(
+            'type' => 'select', 'options' => [
+              'Malaria program' => 'Malaria program', 'National Vaccines and immunisation program' => 'National Vaccines and immunisation program',
+              'Neglected tropical diseases program' => 'Neglected tropical diseases program', 'MNCAH Priority Medicines' => 'MNCAH Priority Medicines', 'TB program' => 'TB program',
+              'NASCOP program' => 'NASCOP program', 'Cancer/Oncology program' => 'Cancer/Oncology program'
+            ], 'empty' => true,
+            'label' => array('class' => 'control-label', 'text' => 'Public Health Program'),
+            'class' => 'input-xlarge'
+          ));  ?>
+        </td>
         <td></td>
         <td></td>
         <td></td>
@@ -353,7 +364,7 @@ echo $this->Session->flash();
       <?php echo $this->Form->create('Padr', array('url' => array('controller' => 'padrs', 'action' => 'upload'), 'type' => 'file', 'class' => 'form-horizontal')); ?>
 
       <div class="modal-body">
-         
+
         <div class="form-group">
           <?php
 
