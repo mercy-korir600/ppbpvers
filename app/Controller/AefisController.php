@@ -821,7 +821,7 @@ class AefisController extends AppController
         ));
         $count++;
         $count = ($count < 10) ? "0$count" : $count;
-        $reference = 'Adverse Event Following Immunization/' . date('Y') . '/' . $count;
+        $reference = 'AEFI/' . date('Y') . '/' . $count;
 
         //ensure that the reference number is unique
         $exists = $this->Aefi->find('count',  array(
@@ -929,13 +929,17 @@ class AefisController extends AppController
 
                         $this->QueuedTask->createJob('GenericEmail', $datum);
                         $this->QueuedTask->createJob('GenericNotification', $datum);
-                        // CakeResque::enqueue('default', 'GenericEmailShell', array('sendEmail', $datum));
-                        // CakeResque::enqueue('default', 'GenericNotificationShell', array('sendNotification', $datum));
                     }
                     //**********************************    END   *********************************
-
-                    $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('action' => 'view', $this->Aefi->id));
+                    // debug($aefi);
+                    $serious = $aefi['Aefi']['serious'];
+                    if ($serious == "Yes") {
+                        $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB. Kindly complete this Investigation Form'), 'alerts/flash_success');
+                        $this->redirect(array('controller' => 'saefis', 'action' => 'add', $this->Aefi->id));
+                    } else {
+                        $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
+                        $this->redirect(array('action' => 'view', $this->Aefi->id));
+                    }
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The Adverse Event Following Immunization has been saved'), 'alerts/flash_success');
@@ -956,6 +960,8 @@ class AefisController extends AppController
         $designations = $this->Aefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
+        // debug($vaccines);
+        // exit;
         $this->set(compact('vaccines'));
     }
 

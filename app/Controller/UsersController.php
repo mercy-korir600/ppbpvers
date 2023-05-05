@@ -33,9 +33,57 @@ class UsersController extends AppController
         parent::beforeFilter();
         // remove initDb
         // $this->initDB();
-        $this->Auth->allow('register', 'login', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder');
+        $this->Auth->allow('register', 'login','api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder');
     }
+    public function api_auth()
+    {
+        # code...
+        $this->RequestHandler->renderAs($this, 'json');
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            if (!isset($data['username']) || !isset($data['password']) || empty($data['username']) || empty($data['password'])) {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Missing username or password', '_serialize' => ['message']]);
+                return;
+            }
 
+            // unset the request and apend new values
+
+            $this->request->data['User']['username'] = $this->request->data['username'];
+            $this->request->data['User']['password'] = $this->request->data['password'];
+            unset($this->request->data['username']);
+            unset($this->request->data['password']);
+
+            if ($this->Auth->login()) {
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                                
+                if ($user) {
+                    // only add the neccessary fields from the user 
+                    $datum=array('id'=>$user['id'],'name'=>$user['name'],'created'=>$user['created']);
+                    $this->set('user', $datum);
+                    $this->set('token', $token);
+                    $this->set('_serialize', array('user', 'token'));
+                } else {
+                    $this->set([
+                        'success' => false,
+                        'data' => $this->request->data,
+                        '_serialize' => ['success', 'data']
+                    ]);
+                }
+            } else {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Invalid username or password', '_serialize' => ['message']]);
+                return;
+            }
+        } else {
+            $this->response->statusCode(405);
+            $this->set([
+                'error' => 'Only POST Request Allowed',
+                '_serialize' => ['error']
+            ]);
+        }
+    }
     public function mpublic()
     {
         $this->render('mpublic');
@@ -1235,6 +1283,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Notifications');
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
+        $this->Acl->allow($group, 'controllers/Saefis');
 
         //Allow reporters to some
         $group->id = 3;
@@ -1304,6 +1353,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Pints/delete');
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
+        $this->Acl->allow($group, 'controllers/Saefis');
 
         //Allow institution administrators to some
         $group->id = 4;
@@ -1336,6 +1386,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Notifications/delete');
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
+        $this->Acl->allow($group, 'controllers/Saefis');
 
 
 
@@ -1379,6 +1430,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Notifications');
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
+        $this->Acl->allow($group, 'controllers/Saefis');
 
         echo "all done";
         exit;

@@ -46,6 +46,7 @@ app/Console/cake acl grant Group.2 controllers/Notifications
 app/Console/cake acl grant Group.2 controllers/Comments 
 app/Console/cake acl grant Group.2 controllers/Reports
 app/Console/cake acl grant Group.2 controllers/AefiDescriptions
+app/Console/cake acl grant Group.2 controllers/Saefis
 
 # Allow reporters to some 
 echo "*************** Assign Reporter Permissions  *******************"
@@ -124,6 +125,7 @@ app/Console/cake acl grant Group.3 controllers/Pints/delete
 app/Console/cake acl grant Group.3 controllers/Comments
 app/Console/cake acl grant Group.3 controllers/Reports
 app/Console/cake acl grant Group.3 controllers/AefiDescriptions
+app/Console/cake acl grant Group.3 controllers/Saefis
 
 # Allow institution administrators to some 
 echo "*************** Assign Institution Managers Permissions  *******************"
@@ -156,6 +158,7 @@ app/Console/cake acl grant Group.4 controllers/Notifications/partner_index
 app/Console/cake acl grant Group.4 controllers/Notifications/delete
 app/Console/cake acl grant Group.4 controllers/Comments
 app/Console/cake acl grant Group.4 controllers/Reports
+app/Console/cake acl grant Group.4 controllers/Saefis
 
  
 
@@ -201,6 +204,7 @@ app/Console/cake acl grant Group.5 controllers/Notifications
 app/Console/cake acl grant Group.5 controllers/Comments 
 app/Console/cake acl grant Group.5 controllers/Reports
 app/Console/cake acl grant Group.5 controllers/AefiDescriptions
+app/Console/cake acl grant Group.5 controllers/Saefis
 
 
 echo "*************** Completed  *******************"

@@ -25,6 +25,12 @@
                         array('controller' => 'aefis', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                     ?>
              </li>
+             <li class="<?php echo $this->fetch('Serious Adverse Event Following Immunization') ?>">
+                <?php
+                    echo $this->Html->link('<i class="fa fa-child" aria-hidden="true"></i> SAEFIs',
+                        array('controller' => 'saefis', 'action'=>'index', 'manager' => true ), array('escape' => false ));
+                    ?>
+             </li>
              <li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
                 <?php
                     echo $this->Html->link('<i class="fa fa-medkit" aria-hidden="true"></i> PQHPTs',

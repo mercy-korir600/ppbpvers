@@ -536,7 +536,132 @@ class PadrsController extends AppController
             throw new MethodNotAllowedException();
         }
     }
+    public function api_submit()
+    {
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $this->Padr->create();
+            $this->_attachments('Padr');
 
+            //add the sender flag
+            $this->request->data['Padr']['device'] = "3"; 
+
+            if ($this->Padr->saveAssociated($this->request->data)) {
+                $count = $this->Padr->find('count',  array('conditions' => array(
+                    'Padr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s"))
+                )));
+                $count++;
+                $count = ($count < 10) ? "0$count" : $count;
+                $this->Padr->saveField('reference_no', 'PADR/' . date('Y') . '/' . $count);
+                $this->Padr->saveField('token', Security::hash($this->Padr->id));
+                $this->Padr->saveField('submitted_date', date("Y-m-d H:i:s"));
+                $this->Padr->saveField('user_id',$this->Auth->User('id'));  
+
+                //******************       Send Emails to Reporter and Managers          *****************************
+                $this->loadModel('Message');
+                $html = new HtmlHelper(new ThemeView());
+                $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_padr_submit')));
+                $padr = $this->Padr->read();
+                $variables = array(
+                    'name' => $padr['Padr']['reporter_name'], 'reference_no' => $padr['Padr']['reference_no'],
+                    'reference_link' => $html->link(
+                        $padr['Padr']['reference_no'],
+                        array('controller' => 'padrs', 'action' => 'view', $padr['Padr']['token'], 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                    'modified' => $padr['Padr']['modified']
+                );
+                $datum = array(
+                    'email' => $padr['Padr']['reporter_email'],
+                    'id' => $this->Padr->id,  'type' => 'reporter_padr_submit', 'model' => 'Padr',
+                    'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                    'message' => CakeText::insert($message['Message']['content'], $variables)
+                );
+
+                $this->loadModel('Queue.QueuedTask');
+                $this->QueuedTask->createJob('GenericEmail', $datum);
+
+                //Send SMS
+                if (!empty($padr['Padr']['reporter_phone']) && strlen(substr($padr['Padr']['reporter_phone'], -9)) == 9 && is_numeric(substr($padr['Padr']['reporter_phone'], -9))) {
+                    $datum['phone'] = '254' . substr($padr['Padr']['reporter_phone'], -9);
+                    $variables['reference_url'] = Router::url(['controller' => 'padrs', 'action' => 'view', $padr['Padr']['token'], 'reporter' => true, 'full_base' => true]);
+                    $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                    $this->QueuedTask->createJob('GenericSms', $datum);
+                }
+
+                //Notify managers
+                $users = $this->Padr->User->find('all', array(
+                    'contain' => array(),
+                    'conditions' => array('User.group_id' => 2)
+                ));
+                foreach ($users as $user) {
+                    $variables = array(
+                        'name' => $user['User']['name'], 'reference_no' => $padr['Padr']['reference_no'],
+                        'reference_link' => $html->link(
+                            $padr['Padr']['reference_no'],
+                            array('controller' => 'padrs', 'action' => 'view', $padr['Padr']['token'], 'manager' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $padr['Padr']['modified']
+                    );
+                    $datum = array(
+                        'email' => $user['User']['email'],
+                        'id' => $this->Padr->id, 'user_id' => $user['User']['id'], 'type' => 'reporter_padr_submit', 'model' => 'Padr',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+                }
+                //**********************************    END   *********************************
+
+                $hey = array('reference' => $padr['Padr']['reference_no']);
+
+                $this->set([
+                    'status' => 'success',
+                    'message' => 'The PADR has been submitted to PPB',
+                    'padr' => $hey,
+                    '_serialize' => ['status', 'message', 'padr']
+                ]);
+            } else {
+                $this->set([
+                    'status' => 'failed',
+                    'message' => 'The PADR could not be saved',
+                    'validation' => $this->Padr->validationErrors,
+                    'padr' => $this->request->data,
+                    '_serialize' => ['status', 'message', 'validation', 'padr']
+                ]);
+            }
+        } else {
+            throw new MethodNotAllowedException();
+        }
+    }
+    public function api_list() {
+        $this->Prg->commonProcess();
+        if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
+        if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
+            else $this->paginate['limit'] = reset($this->page_options);
+
+
+        $criteria = $this->Padr->parseCriteria($this->passedArgs);
+        $criteria['Padr.user_id'] = $this->Auth->User('id');  
+        $columns = ['id','user_id','reference_no','reporter_name','reporter_email',
+        'reporter_phone','county_id','relation','patient_name','gender','date_of_birth','age_group',
+        'report_sadr','description_of_reaction','reaction_on','any_other_comment','sadr_vomiting',
+        'sadr_dizziness','sadr_headache','sadr_joints','sadr_rash','sadr_mouth','sadr_stomach',
+        'sadr_urination','sadr_eyes','sadr_died','pqmp_label','pqmp_material','pqmp_color',
+        'pqmp_smell','pqmp_working','pqmp_bottle','date_of_onset_of_reaction','report_title',
+        'outcome','date_of_end_of_reaction','created'];    
+        $this->paginate['conditions'] = $criteria;
+        $this->paginate['fields'] = $columns;
+        $this->paginate['contain'] = array('County'=>['id','county_name'],'PadrListOfMedicine'); 
+        $this->paginate['order'] = array('Padr.created' => 'desc'); 
+        
+        $this->set([
+            'page_options', $this->page_options,
+            'padrs' => Sanitize::clean($this->paginate(), array('encode' => false)),
+            '_serialize' => ['padrs', 'page_options']]);
+    }
     /**
      * edit method
      *
