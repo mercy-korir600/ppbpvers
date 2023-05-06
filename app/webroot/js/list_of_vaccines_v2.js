@@ -34,32 +34,9 @@ $(function() {
         step: 15
       });
 
-      /*var availableVax = [
-        "BCG",
-        "bOPV (Bivalent Oral Polio Vaccine)",
-        "Pentavalent (DTP-HepB-Hib)",
-        "PCV (Pneumoccocal Conjugate Vaccine)",
-        "IPV (Inactivated Polio Vaccine)",
-        "Measles Rubella (MR)",
-        "Yellow Fever",
-        "Rotavirus",
-        "Malaria Vaccine (RTSS)",
-        "HPV (Human Papilloma Virus)",
-        "Tetanus Diphtheria",
-        "Anti-Rabies Vaccine",
-        "Typhoid Vaccine",
-        "Hepatitis B vaccine",
-        "Influenza vaccine"
-      ];
-      $('.vaxname').autocomplete({
-        source: availableVax
-      });*/
+    
 
-      var dates3 = 0;     //TODO:search for date time fields and use
-      // $('.datetime-field').datetimepicker({
-      //   //format: 'd-m-Y'
-      //   format: 'd-m-Y H:i'
-      // });
+      var dates3 = 0;   
 
     }
 
@@ -86,8 +63,7 @@ $(function() {
 
     function constructLOVTr(intId) {
         var intId2 = intId + 1;
-        // <div class="col-xs-6"> <input class="form-control date-pick-field" name="aefi_list_of_vaccines[{i}][vaccination_date]" id="aefi-list-of-vaccines-{i}-vaccination-date" type="text"></div>\
-                // <div class="col-xs-6"> <input class="form-control " name="aefi_list_of_vaccines[{i}][vaccination_time]" id="aefi-list-of-vaccines-{i}-vaccination-time" placeholder="14:00" type="text" ></div> </td>\
+        
             
         var trWrapper = $('\
           <tr>\
