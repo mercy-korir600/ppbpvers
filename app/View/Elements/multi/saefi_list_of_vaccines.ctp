@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\Aefi $aefi
  */
     // $this->Html->script('multi/list_of_aefis', array('inline' => false));
-  $this->Html->script('list_of_vaccines_v3', array('inline' => false));
+  $this->Html->script('list_of_vaccines_saefi', array('inline' => false));
 ?>
     <div class="row-fluid">
       <div class="span12">

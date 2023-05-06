@@ -63,7 +63,7 @@
                 <div class="span4 lefty">
                 <?php  
                     echo $this->element('comments/add', [
-                                 'model' => ['model_id' => $aefi['Saefi']['id'], 'foreign_key' => $saefi['Saefi']['id'],   
+                                 'model' => ['model_id' => $saefi['Saefi']['id'], 'foreign_key' => $saefi['Saefi']['id'],   
                                              'model' => 'Saefi', 'category' => 'external', 'url' => 'report_feedback']]) 
                 ?>
                 </div>

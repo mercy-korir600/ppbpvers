@@ -55,14 +55,6 @@ class Saefi extends AppModel {
  */
 	public $validate = array(
 
-		'date_of_birth' => array(
-            'ageOrDate' => array(
-                'rule'     => 'ageOrDate',
-                // 'required' => false,
-				'allowEmpty' => true,
-                'message'  => 'Please specify the patient\'s date / Year of birth or age in months'
-            ),
-        ),
 		'province_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
@@ -75,11 +67,27 @@ class Saefi extends AppModel {
 				'message' => 'Please specify your designation',
 			),
 		),
+		'patient_name' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please specify the patient\'s gender'
+            ),
+        ),
 		'gender' => array(
             'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
                 'message'  => 'Please specify the patient\'s gender'
+            ),
+        ),
+
+		'date_of_birth' => array(
+            'ageOrDate' => array(
+                'rule'     => 'ageOrDate',
+                // 'required' => false,
+				'allowEmpty' => true,
+                'message'  => 'Please specify the patient\'s date / Year of birth or age in months'
             ),
         ),
 		'list' => array(
@@ -89,50 +97,50 @@ class Saefi extends AppModel {
                 'message'  => 'Please add at least one vaccine below'
             ),
         ),
-		'reporter_name' => array(
-            'notBlank' => array(
-                'rule'     => 'notBlank',
-                'required' => true,
-                'message'  => 'Please provide the name of the reporter'
-            ),
-        ),
-        'reporter_date' => array(
-            'notBlank' => array(
-                'rule'     => 'notBlank',
-                'required' => true,
-                'message'  => 'Please provide the date of submission of the report'
-            ),
-        ),
-		'reporter_email' => array(
-            'notBlank' => array(
-                'rule'     => 'email',
-                'required' => true,
-                'message'  => 'Please provide a valid email address'
-            ),
-        ),
-        'reporter_phone' => array(
-            'notBlank' => array(
-                'rule'     => 'notBlank',
-                'required' => true,
-                'message'  => 'Please provide a valid phone number'
-            ),
-        ),
+		// 'reporter_name' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'notBlank',
+        //         'required' => true,
+        //         'message'  => 'Please provide the name of the reporter'
+        //     ),
+        // ),
+        // 'reporter_date' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'notBlank',
+        //         'required' => true,
+        //         'message'  => 'Please provide the date of submission of the report'
+        //     ),
+        // ),
+		// 'reporter_email' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'email',
+        //         'required' => true,
+        //         'message'  => 'Please provide a valid email address'
+        //     ),
+        // ),
+        // 'reporter_phone' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'notBlank',
+        //         'required' => true,
+        //         'message'  => 'Please provide a valid phone number'
+        //     ),
+        // ),
 
         //ensure reporter phone is numeric and 10 digits
-        'reporter_phone' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'Please provide a valid phone number',
-            ),
-            'minLength' => array(
-                'rule' => array('minLength', 10),
-                'message' => 'Please provide a valid phone number',
-            ),
-            'maxLength' => array(
-                'rule' => array('maxLength', 10),
-                'message' => 'Please provide a valid phone number',
-            ),
-        ),
+        // 'reporter_phone' => array(
+        //     'numeric' => array(
+        //         'rule' => array('numeric'),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        //     'minLength' => array(
+        //         'rule' => array('minLength', 10),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        //     'maxLength' => array(
+        //         'rule' => array('maxLength', 10),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        // ),
 		 
 	);
 	public function atLeastOneVaccine($field = null) {
@@ -260,6 +268,12 @@ class Saefi extends AppModel {
 		if (!empty($this->data[$this->alias]['reporter_date'])) {
 			$this->data[$this->alias]['reporter_date'] = date('Y-m-d', strtotime($this->data[$this->alias]['reporter_date']));
 		}
+
+		if (!empty($this->data[$this->alias]['complete_date'])) {
+			$this->data[$this->alias]['complete_date'] = date('Y-m-d', strtotime($this->data[$this->alias]['complete_date']));
+		}
+
+		
 		// if (!empty($this->data[$this->alias]['time_of_first_symptom'])) {
 		// 	$this->data[$this->alias]['time_of_first_symptom'] = date('H:i:s', strtotime($this->data[$this->alias]['time_of_first_symptom']));
 		// }

@@ -845,10 +845,10 @@ class AefisController extends AppController
             throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
         }
         $aefi = $this->Aefi->read(null, $id);
-        if ($aefi['Aefi']['submitted'] > 1) {
-            $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted'), 'alerts/flash_info');
-            $this->redirect(array('action' => 'view', $this->Aefi->id));
-        }
+        // if ($aefi['Aefi']['submitted'] > 1) {
+        //     $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted'), 'alerts/flash_info');
+        //     $this->redirect(array('action' => 'view', $this->Aefi->id));
+        // }
         if ($aefi['Aefi']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this Adverse Event Following Immunization!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -860,6 +860,8 @@ class AefisController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
+            // debug($this->request->data);
+            // exit;
             if ($this->Aefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Aefi->saveField('submitted', 2);

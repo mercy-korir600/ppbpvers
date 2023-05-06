@@ -421,8 +421,10 @@ echo $this->Form->create('Saefi', array(
 					  'label' => array('class' => 'control-label required', 'text' => 'Date and time of first/key symptom <span style="color:red;">*</span>'),));
 					  echo $this->Form->input('status_on_date', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'status_on_date',
-						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Status on the date of investigation (✓):<span style="color:red;">*</span></label> </div>
-												<div class="controls">  <input type="hidden" value="" id="status_on_date" name="status_on_date"> <label class="radio inline">',
+
+						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Status on the date of investigation (✓):</label> </div>
+												<div class="controls">   <label class="radio inline">',
+ 
 						'after' => '</label>',
 						'options' => array('Died' => 'Died'),
 					));
@@ -971,7 +973,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('pregnant', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'pregnant',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Currently pregnant?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="pregnant" name="pregnant"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -997,8 +999,10 @@ echo $this->Form->create('Saefi', array(
 			  <?php 
 					 echo $this->Form->input('breastfeeding', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'breastfeeding',
-						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Currently breastfeeding? </label> </div>
-												<div class="controls">  <input type="hidden" value="" id="breastfeeding" name="breastfeeding"> <label class="radio inline">',
+ 
+						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Currently breastfeeding?</label> </div>
+												<div class="controls">   <label class="radio inline">',
+ 
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -1044,7 +1048,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('infant', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'infant',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">The birth was:</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="infant" name="infant"> <label class="radio inline">',
+												<div class="controls"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('full-term' => 'full-term'),
 					));
@@ -1071,7 +1075,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('delivery_procedure', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'delivery_procedure',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Delivery procedure was:</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="delivery_procedure" name="delivery_procedure"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Normal' => 'Normal'),
 					));
@@ -1311,7 +1315,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'when_vaccinated',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="when_vaccinated" name="when_vaccinated"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'Within the first vaccinations of the session' => 'Within the first vaccinations of the session',
@@ -1324,7 +1328,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'when_vaccinated',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="when_vaccinated" name="when_vaccinated"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'Within the last vaccinations of the session' => 'Within the last vaccinations of the session',
@@ -1337,7 +1341,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'when_vaccinated',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="when_vaccinated" name="when_vaccinated"> <label class="radio inline">',
+												<div class="controls">    <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'Unknown' => 'Unknown'
@@ -1358,7 +1362,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'vaccine_given',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="vaccine_given" name="vaccine_given"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'within the first few doses of the vial administered' => 'within the first few doses of the vial administered',
@@ -1371,7 +1375,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'vaccine_given',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="vaccine_given" name="vaccine_given"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'within the last doses of the vial administered' => 'within the last doses of the vial administered',
@@ -1384,7 +1388,7 @@ echo $this->Form->create('Saefi', array(
 						'div' => false, 'hiddenField' => false, 
 						'error' => false, 'class' => 'vaccine_given',
 						'before' => ' </div>
-												<div class="controls">  <input type="hidden" value="" id="vaccine_given" name="vaccine_given"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => [
 							'Unknown' => 'Unknown'
@@ -1830,7 +1834,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('syringes_used', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'syringes_used',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Are AD syringes used for immunization?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="syringes_used" name="syringes_used"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -1864,7 +1868,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('syringes_used_specify', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'syringes_used_specify',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">If no, specify the type of syringes used:</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="syringes_used_specify" name="syringes_used_specify"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Glass' => 'Glass'),
 					));
@@ -1905,7 +1909,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('reconstitution_multiple', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'reconstitution_multiple',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Same reconstitution syringe used for multiple vials of same vaccine?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="reconstitution_multiple" name="reconstitution_multiple"> <label class="radio inline">',
+												<div class="controls"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -1933,7 +1937,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('reconstitution_different', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'reconstitution_different',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Same reconstitution syringe used for reconstituting different vaccines?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="reconstitution_different" name="reconstitution_different"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -1963,7 +1967,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('reconstitution_vial', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'reconstitution_vial',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Separate reconstitution syringe for each vaccine vial?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="reconstitution_vial" name="reconstitution_vial"> <label class="radio inline">',
+												<div class="controls"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -1991,7 +1995,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('reconstitution_syringe', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'reconstitution_syringe',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Separate reconstitution syringe for each vaccination?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="reconstitution_syringe" name="reconstitution_syringe"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2021,7 +2025,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('reconstitution_vaccines', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'reconstitution_vaccines',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Are the vaccines and diluents used the same as those recommended by the manufacturer?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="reconstitution_vaccines" name="reconstitution_vaccines"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2059,7 +2063,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('injection_dose_route', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'injection_dose_route',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Correct dose and route?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="injection_dose_route" name="injection_dose_route"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2082,7 +2086,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('injection_time_mentioned', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'injection_time_mentioned',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Time of reconstitution mentioned on the vial? (in case of freeze dried vaccines)</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="injection_time_mentioned" name="injection_time_mentioned"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2106,7 +2110,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('injection_no_touch', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'injection_no_touch',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Non-touch technique followed?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="injection_no_touch" name="injection_no_touch"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2129,7 +2133,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('injection_contraindications', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'injection_contraindications',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Contraindications screened prior to vaccination?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="injection_contraindications" name="injection_contraindications"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2164,7 +2168,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('injection_vaccines', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'injection_vaccines',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Training received by the vaccinator?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="injection_vaccines" name="injection_vaccines"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2219,7 +2223,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('cold_temperature', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'cold_temperature',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Is the temperature of the vaccine storage refrigerator monitored?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="cold_temperature" name="cold_temperature"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2249,7 +2253,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('procedure_followed', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'procedure_followed',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Was the correct procedure for storing vaccines, diluents and syringes followed?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="procedure_followed" name="procedure_followed"> <label class="radio inline">',
+												<div class="controls">  <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2277,7 +2281,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('other_items', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'other_items',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Was any other item (other than EPI vaccines and diluents) in the refrigerator or freezer?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="other_items" name="other_items"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2307,7 +2311,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('partial_vaccines', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'partial_vaccines',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Were any partially used reconstituted vaccines in the refrigerator?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="partial_vaccines" name="partial_vaccines"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2335,7 +2339,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('unusable_vaccines', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'unusable_vaccines',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Were any unusable vaccines (expired, no label, VVM at stages 3 or 4, frozen) in the refrigerator?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="unusable_vaccines" name="unusable_vaccines"> <label class="radio inline">',
+												<div class="controls"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2365,7 +2369,7 @@ echo $this->Form->create('Saefi', array(
 				echo $this->Form->input('unusable_diluents', array(
 					'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'unusable_diluents',
 					'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Were any unusable diluents (expired, manufacturer not matched, cracked, dirty ampoule) in the store?</label> </div>
-											<div class="controls">  <input type="hidden" value="" id="unusable_diluents" name="unusable_diluents"> <label class="radio inline">',
+											<div class="controls">   <label class="radio inline">',
 					'after' => '</label>',
 					'options' => array('Yes' => 'Yes'),
 				));
@@ -2403,7 +2407,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('cold_transportation', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'cold_transportation',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Was cold chain properly maintained during transportation?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="cold_transportation" name="cold_transportation"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2431,7 +2435,7 @@ echo $this->Form->create('Saefi', array(
 					 echo $this->Form->input('vaccine_carrier', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'vaccine_carrier',
 						'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Was the vaccine carrier sent to the site on the same day as vaccination?</label> </div>
-												<div class="controls">  <input type="hidden" value="" id="vaccine_carrier" name="vaccine_carrier"> <label class="radio inline">',
+												<div class="controls">   <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -2461,7 +2465,7 @@ echo $this->Form->create('Saefi', array(
 				echo $this->Form->input('coolant_packs', array(
 					'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'coolant_packs',
 					'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Were conditioned coolant-packs used?</label> </div>
-											<div class="controls">  <input type="hidden" value="" id="coolant_packs" name="coolant_packs"> <label class="radio inline">',
+											<div class="controls">   <label class="radio inline">',
 					'after' => '</label>',
 					'options' => array('Yes' => 'Yes'),
 				));
