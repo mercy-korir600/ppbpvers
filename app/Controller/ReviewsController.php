@@ -76,4 +76,8 @@ class ReviewsController extends AppController
 	public function manager_add() {
         $this->add();
     }
+	public function reporter_add() {
+        $this->add();
+    }
 }
+

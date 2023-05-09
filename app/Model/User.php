@@ -88,6 +88,11 @@ class User extends AppModel {
 			'foreignKey' => 'user_id',
 			'dependent' => false,
 		),
+		'Saefi' => array(
+			'className' => 'Saefi',
+			'foreignKey' => 'user_id',
+			'dependent' => false,
+		),
 		'Device' => array(
 			'className' => 'Device',
 			'foreignKey' => 'user_id',

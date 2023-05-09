@@ -16,7 +16,7 @@ class SaefisController extends AppController
      *
      * @var mixed
      */
-   
+
     public $components = array('Search.Prg');
     public $paginate = array();
     public $presetVars = true;
@@ -39,7 +39,17 @@ class SaefisController extends AppController
 
         $criteria = $this->Saefi->parseCriteria($this->passedArgs);
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Saefi.submitted'] = array(2);
-        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Saefi.user_id'] = $this->Auth->User('id');
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+
+            // check if county pharmacist
+            if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { 
+                $criteria['Saefi.submitted'] = array(2);
+                $criteria['Saefi.province_id'] = $this->Auth->User('county_id');
+            }else{
+                $criteria['Saefi.user_id'] = $this->Auth->User('id');
+            }
+
+        } 
 
         // Added criteria for reporter
         $criteria['Saefi.deleted'] = false;
@@ -51,7 +61,7 @@ class SaefisController extends AppController
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Saefi.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
+        $this->paginate['contain'] = array('County', 'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'Designation');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -64,8 +74,8 @@ class SaefisController extends AppController
         $this->set('page_options', $this->page_options);
         $counties = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
         $this->set(compact('counties'));
-        $sub_counties = $this->Saefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
-        $this->set(compact('sub_counties'));
+        // $sub_counties = $this->Saefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        // $this->set(compact('sub_counties'));
         $designations = $this->Saefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
         $this->set('saefis', Sanitize::clean($this->paginate(), array('encode' => false)));
@@ -205,7 +215,7 @@ class SaefisController extends AppController
                 $validate = 'first';
             }
 
-            $data=$this->request->data;
+            $data = $this->request->data;
             // debug($data);
             // exit;
             if ($this->Saefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
@@ -331,7 +341,7 @@ class SaefisController extends AppController
         $aefi = $this->Saefi->find('first', array(
             'conditions' => array('Saefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County', 'Attachment', 'Designation', 'ExternalComment',
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County', 'Review', 'Review.User', 'Review.Attachment',  'Attachment', 'Designation', 'ExternalComment',
 
             )
         ));
@@ -367,7 +377,7 @@ class SaefisController extends AppController
         $saefi = $this->Saefi->find('first', array(
             'conditions' => array('Saefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County','Review' ,'Review.User','Review.Attachment','Attachment', 'Designation', 'ExternalComment',
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County', 'Review', 'Review.User', 'Review.Attachment', 'Attachment', 'Designation', 'ExternalComment',
 
             )
         ));
@@ -516,7 +526,7 @@ class SaefisController extends AppController
         $this->Saefi->recursive = 1;
         $aefi = $this->Saefi->read(null, $id);
 
-        $data_save=$this->request->data;
+        $data_save = $this->request->data;
         // debug($data_save);
         // exit;
 
@@ -527,6 +537,5 @@ class SaefisController extends AppController
             $this->Session->setFlash(__('Failed to Post the Review,please try again'), 'alerts/flash_error');
             return $this->redirect($this->referer());
         }
-        
     }
 }

@@ -809,6 +809,26 @@ class UsersController extends AppController
         ));
         $this->set('aefis', $aefis);
 
+        // SAEFIs Reports
+        $saefis = $this->User->Saefi->find('all', array(
+            'limit' => 7, 'contain' => array(),
+            'fields' => array('Saefi.id', 'Saefi.user_id', 'Saefi.created', 'Saefi.submitted', 'Saefi.reference_no', 'Saefi.created'),
+            'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
+            'order' => array('Saefi.created' => 'desc'),
+            'conditions' => array(
+                // only show Reports that have been not been deleted
+                'Saefi.deleted' => false, 
+                'OR' => array(
+                    'Saefi.user_id' => $this->Auth->User('id'),
+                    'Saefi.province_id' =>  $this->Auth->User('county_id'),
+                )
+              
+            ),
+        ));
+        $this->set('saefis', $saefis);
+
+        
+
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.brand_name', 'Pqmp.reference_no', 'Pqmp.created', 'Pqmp.product_formulation', 'Pqmp.therapeutic_ineffectiveness', 'Pqmp.particulate_matter'),

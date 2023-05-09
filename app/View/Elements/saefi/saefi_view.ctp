@@ -15,7 +15,7 @@
 					<td style="text-align: center;">
 						<h2>MINISTRY OF HEALTH</h2>
 						<p class="lead">UNIT OF VACCINES AND IMMUNIZATION SERVICES</p>
-						<h3>AEFI Reporting Form</h3>
+						<h3>AEFI INVESTIGATION FORM</h3>
 					</td>
 					<td>
 						<?php
