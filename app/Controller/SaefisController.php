@@ -363,7 +363,7 @@ class SaefisController extends AppController
         $saefi = $this->Saefi->find('first', array(
             'conditions' => array('Saefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County', 'Attachment', 'Designation', 'ExternalComment',
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County','Review' ,'Review.User','Review.Attachment','Attachment', 'Designation', 'ExternalComment',
 
             )
         ));
@@ -502,5 +502,27 @@ class SaefisController extends AppController
         $this->set(compact('designations'));
         $vaccines = $this->Saefi->AefiListOfVaccine->Vaccine->find('list');
         $this->set(compact('vaccines'));
+    }
+
+
+    // Reviews
+    public function manager_review($id = null)
+    {
+        # code...
+        $this->Saefi->recursive = 1;
+        $aefi = $this->Saefi->read(null, $id);
+
+        $data_save=$this->request->data;
+        // debug($data_save);
+        // exit;
+
+        if ($this->Saefi->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+            $this->Session->setFlash(__('Review successfully submitted'), 'alerts/flash_info');
+            return $this->redirect(array('action' => 'view', $this->Saefi->id));
+        } else {
+            $this->Session->setFlash(__('Failed to Post the Review,please try again'), 'alerts/flash_error');
+            return $this->redirect($this->referer());
+        }
+        
     }
 }

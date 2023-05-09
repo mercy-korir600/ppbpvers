@@ -238,7 +238,7 @@ $this->assign('SAEFI', 'active');
       <?php
       echo $this->Paginator->counter(array(
         'format' => __('Page <span class="badge">{:page}</span> of <span class="badge">{:pages}</span>,
-                showing <span class="badge">{:current}</span> AEFIs out of
+                showing <span class="badge">{:current}</span> SAEFIs out of
                 <span class="badge badge-inverse">{:count}</span> total, starting on record <span class="badge">{:start}</span>,
                 ending on <span class="badge">{:end}</span>')
       ));
@@ -263,12 +263,6 @@ $this->assign('SAEFI', 'active');
           <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
           <th><?php echo $this->Paginator->sort('report_type'); ?></th>
           <th><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? $this->Paginator->sort('patient_name') : $this->Paginator->sort('gender'); ?></th>
-          <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
-
-            <th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th>
-            <!-- <th><?php echo $this->Paginator->sort('webradr_ref'); ?></th> -->
-
-          <?php } ?>
           <th><?php echo $this->Paginator->sort('reporter_date', 'Date reported'); ?></th>
           <th><?php echo $this->Paginator->sort('created', 'Date created'); ?></th>
           <th><?php echo $this->Paginator->sort('submitted_date', 'Date Submitted'); ?></th>
@@ -300,12 +294,7 @@ $this->assign('SAEFI', 'active');
                 ?>&nbsp;
             </td>
             <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($aefi['Saefi']['patient_name']) : $aefi['Saefi']['gender']; ?>&nbsp;</td>
-            <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
-              <td><?php echo h($aefi['Saefi']['vigiflow_ref']);
-                  echo "\n" . $aefi['Saefi']['vigiflow_date']; ?></td>
-              <!-- <td> <?php echo h($aefi['Saefi']['webradr_ref']);
-                        echo "\n" . $aefi['Saefi']['webradr_date']; ?></td> -->
-            <?php } ?>
+             
             <td><?php echo h($aefi['Saefi']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($aefi['Saefi']['created']); ?>&nbsp;</td>
             <td><?php echo h($aefi['Saefi']['submitted_date']); ?>&nbsp;</td>
@@ -316,27 +305,10 @@ $this->assign('SAEFI', 'active');
                   '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
                   array('controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id']),
                   array('escape' => false)
-                );
-                echo "&nbsp;";
-                if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'saefis', 'action' => 'download', $aefi['Saefi']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
-                echo "&nbsp;";
-                if (($redir == 'manager' || $redir == 'reviewer') && empty($aefi['Saefi']['vigiflow_ref']) && $aefi['Saefi']['copied'] == 2) echo $this->Html->link(
-                  '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
-                  array('controller' => 'saefis', 'action' => 'vigiflow', $aefi['Saefi']['id'], 'manager' => false),
-                  array('escape' => false)
-                );
-                // echo "&nbsp;";
-                // if ($redir == 'manager' && empty($aefi['Saefi']['webradr_ref']) && $aefi['Saefi']['copied'] == 2) echo $this->Html->link(
-                //   '<span class="label label-info tooltipper" title="Send to yello card"><i class="fa fa-upload" aria-hidden="true"></i> Yellow Card </span>',
-                //   array('controller' => 'saefis', 'action' => 'yellowcard', $aefi['Saefi']['id'], 'manager' => false),
-                //   array('escape' => false)
-                // );
+                ); 
                 echo "&nbsp;";
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'saefis', 'action' => 'followup', $aefi['Saefi']['id']), array('escape' => false), __('Add a followup report?'));
-                echo "&nbsp;";
-                // if($redir == 'manager') echo $this->Html->link('<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>' ,
-                //   array('controller' => 'saefis', 'action' => 'edit', $aefi['Saefi']['id']),
-                //   array('escape' => false));
+                echo "&nbsp;"; 
                 if (($redir == 'manager' || $redir == 'reviewer') && $aefi['Saefi']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Copy & Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                   array('controller' => 'saefis', 'action' => 'edit', $aefi['Saefi']['id']),
