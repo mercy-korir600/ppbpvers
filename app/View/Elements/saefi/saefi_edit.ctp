@@ -504,6 +504,7 @@ echo $this->Form->create('Saefi', array(
             </div>
         </div>
          <!-- End of Row -->
+		 
 		<!-- Start of Row -->
 		<div class="row-fluid">
             <div class="span6">

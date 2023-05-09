@@ -204,7 +204,11 @@ class SaefisController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
-            if ($this->Saefi->save($this->request->data, array('validate' => $validate, 'deep' => true))) {
+
+            $data=$this->request->data;
+            // debug($data);
+            // exit;
+            if ($this->Saefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
 
                 if (isset($this->request->data['submitReport'])) {
                     $this->Saefi->saveField('submitted', 2);
@@ -470,7 +474,7 @@ class SaefisController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
-            if ($this->Saefi->save($this->request->data, array('validate' => $validate, 'deep' => true))) {
+            if ($this->Saefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Saefi->saveField('submitted', 2);
                     $this->Saefi->saveField('submitted_date', date("Y-m-d H:i:s"));
