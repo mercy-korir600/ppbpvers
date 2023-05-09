@@ -17,7 +17,50 @@ class PqmpsController extends AppController
     public $paginate = array();
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
+    
+    public function beforeFilter()
+    {
+        parent::beforeFilter(); 
+        $this->Auth->allow('reset_reference_numbers');
+    }
 
+    public function reset_reference_numbers($id = null)
+    {
+        # code...
+        $this->Pqmp->id = $id;
+        if (!$this->Pqmp->exists()) {
+            throw new NotFoundException(__('Invalid Pqmp'));
+        }
+        $this->Pqmp->saveField('submitted', 2);
+        $this->Pqmp->saveField('submitted_date', date("Y-m-d H:i:s"));
+        //lucian
+        $Pqmp = $this->Pqmp->read(null, $id);
+         
+        if (!empty($Pqmp['Pqmp']['reference_no']) && $Pqmp['Pqmp']['reference_no'] == 'new') {
+             
+            $count = $this->Pqmp->find('count',  array(
+                'fields' => 'Pqmp.reference_no',
+                'conditions' => array(
+                    'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                )
+            ));
+            $count++;
+            $count = ($count < 10) ? "0$count" : $count;
+            $reference_no = 'PQMP/' . date('Y') . '/' . $count;
+            $this->Pqmp->saveField('reference_no', $reference_no); 
+        }
+        //bokelo
+        $pqmp = $this->Pqmp->read(null, $id);
+       
+
+        $user = $this->Pqmp->User->find('first', array(
+            'contain' => array(),
+            'conditions' => array('User.id' =>  $pqmp['Pqmp']['user_id'])
+        ));
+        debug($pqmp);
+        debug($user);
+        exit;
+    }
     /*public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('add', 'edit','view', 'find', 'download');
@@ -360,7 +403,7 @@ class PqmpsController extends AppController
     }
 
 
-    public function generate_reference()
+    public function generate_reference($id)
     {
         # code...
         $count = $this->Pqmp->find('count',  array(
@@ -387,10 +430,10 @@ class PqmpsController extends AppController
             throw new NotFoundException(__('Invalid PQMP'));
         }
         $pqmp = $this->Pqmp->read(null, $id);
-        // if ($pqmp['Pqmp']['submitted'] > 1) {
-        //     $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
-        //     $this->redirect(array('action' => 'view', $this->Pqmp->id));
-        // }
+        if ($pqmp['Pqmp']['submitted'] > 1) {
+            $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Pqmp->id));
+        }
         if ($pqmp['Pqmp']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this PQMP!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -406,8 +449,17 @@ class PqmpsController extends AppController
                     $this->Pqmp->saveField('submitted_date', date("Y-m-d H:i:s"));
                     //lucian
                     if (!empty($pqmp['Pqmp']['reference_no']) && $pqmp['Pqmp']['reference_no'] == 'new') {
-                        $reference = $this->generate_reference();
-                        $this->Pqmp->saveField('reference_no', $reference);
+                        // $reference = $this->generate_reference();
+                        $count = $this->Pqmp->find('count',  array(
+                            'fields' => 'Pqmp.reference_no',
+                            'conditions' => array(
+                                'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $reference_no = 'PQMP/' . date('Y') . '/' . $count;
+                        $this->Pqmp->saveField('reference_no', $reference_no);
                     }
                     //bokelo
                     $pqmp = $this->Pqmp->read(null, $id);
@@ -514,7 +566,7 @@ class PqmpsController extends AppController
         $save_data['Pqmp']['user_id'] = $this->Auth->user('id');
         $save_data['Pqmp']['submitted'] = 2;
         //lucian
-        if (empty($save_data['Pqmp']['reference_no'])) {
+        // if (empty($save_data['Pqmp']['reference_no'])) {
             $count = $this->Pqmp->find('count',  array(
                 'fields' => 'Pqmp.reference_no',
                 'conditions' => array(
@@ -524,7 +576,7 @@ class PqmpsController extends AppController
             $count++;
             $count = ($count < 10) ? "0$count" : $count;
             $save_data['Pqmp']['reference_no'] = 'PQMP/' . date('Y') . '/' . $count;
-        }
+        // }
         // $save_data['Pqmp']['report_type'] = 'Initial';
         //bokelo
 

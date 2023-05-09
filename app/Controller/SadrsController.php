@@ -77,9 +77,9 @@ class SadrsController extends AppController
             'message' => CakeText::insert($message['Message']['content'], $variables)
         );
 
-        $this->loadModel('Queue.QueuedTask');
-        $this->QueuedTask->createJob('GenericEmail', $datum);
-        $this->QueuedTask->createJob('GenericNotification', $datum);
+        // $this->loadModel('Queue.QueuedTask');
+        // $this->QueuedTask->createJob('GenericEmail', $datum);
+        // $this->QueuedTask->createJob('GenericNotification', $datum);
         debug($user); 
         debug($datum);
         exit;
@@ -597,8 +597,17 @@ class SadrsController extends AppController
                     //lucian
                     // if(empty($sadr->reference_no)) {
                     if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
-                        $reference = $this->generate_reference();
-                        $this->Sadr->saveField('reference_no', $reference); 
+                        // $reference = $this->generate_reference();
+                        $count = $this->Sadr->find('count',  array(
+                            'fields' => 'Sadr.reference_no',
+                            'conditions' => array(
+                                'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++; 
+                  $count = ($count < 10) ? "0$count" : $count;
+                          $reference_number = 'SADR/' . date('Y') . '/' . $count;
+                        $this->Sadr->saveField('reference_no', $reference_number); 
                     }
                     //bokelo
                     $sadr = $this->Sadr->read(null, $id);
@@ -748,7 +757,7 @@ class SadrsController extends AppController
         $save_data['Sadr']['user_id'] = $this->Auth->user('id');
         $save_data['Sadr']['submitted'] = 2;
         //lucian
-        if (empty($save_data['Sadr']['reference_no'])) {
+        // if (empty($save_data['Sadr']['reference_no'])) {
             $count = $this->Sadr->find('count',  array(
                 'fields' => 'Sadr.reference_no',
                 'conditions' => array(
@@ -758,7 +767,7 @@ class SadrsController extends AppController
             $count++;
             $count = ($count < 10) ? "0$count" : $count;
             $save_data['Sadr']['reference_no'] = 'SADR/' . date('Y') . '/' . $count;
-        }
+        // }
         // $save_data['Sadr']['report_type'] = 'Initial';
         //bokelo
 

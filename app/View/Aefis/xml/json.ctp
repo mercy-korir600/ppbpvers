@@ -236,7 +236,7 @@ echo "\n"; ?>
             <drugauthorizationcountry></drugauthorizationcountry>
             <drugauthorizationholder></drugauthorizationholder>
             <drugstructuredosagenumb><?php echo $listOfVaccine['dosage']; ?></drugstructuredosagenumb>
-            <drugstructuredosageunit></drugstructuredosageunit>
+            <drugstructuredosageunit>012</drugstructuredosageunit>
             <drugseparatedosagenumb></drugseparatedosagenumb>
             <drugintervaldosageunitnumb></drugintervaldosageunitnumb>
             <drugintervaldosagedefinition></drugintervaldosagedefinition>

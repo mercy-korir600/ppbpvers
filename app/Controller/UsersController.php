@@ -122,9 +122,7 @@ class UsersController extends AppController
     }
     public function login()
     {
-        //    $this-> initDB();
-        //     debug('user');
-        //     exit;
+      
 
         if ($this->Session->read('Auth.User')) {
             $this->Session->setFlash('You are logged in!', 'alerts/flash_success');
@@ -183,9 +181,7 @@ class UsersController extends AppController
 
     public function api_login()
     {
-        // if (!class_exists('JWT')) {
-        //     throw new RuntimeException('Your desired vendor library cannot be found');
-        // }
+         
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
                 $user = $this->Auth->User();
@@ -1008,6 +1004,9 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+        // debug(';manager');
+        // debug($id);
+        // exit;
         $this->User->id = $id;
         if (!$this->User->exists()) {
             $this->Session->setFlash(__('The user does not exist.'), 'flash_info');
@@ -1017,8 +1016,7 @@ class UsersController extends AppController
             $this->Session->setFlash(__('You do not have permission to edit this user!'), 'flash_info');
             $this->redirect('/', null, false);
         }
-        if ($this->request->is('post') || $this->request->is('put')) {
-            // $this->request->data['User']['group_id'] = 2;
+        if ($this->request->is('post') || $this->request->is('put')) { 
             unset($this->User->validate['username']);
             unset($this->User->validate['password']);
             unset($this->User->validate['confirm_password']);
@@ -1028,7 +1026,8 @@ class UsersController extends AppController
             } else {
                 $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'flash_error');
             }
-        } else {
+        } 
+        else {
             $this->request->data = $this->User->read(null, $id);
         }
         $designations = $this->User->Designation->find('list');
