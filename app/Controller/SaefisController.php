@@ -138,10 +138,10 @@ class SaefisController extends AppController
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
-            // $this->csv_export($this->Saefi->find(
-            //     'all',
-            //     array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 1000)
-            // ));
+            $this->csv_export($this->Saefi->find(
+                'all',
+                array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 10000)
+            ));
         }
         //end pdf export
         $this->set('page_options', $this->page_options);
@@ -155,6 +155,14 @@ class SaefisController extends AppController
         $this->set('saefis', $saefis);
     }
 
+    private function csv_export($csaefis = '')
+    {
+        //todo: check if data exists in $users
+        $this->response->download('SAEFIs_' . date('Ymd_Hi') . '.csv'); // <= setting the file name
+        $this->set(compact('csaefis'));
+        $this->layout = false;
+        $this->render('csv_export');
+    }
 
     public function reporter_add($id = null)
     {

@@ -170,4 +170,9 @@ class CommentsController extends AppController
       throw new MethodNotAllowedException();
     }
   }
+
+  public function comment_file_download($id = null)
+  {
+    # code...
+  }
 }
