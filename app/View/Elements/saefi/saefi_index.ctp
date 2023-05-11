@@ -12,11 +12,11 @@ $this->assign('SAEFI', 'active');
       <div class="row-fluid">
         <div class="span12">
           <?php
-          if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')  echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i>  New AEFI',
-            array('controller' => 'saefis', 'action' => 'add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          );
+          // if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')  echo $this->Html->link(
+          //   '<i class="fa fa-file-o" aria-hidden="true"></i>  New AEFI',
+          //   array('controller' => 'saefis', 'action' => 'add'),
+          //   array('escape' => false, 'class' => 'btn btn-success')
+          // );
           ?>
         </div>
       </div>

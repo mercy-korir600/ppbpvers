@@ -69,6 +69,7 @@ app/Console/cake acl grant Group.3 controllers/Aefis/institutionCodes
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_index
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_add
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_followup
+app/Console/cake acl grant Group.3 controllers/Aefis/reporter_investigation
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_edit
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_view
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_delete 

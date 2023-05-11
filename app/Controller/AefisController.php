@@ -142,10 +142,31 @@ class AefisController extends AppController
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') {
             $this->passedArgs['health_program'] = $this->Session->read('Auth.User.health_program');
         }
+        $user_id = $this->Auth->User('id');
+        $user_type = $this->Auth->User('user_type');
 
         $criteria = $this->Aefi->parseCriteria($this->passedArgs);
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Aefi.submitted'] = array(2);
-        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Aefi.user_id'] = $this->Auth->User('id');
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+            if ($user_type === 'County Pharmacist') {
+                // either this
+                // $criteria['Aefi.user_id'] = $this->Auth->User('id');
+                // // or this
+                // $criteria['Aefi.serious'] = "Yes";
+                // $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+                $conditions = array(
+                    'OR' => array(
+                        array('Aefi.deleted' => false, 'Aefi.user_id' => $user_id),
+                        array(
+                            'Aefi.serious' => "Yes", 'Aefi.county_id' => $this->Auth->User('county_id')
+                        )
+                    ),
+                );
+                $criteria[] = $conditions;
+            } else {
+                $criteria['Aefi.user_id'] = $this->Auth->User('id');
+            }
+        }
 
         // Added criteria for reporter
         $criteria['Aefi.deleted'] = false;
@@ -154,6 +175,23 @@ class AefisController extends AppController
         } elseif (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 2) {
             $criteria['Aefi.submitted'] = array(2, 3);
         }
+        // Add condition for County Pharmacist
+
+        // $conditions = array(
+        //     'Aefi.deleted' => false,
+        //     'Aefi.user_id' => $user_id
+        // );
+
+        // if ($user_type === 'County Pharmacist') {
+        //     $conditions = array(
+        //         'OR' => array(
+        //             array('Aefi.deleted' => false, 'Aefi.user_id' => $user_id),
+        //             array(
+        //                 'Aefi.serious' => "Yes", 'Aefi.county_id' => $this->Auth->User('county_id')
+        //             )
+        //         ),
+        //     );
+        // }
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Aefi.created' => 'desc');
@@ -786,11 +824,6 @@ class AefisController extends AppController
             $data_save = $aefi['Aefi'];
             $data_save['AefiListOfVaccine'] = $aefi['AefiListOfVaccine'];
             $data_save['aefi_id'] = $id;
-
-            // $count = $this->Aefi->find('count',  array('conditions' => array(
-            //             'Aefi.reference_no LIKE' => $aefi['Aefi']['reference_no'].'%',
-            //             )));
-            // $count = ($count < 10) ? "0$count" : $count;
             $data_save['reference_no'] = $aefi['Aefi']['reference_no']; //.'_F'.$count;
             $data_save['report_type'] = 'Followup';
             $data_save['submitted'] = 0;
@@ -845,10 +878,10 @@ class AefisController extends AppController
             throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
         }
         $aefi = $this->Aefi->read(null, $id);
-        // if ($aefi['Aefi']['submitted'] > 1) {
-        //     $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted'), 'alerts/flash_info');
-        //     $this->redirect(array('action' => 'view', $this->Aefi->id));
-        // }
+        if ($aefi['Aefi']['submitted'] > 1) {
+            $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Aefi->id));
+        }
         if ($aefi['Aefi']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this Adverse Event Following Immunization!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -933,15 +966,78 @@ class AefisController extends AppController
                         $this->QueuedTask->createJob('GenericNotification', $datum);
                     }
                     //**********************************    END   *********************************
-                    // debug($aefi);
+
                     $serious = $aefi['Aefi']['serious'];
                     if ($serious == "Yes") {
-                        $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB. Kindly complete this Investigation Form'), 'alerts/flash_success');
-                        $this->redirect(array('controller' => 'saefis', 'action' => 'add', $this->Aefi->id));
-                    } else {
-                        $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
-                        $this->redirect(array('action' => 'view', $this->Aefi->id));
+                        //    Notify County Pharmacist & Managers
+                        $county_id = $aefi['Aefi']['county_id'];
+                        $users1 = $this->Aefi->User->find('all', array(
+                            'contain' => array(),
+                            'conditions' => array(
+                                'OR' => array(
+                                    'User.group_id' => 2,
+                                    array(
+                                        'User.county_id' => $county_id,
+                                        'User.user_type' => 'County Pharmacist'
+                                    )
+                                )
+                            ),
+                            'order' => array(
+                                'User.id' => 'DESC'
+                            )
+                        ));
+
+                        //******************       Send Email and Notifications to County Pharmacist and Managers          *****************************
+                        $this->loadModel('Message');
+                        $html = new HtmlHelper(new ThemeView());
+                        $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_serious_aefi')));
+                        $this->loadModel('Queue.QueuedTask');
+
+                        //Notify managers
+
+                        foreach ($users1 as $user) {
+                            $user_phone = $user['User']['phone_no'];
+                            $variables = array(
+                                'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
+                                'reference_link' => $html->link(
+                                    $aefi['Aefi']['reference_no'],
+                                    array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),
+                                    array('escape' => false)
+                                ),
+                                'modified' => $aefi['Aefi']['modified']
+                            );
+                            $datum = array(
+                                'email' => $user['User']['email'],
+                                'id' => $id,
+                                'user_id' => $user['User']['id'],
+                                'type' => 'reporter_serious_aefi',
+                                'model' => 'Aefi',
+                                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                                'message' => CakeText::insert($message['Message']['content'], $variables)
+                            );
+
+                            $this->QueuedTask->createJob('GenericEmail', $datum);
+                            $this->QueuedTask->createJob('GenericNotification', $datum);
+
+                            $reporter = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
+
+                            //Send SMS
+                            if (!empty($user_phone) && strlen(substr($user_phone, -9)) == 9 && is_numeric(substr($user_phone, -9))) {
+                                $datum['phone'] = '254' . substr($user_phone, -9);
+                                $variables['reference_url'] = Router::url(['controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], $reporter => true, 'full_base' => true]);
+                                $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                                $this->QueuedTask->createJob('GenericSms', $datum);
+                            }
+                        }
+                        //**********************************    END   *********************************
+
+
+                        // debug($message);
+                        // debug($users1);
+                        // exit;
                     }
+                    $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('action' => 'view', $this->Aefi->id));
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The Adverse Event Following Immunization has been saved'), 'alerts/flash_success');
@@ -1134,5 +1230,74 @@ class AefisController extends AppController
         }
 
         $this->redirect($this->referer());
+    }
+    public function reporter_investigation($id = null)
+    {
+        # code...
+        // debug('saefis');
+        // exit;
+        $this->generate_investigation($id);
+    }
+
+    public function generate_investigation($id = null)
+    {
+        # code...
+
+        if ($this->request->is('post')) {
+            $this->Aefi->id = $id;
+            if (!$this->Aefi->exists()) {
+                throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
+            }
+            $aefi = Hash::remove($this->Aefi->find(
+                'first',
+                array(
+                    'contain' => array('AefiListOfVaccine', 'AefiDescription'),
+                    'conditions' => array('Aefi.id' => $id)
+                )
+            ), 'Aefi.id');
+
+            $aefi = Hash::remove($aefi, 'AefiListOfVaccine.{n}.id');
+            $aefi = Hash::remove($aefi, 'AefiListOfVaccine.{n}.aefi_id');
+            unset($aefi['Aefi']['deleted']);
+            $data_save = $aefi['Aefi']; 
+            // debug($data_save);
+            // exit;
+            $data_save['AefiListOfVaccine'] = $aefi['AefiListOfVaccine'];
+            $data_save['initial_id'] = $id; 
+            $data_save['province_id'] = $aefi['Aefi']['county_id'];
+            $data_save['age_at_onset_months'] = $aefi['Aefi']['age_months']; 
+            $data_save['reference_no'] = $aefi['Aefi']['reference_no']; 
+            $data_save['submitted'] = 0;
+            $this->loadModel('Saefi');
+            if ($this->Saefi->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+                $this->Session->setFlash(__('Investigation Form' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
+                $this->redirect(array('controller' => 'saefis', 'action' => 'edit', $this->Saefi->id));
+            } else {
+                $this->Session->setFlash(__('The followup could not be saved. Please, try again.'), 'alerts/flash_error');
+                $this->redirect($this->referer());
+            }
+        }
+
+        // $this->loadModel('Aefis');
+        // $aefi = $this->Aefis->get($id, ['contain' => ['AefiListOfVaccines']]);
+        // debug($aefi);
+        // exit;
+        // $this->loadModel('Saefis');
+        // $this->Saefi->create();
+        // $this->Saefi->save(
+        //     ['Saefi' => [
+        //         'user_id' => $this->Auth->User('id'),
+        //         'reference_no' => 'new',
+        //         'report_type' => 'Initial',
+        //         'initial_id' => $id,
+        //         'designation_id' => $this->Auth->User('designation_id'),
+        //         'county_id' => $this->Auth->User('county_id'),
+        //         'reporter_name' => $this->Auth->User('name'),
+        //         'reporter_email' => $this->Auth->User('email'),
+        //         'reporter_phone' => $this->Auth->User('phone_no'),
+        //     ]],
+        //     false
+        // );
+        // $this->redirect(array('controller' => 'saefis', 'action' => 'edit', $this->Saefi->id));
     }
 }

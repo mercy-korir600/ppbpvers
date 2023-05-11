@@ -259,7 +259,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
                   'label' => array('class' => 'control-label', 'text' => 'Public Health Program'),
                   'class' => 'input-xlarge'
                 ));  ?>
-                </td>
+          </td>
           <td></td>
           <td></td>
           <td></td>
@@ -401,18 +401,17 @@ $this->assign('Adverse Event Following Immunization', 'active');
                   array('controller' => 'aefis', 'action' => 'vigiflow', $aefi['Aefi']['id'], 'manager' => false),
                   array('escape' => false)
                 );
-                // echo "&nbsp;";
-                // if ($redir == 'manager' && empty($aefi['Aefi']['webradr_ref']) && $aefi['Aefi']['copied'] == 2) echo $this->Html->link(
-                //   '<span class="label label-info tooltipper" title="Send to yello card"><i class="fa fa-upload" aria-hidden="true"></i> Yellow Card </span>',
-                //   array('controller' => 'aefis', 'action' => 'yellowcard', $aefi['Aefi']['id'], 'manager' => false),
-                //   array('escape' => false)
-                // );
+
                 echo "&nbsp;";
-                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
+                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+                  if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] !=$this->Session->read('Auth.User.id'))  {
+                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i> Investigation</span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                  }else{
+                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
+                  }
+                }
                 echo "&nbsp;";
-                // if($redir == 'manager') echo $this->Html->link('<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>' ,
-                //   array('controller' => 'aefis', 'action' => 'edit', $aefi['Aefi']['id']),
-                //   array('escape' => false));
+
                 if (($redir == 'manager' || $redir == 'reviewer') && $aefi['Aefi']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Copy & Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                   array('controller' => 'aefis', 'action' => 'edit', $aefi['Aefi']['id']),

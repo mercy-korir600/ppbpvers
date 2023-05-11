@@ -22,7 +22,7 @@ $this->Html->script('comments/reviews', array('inline' => false));
           <?php
           echo $this->Html->link(
             'Download PDF',
-            array('controller' => 'aefis', 'action' => 'view', 'ext' => 'pdf', $saefi['Saefi']['id']),
+            array('controller' => 'saefis', 'action' => 'view', 'ext' => 'pdf', $saefi['Saefi']['id']),
             array(
               'class' => 'btn btn-primary btn-block mapop', 'title' => 'Download PDF',
               'data-content' => 'Download the pdf version of the report',

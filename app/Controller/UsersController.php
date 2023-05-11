@@ -33,7 +33,7 @@ class UsersController extends AppController
         parent::beforeFilter();
         // remove initDb
         // $this->initDB();
-        $this->Auth->allow('register', 'login','api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder');
+        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder');
     }
     public function api_auth()
     {
@@ -57,10 +57,10 @@ class UsersController extends AppController
             if ($this->Auth->login()) {
                 $user = $this->Auth->User();
                 $token = JWT::encode($user['id'], Configure::read('Security.salt'));
-                                
+
                 if ($user) {
                     // only add the neccessary fields from the user 
-                    $datum=array('id'=>$user['id'],'name'=>$user['name'],'created'=>$user['created']);
+                    $datum = array('id' => $user['id'], 'name' => $user['name'], 'created' => $user['created']);
                     $this->set('user', $datum);
                     $this->set('token', $token);
                     $this->set('_serialize', array('user', 'token'));
@@ -130,15 +130,15 @@ class UsersController extends AppController
                 // Check if it's the mini manager::: Check active date
                 if ($this->Auth->User('group_id') == '5') {
                     $active_date = $this->Auth->User('active_date');
-                    if (!empty($active_date)) { 
+                    if (!empty($active_date)) {
                         $today = date('Y-m-d');
                         $active_date_obj = date('Y-m-d', strtotime($active_date));
 
                         if ($active_date_obj < $today) {
                             // $active_date is earlier than today, return an error
                             $this->Session->setFlash('Your account has expired! Please contact PPB.', 'alerts/flash_error');
-                            $this->redirect($this->Auth->logout()); 
-                        } 
+                            $this->redirect($this->Auth->logout());
+                        }
                     } else {
                         // do something if $active_date is null or empty
                         $this->Session->setFlash('Your account has expired! Please contact PPB.', 'alerts/flash_error');
@@ -150,7 +150,7 @@ class UsersController extends AppController
                 if ($this->Auth->User('group_id') == '1') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
                 if ($this->Auth->User('group_id') == '2') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'manager' => true));
                 if ($this->Auth->User('group_id') == '3') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reporter' => true));
-                if ($this->Auth->User('group_id') == '4') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'partner' => true)); 
+                if ($this->Auth->User('group_id') == '4') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'partner' => true));
                 if ($this->Auth->User('group_id') == '5') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reviewer' => true));
             } else {
                 $this->Session->setFlash('Your username or password is incorrect.', 'alerts/flash_error');
@@ -572,8 +572,8 @@ class UsersController extends AppController
         }
         $groups = $this->User->Group->find('list');
         $this->set(compact('groups'));
-        $designations = $this->User->Designation->find('list',array(
-            'order'=>array('Designation.name'=>'asc')
+        $designations = $this->User->Designation->find('list', array(
+            'order' => array('Designation.name' => 'asc')
         ));
         $this->set(compact('designations'));
         $counties = $this->User->County->find('list');
@@ -661,8 +661,8 @@ class UsersController extends AppController
         }
         $counties = $this->User->County->find('list', array('order' => 'County.county_name ASC'));
         $this->set(compact('counties'));
-        $designations = $this->User->Designation->find('list',array(
-            'order'=>array('Designation.name'=>'asc')
+        $designations = $this->User->Designation->find('list', array(
+            'order' => array('Designation.name' => 'asc')
         ));
         $this->set(compact('designations'));
     }
@@ -744,8 +744,8 @@ class UsersController extends AppController
         }
         $counties = $this->User->County->find('list', array('order' => 'County.county_name ASC'));
         $this->set(compact('counties'));
-        $designations = $this->User->Designation->find('list',array(
-            'order'=>array('Designation.name'=>'asc')
+        $designations = $this->User->Designation->find('list', array(
+            'order' => array('Designation.name' => 'asc')
         ));
         $this->set(compact('designations'));
     }
@@ -793,19 +793,31 @@ class UsersController extends AppController
             ),
         ));
         $this->set('sadrs', $sadrs);
+        $user_id = $this->Auth->User('id');
+        $user_type = $this->Auth->User('user_type');
+
+        $conditions = array(
+            'Aefi.deleted' => false,
+            'Aefi.user_id' => $user_id
+        );
+
+        if ($user_type === 'County Pharmacist') {
+            $conditions = array(
+                'OR' => array(
+                    array('Aefi.deleted' => false,'Aefi.user_id' => $user_id),
+                    array('Aefi.serious' => "Yes",'Aefi.county_id' => $this->Auth->User('county_id')
+                    )
+                ),
+            );
+        }
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
-            'conditions' => array(
-                // only show Reports that have been not been deleted
-                'Aefi.deleted' => false,
-                'Aefi.user_id' => $this->Auth->User(
-                    'id'
-                )
-            ),
+            'conditions' => $conditions,
+
         ));
         $this->set('aefis', $aefis);
 
@@ -817,17 +829,17 @@ class UsersController extends AppController
             'order' => array('Saefi.created' => 'desc'),
             'conditions' => array(
                 // only show Reports that have been not been deleted
-                'Saefi.deleted' => false, 
+                'Saefi.deleted' => false,
                 'OR' => array(
-                    'Saefi.user_id' => $this->Auth->User('id'),
-                    'Saefi.province_id' =>  $this->Auth->User('county_id'),
+                    array('Saefi.user_id' => $this->Auth->User('id')),
+                    array('Saefi.province_id' =>  $this->Auth->User('county_id')),
                 )
-              
+
             ),
         ));
         $this->set('saefis', $saefis);
 
-        
+
 
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
@@ -1127,8 +1139,8 @@ class UsersController extends AppController
         } else {
             $this->request->data = $this->User->read(null, $id);
         }
-        $designations = $this->User->Designation->find('list',array(
-            'order'=>array('Designation.name'=>'asc')
+        $designations = $this->User->Designation->find('list', array(
+            'order' => array('Designation.name' => 'asc')
         ));
         $this->set(compact('designations'));
         $counties = $this->User->County->find('list');
@@ -1207,8 +1219,8 @@ class UsersController extends AppController
         }
         $groups = $this->User->Group->find('list');
         $this->set(compact('groups'));
-        $designations = $this->User->Designation->find('list',array(
-            'order'=>array('Designation.name'=>'asc')
+        $designations = $this->User->Designation->find('list', array(
+            'order' => array('Designation.name' => 'asc')
         ));
         $this->set(compact('designations'));
         $counties = $this->User->County->find('list');

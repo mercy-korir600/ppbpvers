@@ -127,7 +127,11 @@ $this->Html->script('dashboard', array('inline' => false));
                   array('escape' => false, 'class' => 'text-' . ((isset($aefi['Aefi']['serious']) && $aefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
                 );
                 echo "&nbsp;";
+                if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] !=$this->Session->read('Auth.User.id'))  {
+                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                }else{
                 echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
+                }
                 echo "</li>";
               } else {
                 echo "<li>";
@@ -147,7 +151,7 @@ $this->Html->script('dashboard', array('inline' => false));
           </div>
           <?php if($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
           <div class="span4 formbacka" style="padding: 4px;">
-            <h5>Serious Adverse Event Following Immunization </h5>
+            <h5>Investigation Reports </h5>
             <?php
             echo '<ol>';
             foreach ($saefis as $saefi) {

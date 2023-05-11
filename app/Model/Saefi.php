@@ -97,13 +97,6 @@ class Saefi extends AppModel
 				'message'  => 'Please provide the name of the reporter'
 			),
 		),
-		// 'reporter_date' => array(
-		//     'notBlank' => array(
-		//         'rule'     => 'notBlank',
-		//         'required' => true,
-		//         'message'  => 'Please provide the date of submission of the report'
-		//     ),
-		// ),
 		'reporter_email' => array(
 			'notBlank' => array(
 				'rule'     => 'email',
@@ -111,31 +104,111 @@ class Saefi extends AppModel
 				'message'  => 'Please provide a valid email address'
 			),
 		),
-		// 'reporter_phone' => array(
-		//     'notBlank' => array(
-		//         'rule'     => 'notBlank',
-		//         'required' => true,
-		//         'message'  => 'Please provide a valid phone number'
-		//     ),
-		// ),
 
-		//ensure reporter phone is numeric and 10 digits
-		// 'reporter_phone' => array(
-		//     'numeric' => array(
-		//         'rule' => array('numeric'),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		//     'minLength' => array(
-		//         'rule' => array('minLength', 10),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		//     'maxLength' => array(
-		//         'rule' => array('maxLength', 10),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		// ),
+		'past_history_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'past_history', 'past_history_remarks'],
+				'message' => 'Please provide past history remarks'
+			)
+		),
+		'adverse_event_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'adverse_event', 'adverse_event_remarks'],
+				'message' => 'Please provide past adverse event remarks'
+			)
+		),
+		'allergy_history_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'allergy_history', 'allergy_history_remarks'],
+				'message' => 'Please provide allergy history remarks'
+			)
+		),
+		'comorbidity_disorder_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'comorbidity_disorder', 'comorbidity_disorder_remarks'],
+				'message' => 'Please provide comorbidity disorder remarks'
+			)
+		),
+		'existing_illness_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'existing_illness', 'existing_illness_remarks'],
+				'message' => 'Please provide existing illness remarks'
+			)
+		),
+		'covid_positive_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'covid_positive', 'covid_positive_remarks'],
+				'message' => 'Please provide past covid positive remarks'
+			)
+		),
+		'hospitalization_history_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'hospitalization_history', 'hospitalization_history_remarks'],
+				'message' => 'Please provide hospitalization_history remarks'
+			)
+		),
+		'medication_vaccination_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'medication_vaccination', 'medication_vaccination_remarks'],
+				'message' => 'Please provide medication vaccination remarks'
+			)
+		),
+		'faith_healers_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'faith_healers', 'faith_healers_remarks'],
+				'message' => 'Please provide faith healers remarks'
+			)
+		),
+		'family_history_remarks' => array(
+			'seriousYes' => array(
+				'rule' => ['checkFieldNotEmpty', 'family_history', 'family_history_remarks'],
+				'message' => 'Please provide family history remarks'
+			)
+		),
+		'examiner_name' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the name of the investigator'
+			),
+		),
+		'person_date' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the date'
+			),
+		),
+
+		'person_designation' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the designation'
+			),
+		),
+		'final_diagnosis' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the Final Diagnosis'
+			),
+		),
+		
+
 
 	);
+
+	public function checkFieldNotEmpty($mainField = null, $subField = null)
+	{
+		if ($this->data['Saefi'][$mainField] == 'Yes') {
+			return !empty($this->data['Saefi'][$subField]);
+		} else {
+			return true;
+		}
+	}
+
+
 	public function atLeastOneVaccine($field = null)
 	{
 		if (!empty($this->data['AefiListOfVaccine'])) {
@@ -146,7 +219,7 @@ class Saefi extends AppModel
 
 	public function ageOrDate($field = null)
 	{
-		return !empty($this->data['Saefi']['date_of_birth']['year']) || !empty($this->data['Saefi']['age_at_onset_years']) || !empty($this->data['Saefi']['age_group']);
+		return !empty($this->data['Saefi']['date_of_birth']) || !empty($this->data['Saefi']['age_at_onset_years']) || !empty($this->data['Saefi']['age_group']);
 	}
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
