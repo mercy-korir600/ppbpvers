@@ -1,6 +1,6 @@
 <?php
-$this->extend('/Reports/reports');
-$this->assign('upgrade/summary', 'active');
+$this->extend('/Reports/reports_manager');
+$this->assign('transfusions-summary', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>
 

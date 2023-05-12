@@ -2621,7 +2621,7 @@ echo $this->Form->create('Saefi', array(
 				?>
 			</div>
 		</div>
-
+	</div>
 	</div>
 	<div class="span2">
 		<div class="my-sidebar" data-spy="affix">

@@ -328,7 +328,7 @@ class SaefisController extends AppController
         }
 
         if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'AEFI_' . $id,  'orientation' => 'portrait');
+            $this->pdfConfig = array('filename' => 'SAEFI_' . $id,  'orientation' => 'portrait');
             // $this->response->download('AEFI_'.$aefi['Saefi']['id'].'.pdf');
         }
 

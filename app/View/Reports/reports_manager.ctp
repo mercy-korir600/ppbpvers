@@ -2,6 +2,7 @@
 $this->assign('Reports', 'active');
 echo $this->Session->flash();
 // $this->Html->css('comments', null, array('inline' => false));
+$this->Html->script('reports', array('inline' => false));
 $this->Html->script('highcharts/highcharts', array('inline' => false));
 $this->Html->script('highcharts/modules/data', array('inline' => false));
 if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('highcharts/modules/exporting', array('inline' => false));
@@ -64,22 +65,104 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
           </td>
 
           <td>
-            
+            <?php
+            echo $this->Form->input(
+              'report_title',
+              array(
+                'div' => false, 'type' => 'text', 'class' => 'span11 unauthorized_index',
+                'label' => array('class' => 'required', 'text' => 'Report Title'), 'placeHolder' => 'Report Title'
+
+              )
+
+            );
+            ?></td>
           <td><?php
-             
-             echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
-              'class' => 'btn btn-primary', 'div' => 'control-group', 'div' => false,
-              'formnovalidate' => 'formnovalidate',
-              'style' => array('margin-bottom: 5px')
-            ));
+              echo $this->Form->input(
+                'county_id',
+                array(
+                  'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
+                  'label' => array('class' => 'required', 'text' => 'County'), 'empty' => true,
+                  'options' => $counties, 'default' => $this->Session->read('Auth.User.county_id')
+
+
+                )
+              );
+
               ?>
           </td>
         </tr>
         <tr>
-          
-            
+          <td>
+            <?php
+            echo $this->Form->input(
+              'suspected_drug',
+              array(
+                'div' => false, 'type' => 'text', 'class' => 'span8 unauthorized_index',
+                'label' => array('class' => 'required', 'text' => 'Suspected drug '), 'placeHolder' => 'Report Title'
+
+              )
+            ); ?>
+          </td>
+          <td>
+            <?php
+            echo $this->Form->input(
+              'age_group',
+              array(
+                'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
+                'label' => array('class' => 'required', 'text' => 'Age Group'), 
+                'type' => 'select',
+                'empty' => true,
+                'options' => array(
+                  'neonate' => 'neonate [0-1 month]',
+                  'infant' => 'infant [1 month-1 year]',
+                  'child' => 'child [1 year - 11 years]',
+                  'adolescent' => 'adolescent [12-17 years]',
+                  'adult' => 'adult [18-64 years]',
+                  'elderly' => 'elderly [>65 years]',
+                ),
+
+
+              )
+            );
+
+
+            ?>
+          </td>
+          <td>
+            <?php
+            echo $this->Form->input(
+              'gender',
+              array(
+                'div' => false,
+                'class' => 'span11 unauthorized_index',
+                'label' => array('class' => 'required', 'text' => 'Gender'),
+                'type' => 'select',
+                'empty' => true,
+                'options' => array(
+                  'Male' => 'Male',
+                  'Female' => 'Female', 
+                ),
+              )
+            );
+
+
+            ?>
+          </td>
         </tr>
-        
+        <tr>
+          <td>
+          </td>
+          <td> </td>
+          <td>
+            <?php
+            echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
+              'class' => 'btn btn-primary', 'div' => 'control-group', 'div' => false,
+              'formnovalidate' => 'formnovalidate',
+              'style' => array('margin-bottom: 5px')
+            ));
+            ?>
+          </td>
+        </tr>
       </tbody>
     </table>
     <?php echo $this->Form->end(); ?>

@@ -104,6 +104,21 @@ class Saefi extends AppModel
 				'message'  => 'Please provide a valid email address'
 			),
 		),
+		'report_date' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide report date'
+			),
+		),
+		'start_date' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide start date'
+			),
+		),
+		
 
 		'past_history_remarks' => array(
 			'seriousYes' => array(

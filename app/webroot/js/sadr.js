@@ -89,7 +89,9 @@ $(document).ready(function () {
     $("#SadrReaction").autocomplete({
         source: "/meddras/autocomplete.json"
     });
-
+    $("#SadrReportTitle").autocomplete({
+        source: "/meddras/autocomplete.json"
+    });
     var cache2 = {}, lastXhr;
     $("#SadrInstitutionCode").autocomplete({
         source: function (request, response) {

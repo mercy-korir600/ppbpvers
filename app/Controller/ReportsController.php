@@ -260,6 +260,18 @@ public function index()
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
+        if (!empty($this->request->data['Report']['county_id'])){
+            $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
+        }
+        if (!empty($this->request->data['Report']['gender'])){
+            $criteria['Sadr.gender'] = $this->request->data['Report']['gender'];
+        }
+        if (!empty($this->request->data['Report']['age_group'])){
+            $criteria['Sadr.age_group'] = $this->request->data['Report']['age_group'];
+        }
+        if (!empty($this->request->data['Report']['report_title'])){
+            $criteria['Sadr.report_title'] = $this->request->data['Report']['report_title'];
+        }
         $geo = $this->Sadr->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
             'contain' => array('County'),
@@ -334,13 +346,13 @@ public function index()
     public function aefi_summary()
     {
 
-        // Load Data for Counties
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        // Load Data for Counties 
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
-        $geo = $this->Sadr->find('all', array(
+            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+        $geo = $this->Aefi->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
             'contain' => array('County'),
             'conditions' => $criteria,
@@ -349,16 +361,16 @@ public function index()
         ));
 
         //get all the counties in the system without any relation
-        $counties = $this->Sadr->County->find('list', array('order' => 'County.county_name ASC'));
+        $counties = $this->Aefi->County->find('list', array('order' => 'County.county_name ASC'));
 
 
-        // Get All SADRs by Gender
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        // Get All AEFIs by Gender
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
-        $sex = $this->Sadr->find('all', array(
+            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+        $sex = $this->Aefi->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -368,11 +380,11 @@ public function index()
 
 
         // GET SUMMARY BY AGE GROUP
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
+            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $case = "((case 
                 when trim(age_group) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_group
                 when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
@@ -383,7 +395,7 @@ public function index()
                 else 'unknown'
                end))";
 
-        $age = $this->Sadr->find('all', array(
+        $age = $this->Aefi->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
             'contain' => array(),
             'conditions' => $criteria,
@@ -392,7 +404,7 @@ public function index()
         ));
 
         // SADRs per Year
-        $year = $this->Sadr->find('all', array(
+        $year = $this->Aefi->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -415,12 +427,12 @@ public function index()
     {
 
         // Load Data for Counties
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        $criteria['Pqmp.submitted'] = array(1, 2);
+        $criteria['Pqmp.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
-        $geo = $this->Sadr->find('all', array(
+            $criteria['Pqmp.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
+        $geo = $this->Pqmp->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
             'contain' => array('County'),
             'conditions' => $criteria,
@@ -429,30 +441,15 @@ public function index()
         ));
 
         //get all the counties in the system without any relation
-        $counties = $this->Sadr->County->find('list', array('order' => 'County.county_name ASC'));
-
-
-        // Get All SADRs by Gender
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
-        $sex = $this->Sadr->find('all', array(
-            'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
-            'conditions' => $criteria,
-            'group' => array('gender'),
-            'having' => array('COUNT(*) >' => 0),
-        ));
-
+        $counties = $this->Pqmp->County->find('list', array('order' => 'County.county_name ASC'));
+ 
 
         // GET SUMMARY BY AGE GROUP
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        $criteria['Pqmp.submitted'] = array(1, 2);
+        $criteria['Pqmp.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
+            $criteria['Pqmp.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $case = "((case 
                 when trim(age_group) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_group
                 when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
@@ -463,7 +460,13 @@ public function index()
                 else 'unknown'
                end))";
 
-        $age = $this->Sadr->find('all', array(
+               $age = $this->Pqmp->find('all', array(
+                'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
+                'contain' => array(),
+                'conditions' => $criteria,
+                'group' => array($case),
+                'having' => array('COUNT(*) >' => 0),
+            ));  $age = $this->Pqmp->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
             'contain' => array(),
             'conditions' => $criteria,
@@ -471,8 +474,8 @@ public function index()
             'having' => array('COUNT(*) >' => 0),
         ));
 
-        // SADRs per Year
-        $year = $this->Sadr->find('all', array(
+        // Pqmps per Year
+        $year = $this->Pqmp->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -483,9 +486,7 @@ public function index()
 
 
         $this->set(compact('counties'));
-        $this->set(compact('geo'));
-        $this->set(compact('sex'));
-        $this->set(compact('age'));
+        $this->set(compact('geo'));  
         $this->set(compact('year'));
 
         $this->set('_serialize', 'geo', 'counties', 'sex', 'age','year');
