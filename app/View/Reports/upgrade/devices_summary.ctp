@@ -73,7 +73,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($sex as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value['Sadr']['gender'] . "</th>";
+                        echo "<th>" . $value['Device']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
@@ -306,7 +306,7 @@ $this->Html->css('summary', null, array('inline' => false));
             table: 'datatableyear'
         },
         chart: {
-            type: 'bar'
+            type: 'column'
         },
         title: {
             text: '',

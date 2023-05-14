@@ -15,7 +15,7 @@
 					<td style="text-align: center;">
 						<h2>MINISTRY OF HEALTH</h2>
 						<p class="lead">UNIT OF VACCINES AND IMMUNIZATION SERVICES</p>
-						<h3>AEFI INVESTIGATION FORM</h3>
+						<h3>AEFI Reporting Form</h3>
 					</td>
 					<td>
 						<?php
@@ -421,151 +421,115 @@
 	                </tbody>
           		</table>
 				<hr>
-
-				<table style="width: 100%;">
+				<hr style="border-top: 1px solid #000;">
+				<h4 style="text-align:center;">Section D ----- Details of vaccines provided at the site linked to AEFI on the corresponding day</h4>
+				<hr style="border-top: 1px solid #000;">
+				<table style="width: 100%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
-					<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
 						<tr>
-							<th colspan="4" ><label class="required">Section D ----- Details of vaccines provided at the site linked to AEFI on the corresponding day</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
+							<th style="width: 55%;"></th>
+							<th style="width: 15%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
+					
 					<tr>
-						<td style="width: 75%;">a) When was the patient immunized? (✓ the below and respond to ALL questions)</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['when_vaccinated'] ?>	</strong></td>
+						<td style="width: 55%;">a) When was the patient immunized? (✓ the below and respond to ALL questions)</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['when_vaccinated'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 55%;">In case of multidose vials, was the vaccine given</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['when_vaccinated_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td style="width: 75%;">In case of multidose vials, was the vaccine given</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['when_vaccinated_specify'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">b) Was there an error in prescribing or non-adherence to recommendations for use of this vaccine?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['prescribing_error'] ?>	</strong></td>
+						<td style="width: 55%;">b) Was there an error in prescribing or non-adherence to recommendations for use of this vaccine?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['prescribing_error'] ?>	</strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['prescribing_error_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">c) Based on your investigation, do you feel that the vaccine (ingredients) administered could have been unsterile?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_unsterile'] ?></strong></td>
+						<td style="width: 55%;">c) Based on your investigation, do you feel that the vaccine (ingredients) administered could have been unsterile?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccine_unsterile'] ?></strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_unsterile_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">d) Based on your investigation, do you feel that the vaccine's physical condition (e.g. colour, turbidity, foreign substances etc.) was abnormal at the time of administration?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_condition'] ?></strong></td>
+						<td style="width: 55%;">d) Based on your investigation, do you feel that the vaccine's physical condition (e.g. colour, turbidity, foreign substances etc.) was abnormal at the time of administration?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccine_condition'] ?></strong></td>
 						<td style="width: 25%;"><?php echo $saefi['Saefi']['vaccine_condition_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">e) Based on your investigation, do you feel that there was an error in vaccine
+						<td style="width: 55%;">e) Based on your investigation, do you feel that there was an error in vaccine
 						reconstitution/preparation by the vaccinator (e.g. wrong product, wrong diluent, improper
 						mixing, improper syringe filling etc.)?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_reconstitution'] ?></strong></td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccine_reconstitution'] ?></strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_reconstitution_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">f) Based on your investigation, do you feel that there was an error in vaccine handling (e.g. break in cold chain during transport, storage and/or immunization session etc.)?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_handling'] ?></strong></td>
+						<td style="width: 55%;">f) Based on your investigation, do you feel that there was an error in vaccine handling (e.g. break in cold chain during transport, storage and/or immunization session etc.)?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccine_handling'] ?></strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_handling_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">g) Based on your investigation, do you feel that the vaccine was administered incorrectly (e.g. wrong dose, site or route of administration, wrong needle size, not following good injection practice etc.)?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_administered'] ?></strong></td>
+						<td style="width: 55%;">g) Based on your investigation, do you feel that the vaccine was administered incorrectly (e.g. wrong dose, site or route of administration, wrong needle size, not following good injection practice etc.)?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccine_administered'] ?></strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccine_administered_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 55%;">h) Number immunized from the concerned vaccine vial/ampoule</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_vial'] ?></strong></td>
 					</tr>
+					
 					<tr>
-						<td style="width: 75%;">h) Number immunized from the concerned vaccine vial/ampoule</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_vial'] ?></strong></td>
+						<td style="width: 55%;">i) Number immunized with the concerned vaccine in the same session</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_session'] ?></strong></td>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">i) Number immunized with the concerned vaccine in the same session</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_session'] ?></strong></td>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">j) Number immunized with the concerned vaccine having the same batch number in other locations. Specify locations:</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_locations'] ?></strong></td>
+						<td style="width: 55%;">j) Number immunized with the concerned vaccine having the same batch number in other locations. Specify locations:</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_locations'] ?></strong></td>
 						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_locations_specify'] ?>	</strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 55%;">k) Is this case a part of a cluster?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster'] ?></strong></td>
 					</tr>
+					
 					<tr>
-						<td style="width: 75%;">k) Is this case a part of a cluster?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster'] ?></strong></td>
+						<td style="width: 55%;">k) i) If yes, how many other cases have been detected in the cluster?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_number'] ?></strong></td>
 					</tr>
+					
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 55%;">K) i) a) Did all the cases in the cluster receive vaccine from the same vial?</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_vial'] ?></strong></td>
 					</tr>
+					
 					<tr>
-						<td style="width: 75%;">k) i) If yes, how many other cases have been detected in the cluster?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_number'] ?></strong></td>
+						<td style="width: 55%;">K) i) b) If no, number of vials used in the cluster (enter details separately)</td>
+						<td style="width: 15%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_vial_number'] ?></strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">K) i) a) Did all the cases in the cluster receive vaccine from the same vial?</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_vial'] ?></strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 75%;">K) i) b) If no, number of vials used in the cluster (enter details separately)</td>
-						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinated_cluster_vial_number'] ?></strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 
 					</tbody>
 				</table>
 				<hr>
-				<table style="width: 100%;">
+				<hr style="border-top: 1px solid #000;">
+				<h4 style="text-align:center;">Section E --- Immunization practices at the place(s) where concerned vaccine was used</h4>
+				<hr style="border-top: 1px solid #000;">
+				<table style="width: 55%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
-					<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
 						<tr>
-							<th colspan="4" ><label class="required">Section E --- Immunization practices at the place(s) where concerned vaccine was used</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
-						<tr>
-							<th colspan="4" ><label class="required">Syringes and needles used:</label></th>
+							<th style="width: 45%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
@@ -588,10 +552,12 @@
 					</tbody>
 				</table>
 				<hr>
-				<table style="width: 100%;">
+				<h5 style="text-align:center;">Reconstitution procedure (✓)</h5>
+				<table style="width: 75%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
 						<tr>
-							<th colspan="4" ><label class="required">Reconstitution procedure (✓)</label></th>
+							<th style="width: 65%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
@@ -599,200 +565,131 @@
 						<td style="width: 25%;">Same reconstitution syringe used for multiple vials of same vaccine?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_multiple'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					<tr>
 						<td style="width: 25%;">Same reconstitution syringe used for reconstituting different vaccines?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_different'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					<tr>
 						<td style="width: 25%;">Separate reconstitution syringe for each vaccine vial?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_vial'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					<tr>
 						<td style="width: 25%;">Separate reconstitution syringe for each vaccination?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_syringe'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					<tr>
 						<td style="width: 25%;">Are the vaccines and diluents used the same as those recommended by the manufacturer?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_vaccines'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					<tr>
 						<td style="width: 25%;">Specific key findings/additional observations and comments:</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['reconstitution_observations'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
+					
 					</tbody>
 				</table>
 				<hr>
-				<table style="width: 100%;">
+				<h5 style="text-align:center;">Injection technique in vaccinator(s): (Observe another session in the same locality – same or different place)</h5>
+				<table style="width: 75%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
 						<tr>
-							<th colspan="4" ><label class="required">Injection technique in vaccinator(s): (Observe another session in the same locality – same or different place)</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+							<th style="width: 65%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
 					<tr>
-						<td style="width: 17%;">Correct dose and route?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_dose_route'] ?>	</strong></td>
+						<td style="width: 25%;">Correct dose and route?</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_dose_route'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Time of reconstitution mentioned on the vial? (in case of freeze dried vaccines)</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_time_mentioned'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">Time of reconstitution mentioned on the vial? (in case of freeze dried vaccines)</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_time_mentioned'] ?>	</strong></td>
+						<td style="width: 25%;">Non-touch technique followed?</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_no_touch'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Contraindications screened prior to vaccination?</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_contraindications'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">Non-touch technique followed?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_no_touch'] ?>	</strong></td>
+						<td style="width: 25%;">How many AEFI were reported from the centre that distributed the vaccine in the last 30 days?</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_reported'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Training received by the vaccinator? (If Yes, specify the date of last training)</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['vaccinator_training'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">Contraindications screened prior to vaccination?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_contraindications'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">How many AEFI were reported from the centre that distributed the vaccine in the last 30 days?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_reported'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">Training received by the vaccinator? (If Yes, specify the date of last training)</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['vaccinator_training'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">Specific key findings/additional observations and comments:</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['injection_observations'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Specific key findings/additional observations and comments:</td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['injection_observations'] ?>	</strong></td>
 					</tr>
 					</tbody>
 				</table>
+				<hr style="border-top: 1px solid #000;">
+				<h4 style="text-align:center;">Section F --- Cold chain and transport</h4>
+				<hr style="border-top: 1px solid #000;">
+				<h5 style="text-align:center;">Last vaccine storage point:</h5>
 				<hr>
-				<table style="width: 100%;">
+				<table style="width: 100%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
 						<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
-						<tr>
-							<th colspan="4" ><label class="required">Section F --- Cold chain and transport</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
-						<tr>
-							<th colspan="4" ><label class="required">Last vaccine storage point:</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+							<th style="width: 65%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
 					<tr>
 						<td style="width: 17%;">Is the temperature of the vaccine storage refrigerator monitored?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['cold_temperature'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;"><strong><?php echo $saefi['Saefi']['cold_temperature'] ?>	</strong></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">If “yes”, was there any deviation outside of 2-8 ° C after the vaccine was placed inside?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['cold_temperature_deviation'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">If “yes”, provide details of monitoring separately.</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['cold_temperature_specify'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">Was the correct procedure for storing vaccines, diluents and syringes followed?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['procedure_followed'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">Was any other item (other than EPI vaccines and diluents) in the refrigerator or freezer?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['other_items'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">Were any partially used reconstituted vaccines in the refrigerator?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['partial_vaccines'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">Were any unusable vaccines (expired, no label, VVM at stages 3 or 4, frozen) in the refrigerator?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['unusable_vaccines'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">Were any unusable diluents (expired, manufacturer not matched, cracked, dirty ampoule) in the store?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['unusable_diluents'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">Specific key findings/additional observations and comments:</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['additional_observations'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
 					</tbody>
 				</table>
-				<table style="width: 100%;">
+				<h5 style="text-align:center;">Vaccine transportation:</h5>
+				<table style="width: 100%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
 						<tr>
-							<th colspan="4" ><label class="required">Vaccine transportation:</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+							<th style="width: 65%;"></th>
+							<th style="width: 25%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
@@ -801,105 +698,64 @@
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['cold_transportation'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">Was the vaccine carrier sent to the site on the same day as vaccination?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['vaccine_carrier'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">Was the vaccine carrier returned from the site on the same day as vaccination?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['transport_findings'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
 						<td style="width: 17%;">Was a conditioned ice-pack used?</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['coolant_packs'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
 					</tr>
 					<tr>
 						<td style="width: 17%;">Specific key findings/additional observations and comments:</td>
 						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['transport_findings'] ?>	</strong></td>
 					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
 					</tbody>
 				</table>
-				<table style="width: 100%;">
+				<hr style="border-top: 1px solid #000;">
+				<h4 style="text-align:center;">Section G --- Community investigation (Please visit locality and interview parents/others)</h4>
+				<hr style="border-top: 1px solid #000;">
+				<table style="width: 75%;" class="table table-bordered table-condensed table-pvborder">
 					<thead>
-					<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
-						</tr>
 						<tr>
-							<th colspan="4" ><label class="required">Section G --- Community investigation (Please visit locality and interview parents/others)</label></th>
-						</tr>
-						<tr>
-							<td colspan="2" style="border-top: 1px solid #000;"></td>
+							<th style="width: 25%;"></th>
+							<th style="width: 75%;"></th>
 						</tr>
 	                </thead>
 					<tbody>
 					<tr>
-						<td style="width: 17%;">Were any similar events reported within a time period similar to when the adverse event occurred and in the same locality?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['similar_events'] ?>	</strong></td>
+						<td style="width: 25%;">Were any similar events reported within a time period similar to when the adverse event occurred and in the same locality?</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['similar_events'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">If yes, describe:</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['similar_events_describe'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">If yes, describe:</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['similar_events_describe'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">If yes, how many events/episodes?</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['similar_events_episodes'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">If yes, how many events/episodes?</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['similar_events_episodes'] ?>	</strong></td>
 					</tr>
 					<tr>
 						<td style="width: 100%;">Of those effected, how many are:</td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Vaccinated:</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['affected_vaccinated'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">Vaccinated:</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['affected_vaccinated'] ?>	</strong></td>
+						<td style="width: 25%;">Not vaccinated:</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['affected_not_vaccinated'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Unknown</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['affected_unknown'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 17%;">Not vaccinated:</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['affected_not_vaccinated'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">Unknown</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['affected_unknown'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 1px solid #D3D3D3;"></td>
-					</tr>
-					<tr>
-						<td style="width: 17%;">Other comments:</td>
-						<td style="width: 7%;"><strong><?php echo $saefi['Saefi']['community_comments'] ?>	</strong></td>
-					</tr>
-					<tr>
-						<td colspan="2" style="border-top: 0.25px solid #D3D3D3;"></td>
+						<td style="width: 25%;">Other comments:</td>
+						<td style="width: 75%;"><strong><?php echo $saefi['Saefi']['community_comments'] ?>	</strong></td>
 					</tr>
 					</tbody>
 				</table>

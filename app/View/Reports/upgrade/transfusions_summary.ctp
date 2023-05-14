@@ -73,7 +73,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($sex as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value['Sadr']['gender'] . "</th>";
+                        echo "<th>" . $value['Transfusion']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }

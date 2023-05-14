@@ -801,15 +801,7 @@ class UsersController extends AppController
             'Aefi.user_id' => $user_id
         );
 
-        if ($user_type === 'County Pharmacist') {
-            $conditions = array(
-                'OR' => array(
-                    array('Aefi.deleted' => false,'Aefi.user_id' => $user_id),
-                    array('Aefi.serious' => "Yes",'Aefi.county_id' => $this->Auth->User('county_id')
-                    )
-                ),
-            );
-        }
+
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
@@ -820,6 +812,25 @@ class UsersController extends AppController
 
         ));
         $this->set('aefis', $aefis);
+
+
+        if ($user_type === 'County Pharmacist') {
+            $conditions = array(
+                'Aefi.deleted' => false, 
+                'Aefi.serious' => "Yes", 
+                'Aefi.submitted' => 2, 
+                'Aefi.county_id' => $this->Auth->User('county_id')
+            );
+        }
+        $serious_aefis = $this->User->Aefi->find('all', array(
+            'limit' => 7, 'contain' => array(),
+            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+            'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
+            'order' => array('Aefi.created' => 'desc'),
+            'conditions' => $conditions,
+
+        ));
+        $this->set('serious_aefis', $serious_aefis);
 
         // SAEFIs Reports
         $saefis = $this->User->Saefi->find('all', array(

@@ -81,8 +81,10 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'county_id',
                 array(
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                  'label' => array('class' => 'required', 'text' => 'County'), 'empty' => true,
-                  'options' => $counties, 'default' => $this->Session->read('Auth.User.county_id')
+                  'label' => array('class' => 'required', 'text' => 'County'),
+                  'empty' => true,
+                  'options' => $counties, 
+                  'default' => $this->Session->read('Auth.User.county_id')
 
 
                 )
@@ -95,10 +97,12 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
           <td>
             <?php
             echo $this->Form->input(
-              'suspected_drug',
+              'vaccine',
               array(
-                'div' => false, 'type' => 'text', 'class' => 'span8 unauthorized_index',
-                'label' => array('class' => 'required', 'text' => 'Suspected drug '), 'placeHolder' => 'drug name'
+                'div' => false, 'type' => 'select', 'class' => 'span8 unauthorized_index',
+                'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),  
+                'empty' => true,
+                'options' => $vaccines,  
 
               )
             ); ?>
@@ -152,7 +156,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
         </tr>
         <tr> 
           <td>
-          
+            
           </td> 
           <td> </td>
           <td>
