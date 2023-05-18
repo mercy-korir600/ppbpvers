@@ -17,6 +17,12 @@ class DevicesController extends AppController
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->Auth->allow('guest_add','guest_edit');
+    }
     /**
      * index method
      */
@@ -970,5 +976,121 @@ class DevicesController extends AppController
             $this->Session->setFlash(__('The report could not be deleted. Please, try again.'), 'flash_error');
             $this->redirect($this->referer());
         }
+    }
+    public function guest_add($id = null)
+    {
+        $this->Device->create();
+        $this->Device->save(['Device' => [ 
+            'reference_no' => 'new',  
+            'report_type' => 'Initial', 
+        ]], false);
+        $this->Session->setFlash(__('The Medical Device Incident has been created'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'guest_edit', $this->Device->id));
+    }
+    public function guest_edit($id = null)
+    {
+        $this->Device->id = $id;
+        if (!$this->Device->exists()) {
+            throw new NotFoundException(__('Invalid DEVICE'));
+        }
+        $device = $this->Device->read(null, $id);
+       
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+            }
+
+
+            if ($this->Device->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+                    $this->Device->saveField('submitted', 2);
+                    $this->Device->saveField('submitted_date', date("Y-m-d H:i:s"));
+                     
+                    if (!empty($device['Device']['reference_no']) && $device['Device']['reference_no'] == 'new') {
+                        $reference = $this->generateReferenceNumber();
+
+                        $this->Device->saveField('reference_no', $reference);
+                    }
+                    //bokelo
+                    $device = $this->Device->read(null, $id);
+
+                    //******************       Send Email and Notifications to Applicant and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_device_submit')));
+                    $variables = array(
+                        'name' =>'Guest', 
+                        'reference_no' => $device['Device']['reference_no'],
+                        'reference_link' => $html->link(
+                            $device['Device']['reference_no'],
+                            array('controller' => 'devices', 'action' => 'view', $device['Device']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $device['Device']['modified']
+                    );
+                    $datum = array(
+                        'email' => $device['Device']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_device_submit', 'model' => 'Device',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+                    //Send SMS
+                    if (!empty($device['Device']['reporter_phone']) && strlen(substr($device['Device']['reporter_phone'], -9)) == 9 && is_numeric(substr($device['Device']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($device['Device']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'devices', 'action' => 'view', $device['Device']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
+
+                    //Notify managers
+                    $users = $this->Device->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array('User.group_id' => 2)
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $device['Device']['reference_no'],
+                            'reference_link' => $html->link(
+                                $device['Device']['reference_no'],
+                                array('controller' => 'devices', 'action' => 'view', $device['Device']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $device['Device']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_device_submit', 'model' => 'Device',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum); 
+                    }
+                    //**********************************    END   *********************************
+
+                    $this->Session->setFlash(__('The DEVICE has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                }
+                // debug($this->request->data);
+                $this->Session->setFlash(__('The DEVICE has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The DEVICE could not be saved. Please, try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Device->read(null, $id);
+        }
+ 
+        $counties = $this->Device->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
+        $designations = $this->Device->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('designations'));
     }
 }

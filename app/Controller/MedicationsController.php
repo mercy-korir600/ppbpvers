@@ -24,6 +24,12 @@ class MedicationsController extends AppController
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->Auth->allow('guest_add','guest_edit');
+    }
     /**
      * index method
      *
@@ -963,5 +969,128 @@ class MedicationsController extends AppController
             $this->Session->setFlash(__('The report could not be deleted. Please, try again.'), 'flash_error');
             $this->redirect($this->referer());
         }
+    }
+
+    public function guest_add($id = null)
+    {
+        $this->Medication->create();
+        $this->Medication->save(['Medication' => [ 
+            'reference_no' => 'new',  
+            'report_type' => 'Initial',
+            'pqmp_id' => $id, 
+        ]], false);
+        $this->Session->setFlash(__('The MEDICATION has been created'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'guest_edit', $this->Medication->id));
+    }
+    public function guest_edit($id = null)
+    {
+        $this->Medication->id = $id;
+        if (!$this->Medication->exists()) {
+            throw new NotFoundException(__('Invalid MEDICATION'));
+        }
+        $medication = $this->Medication->read(null, $id);
+        
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+            }
+            if ($this->Medication->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+                    $this->Medication->saveField('submitted', 2);
+                    $this->Medication->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    //lucian
+                    if (!empty($medication['Medication']['reference_no']) && $medication['Medication']['reference_no'] == 'new') {
+                        $count = $this->Medication->find('count',  array(
+                            'fields' => 'Medication.reference_no',
+                            'conditions' => array(
+                                'Medication.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Medication.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $this->Medication->saveField('reference_no', 'ME/' . date('Y') . '/' . $count);
+                    }
+                    //bokelo
+                    $medication = $this->Medication->read(null, $id);
+
+                    //******************       Send Email and Notifications to Applicant and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_medication_submit')));
+                    $variables = array(
+                        'name' => 'Guest', 
+                        'reference_no' => $medication['Medication']['reference_no'],
+                        'reference_link' => $html->link(
+                            $medication['Medication']['reference_no'],
+                            array('controller' => 'medications', 'action' => 'view', $medication['Medication']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $medication['Medication']['modified']
+                    );
+                    $datum = array(
+                        'email' => $medication['Medication']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_medication_submit', 'model' => 'Medication',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+                    //Send SMS
+                    if (!empty($medication['Medication']['reporter_phone']) && strlen(substr($medication['Medication']['reporter_phone'], -9)) == 9 && is_numeric(substr($medication['Medication']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($medication['Medication']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'medications', 'action' => 'view', $medication['Medication']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
+
+                    //Notify managers
+                    $users = $this->Medication->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array('User.group_id' => 2)
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $medication['Medication']['reference_no'],
+                            'reference_link' => $html->link(
+                                $medication['Medication']['reference_no'],
+                                array('controller' => 'medications', 'action' => 'view', $medication['Medication']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $medication['Medication']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_medication_submit', 'model' => 'Medication',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
+                    }
+                    //**********************************    END   *********************************
+
+                    $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                }
+                // debug($this->request->data);
+                $this->Session->setFlash(__('The MEDICATION has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The MEDICATION could not be saved. Please, try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Medication->read(null, $id);
+        }
+
+        //$medication = $this->request->data;
+
+        $counties = $this->Medication->County->find('list');
+        $designations = $this->Medication->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('counties', 'designations'));
     }
 }

@@ -24,4 +24,10 @@ class Pint extends AppModel {
 			'order' => ''
 		)
 	);
+	public function beforeSave($options = array())
+	{
+		if (!empty($this->data[$this->alias]['expiry_date'])) {
+			$this->data[$this->alias]['expiry_date'] = date('Y-m-d H:i:s', strtotime($this->data[$this->alias]['expiry_date']));
+		}
+	}
 }

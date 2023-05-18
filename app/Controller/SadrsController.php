@@ -27,7 +27,7 @@ class SadrsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard');
+        $this->Auth->allow('yellowcard','guest_add','guest_edit');
     }
 
     public function yellowcard($id = null)
@@ -1133,5 +1133,131 @@ class SadrsController extends AppController
         }
         $this->Session->setFlash(__('SADR was not deleted'), 'alerts/flash_error');
         $this->redirect($this->referer());
+    }
+    public function guest_add($id = null)
+    {
+        $this->Sadr->create();
+        $this->Sadr->save(['Sadr' => [ 
+            'reference_no' => 'new', 
+            'report_type' => 'Initial',
+            'pqmp_id' => $id, 
+        ]], false);
+        $this->Session->setFlash(__('The SADR has been created'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'guest_edit', $this->Sadr->id));
+    }
+    public function guest_edit($id = null)
+    {
+        $this->Sadr->id = $id;
+        if (!$this->Sadr->exists()) {
+            throw new NotFoundException(__('Invalid SADR'));
+        }
+        $sadr = $this->Sadr->read(null, $id);
+        
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+            }
+            if ($this->Sadr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+                    $this->Sadr->saveField('submitted', 2);
+                    $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    //lucian
+                    // if(empty($sadr->reference_no)) {
+                    if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
+                        $reference = $this->generateReferenceNumber();
+                        $this->Sadr->saveField('reference_no', $reference);
+                    }
+                    //bokelo
+                    $sadr = $this->Sadr->read(null, $id);
+
+                    //******************       Send Email and Notifications to Reporter and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_sadr_submit')));
+                    $variables = array(
+                        'name' => 'Guest', 
+                        'reference_no' => $sadr['Sadr']['reference_no'],
+                        'reference_link' => $html->link(
+                            $sadr['Sadr']['reference_no'],
+                            array('controller' => 'sadrs', 'action' => 'view', $sadr['Sadr']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $sadr['Sadr']['modified']
+                    );
+                    $datum = array(
+                        'email' => $sadr['Sadr']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_sadr_submit', 'model' => 'Sadr',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+
+                    //Send SMS
+                    if (!empty($sadr['Sadr']['reporter_phone']) && strlen(substr($sadr['Sadr']['reporter_phone'], -9)) == 9 && is_numeric(substr($sadr['Sadr']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($sadr['Sadr']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'sadrs', 'action' => 'view', $sadr['Sadr']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
+
+                    //Notify managers
+                    $users = $this->Sadr->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array('User.group_id' => 2)
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $sadr['Sadr']['reference_no'],
+                            'reference_link' => $html->link(
+                                $sadr['Sadr']['reference_no'],
+                                array('controller' => 'sadrs', 'action' => 'view', $sadr['Sadr']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $sadr['Sadr']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_sadr_submit', 'model' => 'Sadr',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
+                    }
+                    //**********************************    END   *********************************
+
+                    $this->Session->setFlash(__('The SADR has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                }
+                // debug($this->request->data);
+                $this->Session->setFlash(__('The SADR has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The SADR could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Sadr->read(null, $id);
+        }
+
+        //$sadr = $this->request->data;
+
+        $counties = $this->Sadr->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
+        $sub_counties = $this->Sadr->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties'));
+        $designations = $this->Sadr->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('designations'));
+        $routes = $this->Sadr->SadrListOfDrug->Route->find('list');
+        $this->set(compact('routes'));
+        $frequency = $this->Sadr->SadrListOfDrug->Frequency->find('list');
+        $this->set(compact('frequency'));
+        $dose = $this->Sadr->SadrListOfDrug->Dose->find('list');
+        $this->set(compact('dose'));
     }
 }

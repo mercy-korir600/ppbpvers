@@ -159,7 +159,7 @@ class SaefisController extends AppController
     {
         //todo: check if data exists in $users
         $this->response->download('SAEFIs_' . date('Ymd_Hi') . '.csv'); // <= setting the file name
-        $this->set(compact('csaefis'));
+        $this->set(compact('saefis'));
         $this->layout = false;
         $this->render('csv_export');
     }
@@ -377,11 +377,7 @@ class SaefisController extends AppController
     public function general_view($id = null)
     {
         # code...
-        if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'SAEFI_' . $id . '.pdf',  'orientation' => 'portrait');
-            // $this->response->download('AEFI_'.$aefi['Saefi']['id'].'.pdf');
-        }
-
+       
         $saefi = $this->Saefi->find('first', array(
             'conditions' => array('Saefi.id' => $id),
             'contain' => array(

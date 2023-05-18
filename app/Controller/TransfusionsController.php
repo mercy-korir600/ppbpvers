@@ -23,6 +23,13 @@ class TransfusionsController extends AppController
     public $paginate = array();
     public $presetVars = true;
 
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->Auth->allow('guest_add','guest_edit');
+    }
+
     /**
      * index method
      *
@@ -881,5 +888,136 @@ class TransfusionsController extends AppController
             $this->Session->setFlash(__('The report could not be deleted. Please, try again.'), 'flash_error');
             $this->redirect($this->referer());
         }
+    }
+
+
+    // Quest Reports
+    public function guest_add()
+    {
+        # code...
+        $this->Transfusion->create();
+        $this->Transfusion->save(['Transfusion' => [ 
+            'reference_no' => 'new', 
+            'report_type' => 'Initial',  
+        ]], false);
+        $this->Session->setFlash(__('The Blood Transfusion Reaction has been created'), 'alerts/flash_success');
+      
+        $this->redirect(array('action' => 'guest_edit', $this->Transfusion->id));
+    }
+
+    public function guest_edit($id = null)
+    {
+        $this->Transfusion->id = $id;
+        if (!$this->Transfusion->exists()) {
+            throw new NotFoundException(__('Invalid TRANSFUSION'));
+        }
+        $transfusion = $this->Transfusion->read(null, $id);
+               
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+            }
+            if ($this->Transfusion->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+                    $this->Transfusion->saveField('submitted', 2);
+                    $this->Transfusion->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    //lucian
+                    if (!empty($transfusion['Transfusion']['reference_no']) && $transfusion['Transfusion']['reference_no'] == 'new') {
+                        $count = $this->Transfusion->find('count',  array(
+                            'fields' => 'Transfusion.reference_no',
+                            'conditions' => array(
+                                'Transfusion.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Transfusion.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $this->Transfusion->saveField('reference_no', 'BT/' . date('Y') . '/' . $count);
+                    }
+                    //bokelo
+                    $transfusion = $this->Transfusion->read(null, $id);
+
+                    //******************       Send Email and Notifications to Applicant and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_transfusion_submit')));
+                    $variables = array(
+                        'name' => 'Guest', 
+                        'reference_no' => $transfusion['Transfusion']['reference_no'],
+                        'reference_link' => $html->link(
+                            $transfusion['Transfusion']['reference_no'],
+                            array(
+                                'controller' => 'transfusions', 
+                                'action' => 'view', $transfusion['Transfusion']['id'], 
+                                'reporter' => true, 
+                                'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $transfusion['Transfusion']['modified']
+                    );
+                    $datum = array(
+                        'email' => $transfusion['Transfusion']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_transfusion_submit', 'model' => 'Transfusion',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+                    //Send SMS
+                    if (!empty($transfusion['Transfusion']['reporter_phone']) && strlen(substr($transfusion['Transfusion']['reporter_phone'], -9)) == 9 && is_numeric(substr($transfusion['Transfusion']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($transfusion['Transfusion']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'transfusions', 'action' => 'view', $transfusion['Transfusion']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
+
+                    //Notify managers
+                    $users = $this->Transfusion->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array('User.group_id' => 2)
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $transfusion['Transfusion']['reference_no'],
+                            'reference_link' => $html->link(
+                                $transfusion['Transfusion']['reference_no'],
+                                array('controller' => 'transfusions', 'action' => 'view', $transfusion['Transfusion']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $transfusion['Transfusion']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_transfusion_submit', 'model' => 'Transfusion',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
+                    }
+                    //**********************************    END   *********************************
+
+                    $this->Session->setFlash(__('The blood transfusion reaction report has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                    // $this->redirect($this->referer());
+                }
+                // debug($this->request->data);
+                $this->Session->setFlash(__('The blood transfusion reaction report has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else { 
+                $this->Flash->error(__('The blood transfusion reaction could not be submitted to PPB. Please, correct the errors and try again.'));
+            }
+        } else {
+            $this->request->data = $this->Transfusion->read(null, $id);
+        }
+
+        //$transfusion = $this->request->data;
+        $counties = $this->Transfusion->County->find('list');
+        $designations = $this->Transfusion->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('counties', 'designations'));
     }
 }
