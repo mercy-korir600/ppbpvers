@@ -536,6 +536,20 @@ class PadrsController extends AppController
             throw new MethodNotAllowedException();
         }
     }
+    public function api_counties()
+    {
+        if ($this->request->is('get')) {
+            $counties = $this->Padr->County->find('list', array('order' => array('County.county_name')));
+            $this->set([
+                'status' => 'success',
+                'message' => 'County list successfully retrieved',
+                'counties' => $counties,
+                '_serialize' => ['status', 'message', 'counties']
+            ]);
+        } else {
+            throw new MethodNotAllowedException();
+        }
+    }
     public function api_submit()
     {
         if ($this->request->is('post') || $this->request->is('put')) {
