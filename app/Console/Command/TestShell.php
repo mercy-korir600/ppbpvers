@@ -13,7 +13,7 @@ class TestShell extends AppShell {
        $this->out('Hello world.');
        $email = new CakeEmail();
        $email->config('gmail'); 
-       $email->to('kiprotich.japheth19@gmail.com'); 
+       $email->to('jkiprotich@intellisoftkenya.com'); 
        $email->subject('test email'); 
        if(!$email->send('My message to youhouhou')) {
            $this->log($email, 'test_email');

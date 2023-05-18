@@ -7,7 +7,7 @@
 <div id="sadrs-by-county"></div>
 
 <hr>
-<h4>SADRs by County</h4>
+<h4>ADRs by County</h4>
 <table class="table table-condensed table-bordered" id="datatable8">
     <thead>
         <tr>
@@ -36,7 +36,7 @@ Highcharts.chart('sadrs-by-county', {
         type: 'bar'
     },
     title: {
-        text: 'SADRs by County'
+        text: 'ADRs by County'
     },
     yAxis: {
         allowDecimals: false,
