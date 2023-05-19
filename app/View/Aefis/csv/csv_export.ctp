@@ -1,7 +1,8 @@
 <?php
 	
-	$header = array('id' => '#', 'reference_no' => 'Reference No.',  'name_of_institution' => 'Institution','report_type' => 'Type',
-		'counties' => 'County','date_born' => 'Date of birth','age_months' => 'Age in months', 'gender' => 'Gender','patient_county' => 'Patient county',
+	$header = array('id' => '#', 'reference_no' => 'Reference No.', 'report_type' => 'Type', 'name_of_institution' => 'Institution', 'institution_code' => 'Institution Code',
+		'counties' => 'County', 'patient_name' => 'Patient Name', 'guardian_name' => 'Guardian Name', 'ip_no' => 'IP/OP No', 'patient_address' => 'Patient Address', 'date_born' => 'Date of birth','age_months' => 'Age in months', 
+		'gender' => 'Gender', 'patient_village' => 'Patient Village', 'patient_county' => 'Patient county', 'patient_ward' => 'Patient Ward',
 		'vaccination_center' => 'Vaccination center','vaccination_type' => 'Vaccination service', 'vaccination_county' => 'Vaccination county',
 		'bcg' => 'BCG Lymphadenitis', 'convulsion' => 'Convulsion','urticaria' => 'Generalized urticaria', 'high_fever' => 'High Fever',
 		'abscess' => 'Injection site abscess', 'local_reaction' => 'Severe Local Reaction','anaphylaxis' => 'Anaphylaxis', 'meningitis' => 'Encephalopathy',
@@ -11,7 +12,9 @@
 		'vaccination_sites' => 'Vaccination sites','vaccination_batch' => 'Batch/Lot No.','manufacturers' => 'Vaccine Manufacturers',
 		'vaccination_expiry' => 'Vaccine expiry','diluent_batch' => 'Diluent batch','diluent_manufacturers' => 'Diluent manufacturers',
 		'diluent_expiry' => 'Diluent expiry','serious' => 'Reaction serious', 'serious_yes' => 'Reason for seriousness','outcome' => 'Outcome',
-		'designations' => 'Reporter designation','device' => 'Sending Device','created' => 'Date Created','submitted_date'=>'Date Submitted', 'reporter_date' => 'Report Date'
+		'reporter_name' => 'Reporter Name', 'designations' => 'Reporter designation', 'reporter_email' => 'Reporter Email', 'reporter_phone' => 'Reporter Phone', 'reporter_date' => 'Report Date',
+		'person_submitting'=>'Person Submitting', 'reporter_name_diff'=>'Name of person reporting', 'reporter_email_diff'=>'E-MAIL ADDRESS', 'reporter_designation_diff'=>'DESIGNATION', 'reporter_phone_diff'=>'PHONE NO', 'reporter_date_diff'=>'Date',
+		'device' => 'Sending Device','created' => 'Date Created','submitted_date'=>'Date Submitted'
 		);
 	
 	if($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
@@ -21,19 +24,19 @@
 		$header['patient_name'] = 'Patient name';
 	}
 	
-	//Additional free text columns
-	$header['aefi_symptoms'] = 'Describe Adverse Event Following Immunization';
-	$header['description_of_reaction'] = 'Brief details on the event';
-	$header['medical_history'] = 'Past medical history';
-	$header['treatment_given'] = 'Treatment given';
+	// //Additional free text columns
+	// $header['aefi_symptoms'] = 'Describe Adverse Event Following Immunization';
+	// $header['description_of_reaction'] = 'Brief details on the event';
+	// $header['medical_history'] = 'Past medical history';
+	// $header['treatment_given'] = 'Treatment given';
 
 
 	// if header has patient_name then order it to follow the sub_counties
-	if(isset($header['patient_name'])) {
-		$patient_name = $header['patient_name'];
-		unset($header['patient_name']);
-		$header = array_slice($header, 0, 7, true) + array('patient_name' => $patient_name) + array_slice($header, 7, count($header) - 1, true);
-	}
+	// if(isset($header['patient_name'])) {
+	// 	$patient_name = $header['patient_name'];
+	// 	unset($header['patient_name']);
+	// 	$header = array_slice($header, 0, 7, true) + array('patient_name' => $patient_name) + array_slice($header, 7, count($header) - 1, true);
+	// }
 
 
 	echo implode(',', $header)."\n";
@@ -43,8 +46,30 @@
 		foreach ($header as $key => $val) {
 			if (array_key_exists($key, $caefi['Aefi'])) {
 				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi'][$key]) . '"';
-			} elseif ($key == 'counties') {
+			} 
+			elseif ($key == 'report_type') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['report_type']) . '"';
+			}
+			elseif ($key == 'name_of_institution') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['name_of_institution']) . '"';
+			}
+			elseif ($key == 'institution_code') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['institution_code']) . '"';
+			}
+			elseif ($key == 'counties') {
 				$row[$key] = '"' . preg_replace('/"/','""',$caefi['County']['county_name']) . '"';
+			} 
+			elseif ($key == 'patient_name') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['patient_name']) . '"';
+			} 
+			elseif ($key == 'guardian_name') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['guardian_name']) . '"';
+			} 
+			elseif ($key == 'ip_no') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['ip_no']) . '"';
+			} 
+			elseif ($key == 'patient_address') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['patient_address']) . '"';
 			} 
 			// elseif ($key == 'sub_counties') {
 			// 	$row[$key] = '"' . preg_replace('/"/','""',$caefi['SubCounty']['sub_county_name']) . '"';

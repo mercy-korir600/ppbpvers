@@ -145,7 +145,7 @@ $this->Html->css('summary', null, array('inline' => false));
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
-                        <th>Age group</th>
+                        <th>Year</th>
                         <th>SADRs</th>
                     </tr>
                 </thead>
@@ -166,37 +166,36 @@ $this->Html->css('summary', null, array('inline' => false));
 <hr>
 <div class="row-fluid">
     <div class="span12">
-        <h4>SADRs per Reaction</h4>
-
+        <h4>SADRs per Month</h4>
         <div class="tab">
-            <button class="tablinks" onclick="reactionTab(event, 'reactionChart')" id="reactionOpen">
+            <button class="tablinks" onclick="monthTab(event, 'monthChart')" id="monthOpen">
                 <i class="fa fa-pie-chart"></i> Chart
             </button>
 
-            <button class="tablinksreaction" onclick="reactionTab(event, 'reactionTable')">
+            <button class="tablinksmonth" onclick="monthTab(event, 'monthTable')">
                 <i class="fa fa-table"></i> Table
             </button>
         </div>
 
-        <div id="reactionChart" class="tabcontentreaction">
-            <div id="sadrs-reaction"></div>
+        <div id="monthChart" class="tabcontentmonth">
+            <div id="sadrs-month"></div>
 
         </div>
 
-        <div id="reactionTable" class="tabcontentreaction">
-            <table class="table table-condensed table-bordered" id="datatablereaction">
+        <div id="monthTable" class="tabcontentmonth">
+            <table class="table table-condensed table-bordered" id="datatablemonth">
                 <thead>
                     <tr>
-                        <th>Reaction</th>
+                        <th>Month</th>
                         <th>SADRs</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    foreach ($reaction as $key => $value) {
+                    foreach ($monthly as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value['Sadr']['reaction'] . "</th>";
-                        echo "<td>" . $value[0]['rea'] . "</td>";
+                        echo "<th>" . $value[0]['month'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -205,48 +204,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
-<div class="row-fluid">
-    <div class="span12">
-        <h4>SADRs per Title</h4>
-
-        <div class="tab">
-            <button class="tablinks" onclick="titleTab(event, 'titleChart')" id="titleOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinkstitle" onclick="titleTab(event, 'titleTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="titleChart" class="tabcontenttitle">
-            <div id="sadrs-title"></div>
-
-        </div>
-
-        <div id="titleTable" class="tabcontenttitle">
-            <table class="table table-condensed table-bordered" id="datatabletitle">
-                <thead>
-                    <tr>
-                        <th>Report Title</th>
-                        <th>SADRs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($report_title as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value['Sadr']['report_title'] . "</th>";
-                        echo "<td>" . $value[0]['rep'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<hr> 
 <script type="text/javascript">
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
@@ -290,6 +248,20 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
+    function monthTab(evt, monthtabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentmonth");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksmonth");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(monthtabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
     function yearTab(evt, yeartabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentyear");
@@ -303,41 +275,13 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
-
-    function reactionTab(evt, reactiontabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentreaction");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksreaction");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(reactiontabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    function titleTab(evt, titletabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontenttitle");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinkstitle");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(titletabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
+ 
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
-    document.getElementById("yearOpen").click();
-    document.getElementById("reactionOpen").click();
-    document.getElementById("titleOpen").click();
+    document.getElementById("monthOpen").click();
+    document.getElementById("yearOpen").click(); 
 
 
     Highcharts.chart('sadrs-geo', {
@@ -412,6 +356,30 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
+    Highcharts.chart('sadrs-month', {
+        data: {
+            table: 'datatablemonth'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
     Highcharts.chart('sadrs-year', {
         data: {
             table: 'datatableyear'
@@ -436,53 +404,6 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    Highcharts.chart('sadrs-reaction', {
-        data: {
-            table: 'datatablereaction'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-    Highcharts.chart('sadrs-title', {
-        data: {
-            table: 'datatabletitle'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
+    
 </script>
 <?php $this->end(); ?>

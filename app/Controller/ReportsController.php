@@ -330,17 +330,22 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+
+        $monthly = $this->Sadr->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Sadr.id'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
         //get all the counties in the system without any relation
         $counties = $this->Sadr->County->find('list', array('order' => 'County.county_name ASC'));
 
 
-        // Get All SADRs by Gender
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
-        $sex = $this->Sadr->find('all', array(
+        // Get All SADRs by Gender 
+         $sex = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -349,12 +354,7 @@ class ReportsController extends AppController
         ));
 
 
-        // Get All SADRs by Report Title
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
+        // Get All SADRs by Report Title 
         $report_title = $this->Sadr->find('all', array(
             'fields' => array('report_title', 'COUNT(*) as rep'),
             'contain' => array(), 'recursive' => -1,
@@ -365,11 +365,6 @@ class ReportsController extends AppController
 
 
         // GET SUMMARY BY AGE GROUP
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $case = "((case 
                 when trim(age_group) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_group
                 when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
@@ -399,11 +394,6 @@ class ReportsController extends AppController
         ));
 
         // Get All SADRs by Reaction
-        $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $reaction = $this->Sadr->find('all', array(
             'fields' => array('reaction', 'COUNT(*) as rea'),
             'contain' => array(), 'recursive' => -1,
@@ -412,17 +402,76 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+        // Reporter Qualification
+        $qualification = $this->Sadr->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Seriousness
+
+        $seriousness = $this->Sadr->find('all', array(
+            'fields' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious) as serious', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious)'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Outcome
+        $outcome_data = $this->Sadr->find('all', array(
+            'fields' => array('outcome', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('outcome'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+
+        // Facility
+        $facility_data = $this->Sadr->find('all', array(
+            'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+
+        // Reason for Seriousness
+        $criteria['Sadr.serious_reason !='] = '';
+        $seriousness_reason = $this->Sadr->find('all', array(
+            'fields' => array('serious_reason', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('serious_reason'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('sex'));
         $this->set(compact('age'));
+        $this->set(compact('monthly'));
         $this->set(compact('year'));
         $this->set(compact('reaction'));
         $this->set(compact('report_title'));
-
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'reaction', 'report_title');
-        $this->render('upgrade/summary');
+        $this->set(compact('qualification'));
+        $this->set(compact('seriousness'));
+        $this->set(compact('seriousness_reason'));
+        $this->set(compact('outcome_data'));
+        $this->set(compact('facility_data'));
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age','monthly', 'year', 'reaction', 'report_title','qualification','seriousness','seriousness_reason','outcome_data','facility_data');
+        if($this->Session->read('Auth.User.group_id') ==2){
+        $this->render('upgrade/manager_sadr_summary');
+        }else{
+            $this->render('upgrade/sadr_summary');
+        }
     }
     public function aefi_summary()
     {

@@ -94,7 +94,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
           </ul>
         </div><!--/.nav-collapse -->
 
-        
+
       </div>
     </div>
   </div>
@@ -117,63 +117,66 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
       ?>
       <?php echo $this->fetch('content'); ?>
 
+      <?php
+      if (!$this->Session->read('Auth.User')) { ?>
         <!-- Modal comes here -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel">Guest Reporting</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Divide into equal 4 sections -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Guest Reporting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <!-- Divide into equal 4 sections -->
 
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> AEFI Reporting Form',
-            array('controller' => 'aefis', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
-          <hr>
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> PQHPT Reporting Form',
-            array('controller' => 'pqmps', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> AEFI Reporting Form',
+                  array('controller' => 'aefis', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
+                <hr>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> PQHPT Reporting Form',
+                  array('controller' => 'pqmps', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
 
-          <hr>
+                <hr>
 
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> SADR Reporting Form',
-            array('controller' => 'sadrs', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
-          <hr>
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> Medical Devices Reporting Form',
-            array('controller' => 'devices', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
-          <hr>
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> Medication Errors Reporting Form',
-            array('controller' => 'medications', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
-          <hr>
-          <?php echo $this->Html->link(
-            '<i class="fa fa-file-o" aria-hidden="true"></i> Transfusion Reaction Reporting Form',
-            array('controller' => 'transfusions', 'action' => 'guest_add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          ); ?>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> SADR Reporting Form',
+                  array('controller' => 'sadrs', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
+                <hr>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Medical Devices Reporting Form',
+                  array('controller' => 'devices', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
+                <hr>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Medication Errors Reporting Form',
+                  array('controller' => 'medications', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
+                <hr>
+                <?php echo $this->Html->link(
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Transfusion Reaction Reporting Form',
+                  array('controller' => 'transfusions', 'action' => 'guest_add'),
+                  array('escape' => false, 'class' => 'btn btn-success')
+                ); ?>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div> 
+      <?php } ?>
     </div>
   </div>
   <hr>
@@ -225,7 +228,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
     </div>
   </footer>
 
-  
+
   <script>
     $(document).ready(function() {
       $('.modal-trigger').click(function() {

@@ -118,73 +118,80 @@ class Saefi extends AppModel
 				'message'  => 'Please provide start date'
 			),
 		),
-		
 
-		'past_history_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'past_history', 'past_history_remarks'],
-				'message' => 'Please provide past history remarks'
-			)
-		),
-		'adverse_event_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'adverse_event', 'adverse_event_remarks'],
-				'message' => 'Please provide past adverse event remarks'
-			)
-		),
-		'allergy_history_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'allergy_history', 'allergy_history_remarks'],
-				'message' => 'Please provide allergy history remarks'
-			)
-		),
-		'comorbidity_disorder_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'comorbidity_disorder', 'comorbidity_disorder_remarks'],
-				'message' => 'Please provide comorbidity disorder remarks'
-			)
-		),
-		'existing_illness_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'existing_illness', 'existing_illness_remarks'],
-				'message' => 'Please provide existing illness remarks'
-			)
-		),
-		'covid_positive_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'covid_positive', 'covid_positive_remarks'],
-				'message' => 'Please provide past covid positive remarks'
-			)
-		),
-		'hospitalization_history_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'hospitalization_history', 'hospitalization_history_remarks'],
-				'message' => 'Please provide hospitalization_history remarks'
-			)
-		),
-		'medication_vaccination_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'medication_vaccination', 'medication_vaccination_remarks'],
-				'message' => 'Please provide medication vaccination remarks'
-			)
-		),
-		'faith_healers_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'faith_healers', 'faith_healers_remarks'],
-				'message' => 'Please provide faith healers remarks'
-			)
-		),
-		'family_history_remarks' => array(
-			'seriousYes' => array(
-				'rule' => ['checkFieldNotEmpty', 'family_history', 'family_history_remarks'],
-				'message' => 'Please provide family history remarks'
-			)
-		),
+
+		// 'past_history_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'past_history', 'past_history_remarks'],
+		// 		'message' => 'Please provide past history remarks'
+		// 	)
+		// ),
+		// 'adverse_event_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'adverse_event', 'adverse_event_remarks'],
+		// 		'message' => 'Please provide past adverse event remarks'
+		// 	)
+		// ),
+		// 'allergy_history_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'allergy_history', 'allergy_history_remarks'],
+		// 		'message' => 'Please provide allergy history remarks'
+		// 	)
+		// ),
+		// 'comorbidity_disorder_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'comorbidity_disorder', 'comorbidity_disorder_remarks'],
+		// 		'message' => 'Please provide comorbidity disorder remarks'
+		// 	)
+		// ),
+		// 'existing_illness_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'existing_illness', 'existing_illness_remarks'],
+		// 		'message' => 'Please provide existing illness remarks'
+		// 	)
+		// ),
+		// 'covid_positive_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'covid_positive', 'covid_positive_remarks'],
+		// 		'message' => 'Please provide past covid positive remarks'
+		// 	)
+		// ),
+		// 'hospitalization_history_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'hospitalization_history', 'hospitalization_history_remarks'],
+		// 		'message' => 'Please provide hospitalization_history remarks'
+		// 	)
+		// ),
+		// 'medication_vaccination_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'medication_vaccination', 'medication_vaccination_remarks'],
+		// 		'message' => 'Please provide medication vaccination remarks'
+		// 	)
+		// ),
+		// 'faith_healers_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'faith_healers', 'faith_healers_remarks'],
+		// 		'message' => 'Please provide faith healers remarks'
+		// 	)
+		// ),
+		// 'family_history_remarks' => array(
+		// 	'seriousYes' => array(
+		// 		'rule' => ['checkFieldNotEmpty', 'family_history', 'family_history_remarks'],
+		// 		'message' => 'Please provide family history remarks'
+		// 	)
+		// ),
 		'examiner_name' => array(
 			'notBlank' => array(
 				'rule'     => 'notBlank',
 				'required' => true,
 				'message'  => 'Please provide the name of the investigator'
+			),
+		),
+		'person_details' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the person details'
 			),
 		),
 		'person_date' => array(
@@ -209,7 +216,7 @@ class Saefi extends AppModel
 				'message'  => 'Please provide the Final Diagnosis'
 			),
 		),
-		
+
 
 
 	);

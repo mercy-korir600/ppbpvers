@@ -71,8 +71,8 @@ echo $this->Form->create('Saefi', array(
 			<div class="span6">
 				<?php
 				echo $this->Form->input('province_id', [
-					'label' => 'Province ',  'div' => array('class' => 'control-group required'),
-					'label' => array('class' => 'control-label required', 'text' => 'Province <span style="color:red;">*</span>'),
+					'label' => 'County ',  'div' => array('class' => 'control-group required'),
+					'label' => array('class' => 'control-label required', 'text' => 'County <span style="color:red;">*</span>'),
 					'after' => '<p class="help-block"> </p></div>', 'options' => $county, 'empty' => true, 'escape' => false
 				]);
 				?>
@@ -80,7 +80,7 @@ echo $this->Form->create('Saefi', array(
 			<div class="span6">
 				<?= $this->Form->input('district', array(
 					'div' => array('class' => 'control-group required'),
-					'label' => array('class' => 'control-label required', 'text' => 'District <span style="color:red;">*</span>'),
+					'label' => array('class' => 'control-label required', 'text' => 'Sub County <span style="color:red;">*</span>'),
 					'after' => '<p class="help-block"> </p></div>'
 				)); ?>
 			</div>
@@ -1284,7 +1284,7 @@ echo $this->Form->create('Saefi', array(
 		<!-- Start of Row -->
 		<div class="row-fluid">
 			<div class="col-xs-4">
-				<div class="control-label"><label>Autopsy report (if available):</label></div>
+				<!-- <div class="control-label"><label>Autopsy report (if available):</label></div> -->
 			</div>
 			<div class="col-xs-7">
 				<?php
@@ -1292,12 +1292,13 @@ echo $this->Form->create('Saefi', array(
 					echo '<p><b>File attachment:</b></p>';
 					echo $this->Html->link($saefi['reports'][0]->file, substr($saefi['reports'][0]->dir, 8) . '/' . $saefi['reports'][0]->file, ['fullBase' => true]);
 				} else {
-					echo $this->Form->input('reports.0.file', ['type' => 'file', 'label' => false, 'templates' => 'table_form']);
+					// echo $this->Form->input('reports.0.file', ['type' => 'file', 'label' => false, 'templates' => 'table_form']);
 				}
 				?>
 			</div>
 			<!-- <p>Attachments!!</p> -->
-			<div class="col-xs-12"><?php echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachments']); ?>
+			<div class="col-xs-12"><?php 
+			// echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachments']); ?>
 			</div>
 		</div>
 		<!-- End of Row -->
