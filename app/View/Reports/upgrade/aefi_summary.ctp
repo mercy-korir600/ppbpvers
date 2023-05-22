@@ -605,9 +605,9 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("ageOpen").click();
     document.getElementById("yearOpen").click();
     document.getElementById("qualificationOpen").click();
+    document.getElementById("outcomeOpen").click();
     document.getElementById("reasonOpen").click();
     document.getElementById("seriousOpen").click();
-    document.getElementById("outcomeOpen").click();
     document.getElementById("facilityOpen").click();
     document.getElementById("monthOpen").click();
     Highcharts.chart('sadrs-month', {

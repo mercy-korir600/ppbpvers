@@ -856,7 +856,7 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
- 
+
         //get all the counties in the system without any relation
         $counties = $this->Pqmp->County->find('list', array('order' => 'County.county_name ASC'));
 
@@ -875,9 +875,9 @@ class ReportsController extends AppController
         $this->set(compact('supplier'));
         $this->set(compact('generic_name'));
         $this->set(compact('country'));
-        $this->set(compact('monthly')); 
+        $this->set(compact('monthly'));
 
-        $this->set('_serialize', 'geo', 'counties', 'year', 'designation', 'facility', 'formulation', 'category', 'complaint', 'medical', 'brands','manufacturer','supplier','generic_name','country','monthly');
+        $this->set('_serialize', 'geo', 'counties', 'year', 'designation', 'facility', 'formulation', 'category', 'complaint', 'medical', 'brands', 'manufacturer', 'supplier', 'generic_name', 'country', 'monthly');
         $this->render('upgrade/pqmps_summary');
     }
 
@@ -996,7 +996,13 @@ class ReportsController extends AppController
             'group' => array('County.county_name', 'County.id'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
+        $qualification = $this->Transfusion->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
         //get all the counties in the system without any relation
         $counties = $this->Transfusion->County->find('list', array('order' => 'County.county_name ASC'));
 
@@ -1039,6 +1045,60 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
+        $case = "((case 
+        when reaction_fever is not null then 'Fever'
+        when reaction_chills is not null then 'Chills/Rigors'
+        when reaction_flushing is not null then 'Flushing'
+        when reaction_vomiting is not null then 'Nausea/Vomiting'
+        when reaction_dermatological is not null then reaction_dermatological
+        when reaction_chest is not null then 'Chest pain'
+        when reaction_dyspnoea is not null then 'Dyspnoea'
+        when reaction_hypotension is not null then 'Hypotension'
+        when reaction_tachycardia is not null then 'Tachycardia'
+        when reaction_dark is not null then 'Haemoglobinuria- Dark urine'
+        when reaction_oliguria is not null then 'Oliguria'
+        when reaction_anuria is not null then 'Anuria'
+        when reaction_haematological is not null then 'Unexplained bleeding'
+        when reaction_other is not null then 'Others'
+        else 'N/A'
+       end))";
+
+        $outcome = $this->Transfusion->find('all', array(
+            'fields' => array($case . ' as rtype', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $previous_reactions = $this->Transfusion->find('all', array(
+            'fields' => array('previous_reactions', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_reactions !=' => ''),
+            'group' => array('previous_reactions'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $previous_transfusion = $this->Transfusion->find('all', array(
+            'fields' => array('previous_transfusion', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_transfusion !=' => ''),
+            'group' => array('previous_transfusion'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $months = $this->Transfusion->find('all', array(
+            'fields' => array(
+                'DATE_FORMAT(created, "%b %Y") AS month',
+                'month(ifnull(created, created)) AS salit',
+                'COUNT(*) AS cnt'
+            ),
+            'contain' => array(),
+            'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('Transfusion.created'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
 
 
         $this->set(compact('counties'));
@@ -1046,34 +1106,25 @@ class ReportsController extends AppController
         $this->set(compact('sex'));
         $this->set(compact('age'));
         $this->set(compact('year'));
+        $this->set(compact('qualification'));
+        $this->set(compact('outcome'));
+        $this->set(compact('previous_reactions'));
+        $this->set(compact('previous_transfusion'));
+        $this->set(compact('months'));
 
         $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
-
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
+        $this->set('_serialize', 'qualification', 'outcome', 'previous_reactions', 'previous_transfusion', 'months');
         $this->render('upgrade/transfusions_summary');
     }
     public function saes_summary()
     {
 
-        // Load Data for Counties
         $criteria = array();
-        // $criteria['Sae.submitted'] = array(1, 2);
-        // $criteria['Sae.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sae.county_id'] = $this->Auth->User('county_id');
-        // $geo = $this->Sae->find('all', array(
-        //     'fields' => array('County.county_name', 'COUNT(*) as cnt'),
-        //     'contain' => array('County'),
-        //     'conditions' => $criteria,
-        //     'group' => array('County.county_name', 'County.id'),
-        //     'having' => array('COUNT(*) >' => 0),
-        // ));
         $geo = [];
-
-        //get all the counties in the system without any relation
-        $counties = []; // $this->Sae->County->find('list', array('order' => 'County.county_name ASC'));
-
+        $counties = [];
 
         // Get All SADRs by Gender 
         $sex = $this->Sae->find('all', array(
@@ -1104,6 +1155,14 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+        $months = $this->Sae->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Sae.id'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
         // SADRs per Year
         $year = $this->Sae->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
@@ -1114,14 +1173,18 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-
+        $outcome = [];
+        $causality = [];
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('sex'));
         $this->set(compact('age'));
         $this->set(compact('year'));
+        $this->set(compact('months'));
+        $this->set(compact('outcome'));
+        $this->set(compact('causality'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'outcome', 'causality');
         $this->render('upgrade/saes_summary');
     }
 
@@ -1198,14 +1261,196 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+        $months = $this->Medication->find('all', array(
+            'fields' => array('month(ifnull(created, created)) as month', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('month(ifnull(created, created))'),
+            'order' => array('month'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $facilities = $this->Medication->find('all', array(
+            'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        // Japhee
+        $process = $this->Medication->find('all', array(
+            'fields' => array('process_occur', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('process_occur'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $case = "((case 
+        when outcome in ('Potential error, circumstances/events have potential to cause incident') then 'NO ERROR'
+        when outcome in ('Treatment /intervention required-caused temporary harm', 'Initial/prolonged hospitalization-caused temporary harm', 'Caused permanent harm', 'Near death event') then 'ERROR, HARM'
+        when outcome in ('Actual error-did not reach patient', 'Actual error-caused no harm', 'Additional monitoring required-caused no harm') then 'ERROR, NO HARM'
+        when outcome in ('Death') then 'ERROR, DEATH'
+        else 'N/A'
+       end))";
 
+        $error = $this->Medication->find('all', array(
+            'fields' => array($case . ' as error', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $designation = $this->Medication->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $case = "((case 
+        when error_cause_inexperience = 1 or error_cause_knowledge = 1 or error_cause_distraction = 1 then 'Staff factors'
+        when error_cause_medication = 1 or error_cause_packaging = 1 or error_cause_sound = 1 then 'Medication related'
+        when error_cause_workload = 1 or error_cause_peak = 1 or error_cause_stock = 1 then 'Work and environment'
+        when error_cause_procedure = 1 or error_cause_abbreviations = 1 or error_cause_illegible = 1 or error_cause_inaccurate = 1 or error_cause_labelling = 1 or error_cause_computer = 1 or error_cause_other = 1  then 'Task and technology'
+        else 'N/A'
+       end))";
+
+        $factor = $this->Medication->find('all', array(
+            'fields' => array($case . ' as factor', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $pic=array();
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $pic['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        } else {
+            $pic['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+        }
+        $pi = $this->Medication->MedicationProduct->find('all', array(
+            'fields' => array('MedicationProduct.product_name_i as product_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $pic,
+            'group' => array('MedicationProduct.product_name_i'),
+            'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
+        ));
+
+        $pec=array();
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $pec['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        } else {
+            $pec['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+        }
+
+        $pe = $this->Medication->MedicationProduct->find('all', array(
+            'fields' => array('MedicationProduct.product_name_ii as product_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $pec,
+            'group' => array('MedicationProduct.product_name_ii'),
+            'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
+        ));
+
+        // Generic Error
+
+        $gec['MedicationProduct.created >'] = '2020-04-01 08:08:08';
+        $gec['MedicationProduct.generic_name_i >'] = '';
+        if ($this->Auth->User('user_type') == 'Public Health Program') {
+            $conditionsSubQuery['DrugDictionary.health_program'] = $this->Auth->User('health_program');
+
+            $db = $this->DrugDictionary->getDataSource();
+            $subQuery = $db->buildStatement(
+                array(
+                    'fields'     => array('DrugDictionary.drug_name'),
+                    'table'      => $db->fullTableName($this->DrugDictionary),
+                    'alias'      => 'DrugDictionary',
+                    'limit'      => null,
+                    'offset'     => null,
+                    'joins'      => array(),
+                    'conditions' => $conditionsSubQuery,
+                    'order'      => null,
+                    'group'      => null
+                ),
+                $this->DrugDictionary
+            );
+            $subQuery = 'MedicationProduct.generic_name_i IN (' . $subQuery . ') ';
+            $subQueryExpression = $db->expression($subQuery);
+
+            $gec[] = $subQueryExpression;
+        }
+
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $gec['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        } else {
+            $gec['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+        }
+        $gi = $this->Medication->MedicationProduct->find('all', array(
+            'fields' => array('MedicationProduct.generic_name_i as generic_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $gec,
+            'group' => array('MedicationProduct.generic_name_i'),
+            'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
+        ));
+
+        // Generic Error
+        $git['MedicationProduct.created >'] = '2020-04-01 08:08:08';
+        $git['MedicationProduct.generic_name_ii >'] = '';
+        if ($this->Auth->User('user_type') == 'Public Health Program') {
+            $conditionsSubQuery['DrugDictionary.health_program'] = $this->Auth->User('health_program');
+
+            $db = $this->DrugDictionary->getDataSource();
+            $subQuery = $db->buildStatement(
+                array(
+                    'fields'     => array('DrugDictionary.drug_name'),
+                    'table'      => $db->fullTableName($this->DrugDictionary),
+                    'alias'      => 'DrugDictionary',
+                    'limit'      => null,
+                    'offset'     => null,
+                    'joins'      => array(),
+                    'conditions' => $conditionsSubQuery,
+                    'order'      => null,
+                    'group'      => null
+                ),
+                $this->DrugDictionary
+            );
+            $subQuery = 'MedicationProduct.generic_name_ii IN (' . $subQuery . ') ';
+            $subQueryExpression = $db->expression($subQuery);
+
+            $git[] = $subQueryExpression;
+        }
+
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $git['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        } else {
+            $git['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+        }
+        $ge = $this->Medication->MedicationProduct->find('all', array(
+            'fields' => array('MedicationProduct.generic_name_ii as generic_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $git,
+            'group' => array('MedicationProduct.generic_name_ii'),
+            'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
+        ));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('sex'));
         $this->set(compact('age'));
         $this->set(compact('year'));
+        $this->set(compact('facilities'));
+        $this->set(compact('months'));
+        $this->set(compact('process'));
+        $this->set(compact('error'));
+        $this->set(compact('designation'));
+        $this->set(compact('factor'));
+        $this->set(compact('pi'));
+        $this->set(compact('pe'));
+        $this->set(compact('gi'));
+        $this->set(compact('ge'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor','pi','pe','gi','ge');
         $this->render('upgrade/medications_summary');
     }
     public function sadrs_by_age()
