@@ -272,8 +272,8 @@ class ReportsController extends AppController
             ),
             'fields' => array('id')
         ));
-        debug($cond);
-        exit;
+        // debug($cond);
+        // exit;
         return $cond;
     }
 
@@ -345,7 +345,7 @@ class ReportsController extends AppController
 
 
         // Get All SADRs by Gender 
-         $sex = $this->Sadr->find('all', array(
+        $sex = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -466,10 +466,10 @@ class ReportsController extends AppController
         $this->set(compact('seriousness_reason'));
         $this->set(compact('outcome_data'));
         $this->set(compact('facility_data'));
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age','monthly', 'year', 'reaction', 'report_title','qualification','seriousness','seriousness_reason','outcome_data','facility_data');
-        if($this->Session->read('Auth.User.group_id') ==2){
-        $this->render('upgrade/manager_sadr_summary');
-        }else{
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'monthly', 'year', 'reaction', 'report_title', 'qualification', 'seriousness', 'seriousness_reason', 'outcome_data', 'facility_data');
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_sadr_summary');
+        } else {
             $this->render('upgrade/sadr_summary');
         }
     }
@@ -533,9 +533,7 @@ class ReportsController extends AppController
         ));
 
 
-        // GET SUMMARY BY AGE GROUP
-        $criteria['Aefi.submitted'] = array(1, 2);
-        $criteria['Aefi.copied !='] = '1';
+        // GET SUMMARY BY AGE GROUP 
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
@@ -570,6 +568,54 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
+
+        $qualification = $this->Aefi->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $serious = $this->Aefi->find('all', array(
+            'fields' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious) as serious', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious)'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $outcome = $this->Aefi->find('all', array(
+            'fields' => array('outcome', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('outcome'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $facilities = $this->Aefi->find('all', array(
+            'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $months = $this->Aefi->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y") as month', 'month(created) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('monthname(created)', 'Aefi.id'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $conditions = array_merge($criteria, array('serious_yes IS NOT NULL'));
+        $reason = $this->Aefi->find('all', array(
+            'fields' => array('serious_yes', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $conditions,
+            'group' => array('serious_yes'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
@@ -578,20 +624,12 @@ class ReportsController extends AppController
             $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
         }
 
-        // $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-        //     'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-        //     'contain' => array('Vaccine'), 'recursive' => -1,
-        //     // 'conditions' => $criteria,
-        //     'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
-        //     'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
-        // ));
         $criteriav['Vaccine.id >'] = 0;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteriav['AefiListOfVaccine.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         else
             $criteriav['AefiListOfVaccine.created >'] = '2020-04-01 08:00:00';
 
-        // if($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
             $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
@@ -604,6 +642,7 @@ class ReportsController extends AppController
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
+
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
@@ -611,8 +650,14 @@ class ReportsController extends AppController
         $this->set(compact('age'));
         $this->set(compact('year'));
         $this->set(compact('vaccine'));
+        $this->set(compact('qualification'));
+        $this->set(compact('serious'));
+        $this->set(compact('reason'));
+        $this->set(compact('outcome'));
+        $this->set(compact('facilities'));
+        $this->set(compact('months'));
 
-        $this->set('_serialize', 'geo', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year');
+        $this->set('_serialize', 'geo', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year', 'qualification', 'serious', 'reason', 'outcome', 'facilities', 'months');
         $this->render('upgrade/aefi_summary');
     }
     public function pqmps_summary()
@@ -624,6 +669,9 @@ class ReportsController extends AppController
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Pqmp.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
+
+
+        //    PQHPTs per County
         $geo = $this->Pqmp->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
             'contain' => array('County'),
@@ -631,12 +679,7 @@ class ReportsController extends AppController
             'group' => array('County.county_name', 'County.id'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
-        //get all the counties in the system without any relation
-        $counties = $this->Pqmp->County->find('list', array('order' => 'County.county_name ASC'));
-
-
-        // Pqmps per Year
+        // PQHPTs per Year
         $year = $this->Pqmp->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
@@ -645,12 +688,196 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
+        // PQHPTS per Designation
+        $designation = $this->Pqmp->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // PQHPTs per  Facility
+
+        $facility = $this->Pqmp->find('all', array(
+            'fields' => array('facility_name', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('facility_name'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // PQHPTs per Product Formalation
+
+        $formulation = $this->Pqmp->find('all', array(
+            'fields' => array('product_formulation', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('product_formulation'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // PQHPTs per Product Category
+
+        $case = "((case 
+        when medicinal_product = 1 then 'Medicinal Product'
+        when blood_products = 1 then 'Blood and blood products'
+        when herbal_product = 1 then 'Herbal product'
+        when medical_device = 1 then 'Medical device'
+        when product_vaccine = 1 then 'Vaccine'
+        when cosmeceuticals = 1 then 'Cosmeceuticals'
+        else 'Others'
+       end))";
+
+        $category = $this->Pqmp->find('all', array(
+            'fields' => array($case . ' as category', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // PQHPTs per Complaint
+
+        $case = "((case 
+        when colour_change = 1 then 'Colour change'
+        when separating = 1 then 'Separating'
+        when powdering = 1 then 'Powdering'
+        when caking = 1 then 'Caking'
+        when moulding = 1 then 'Moulding'
+        when odour_change = 1 then 'Odour change'
+        when mislabeling = 1 then 'Mislabeling'
+        when incomplete_pack = 1 then 'Incomplete pack'
+        when therapeutic_ineffectiveness = 1 then 'Therapeutic ineffectiveness'
+        when particulate_matter = 1 then 'Particulate matter'
+        else 'Others'
+       end))";
+
+        $complaint = $this->Pqmp->find('all', array(
+            'fields' => array($case . ' as complaint', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // PQHPTs per Medical Device
+
+
+        $case = "((case 
+        when packaging = 1 then 'Packaging'
+        when labelling = 1 then 'Labelling'
+        when sampling = 1 then 'Sampling'
+        when mechanism = 1 then 'Mechanism'
+        when electrical = 1 then 'Electrical'
+        when device_data = 1 then 'Data'
+        when software = 1 then 'Software'
+        when environmental = 1 then 'Environmental'
+        when failure_to_calibrate = 1 then 'Failure to calibrate'
+        when results = 1 then 'Results'
+        when readings = 1 then 'Readings'
+        else 'N/A'
+       end))";
+
+        $medical = $this->Pqmp->find('all', array(
+            'fields' => array($case . ' as device', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Per Brand Name
+
+        $brands = $this->Pqmp->find('all', array(
+            'fields' => array('brand_name', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('brand_name'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Per Manufacturer
+
+        $manufacturer = $this->Pqmp->find('all', array(
+            'fields' => array('name_of_manufacturer', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_manufacturer'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Per Supplier
+
+        $supplier = $this->Pqmp->find('all', array(
+            'fields' => array('supplier_name', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('supplier_name'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Per Generic Name
+
+
+        $generic_name = $this->Pqmp->find('all', array(
+            'fields' => array('generic_name', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('generic_name'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+
+        // Per Country
+
+        $country = $this->Pqmp->find('all', array(
+            'fields' => array('Country.name', 'COUNT(*) as cnt'),
+            'contain' => array('Country'),
+            'conditions' => $criteria,
+            'group' => array('Country.name', 'Country.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        // Per Month
+
+        $monthly = $this->Pqmp->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Pqmp.id'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+ 
+        //get all the counties in the system without any relation
+        $counties = $this->Pqmp->County->find('list', array('order' => 'County.county_name ASC'));
+
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('year'));
+        $this->set(compact('designation'));
+        $this->set(compact('facility'));
+        $this->set(compact('formulation'));
+        $this->set(compact('category'));
+        $this->set(compact('complaint'));
+        $this->set(compact('medical'));
+        $this->set(compact('brands'));
+        $this->set(compact('manufacturer'));
+        $this->set(compact('supplier'));
+        $this->set(compact('generic_name'));
+        $this->set(compact('country'));
+        $this->set(compact('monthly')); 
 
-        $this->set('_serialize', 'geo', 'counties', 'year');
+        $this->set('_serialize', 'geo', 'counties', 'year', 'designation', 'facility', 'formulation', 'category', 'complaint', 'medical', 'brands','manufacturer','supplier','generic_name','country','monthly');
         $this->render('upgrade/pqmps_summary');
     }
 
@@ -842,10 +1069,10 @@ class ReportsController extends AppController
         //     'group' => array('County.county_name', 'County.id'),
         //     'having' => array('COUNT(*) >' => 0),
         // ));
-        $geo=[];
+        $geo = [];
 
         //get all the counties in the system without any relation
-        $counties =[];// $this->Sae->County->find('list', array('order' => 'County.county_name ASC'));
+        $counties = []; // $this->Sae->County->find('list', array('order' => 'County.county_name ASC'));
 
 
         // Get All SADRs by Gender 

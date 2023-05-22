@@ -1,8 +1,5 @@
 $(function () {
-
-	// $( "#SaefiCountyId" ).combobox();
-	// allow typing in the combobox 
-	// $( "#SaefiCountyId" ).combobox('option', 'forceSelect', false);
+ 
 	$("#toggle").on("click", function () {
 		// $( "#combobox" ).toggle();
 		$("#SaefiCountyId").toggle();
