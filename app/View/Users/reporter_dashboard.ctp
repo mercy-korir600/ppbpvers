@@ -184,6 +184,40 @@ $this->Html->script('dashboard', array('inline' => false));
 
           </div>
           <?php } ?>
+          <?php 
+          if($this->Session->read('Auth.User.user_type')=="Market Authority"){?> 
+          <div class="span4 formbacka" style="padding: 4px;">
+            <h5>CE2Bs </h5>
+            <?php
+            echo '<ol>';
+            foreach ($ce2bs as $ce) {
+              if ($ce['Ce2b']['submitted'] > 1) { 
+                echo "<li>";
+               echo $this->Html->link(' <small class="muted">(' . $ce['Ce2b']['reference_no'] . ')</small>',
+                  array('controller' => 'ce2bs', 'action' => 'view', $ce['Ce2b']['id']),
+                  array('escape' => false, 'class' => 'text-success')
+                );
+                echo "&nbsp;"; 
+                if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $ce['Ce2b']['user_id'] !=$this->Session->read('Auth.User.id'))  {
+                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                }
+                echo "</li>";
+              } else {
+                echo "<li>";
+                echo $this->Html->link(
+                  $ce['Ce2b']['created'] . ' <small class="muted">(unsubmitted)</small>',
+                  array('controller' => 'ce2bs', 'action' => 'edit', $ce['Ce2b']['id']),
+                  array('escape' => false)
+                );
+                echo "</li>";
+              }
+            }
+            echo '</ol>';
+            echo $this->Html->link('All CE2Bs >>', array('controller' => 'ce2bs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+            ?>
+
+          </div>
+          <?php } ?>
         </div>
         <hr>
         <div class="row-fluid">

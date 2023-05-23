@@ -816,9 +816,9 @@ class UsersController extends AppController
 
         if ($user_type === 'County Pharmacist') {
             $conditions = array(
-                'Aefi.deleted' => false, 
-                'Aefi.serious' => "Yes", 
-                'Aefi.submitted' => 2, 
+                'Aefi.deleted' => false,
+                'Aefi.serious' => "Yes",
+                'Aefi.submitted' => 2,
                 'Aefi.county_id' => $this->Auth->User('county_id')
             );
         }
@@ -907,6 +907,19 @@ class UsersController extends AppController
             ),
         ));
         $this->set('transfusions', $transfusions);
+
+        // CE2Bs
+        $ce2bs = $this->User->Ce2b->find('all', array(
+            'limit' => 7, 'contain' => array(),
+            'fields' => array('Ce2b.id', 'Ce2b.user_id', 'Ce2b.created', 'Ce2b.submitted', 'Ce2b.reference_no'),
+            'order' => array('Ce2b.created' => 'desc'),
+            'conditions' => array(
+                // only show Reports that have been not been deleted
+                'Ce2b.deleted' => false,
+                'Ce2b.user_id' => $this->Auth->User('id')
+            ),
+        ));
+        $this->set('ce2bs', $ce2bs);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12

@@ -187,6 +187,8 @@ echo $this->Session->flash();
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
+                                if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'ce2bs', 'action' => 'download', $ce2b['Ce2b']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
+                                echo "&nbsp;";
                                
                                 if ($redir == 'manager') echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
@@ -219,6 +221,7 @@ echo $this->Session->flash();
                                     array('controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id']),
                                     array('escape' => false)
                                 );
+                               
                             }
                             ?>
                         </td>
