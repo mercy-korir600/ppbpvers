@@ -394,8 +394,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($facilities as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value['Aefi']['name_of_institution']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['Aefi']['name_of_institution'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -403,7 +403,8 @@ $this->Html->css('summary', null, array('inline' => false));
             </table>
         </div>
     </div>
-</div><hr>
+</div>
+<hr>
 <div class="row-fluid">
     <div class="span12">
         <h4>AEFIs per Month</h4>
@@ -434,8 +435,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($months as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value[0]['month']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value[0]['month'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -585,6 +586,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(facilitytabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
     function monthTab(evt, monthtabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentmonth");

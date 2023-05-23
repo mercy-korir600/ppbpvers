@@ -957,15 +957,66 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
+        $serious = $this->Device->find('all', array(
+            'fields' => array('Device.serious', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('Device.serious'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $reason = $this->Device->find('all', array(
+            'fields' => array('serious_yes', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => array('submitted' => array(1, 2)),
+            'group' => array('serious_yes'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $brands = $this->Device->ListOfDevice->find('all', array(
+            'fields' => array('ListOfDevice.brand_name as brand_name', 'COUNT(distinct ListOfDevice.device_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => array('ListOfDevice.created >' => '2020-04-01 08:08:08'),
+            'group' => array('ListOfDevice.brand_name'),
+            'having' => array('COUNT(distinct ListOfDevice.device_id) >' => 0),
+        ));
+        $outcome = $this->Device->find('all', array(
+            'fields' => array('outcome', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('outcome'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $facilities = $this->Device->find('all', array(
+            'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $months = $this->Device->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        
+        // Amos
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('sex'));
         $this->set(compact('age'));
         $this->set(compact('year'));
+        $this->set(compact('serious'));
+        $this->set(compact('reason'));
+        $this->set(compact('brands'));
+        $this->set(compact('outcome'));
+        $this->set(compact('facilities'));
+        $this->set(compact('months'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year','serious','reason','brands','outcome','facilities','months');
         $this->render('upgrade/devices_summary');
     }
     public function transfusions_summary()
@@ -1003,6 +1054,7 @@ class ReportsController extends AppController
             'group' => array('Designation.name', 'Designation.id'),
             'having' => array('COUNT(*) >' => 0),
         ));
+      
         //get all the counties in the system without any relation
         $counties = $this->Transfusion->County->find('list', array('order' => 'County.county_name ASC'));
 
@@ -1085,20 +1137,27 @@ class ReportsController extends AppController
             'group' => array('previous_transfusion'),
             'having' => array('COUNT(*) >' => 0),
         ));
+        // $months = $this->Transfusion->find('all', array(
+        //     'fields' => array(
+        //         'DATE_FORMAT(created, "%b %Y") AS month',
+        //         'month(ifnull(created, created)) AS salit',
+        //         'COUNT(*) AS cnt'
+        //     ),
+        //     'contain' => array(),
+        //     'recursive' => -1,
+        //     'conditions' => $criteria,
+        //     'group' => array('Transfusion.created'),
+        //     'order' => array('salit'),
+        //     'having' => array('COUNT(*) >' => 0),
+        // ));
         $months = $this->Transfusion->find('all', array(
-            'fields' => array(
-                'DATE_FORMAT(created, "%b %Y") AS month',
-                'month(ifnull(created, created)) AS salit',
-                'COUNT(*) AS cnt'
-            ),
-            'contain' => array(),
-            'recursive' => -1,
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('Transfusion.created'),
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
 
 
         $this->set(compact('counties'));
@@ -1261,12 +1320,20 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+        // $months = $this->Medication->find('all', array(
+        //     'fields' => array('month(ifnull(created, created)) as month', 'COUNT(*) as cnt'),
+        //     'contain' => array(), 'recursive' => -1,
+        //     'conditions' => $criteria,
+        //     'group' => array('month(ifnull(created, created))'),
+        //     'order' => array('month'),
+        //     'having' => array('COUNT(*) >' => 0),
+        // ));
         $months = $this->Medication->find('all', array(
-            'fields' => array('month(ifnull(created, created)) as month', 'COUNT(*) as cnt'),
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('month(ifnull(created, created))'),
-            'order' => array('month'),
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $facilities = $this->Medication->find('all', array(

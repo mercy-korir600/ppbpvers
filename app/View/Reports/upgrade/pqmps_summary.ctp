@@ -761,6 +761,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(monthlytabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
     function facilityTab(evt, facilitytabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentfacility");
@@ -790,30 +791,30 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("monthlyOpen").click();
     document.getElementById("facilityOpen").click();
 
-Highcharts.chart('sadrs-facility', {
-    data: {
-        table: 'datatablefacility'
-    },
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: '',
-
-    },
-    yAxis: {
-        allowDecimals: false,
+    Highcharts.chart('sadrs-facility', {
+        data: {
+            table: 'datatablefacility'
+        },
+        chart: {
+            type: 'column'
+        },
         title: {
-            text: 'Units'
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
         }
-    },
-    tooltip: {
-        formatter: function() {
-            return '<b>' + this.series.name + '</b><br/>' +
-                this.point.y + ' ' + this.point.name.toLowerCase();
-        }
-    }
-});
+    });
 
     Highcharts.chart('sadrs-monthly', {
         data: {
