@@ -66,7 +66,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>Sex</th>
-                        <th>ADRs</th>
+                        <th>Devices</th>
                     </tr>
                 </thead>
                 <tbody>

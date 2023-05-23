@@ -35,6 +35,51 @@ class Ce2bsController extends AppController
         parent::beforeFilter();
     }
 
+    public function vigiflow($id = null)
+    {
+        # code...
+        $this->Ce2b->id = $id;
+        if (!$this->Ce2b->exists()) {
+            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->redirect('/');
+        }
+
+        $ce2b = $this->Ce2b->find('first', array(
+            'conditions' => array('Ce2b.id' => $id),
+        ));
+        $html = $ce2b['Ce2b']['e2b_content'];
+        $HttpSocket = new HttpSocket();
+        // string data
+        $results = $HttpSocket->post(
+            Configure::read('vigiflow_api'),
+            (string)$html,
+            array('header' => array('umc-client-key' => Configure::read('vigiflow_key')))
+        );
+
+        // debug($results->code);
+        // debug($results->body);
+        // exit();
+        if ($results->isOk()) {
+            $body = $results->body;
+            $this->Ce2b->saveField('vigiflow_message', $body);
+            $this->Ce2b->saveField('vigiflow_date', date('Y-m-d H:i:s'));
+            $resp = json_decode($body, true);
+            if (json_last_error() == JSON_ERROR_NONE) {
+                $this->Ce2b->saveField('vigiflow_ref', $resp);
+            }
+            $this->Flash->success('Vigiflow integration success!!');
+            $this->Flash->success($body);
+            $this->redirect($this->referer());
+        } else {
+            $body = $results->body;
+            $this->Ce2b->saveField('vigiflow_message', $body);
+            $this->Flash->error('Error sending report to vigiflow:');
+            $this->Flash->error($body);
+            $this->redirect($this->referer());
+        }
+        $this->autoRender = false;
+    }
+
     public function reporter_index()
     {
         # code...
@@ -105,7 +150,7 @@ class Ce2bsController extends AppController
             'conditions' => array('Ce2b.id' => $id),
         ));
         $e2b_content = $ce2b['Ce2b']['e2b_content'];
-        $filename = 'CE2B.xml';//$ce2b['Ce2b']['id'] . ".xml";
+        $filename = 'CE2B.xml'; //$ce2b['Ce2b']['id'] . ".xml";
         // Set the HTTP headers for file download
         header('Content-Type: application/xml');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -229,11 +274,11 @@ class Ce2bsController extends AppController
                             $xmlString = $xml->asXML();
                             $this->Ce2b->saveField('e2b_content', $xmlString);
                         } catch (Exception $e) {
-                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'.$e), 'alerts/flash_error');
+                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later' . $e), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
                     } catch (XmlException $e) {
-                        $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'.$e), 'alerts/flash_error');
+                        $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later' . $e), 'alerts/flash_error');
                         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                     }
 

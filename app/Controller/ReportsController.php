@@ -331,11 +331,13 @@ class ReportsController extends AppController
         ));
 
 
+       
+         
         $monthly = $this->Sadr->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Sadr.id'),
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -495,6 +497,8 @@ class ReportsController extends AppController
         if (!empty($this->request->data['Report']['age_group'])) {
             $criteria['Aefi.age_months'] = $this->request->data['Report']['age_group'];
         }
+
+        // Start from Here::::
         // if (!empty($this->request->data['Report']['vaccine'])) { 
         //     $id_arrays=array();
         //     $ids=$this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
@@ -519,12 +523,7 @@ class ReportsController extends AppController
         ));
 
         // Get All AEFIs by Gender
-        $criteria['Aefi.submitted'] = array(1, 2);
-        $criteria['Aefi.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
-        $sex = $this->Aefi->find('all', array(
+       $sex = $this->Aefi->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -534,10 +533,7 @@ class ReportsController extends AppController
 
 
         // GET SUMMARY BY AGE GROUP 
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
-
+        
         $case = "((case 
         when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
         when age_months > 0 and age_months < 1 then 'neonate'
@@ -599,11 +595,13 @@ class ReportsController extends AppController
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
+
+       
         $months = $this->Aefi->find('all', array(
-            'fields' => array('DATE_FORMAT(created, "%b %Y") as month', 'month(created) as salit', 'COUNT(*) as cnt'),
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('monthname(created)', 'Aefi.id'),
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -847,11 +845,12 @@ class ReportsController extends AppController
 
         // Per Month
 
+      
         $monthly = $this->Pqmp->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Pqmp.id'),
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -1319,15 +1318,7 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
-        // $months = $this->Medication->find('all', array(
-        //     'fields' => array('month(ifnull(created, created)) as month', 'COUNT(*) as cnt'),
-        //     'contain' => array(), 'recursive' => -1,
-        //     'conditions' => $criteria,
-        //     'group' => array('month(ifnull(created, created))'),
-        //     'order' => array('month'),
-        //     'having' => array('COUNT(*) >' => 0),
-        // ));
+ 
         $months = $this->Medication->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
