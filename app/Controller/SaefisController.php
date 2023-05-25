@@ -309,10 +309,12 @@ class SaefisController extends AppController
             $this->request->data = $this->Saefi->read(null, $id);
         }
         //county
-        $county = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'asc')));
-        $this->set('county', $county);
+        $counties = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'asc')));
+        $this->set('counties', $counties);
         $this->set('saefi', $saefi);
 
+        $sub_counties = $this->Saefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties'));
         //designation and vaccines
         $designations = $this->Saefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set('designations', $designations);
@@ -514,10 +516,12 @@ class SaefisController extends AppController
         ));
         $this->set('aefi', $aefi);
 
-        $county = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
-        $this->set(compact('county'));
+        $counties = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
         $designations = $this->Saefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
+        $sub_counties = $this->Saefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties'));
         $vaccines = $this->Saefi->AefiListOfVaccine->Vaccine->find('list');
         $this->set(compact('vaccines'));
     }

@@ -8,6 +8,7 @@ App::uses('Time', 'Utility');
  * @property User $User
  * @property Saefi $Saefi
  * @property County $County 
+ * @property SubCounty $SubCounty
  * @property Designation $Designation
  * @property Saefi $Saefi
  */
@@ -67,9 +68,37 @@ class Saefi extends AppModel
 		'province_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				'message' => 'Please select a province',
+				'message' => 'Please select a county',
 			),
 		),
+		'district' => array(
+			'numeric' => array(
+				'rule' => array('numeric'),
+				'message' => 'Please select a sub county',
+			),
+		), 'name_of_vaccination_site' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please specify vaccinaition site'
+			),
+		),
+		'mobile' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the mobile number of the reporter'
+			),
+		),
+		'place_vaccination' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the place of vaccination'
+			),
+		),
+		
+
 		'designation_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
@@ -265,7 +294,13 @@ class Saefi extends AppModel
 			'fields' => '',
 			'order' => ''
 		),
-
+		'SubCounty' => array(
+			'className' => 'SubCounty',
+			'foreignKey' => 'district',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 		'Designation' => array(
 			'className' => 'Designation',
 			'foreignKey' => 'designation_id',

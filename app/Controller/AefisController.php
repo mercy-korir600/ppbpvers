@@ -30,7 +30,7 @@ class AefisController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard','guest_add','guest_edit');
+        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit');
     }
 
     public function yellowcard($id = null)
@@ -565,7 +565,7 @@ class AefisController extends AppController
     public function general_view($id = null)
     {
         # code...
-        
+
 
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
@@ -583,7 +583,7 @@ class AefisController extends AppController
 
 
         if (strpos($this->request->url, 'pdf') !== false) {
-             
+
             $this->pdfConfig = array('filename' => 'AEFI_' . $id . '.pdf',  'orientation' => 'portrait');
             $this->response->download('AEFI_' . $aefi['Aefi']['id'] . '.pdf');
         }
@@ -1060,8 +1060,154 @@ class AefisController extends AppController
         // exit;
         $this->set(compact('vaccines'));
     }
+    public function generateSReferenceNumber()
+    {
+
+        $this->loadModel('Saefi');
+        $count = $this->Saefi->find('count',  array(
+            'fields' => 'Saefi.reference_no',
+            'conditions' => array(
+                'Saefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Saefi.reference_no !=' => 'new'
+            )
+        ));
+        $count++;
+        $count = ($count < 10) ? "0$count" : $count;
+        $reference = 'SAEFI/' . date('Y') . '/' . $count;
+
+        //ensure that the reference number is unique
+        $exists = $this->Saefi->find('count',  array(
+            'fields' => 'Saefi.reference_no',
+            'conditions' => array(
+                'Saefi.reference_no' => $reference
+            )
+        ));
+        if ($exists > 0) {
+            $this->generateSReferenceNumber();
+        }
+
+        return $reference;
+    }
+
+    public function reporter_sedit($id = null)
+    {
+
+        $this->loadModel('Saefi');
+        $this->Saefi->id = $id;
+        if (!$this->Saefi->exists()) {
+            throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
+        }
+        $aefi = $this->Saefi->read(null, $id);
+        if ($aefi['Saefi']['submitted'] > 1) {
+            $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'sview', $this->Saefi->id));
+        }
+        if ($aefi['Saefi']['user_id'] !== $this->Auth->user('id')) {
+            $this->Session->setFlash(__('You don\'t have permission to edit this Adverse Event Following Immunization!!'), 'alerts/flash_error');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+        }
+        if ($this->request->is('post') || $this->request->is('put')) {
+            // debug($this->request->data);
+            // return;
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+            }
+            
+            if ($this->Saefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+                    $this->Saefi->saveField('submitted', 2);
+                    $this->Saefi->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    //lucian
+                    if (!empty($aefi['Saefi']['reference_no']) && $aefi['Saefi']['reference_no'] == 'new') {
+                        $reference = $this->generateSReferenceNumber();
+                        $this->Saefi->saveField('reference_no', $reference);
+                    }
+                    //bokelo
+                    $aefi = $this->Saefi->read(null, $id);
+
+                    //******************       Send Email and Notifications to Applicant and Managers          *****************************
+
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
+                    $variables = array(
+                        'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Saefi']['reference_no'],
+                        'reference_link' => $html->link(
+                            $aefi['Saefi']['reference_no'],
+                            array('controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $aefi['Saefi']['modified']
+                    );
+                    $datum = array(
+                        'email' => $aefi['Saefi']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+                    //Send SMS
+                    if (!empty($aefi['Saefi']['reporter_phone']) && strlen(substr($aefi['Saefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Saefi']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($aefi['Saefi']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
 
 
+                    //Notify managers
+                    $users = $this->Saefi->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array('User.group_id' => 2)
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $aefi['Saefi']['reference_no'],
+                            'reference_link' => $html->link(
+                                $aefi['Saefi']['reference_no'],
+                                array('controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $aefi['Saefi']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
+                    }
+                    // ************************** End of Alerts*********************************88
+                    $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('action' => 'view', $this->Saefi->id));
+                }
+                // debug($this->request->data);
+                $this->Session->setFlash(__('The Adverse Event Following Immunization has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The Adverse Event Following Immunization could not be saved. Please, try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Saefi->read(null, $id);
+        }
+
+
+        $counties = $this->Saefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
+        $sub_counties = $this->Saefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties'));
+        $designations = $this->Saefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('designations'));
+        $vaccines = $this->Saefi->AefiListOfVaccine->Vaccine->find('list');
+        $this->set(compact('vaccines'));
+    }
     public function api_add()
     {
         $this->Aefi->create();
@@ -1257,14 +1403,15 @@ class AefisController extends AppController
             $aefi = Hash::remove($aefi, 'AefiListOfVaccine.{n}.id');
             $aefi = Hash::remove($aefi, 'AefiListOfVaccine.{n}.aefi_id');
             unset($aefi['Aefi']['deleted']);
-            $data_save = $aefi['Aefi']; 
-            // debug($data_save);
-            // exit;
+            $data_save = $aefi['Aefi'];
+
             $data_save['AefiListOfVaccine'] = $aefi['AefiListOfVaccine'];
-            $data_save['initial_id'] = $id; 
+            $data_save['initial_id'] = $id;
             $data_save['province_id'] = $aefi['Aefi']['county_id'];
-            $data_save['age_at_onset_months'] = $aefi['Aefi']['age_months']; 
-            $data_save['reference_no'] = $aefi['Aefi']['reference_no']; 
+            $data_save['district'] = $aefi['Aefi']['sub_county_id'];
+            $data_save['age_at_onset_months'] = $aefi['Aefi']['age_months'];
+            $data_save['reference_no'] = $aefi['Aefi']['reference_no'];
+            $data_save['user_id']=$this->Auth->user('id');
             $data_save['submitted'] = 0;
             $this->loadModel('Saefi');
             if ($this->Saefi->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
@@ -1275,37 +1422,16 @@ class AefisController extends AppController
                 $this->redirect($this->referer());
             }
         }
-
-        // $this->loadModel('Aefis');
-        // $aefi = $this->Aefis->get($id, ['contain' => ['AefiListOfVaccines']]);
-        // debug($aefi);
-        // exit;
-        // $this->loadModel('Saefis');
-        // $this->Saefi->create();
-        // $this->Saefi->save(
-        //     ['Saefi' => [
-        //         'user_id' => $this->Auth->User('id'),
-        //         'reference_no' => 'new',
-        //         'report_type' => 'Initial',
-        //         'initial_id' => $id,
-        //         'designation_id' => $this->Auth->User('designation_id'),
-        //         'county_id' => $this->Auth->User('county_id'),
-        //         'reporter_name' => $this->Auth->User('name'),
-        //         'reporter_email' => $this->Auth->User('email'),
-        //         'reporter_phone' => $this->Auth->User('phone_no'),
-        //     ]],
-        //     false
-        // );
-        // $this->redirect(array('controller' => 'saefis', 'action' => 'edit', $this->Saefi->id));
+ 
     }
 
 
     public function guest_add($id = null)
     {
         $this->Aefi->create();
-        $this->Aefi->save(['Aefi' => [ 
-            'reference_no' => 'new', 
-            'report_type' => 'Initial',  
+        $this->Aefi->save(['Aefi' => [
+            'reference_no' => 'new',
+            'report_type' => 'Initial',
         ]], false);
         $this->Session->setFlash(__('The Adverse Event Following Immunization has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'guest_edit', $this->Aefi->id));
@@ -1318,13 +1444,13 @@ class AefisController extends AppController
             throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
         }
         $aefi = $this->Aefi->read(null, $id);
-        
+
         if ($this->request->is('post') || $this->request->is('put')) {
-            
+
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
-            } 
+            }
             if ($this->Aefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Aefi->saveField('submitted', 2);
@@ -1342,7 +1468,7 @@ class AefisController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
                     $variables = array(
-                        'name' => 'Guest', 
+                        'name' => 'Guest',
                         'reference_no' => $aefi['Aefi']['reference_no'],
                         'reference_link' => $html->link(
                             $aefi['Aefi']['reference_no'],
@@ -1461,10 +1587,10 @@ class AefisController extends AppController
                             }
                         }
                         //**********************************    END   *********************************
- 
+
                     }
                     $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                    $this->redirect(array('controller' => 'pages', 'action' => 'home'));
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The Adverse Event Following Immunization has been saved'), 'alerts/flash_success');
@@ -1482,8 +1608,7 @@ class AefisController extends AppController
         $this->set(compact('sub_counties'));
         $designations = $this->Aefi->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
-        $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list'); 
+        $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
         $this->set(compact('vaccines'));
     }
-
 }

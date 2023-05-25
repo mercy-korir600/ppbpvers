@@ -71,6 +71,7 @@ app/Console/cake acl grant Group.3 controllers/Aefis/reporter_add
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_followup
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_investigation
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_edit
+app/Console/cake acl grant Group.3 controllers/Aefis/reporter_sedit
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_view
 app/Console/cake acl grant Group.3 controllers/Aefis/reporter_delete 
 
@@ -103,8 +104,8 @@ app/Console/cake acl grant Group.3 controllers/Medications/reporter_delete
 
 app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_index
 app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_add
-app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_followup
-app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_edit
+app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_followup 
+app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_edit 
 app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_view
 app/Console/cake acl grant Group.3 controllers/Transfusions/reporter_delete 
 

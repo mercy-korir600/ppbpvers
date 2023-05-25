@@ -1,3 +1,22 @@
 .form-horizontal .control-group {
     margin-bottom: 5px;
 }
+
+.row-fluid {
+    margin-top: 10px;
+}
+
+.control-group {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.control-label {
+    display: block;
+    font-weight: bold;
+}
+
+.input-text {
+    width: 100%;
+    padding: 5px;
+}

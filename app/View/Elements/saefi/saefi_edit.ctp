@@ -28,7 +28,6 @@ echo $this->Form->create('Saefi', array(
 
 		<?php
 		echo $this->Form->input('id', array());
-		// echo $this->Form->input('Aefi.report_type', array('type' => 'hidden'));
 		echo $this->Form->input('Saefi.reference_no', array('type' => 'hidden'));
 		?>
 
@@ -73,16 +72,19 @@ echo $this->Form->create('Saefi', array(
 				echo $this->Form->input('province_id', [
 					'label' => 'County ',  'div' => array('class' => 'control-group required'),
 					'label' => array('class' => 'control-label required', 'text' => 'County <span style="color:red;">*</span>'),
-					'after' => '<p class="help-block"> </p></div>', 'options' => $county, 'empty' => true, 'escape' => false
+					'after' => '<p class="help-block"> </p></div>', 'options' => $counties, 'empty' => true, 'escape' => false
 				]);
 				?>
 			</div>
 			<div class="span6">
-				<?= $this->Form->input('district', array(
-					'div' => array('class' => 'control-group required'),
+				 
+				<?php
+				echo $this->Form->input('district', [
+					'label' => 'Sub County ',  'div' => array('class' => 'control-group required'),
 					'label' => array('class' => 'control-label required', 'text' => 'Sub County <span style="color:red;">*</span>'),
-					'after' => '<p class="help-block"> </p></div>'
-				)); ?>
+					'after' => '<p class="help-block"> </p></div>', 'options' => $sub_counties, 'empty' => true, 'escape' => false
+				]);
+				?>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -573,7 +575,7 @@ echo $this->Form->create('Saefi', array(
 							<div class="col-xs-12">
 								<?php
 								echo $this->Form->input('past_history', array(
-									'type' => 'radio',  'label' => false, 
+									'type' => 'radio',  'label' => false,
 									'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'past_history',
 									'before' => '<label class="radio inline">',
 									'after' => '</label>',
@@ -603,7 +605,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('past_history_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class' =>'phistory',
+								'class' => 'phistory',
 								'div' => ['class' => 'control-group required '],
 								'after' => '<p class="help-block"> </p></div>',
 								'templateVars' => ['class' => 'd-block']
@@ -647,7 +649,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('adverse_event_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class'=>'padverse_event',
+								'class' => 'padverse_event',
 								'div' => array('class' => 'control-group required'),
 								'after' => '<p class="help-block"> </p></div>',
 							]); ?>
@@ -689,7 +691,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('allergy_history_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class'=>'pallergy_history',
+								'class' => 'pallergy_history',
 								'div' => array('class' => 'control-group required'),
 								'after' => '<p class="help-block"> </p></div>',
 							]); ?>
@@ -733,7 +735,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('comorbidity_disorder_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class' =>'pcomorbidity_disorder',
+								'class' => 'pcomorbidity_disorder',
 								'div' => array('class' => 'control-group required'),
 								'after' => '<p class="help-block"> </p></div>',
 							]); ?>
@@ -859,7 +861,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('hospitalization_history_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class' =>'phospitalization_history',
+								'class' => 'phospitalization_history',
 								'div' => array('class' => 'control-group required'),
 								'after' => '<p class="help-block"> </p></div>',
 							]); ?>
@@ -947,7 +949,7 @@ echo $this->Form->create('Saefi', array(
 							<?= $this->Form->input('faith_healers_remarks', [
 								'label' => false,
 								'rows' => 2,
-								'class' =>'pfaith_healers',
+								'class' => 'pfaith_healers',
 								'div' => array('class' => 'control-group required'),
 								'after' => '<p class="help-block"> </p></div>',
 							]); ?>
@@ -1062,8 +1064,8 @@ echo $this->Form->create('Saefi', array(
 				<div class="col-xs-4" id="choice-pregnancy">
 					<?php
 					echo $this->Form->input('pregnant_weeks', [
-						'label' => 'Weeks', 
-						'type' => 'text', 
+						'label' => 'Weeks',
+						'type' => 'text',
 						'escape' => false,
 						'class' => 'ppregnant',
 						'div' => array('class' => 'control-group required'),
@@ -1177,7 +1179,7 @@ echo $this->Form->create('Saefi', array(
 				));
 				echo $this->Form->input('source_documents', array(
 					'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-					'between' =>'<label class="checkbox">',
+					'between' => '<label class="checkbox">',
 					'after' => 'Documents  </label>',
 				));
 				echo $this->Form->input('source_verbal', array(
@@ -1189,8 +1191,8 @@ echo $this->Form->create('Saefi', array(
 					'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 					'between' => '<label class="checkbox">',
 					'after' => 'Other   </label>',
-				)); 
-				 
+				));
+
 				?>
 			</div>
 			<div class="span6">
@@ -1248,7 +1250,7 @@ echo $this->Form->create('Saefi', array(
 			</div>
 			<div class="span6">
 				<?php
-			 
+
 
 				echo $this->Form->input('person_designation', [
 					'label' => 'Designation ',  'div' => array('class' => 'control-group required'),
@@ -1297,8 +1299,9 @@ echo $this->Form->create('Saefi', array(
 				?>
 			</div>
 			<!-- <p>Attachments!!</p> -->
-			<div class="col-xs-12"><?php 
-			// echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachments']); ?>
+			<div class="col-xs-12"><?php
+									// echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachments']); 
+									?>
 			</div>
 		</div>
 		<!-- End of Row -->
@@ -1314,7 +1317,7 @@ echo $this->Form->create('Saefi', array(
 					?>
 					<!-- Original File -->
 				</div>
-				 
+
 
 			</div>
 		</div>
@@ -2623,61 +2626,60 @@ echo $this->Form->create('Saefi', array(
 			</div>
 		</div>
 	</div>
-	</div>
-	<div class="span2">
-		<div class="my-sidebar" data-spy="affix">
-			<div class="awell">
-				<?php
-				// echo $this->Form->button('<i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes', array(
-				//     'name' => 'saveChanges',
-				//     'class' => 'btn btn-success mapop',
-				//     'formnovalidate' => 'formnovalidate',
-				//     'id' => 'SaefiSaveChanges', 'title' => 'Save & continue editing',
-				//     'data-content' => 'Save changes to form without submitting it.
-				//                                       The form will still be available for further editing.',
-				//     'div' => false,
-				// ));
-				 
+</div>
+<div class="span2">
+	<div class="my-sidebar" data-spy="affix">
+		<div class="awell">
+			<?php
+			// echo $this->Form->button('<i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes', array(
+			// 	'name' => 'saveChanges',
+			// 	'class' => 'btn btn-success mapop',
+			// 	'formnovalidate' => 'formnovalidate',
+			// 	'id' => 'SaefiSaveChanges', 'title' => 'Save & continue editing',
+			// 	'data-content' => 'Save changes to form without submitting it.
+			// 	                                      The form will still be available for further editing.',
+			// 	'div' => false,
+			// ));
 
-				?>
-				<br>
-				<hr>
-				<?php
-				echo $this->Form->button('<i class="fa fa-paper-plane-o" aria-hidden="true"></i> Submit', array(
-					'name' => 'submitReport',
-					'onclick' => "return confirm('Are you sure you wish to submit the report?');",
-					'class' => 'btn btn-primary btn-block mapop',
-					'id' => 'SiteInspectionSubmitReport', 'title' => 'Save and Submit Report',
-					'data-content' => 'Submit report for peer review and approval.',
-					'div' => false,
-				));
+			?>
+			<br>
+			<hr>
+			<?php
+			echo $this->Form->button('<i class="fa fa-paper-plane-o" aria-hidden="true"></i> Submit', array(
+				'name' => 'submitReport',
+				'onclick' => "return confirm('Are you sure you wish to submit the report?');",
+				'class' => 'btn btn-primary btn-block mapop',
+				'id' => 'SiteInspectionSubmitReport', 'title' => 'Save and Submit Report',
+				'data-content' => 'Submit report for peer review and approval.',
+				'div' => false,
+			));
 
-				?>
-				<br>
-				<hr>
-				<?php
-				echo $this->Html->link(
-					'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
-					array('action' => 'view', 'ext' => 'pdf', $this->request->data['Saefi']['id']),
-					array(
-						'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
-						'data-content' => 'Download the pdf version of the report',
-					)
-				);
-				?>
-				<br>
-				<hr>
-				<?php
-				echo $this->Html->link(
-					'<i class="fa fa-times" aria-hidden="true"></i> Cancel',
-					array('controller' => 'users', 'action' => 'dashboard'),
-					array('escape' => false, 'class' => 'btn btn-danger btn-block')
-				);
+			?>
+			<br>
+			<hr>
+			<?php
+			echo $this->Html->link(
+				'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
+				array('action' => 'view', 'ext' => 'pdf', $this->request->data['Saefi']['id']),
+				array(
+					'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
+					'data-content' => 'Download the pdf version of the report',
+				)
+			);
+			?>
+			<br>
+			<hr>
+			<?php
+			echo $this->Html->link(
+				'<i class="fa fa-times" aria-hidden="true"></i> Cancel',
+				array('controller' => 'users', 'action' => 'dashboard'),
+				array('escape' => false, 'class' => 'btn btn-danger btn-block')
+			);
 
-				?>
-			</div>
+			?>
 		</div>
 	</div>
+</div>
 </div>
 <?php
 echo $this->Form->end();

@@ -41,7 +41,7 @@ $this->Html->css('padr', false, array('inline' => false));
             </div>
 
             <div style="background-color: #aad7d4;">
-                <h5 style="text-align: center; text-decoration: underline;">DETAILS OF THE PERSON REPORTING</h5>
+                <h5 style="text-align: start; text-decoration: underline;">DETAILS OF THE PERSON REPORTING</h5>
             </div>
             <div class="row-fluid">
                 <div class="span6">
