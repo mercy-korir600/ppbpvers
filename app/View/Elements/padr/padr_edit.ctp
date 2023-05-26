@@ -5,6 +5,13 @@ $this->Html->script('padr', array('inline' => false));
 $this->Html->css('padr', false, array('inline' => false));
 ?>
 
+<style>
+    .report {
+        margin-left: 5%;
+        margin-right: 20px;
+    }
+</style>
+
 <!-- PADR
     ================================================== -->
 <section id="padrsadd">
@@ -13,7 +20,7 @@ $this->Html->css('padr', false, array('inline' => false));
     echo $this->Session->flash();
     echo $this->Form->create('Padr', array(
         'type' => 'file',
-        'class' => 'form-horizontal',
+        'class' => 'form-vertical',
         'inputDefaults' => array(
             'div' => array('class' => 'control-group'),
             'label' => array('class' => 'control-label'),
@@ -41,27 +48,19 @@ $this->Html->css('padr', false, array('inline' => false));
             </div>
 
             <div style="background-color: #aad7d4;">
-                <h5 style="text-align: start; text-decoration: underline;">DETAILS OF THE PERSON REPORTING</h5>
+                <h5 style="text-align: center; text-decoration: underline;">DETAILS OF THE PERSON REPORTING</h5>
             </div>
-            <div class="row-fluid">
+            <div class="row-fluid report">
                 <div class="span6">
                     <?php
                     echo $this->Form->input('reporter_name', array(
+                        'class'=>'span6',
                         'div' => array('class' => 'control-group required'),
                         'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
                     ));
 
-                    ?>
-                </div>
-                <!--/span-->
-                <div class="span6">
-                    <?php
-                    echo $this->Form->input('relation', array(
-                        'type' => 'select', 'empty' => true,
-                        'label' => array('class' => 'control-label required', 'text' => 'Relation'),
-                        'options' => array('Self' => 'Self', 'Parent' => 'Parent', 'Guardian' => 'Guardian', 'Other' => 'Other')
-                    ));
                     echo $this->Form->input('county_id', array(
+                        'class'=>'span6',
                         'label' => array(
                             'class' => 'control-label required',
                             'text' => 'County <span style="color:red;">*</span>'
@@ -72,13 +71,26 @@ $this->Html->css('padr', false, array('inline' => false));
                     ?>
                 </div>
                 <!--/span-->
+                <div class="span6">
+                    <?php
+                    echo $this->Form->input('relation', array(
+                        'type' => 'select', 'empty' => true, 'class'=>'span6',
+                        'label' => array('class' => 'control-label required', 'text' => 'Relation'),
+                        'options' => array('Self' => 'Self', 'Parent' => 'Parent', 'Guardian' => 'Guardian', 'Other' => 'Other')
+                    ));
+                   
+
+                    ?>
+                </div>
+                <!--/span-->
             </div>
             <!--/row-->
             <div style="background-color: #d3d3d352; padding-top: 7px;">
-                <div class="row-fluid">
+                <div class="row-fluid report">
                     <div class="span5">
                         <?php
                         echo $this->Form->input('reporter_email', array(
+                            'class'=>'span7',
                             'type' => 'email',
                             'div' => array('class' => 'control-group required'), 'required' => false,
                             'label' => array('class' => 'control-label required', 'text' => 'Email Address')
@@ -99,8 +111,8 @@ $this->Html->css('padr', false, array('inline' => false));
                             'label' => array('class' => 'control-label required', 'text' => 'Mobile No.<span style="color:red;">*</span>'),
                             'placeholder' => '', 'title' => 'Mobile No.',
                             'data-content' => 'It is important for follow up by the Pharmacy and Poisons Board and to obtain additional information as well as providing you with the feedback',
-                            'after' => '<p class="help-block"> Your phone number is important for follow up by the Pharmacy and Poisons Board and to obtain additional information as well as providing you with the feedback </p></div>',
-                            // 'class' => 'span9',
+                            'after' => '<p class="help-block"> Your phone number is important for follow up by the Pharmacy and Poisons Board <br> and to obtain additional information as well as providing you with the feedback </p></div>',
+                             'class' => 'span6',
                         ));
                         ?>
                         <span></span>
@@ -112,13 +124,14 @@ $this->Html->css('padr', false, array('inline' => false));
             <div style="background-color: lightblue;">
                 <h5 style="text-align: center; text-decoration: underline;">DETAILS OF THE PATIENT</h5>
             </div>
-            <div class="row-fluid">
+            <div class="row-fluid report">
                 <div class="span6">
                     <?php
                     echo $this->Form->input('patient_name', array(
+                        'class'=>'span11',
                         'label' => array('class' => 'control-label required', 'text' =>  'Patient\'s Name <span style="color:red;">*</span>'),
                         // 'after'=>'<span class="muted"> or initials e.g E.O.O </span></div>',
-                        'placeholder' => 'Name or Initials', 'class' => 'tooltipper',
+                        'placeholder' => 'Name or Initials', 'class' => 'tooltipper span6',
                     ));
                     ?>
                 </div>
@@ -151,8 +164,8 @@ $this->Html->css('padr', false, array('inline' => false));
                 <!--/span-->
             </div>
             <!--/row-->
-            <div class="row-fluid">
-                <div class="span7">
+            <div class="row-fluid report">
+                <div class="span4">
 
                     <?php
 
@@ -170,12 +183,14 @@ $this->Html->css('padr', false, array('inline' => false));
                     ));
 
                     ?>
-
-                    <div class="controls">
-                        <h5 class="text-success">--OR--</h5>
+                </div>
+                <div class="span2">
+                <div class="controls">
+                        <h5 class="text-success" style="margin-top:30px;">--OR--</h5>
                     </div>
-
-                    <?php
+                </div>
+                <div class="span5">
+                <?php
                     echo $this->Form->input('age_group', array(
                         'type' => 'select',
                         'empty' => true,
@@ -191,11 +206,10 @@ $this->Html->css('padr', false, array('inline' => false));
                         'after' => '<a onclick="$(\'#PadrAgeGroup\').removeAttr(\'disabled\'); $(\'#PadrAgeGroup\').val(\'\');
                                     $(\'.birthdate\').attr(\'disabled\',\'disabled\'); $(\'.birthdate\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a> </div>',
+                                'class' => 'span6',
                     ));
 
-                    ?>
-                </div>
-                <div class="span5">
+                    ?> 
                 </div>
             </div>
             <div class="row-fluid">
@@ -421,6 +435,7 @@ $this->Html->css('padr', false, array('inline' => false));
             <div style="background-color: lightblue;">
                 <h5 style="text-align: center; text-decoration: underline;">OUTCOME DETAILS</h5>
             </div>
+            <div class="row-fluid report">
             <?php
             echo $this->Form->input('outcome', array(
                 'type' => 'select',
@@ -434,12 +449,14 @@ $this->Html->css('padr', false, array('inline' => false));
                     'death' => 'Death',
                     'unknown' => 'Unknown',
                 ),
+                'class' => 'span4',
                 'label' => array('class' => 'control-label required', 'text' => 'Outcome'),
                 'after' => '<a onclick="$(\'#PadrOutcome\').removeAttr(\'disabled\'); $(\'#PadrOutcome\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a> </div>',
             ));
 
             ?>
+            </div>
             <!-- End of outcome section -->
             <?php echo $this->element('multi/attachments', ['model' => 'Padr', 'group' => 'attachment']); ?>
 

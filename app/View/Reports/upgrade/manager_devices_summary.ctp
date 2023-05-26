@@ -163,7 +163,88 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>  
+<hr>
+<hr>
+<div class="row-fluid">
+    <div class="span6">
+        <h4>Seruousness of Incidences</h4>
+
+        <div class="tab">
+            <button class="tablinks" onclick="seriousTab(event, 'seriousChart')" id="seriousOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksserious" onclick="seriousTab(event, 'seriousTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="seriousChart" class="tabcontentserious">
+            <div id="sadrs-serious"></div>
+
+        </div>
+
+        <div id="seriousTable" class="tabcontentserious">
+            <table class="table table-condensed table-bordered" id="datatableserious">
+                <thead>
+                    <tr>
+                        <th>Seriousness</th>
+                        <th>Devices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($serious as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>" . $value['Device']['serious'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="span6">
+        <h4>Reasons for Seriouness</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="reasonTab(event, 'reasonChart')" id="reasonOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksreason" onclick="reasonTab(event, 'reasonTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="reasonChart" class="tabcontentreason">
+            <div id="sadrs-reason"></div>
+
+        </div>
+
+        <div id="reasonTable" class="tabcontentreason">
+            <table class="table table-condensed table-bordered" id="datatablereason">
+                <thead>
+                    <tr>
+                        <th>Reason for seriousness</th>
+                        <th>Devices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($reason as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>" . $value['Device']['serious_yes'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
 <div class="row-fluid">
     <div class="span12">
         <h4>Devices per Brand Name</h4>
@@ -204,7 +285,89 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 
-</div> 
+</div>
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>Devices per Outcome</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="outcomeTab(event, 'outcomeChart')" id="outcomeOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksoutcome" onclick="outcomeTab(event, 'outcomeTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="outcomeChart" class="tabcontentoutcome">
+            <div id="sadrs-outcome"></div>
+
+        </div>
+
+        <div id="outcomeTable" class="tabcontentoutcome">
+            <table class="table table-condensed table-bordered" id="datatableoutcome">
+                <thead>
+                    <tr>
+                        <th>Outcome</th>
+                        <th>Devices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($outcome as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>" . $value['Device']['outcome'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>Devices per Facility</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="facilityTab(event, 'facilityChart')" id="facilityOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksfacility" onclick="facilityTab(event, 'facilityTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="facilityChart" class="tabcontentfacility">
+            <div id="sadrs-facility"></div>
+
+        </div>
+
+        <div id="facilityTable" class="tabcontentfacility">
+            <table class="table table-condensed table-bordered" id="datatablefacility">
+                <thead>
+                    <tr>
+                        <th>Facility</th>
+                        <th>Devices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($facilities as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>" . $value['Device']['name_of_institution'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
@@ -302,7 +465,63 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
-    } 
+    }
+
+    function reasonTab(evt, reasontabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentreason");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksreason");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(reasontabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function seriousTab(evt, serioustabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentserious");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksserious");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(serioustabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function outcomeTab(evt, outcometabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentoutcome");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksoutcome");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(outcometabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function facilityTab(evt, facilitytabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentfacility");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksfacility");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(facilitytabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
 
     function monthTab(evt, monthtabName) {
         var i, tabcontent, tablinks;
@@ -336,7 +555,11 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
-    document.getElementById("yearOpen").click(); 
+    document.getElementById("yearOpen").click();
+    document.getElementById("outcomeOpen").click();
+    document.getElementById("reasonOpen").click();
+    document.getElementById("seriousOpen").click();
+    document.getElementById("facilityOpen").click();
     document.getElementById("monthOpen").click();
     document.getElementById("brandsOpen").click();
 
@@ -367,6 +590,104 @@ $this->Html->css('summary', null, array('inline' => false));
     Highcharts.chart('sadrs-month', {
         data: {
             table: 'datatablemonth'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+    Highcharts.chart('sadrs-facility', {
+        data: {
+            table: 'datatablefacility'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+    Highcharts.chart('sadrs-outcome', {
+        data: {
+            table: 'datatableoutcome'
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+    Highcharts.chart('sadrs-serious', {
+        data: {
+            table: 'datatableserious'
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+    Highcharts.chart('sadrs-reason', {
+        data: {
+            table: 'datatablereason'
         },
         chart: {
             type: 'column'

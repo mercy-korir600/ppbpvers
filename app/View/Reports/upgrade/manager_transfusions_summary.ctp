@@ -1,6 +1,6 @@
 <?php
 $this->extend('/Reports/reports_manager');
-$this->assign('devices-summary', 'active');
+$this->assign('transfusions-summary', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>
 
@@ -28,7 +28,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>County</th>
-                        <th>Devices</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,14 +66,14 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>Sex</th>
-                        <th>Devices</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     foreach ($sex as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value['Device']['gender'] . "</th>";
+                        echo "<th>" . $value['Transfusion']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
@@ -108,7 +108,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>Age group</th>
-                        <th>Devices</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,7 +125,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
     <div class="span6">
-        <h4>Devices Per Year</h4>
+        <h4>Transfusions Per Year</h4>
         <div class="tab">
             <button class="tablinks" onclick="yearTab(event, 'yearChart')" id="yearOpen">
                 <i class="fa fa-pie-chart"></i> Chart
@@ -146,7 +146,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>Age group</th>
-                        <th>Devices</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -163,38 +163,38 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>  
+<hr>
 <div class="row-fluid">
-    <div class="span12">
-        <h4>Devices per Brand Name</h4>
+    <div class="span6">
+        <h4>Transfusions per Reporter Qualification</h4>
         <div class="tab">
-            <button class="tablinks" onclick="brandsTab(event, 'brandsChart')" id="brandsOpen">
+            <button class="tablinks" onclick="qualificationTab(event, 'qualificationChart')" id="qualificationOpen">
                 <i class="fa fa-pie-chart"></i> Chart
             </button>
 
-            <button class="tablinksbrands" onclick="brandsTab(event, 'brandsTable')">
+            <button class="tablinksqualification" onclick="qualificationTab(event, 'qualificationTable')">
                 <i class="fa fa-table"></i> Table
             </button>
         </div>
 
-        <div id="brandsChart" class="tabcontentbrands">
-            <div id="sadrs-brands"></div>
+        <div id="qualificationChart" class="tabcontentqualification">
+            <div id="sadrs-qualification"></div>
 
         </div>
 
-        <div id="brandsTable" class="tabcontentbrands">
-            <table class="table table-condensed table-bordered" id="datatablebrands">
+        <div id="qualificationTable" class="tabcontentqualification">
+            <table class="table table-condensed table-bordered" id="datatablequalification">
                 <thead>
                     <tr>
-                        <th>Brand Name</th>
-                        <th>Devices</th>
+                        <th>Qualification</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    foreach ($brands as $key => $value) {
+                    foreach ($qualification as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value['ListOfDevice']['brand_name'] . "</th>";
+                        echo "<th>" . $value['Designation']['name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
@@ -203,12 +203,129 @@ $this->Html->css('summary', null, array('inline' => false));
             </table>
         </div>
     </div>
+    <div class="span6">
+        <h4>Transfusions per Reaction Type</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="outcomeTab(event, 'outcomeChart')" id="outcomeOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
 
-</div> 
+            <button class="tablinksoutcome" onclick="outcomeTab(event, 'outcomeTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="outcomeChart" class="tabcontentoutcome">
+            <div id="sadrs-outcome"></div>
+
+        </div>
+
+        <div id="outcomeTable" class="tabcontentoutcome">
+            <table class="table table-condensed table-bordered" id="datatableoutcome">
+                <thead>
+                    <tr>
+                        <th>Reaction Type</th>
+                        <th>Transfusion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($outcome as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>" . $value[0]['rtype'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row-fluid">
+    <div class="span6">
+        <h4>Previous Transfusions</h4>
+
+        <div class="tab">
+            <button class="tablinks" onclick="seriousTab(event, 'seriousChart')" id="seriousOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksserious" onclick="seriousTab(event, 'seriousTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="seriousChart" class="tabcontentserious">
+            <div id="sadrs-serious"></div>
+
+        </div>
+
+        <div id="seriousTable" class="tabcontentserious">
+            <table class="table table-condensed table-bordered" id="datatableserious">
+                <thead>
+                    <tr>
+                        <th>Seriousness</th>
+                        <th>Transfusions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($previous_transfusion as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>".$value['Transfusion']['previous_transfusion']."</th>";
+                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="span6">
+        <h4>Previous Reaction</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="reasonTab(event, 'reasonChart')" id="reasonOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksreason" onclick="reasonTab(event, 'reasonTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="reasonChart" class="tabcontentreason">
+            <div id="sadrs-reason"></div>
+
+        </div>
+
+        <div id="reasonTable" class="tabcontentreason">
+            <table class="table table-condensed table-bordered" id="datatablereason">
+                <thead>
+                    <tr>
+                        <th>Reaction</th>
+                        <th>Transfusions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($previous_reactions as $key => $value) {
+                        echo "<tr>";
+                        echo "<th>".$value['Transfusion']['previous_reactions']."</th>";
+                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
-        <h4>Devices per Month</h4>
+        <h4>Transfusions per Month</h4>
         <div class="tab">
             <button class="tablinks" onclick="monthTab(event, 'monthChart')" id="monthOpen">
                 <i class="fa fa-pie-chart"></i> Chart
@@ -229,15 +346,15 @@ $this->Html->css('summary', null, array('inline' => false));
                 <thead>
                     <tr>
                         <th>Month</th>
-                        <th>Devices</th>
+                        <th>Transfusions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     foreach ($months as $key => $value) {
                         echo "<tr>";
-                        echo "<th>" . $value[0]['month'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "<th>".$value[0]['month']."</th>";
+                        echo "<td>".$value[0]['cnt']."</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -246,6 +363,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
+
 <hr>
 <script type="text/javascript">
     function geoTab(evt, geotabName) {
@@ -290,6 +408,34 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
+    function reasonTab(evt, reasontabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentreason");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksreason");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(reasontabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function seriousTab(evt, serioustabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentserious");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksserious");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(serioustabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
     function yearTab(evt, yeartabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentyear");
@@ -302,7 +448,35 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
-    } 
+    }
+
+    function qualificationTab(evt, qualificationtabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentqualification");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksqualification");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(qualificationtabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function outcomeTab(evt, outcometabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentoutcome");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksoutcome");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(outcometabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
 
     function monthTab(evt, monthtabName) {
         var i, tabcontent, tablinks;
@@ -317,53 +491,17 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(monthtabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
-
-    function brandsTab(evt, brandstabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentbrands");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksbrands");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(brandstabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
-    document.getElementById("yearOpen").click(); 
+    document.getElementById("yearOpen").click();
+    document.getElementById("qualificationOpen").click();
+    document.getElementById("outcomeOpen").click();
+    document.getElementById("reasonOpen").click();
+    document.getElementById("seriousOpen").click();
     document.getElementById("monthOpen").click();
-    document.getElementById("brandsOpen").click();
 
-    Highcharts.chart('sadrs-brands', {
-        data: {
-            table: 'datatablebrands'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
     Highcharts.chart('sadrs-month', {
         data: {
             table: 'datatablemonth'
@@ -388,6 +526,107 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
+
+    Highcharts.chart('sadrs-serious', {
+        data: {
+            table: 'datatableserious'
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+    Highcharts.chart('sadrs-reason', {
+        data: {
+            table: 'datatablereason'
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+    Highcharts.chart('sadrs-outcome', {
+        data: {
+            table: 'datatableoutcome'
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+    Highcharts.chart('sadrs-qualification', {
+        data: {
+            table: 'datatablequalification'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+
     Highcharts.chart('sadrs-geo', {
         data: {
             table: 'datatablegeo'
@@ -465,7 +704,7 @@ $this->Html->css('summary', null, array('inline' => false));
             table: 'datatableyear'
         },
         chart: {
-            type: 'column'
+            type: 'bar'
         },
         title: {
             text: '',

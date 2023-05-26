@@ -137,6 +137,39 @@ $this->Html->css('upgrade', false, array('inline' => false));
                         </div>
                     </div>
                 </div>
+
+                <!-- Transfussion -->
+                <br>
+                <div class="card mb-0">
+                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+                        <a class="card-title">
+                        Guide to reporting Blood Transfusion
+                        </a>
+                    </div>
+                    <div id="collapseFive" class="collapse" data-parent="#accordion">
+                        <div class="card-body">
+                            <br>
+                            <p style="text-align: left;"> Report all transfusion reactions, incidents, near misses, errors, deviations from standard operating procedures and accidents associated with blood donation and transfusion. Fill this form immediately the reaction occurs.</p>
+                            
+                        </div>
+                    </div>
+                </div>
+                 <!--  Medical Errors -->
+                 <br>
+                <div class="card mb-0">
+                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix">
+                        <a class="card-title">
+                        Guide to reporting Medical Errors
+                        </a>
+                    </div>
+                    <div id="collapseSix" class="collapse" data-parent="#accordion">
+                        <div class="card-body">
+                            <br>
+                            <p style="text-align: left;"> Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event. Patient’s identity is held in strict confidence and program staff is not is not expected to and will not disclose reporter’s identity in response to any public request.</p>
+                            
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

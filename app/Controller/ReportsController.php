@@ -28,6 +28,11 @@ class ReportsController extends AppController
             'generate_reports_per_vaccines',
             'index',
             'summary',
+            'aefi_summary',
+            'pqmps_summary',
+            'devices_summary',
+            'medications_summary',
+            'transfusions_summary',
             'sadrs_by_age',
             'sadrs_by_medicine',
             'sadrs_by_gender',
@@ -176,9 +181,9 @@ class ReportsController extends AppController
         # code...
         $counties = $this->Sadr->County->find('list', array('order' => 'County.county_name ASC'));
 
-        if ($this->Auth->User('group_id') == '2') {
-            $this->redirect(array('action' => 'summary'));
-        }
+        // if ($this->Auth->User('group_id') == '2') {
+        $this->redirect(array('action' => 'summary'));
+        // }
         $this->set(compact('counties'));
     }
     public function index_latest()
@@ -260,17 +265,22 @@ class ReportsController extends AppController
 
     public function generate_reports_per_vaccines($drug_name = null)
     {
-        # code...
-
-        // $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
-        $cond = $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
+        # code...  
+        $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
             'conditions' => array(
-                'OR' => array(
-                    'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
-                    'Vaccine.description LIKE' => '%' . $drug_name . '%',
-                )
+                'AefiListOfVaccine.vaccine_id IN' => $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
+                    'conditions' => array(
+                        'OR' => array(
+                            'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
+                            'Vaccine.description LIKE' => '%' . $drug_name . '%',
+                        )
+                    ),
+                    'fields' => array('id'),
+                    'recursive' => -1 // To avoid unnecessary recursive queries
+                ))
             ),
-            'fields' => array('id')
+            'keyField' => 'aefi_id',
+            'valueField' => 'aefi_id'
         ));
         // debug($cond);
         // exit;
@@ -331,8 +341,8 @@ class ReportsController extends AppController
         ));
 
 
-       
-         
+
+
         $monthly = $this->Sadr->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
@@ -479,13 +489,12 @@ class ReportsController extends AppController
     {
 
         // Load Data for Counties 
+        $id_arrays = array();
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
-
-
 
         // Filters
         if (!empty($this->request->data['Report']['county_id'])) {
@@ -499,18 +508,19 @@ class ReportsController extends AppController
         }
 
         // Start from Here::::
-        // if (!empty($this->request->data['Report']['vaccine'])) { 
-        //     $id_arrays=array();
-        //     $ids=$this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
+        if (!empty($this->request->data['Report']['vaccine'])) {
 
-        //     if(!empty($ids)){
-        //         foreach($ids as $key=>$value){
-        //             $id_arrays[]=$key;
-        //         }
-        //     } 
-        //     $criteria['Aefi.id'] = $id_arrays;
+            $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
 
-        // }
+            if (!empty($ids)) {
+                foreach ($ids as $key => $value) {
+                    $id_arrays[] = $key;
+                }
+            }
+            if (!empty($id_arrays)) {
+                $criteria['Aefi.id'] = $id_arrays;
+            }
+        }
 
         //get all the counties in the system without any relation
         $counties = $this->Aefi->County->find('list', array('order' => 'County.county_name ASC'));
@@ -523,7 +533,7 @@ class ReportsController extends AppController
         ));
 
         // Get All AEFIs by Gender
-       $sex = $this->Aefi->find('all', array(
+        $sex = $this->Aefi->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -533,7 +543,7 @@ class ReportsController extends AppController
 
 
         // GET SUMMARY BY AGE GROUP 
-        
+
         $case = "((case 
         when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
         when age_months > 0 and age_months < 1 then 'neonate'
@@ -596,7 +606,7 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-       
+
         $months = $this->Aefi->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
@@ -619,10 +629,21 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
             $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
-            $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+            $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find(
+                'list',
+                array(
+                    'conditions' => array(
+                        'Aefi.submitted' => '2',
+                        'Aefi.copied !=' => '1',
+                        'Aefi.report_type !=' => 'Followup'
+                    ),
+                    'fields' => array('id', 'id')
+                )
+            );
         }
 
         $criteriav['Vaccine.id >'] = 0;
+
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteriav['AefiListOfVaccine.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         else
@@ -631,11 +652,23 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
             $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
-            $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup'), 'fields' => array('id', 'id')));
+            $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array(
+                'conditions' => array(
+                    'Aefi.submitted' => '2',
+                    'Aefi.copied !=' => '1',
+                    'Aefi.report_type !=' => 'Followup',
+                ),
+                'fields' => array('id', 'id')
+            ));
+        }
+
+        if (!empty($this->request->data['Report']['vaccine'])) {
+            $criteriav['Vaccine.vaccine_name'] = $this->request->data['Report']['vaccine'];
         }
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-            'contain' => array('Vaccine'), 'recursive' => -1,
+            'contain' => array('Vaccine'),
+            'recursive' => -1,
             'conditions' => $criteriav,
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
@@ -656,7 +689,12 @@ class ReportsController extends AppController
         $this->set(compact('months'));
 
         $this->set('_serialize', 'geo', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year', 'qualification', 'serious', 'reason', 'outcome', 'facilities', 'months');
-        $this->render('upgrade/aefi_summary');
+
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_aefi_summary');
+        } else {
+            $this->render('upgrade/aefi_summary');
+        }
     }
     public function pqmps_summary()
     {
@@ -845,7 +883,7 @@ class ReportsController extends AppController
 
         // Per Month
 
-      
+
         $monthly = $this->Pqmp->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
@@ -877,7 +915,12 @@ class ReportsController extends AppController
         $this->set(compact('monthly'));
 
         $this->set('_serialize', 'geo', 'counties', 'year', 'designation', 'facility', 'formulation', 'category', 'complaint', 'medical', 'brands', 'manufacturer', 'supplier', 'generic_name', 'country', 'monthly');
-        $this->render('upgrade/pqmps_summary');
+
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_pqmps_summary');
+        } else {
+            $this->render('upgrade/pqmps_summary');
+        }
     }
 
     public function devices_summary()
@@ -1000,7 +1043,7 @@ class ReportsController extends AppController
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
-        
+
         // Amos
 
         $this->set(compact('counties'));
@@ -1015,8 +1058,13 @@ class ReportsController extends AppController
         $this->set(compact('facilities'));
         $this->set(compact('months'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year','serious','reason','brands','outcome','facilities','months');
-        $this->render('upgrade/devices_summary');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'serious', 'reason', 'brands', 'outcome', 'facilities', 'months');
+
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_devices_summary');
+        } else {
+            $this->render('upgrade/devices_summary');
+        }
     }
     public function transfusions_summary()
     {
@@ -1053,7 +1101,7 @@ class ReportsController extends AppController
             'group' => array('Designation.name', 'Designation.id'),
             'having' => array('COUNT(*) >' => 0),
         ));
-      
+
         //get all the counties in the system without any relation
         $counties = $this->Transfusion->County->find('list', array('order' => 'County.county_name ASC'));
 
@@ -1172,7 +1220,12 @@ class ReportsController extends AppController
 
         $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
         $this->set('_serialize', 'qualification', 'outcome', 'previous_reactions', 'previous_transfusion', 'months');
-        $this->render('upgrade/transfusions_summary');
+
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_transfusions_summary');
+        } else {
+            $this->render('upgrade/transfusions_summary');
+        }
     }
     public function saes_summary()
     {
@@ -1318,8 +1371,8 @@ class ReportsController extends AppController
             'order' => array('year'),
             'having' => array('COUNT(*) >' => 0),
         ));
- 
-        $months = $this->Medication->find('all', array(
+
+        $monthly = $this->Medication->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -1383,7 +1436,7 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-        $pic=array();
+        $pic = array();
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
             $pic['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
@@ -1397,7 +1450,7 @@ class ReportsController extends AppController
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
         ));
 
-        $pec=array();
+        $pec = array();
         if ($this->Auth->User('user_type') == 'County Pharmacist') {
             $pec['MedicationProduct.medication_id'] = $this->Medication->find('list', array('conditions' => array('Medication.submitted' => '2', 'Medication.copied !=' => '1', 'Medication.report_type !=' => 'Followup', 'Medication.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
@@ -1498,7 +1551,7 @@ class ReportsController extends AppController
         $this->set(compact('age'));
         $this->set(compact('year'));
         $this->set(compact('facilities'));
-        $this->set(compact('months'));
+        $this->set(compact('monthly'));
         $this->set(compact('process'));
         $this->set(compact('error'));
         $this->set(compact('designation'));
@@ -1508,8 +1561,14 @@ class ReportsController extends AppController
         $this->set(compact('gi'));
         $this->set(compact('ge'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor','pi','pe','gi','ge');
-        $this->render('upgrade/medications_summary');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'monthly', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
+
+
+        if ($this->Session->read('Auth.User.group_id') == 2) {
+            $this->render('upgrade/manager_medications_summary');
+        } else {
+            $this->render('upgrade/medications_summary');
+        }
     }
     public function sadrs_by_age()
     {

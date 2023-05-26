@@ -34,7 +34,7 @@
       <li class="nav-header"><i class="fa fa-stethoscope" aria-hidden="true"></i> MEDICAL DEVICES</li>
       <li class="<?php echo $this->fetch('devices-summary'); ?>">
         <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medical',  array('controller' => 'reports', 'action'=>'devices_summary', 'admin' => false ),
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medical Devices',  array('controller' => 'reports', 'action'=>'devices_summary', 'admin' => false ),
                       array('escape' => false));
         ?>                        	
       </li>

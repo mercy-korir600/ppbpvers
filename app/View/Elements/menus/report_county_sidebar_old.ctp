@@ -1,27 +1,57 @@
     
-    <ul class="nav nav-list sidebar-manager">
+    <ul class="nav nav-list sidebar-<?php echo $redir; ?>">
       <li class="text-center <?php echo $this->fetch('reports-home'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('REPORTS',  array('controller' => 'reports', 'action'=>'index', 'prefix' => false ), array('escape' => false, 'class' => 'text-success'));
         ?>
       </li>      
       <li class="divider"></li>
       <li class="nav-header"><i class="fa fa-ambulance" aria-hidden="true"></i> SUSPECTED ADVERSE DRUG REACTIONS</li>
-      <li class="<?php echo $this->fetch('sadr-summary'); ?>">
-        <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> SADR',  array('controller' => 'reports', 'action'=>'summary', 'admin' => false ),
+      <li class="<?php echo $this->fetch('sadrs-by-designation'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'sadrs_by_designation', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-      <!-- <li class="<?php echo $this->fetch('sadrs-by-age'); ?>">
-        <?php
+      <li class="<?php echo $this->fetch('sadrs-by-age'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Age groups',  array('controller' => 'reports', 'action'=>'sadrs_by_age', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
+      <li class="<?php echo $this->fetch('sadrs-by-seriousness'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Seriousness of ADRs',  array('controller' => 'reports', 'action'=>'sadrs_by_seriousness', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('sadrs-by-reason'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reason for Seriousness',  array('controller' => 'reports', 'action'=>'sadrs_by_reason', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('sadrs-by-medicine'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Suspected Medicine',  array('controller' => 'reports', 'action'=>'sadrs_by_medicine', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="<?php echo $this->fetch('sadrs-by-gender'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Gender',  array('controller' => 'reports', 'action'=>'sadrs_by_gender', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('sadrs-by-outcome'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Outcome',  array('controller' => 'reports', 'action'=>'sadrs_by_outcome', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('sadrs-by-facility'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Facility',  array('controller' => 'reports', 'action'=>'sadrs_by_facility', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
@@ -38,39 +68,62 @@
         ?>
       </li>
       <li class="<?php echo $this->fetch('sadrs-by-year'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'sadrs_by_year', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li> -->
+      </li>
       <li class="nav-header"><i class="fa fa-child" aria-hidden="true"></i> ADVERSE EVENT FOLLOWING IMMUNIZATION</li>
-      
-      <li class="<?php echo $this->fetch('aefi-summary'); ?>">
-        <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> AEFI',  array('controller' => 'reports', 'action'=>'aefi_summary', 'admin' => false ),
+      <li class="<?php echo $this->fetch('aefis-by-designation'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'aefis_by_designation', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-      <!-- <li class="<?php echo $this->fetch('aefis-by-age'); ?>">
-        <?php
+      <li class="<?php echo $this->fetch('aefis-by-age'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Age groups',  array('controller' => 'reports', 'action'=>'aefis_by_age', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
+      <li class="<?php echo $this->fetch('aefis-by-seriousness'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Seriousness of AEFIs',  array('controller' => 'reports', 'action'=>'aefis_by_seriousness', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('aefis-by-reason'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reason for Seriousness',  array('controller' => 'reports', 'action'=>'aefis_by_reason', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="<?php echo $this->fetch('aefis-by-vaccine'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> AEFIs by Vaccine',  array('controller' => 'reports', 'action'=>'aefis_by_vaccine', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
       <li class="<?php echo $this->fetch('aefis-by-gender'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Gender',  array('controller' => 'reports', 'action'=>'aefis_by_gender', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
+      <li class="<?php echo $this->fetch('aefis-by-outcome'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Outcome',  array('controller' => 'reports', 'action'=>'aefis_by_outcome', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('aefis-by-facility'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Facility',  array('controller' => 'reports', 'action'=>'aefis_by_facility', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="<?php echo $this->fetch('aefis-by-county'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> County',  array('controller' => 'reports', 'action'=>'aefis_by_county', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -86,23 +139,46 @@
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'aefis_by_year', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li> -->
+      </li>
       <li class="nav-header"><i class="fa fa-medkit" aria-hidden="true"></i> POOR QUALITY MEDICINAL PRODUCTS</li>
-    
-      <li class="<?php echo $this->fetch('pqmps-summary'); ?>">
+      <li class="<?php echo $this->fetch('pqmps-by-designation'); ?>">
+      	<?php
+	        echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'pqmps_by_designation', 'admin' => false ),
+	                  array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('pqmps-by-facility'); ?>">
         <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> PQHPTs',  array('controller' => 'reports', 'action'=>'pqmps_summary', 'admin' => false ),
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Facility',  array('controller' => 'reports', 'action'=>'pqmps_by_facility', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-      <!-- <li class="<?php echo $this->fetch('pqmps-by-brand'); ?>">
+      <li class="<?php echo $this->fetch('pqmps-by-formulation'); ?>">
         <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Brand Name',  array('controller' => 'reports', 'action'=>'pqmps_by_brand', 'admin' => false ),
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Product Formulation',  array('controller' => 'reports', 'action'=>'pqmps_by_formulation', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('pqmps-by-category'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Product Category',  array('controller' => 'reports', 'action'=>'pqmps_by_category', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('pqmps-by-complaint'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Product Complaint',  array('controller' => 'reports', 'action'=>'pqmps_by_complaint', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('pqmps-by-device'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medical Device',  array('controller' => 'reports', 'action'=>'pqmps_by_device', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
       <li class="<?php echo $this->fetch('pqmps-by-generic'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Generic Name',  array('controller' => 'reports', 'action'=>'pqmps_by_generic', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -110,6 +186,12 @@
       <li class="<?php echo $this->fetch('pqmps-by-county'); ?>">
         <?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> County',  array('controller' => 'reports', 'action'=>'pqmps_by_county', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('pqmps-by-country'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Country',  array('controller' => 'reports', 'action'=>'pqmps_by_country', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
@@ -124,35 +206,58 @@
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'pqmps_by_year', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li> -->
-      <li class="nav-header"><i class="fa fa-stethoscope" aria-hidden="true"></i> Medical Devices</li>
-    
-      <li class="<?php echo $this->fetch('devices-summary'); ?>">
-        <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medical devices',  array('controller' => 'reports', 'action'=>'devices_summary', 'admin' => false ),
-                      array('escape' => false));
-        ?>                          
       </li>
-      <!-- <li class="<?php echo $this->fetch('devices-by-age'); ?>">
+      <li class="nav-header"><i class="fa fa-stethoscope" aria-hidden="true"></i> Medical Devices</li>
+      <li class="<?php echo $this->fetch('devices-by-designation'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'devices_by_designation', 'admin' => false ),
+                      array('escape' => false));
+        ?>                        	
+      </li>
+      <li class="<?php echo $this->fetch('devices-by-age'); ?>">
         <?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Age groups',  array('controller' => 'reports', 'action'=>'devices_by_age', 'admin' => false ),
                       array('escape' => false));
-        ?>                          
+        ?>                        	
+      </li>
+      <li class="<?php echo $this->fetch('devices-by-seriousness'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Seriousness of ADRs',  array('controller' => 'reports', 'action'=>'devices_by_seriousness', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('devices-by-reason'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reason for Seriousness',  array('controller' => 'reports', 'action'=>'devices_by_reason', 'admin' => false ),
+                      array('escape' => false));
+        ?>
       </li>
       <li class="<?php echo $this->fetch('devices-by-brand'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Devices by Brand',  array('controller' => 'reports', 'action'=>'devices_by_brand', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
       <li class="<?php echo $this->fetch('devices-by-gender'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Gender',  array('controller' => 'reports', 'action'=>'devices_by_gender', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
+      <li class="<?php echo $this->fetch('devices-by-outcome'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Outcome',  array('controller' => 'reports', 'action'=>'devices_by_outcome', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('devices-by-facility'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Facility',  array('controller' => 'reports', 'action'=>'devices_by_facility', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="<?php echo $this->fetch('devices-by-county'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> County',  array('controller' => 'reports', 'action'=>'devices_by_county', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -167,16 +272,16 @@
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'devices_by_year', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li> -->
+      </li>
       <li class="nav-header"><i class="fa fa-chain-broken" aria-hidden="true"></i> Medication Errors</li>
-      <li class="<?php echo $this->fetch('medications-summary'); ?>">
-        <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medications',  array('controller' => 'reports', 'action'=>'medications_summary', 'admin' => false ),
+      <li class="<?php echo $this->fetch('medications-by-designation'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'medications_by_designation', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-      <!-- <li class="<?php echo $this->fetch('medications-by-age'); ?>">
-        <?php
+      <li class="<?php echo $this->fetch('medications-by-age'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Age group',  array('controller' => 'reports', 'action'=>'medications_by_age', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -206,13 +311,37 @@
         ?>
       </li>
       <li class="<?php echo $this->fetch('medications-by-genericii'); ?>">
-        <?php
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Generic (error)',  array('controller' => 'reports', 'action'=>'medications_by_genericii', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-      <li class="<?php echo $this->fetch('medications-by-county'); ?>">
+      <li class="<?php echo $this->fetch('medications-by-facility'); ?>">
         <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Facility',  array('controller' => 'reports', 'action'=>'medications_by_facility', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('medications-by-process'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Process',  array('controller' => 'reports', 'action'=>'medications_by_process', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('medications-by-errors'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Error Outcome',  array('controller' => 'reports', 'action'=>'medications_by_error', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('medications-by-factors'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Contributing Factors',  array('controller' => 'reports', 'action'=>'medications_by_factors', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('medications-by-county'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> County',  array('controller' => 'reports', 'action'=>'medications_by_county', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -228,18 +357,16 @@
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'medications_by_year', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li> -->
+      </li>
       <li class="nav-header"><i class="fa fa-eyedropper" aria-hidden="true"></i> Blood Transfusion</li>
-    
-      <li class="<?php echo $this->fetch('transfusions-summary'); ?>">
-        <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Transfusion',  array('controller' => 'reports', 'action'=>'transfusions_summary', 'admin' => false ),
+      <li class="<?php echo $this->fetch('transfusions-by-designation'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reporter Qualification',  array('controller' => 'reports', 'action'=>'transfusions_by_designation', 'admin' => false ),
                       array('escape' => false));
         ?>
       </li>
-    
-      <!-- <li class="<?php echo $this->fetch('transfusions-by-age'); ?>">
-        <?php
+      <li class="<?php echo $this->fetch('transfusions-by-age'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Age group',  array('controller' => 'reports', 'action'=>'transfusions_by_age', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -250,8 +377,26 @@
                       array('escape' => false));
         ?>
       </li>
-      <li class="<?php echo $this->fetch('transfusions-by-county'); ?>">
+      <li class="<?php echo $this->fetch('transfusions-by-rtype'); ?>">
         <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Reaction Type',  array('controller' => 'reports', 'action'=>'transfusions_by_rtype', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('transfusions-by-ptransfusion'); ?>">
+        <?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Previous Transfusion',  array('controller' => 'reports', 'action'=>'transfusions_by_ptransfusion', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('transfusions-by-preaction'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Previous Reaction',  array('controller' => 'reports', 'action'=>'transfusions_by_preaction', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('transfusions-by-county'); ?>">
+      	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> County',  array('controller' => 'reports', 'action'=>'transfusions_by_county', 'admin' => false ),
                       array('escape' => false));
         ?>
@@ -264,9 +409,8 @@
       </li>
       <li class="<?php echo $this->fetch('transfusions-by-year'); ?>">
         <?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'transfusions_by_year', 'admin' => false ),
-                      array('escape' => false));
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Year',  array('controller' => 'reports', 'action'=>'transfusions_by_year', 'admin' => false ), array('escape' => false));
         ?>
-      </li> -->
+      </li>
       <li class="divider"></li>
     </ul>

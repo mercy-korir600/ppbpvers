@@ -205,209 +205,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
-<div class="row-fluid">
-    <div class="span12">
-        <h4>Medications Errors per Facility</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="facilityTab(event, 'facilityChart')" id="facilityOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksfacility" onclick="facilityTab(event, 'facilityTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="facilityChart" class="tabcontentfacility">
-            <div id="sadrs-facility"></div>
-
-        </div>
-
-        <div id="facilityTable" class="tabcontentfacility">
-            <table class="table table-condensed table-bordered" id="datatablefacility">
-                <thead>
-                    <tr>
-                        <th>Facility</th>
-                        <th>Medications Errors</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($facilities as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value['Medication']['name_of_institution'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<hr>
-
-<div class="row-fluid">
-    <div class="span6">
-        <h4>Medications Errors per Process</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="qualificationTab(event, 'qualificationChart')" id="qualificationOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksqualification" onclick="qualificationTab(event, 'qualificationTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="qualificationChart" class="tabcontentqualification">
-            <div id="sadrs-qualification"></div>
-
-        </div>
-
-        <div id="qualificationTable" class="tabcontentqualification">
-            <table class="table table-condensed table-bordered" id="datatablequalification">
-                <thead>
-                    <tr>
-                        <th>Process</th>
-                        <th>Medications Errors</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($process as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value['Medication']['process_occur'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="span6">
-        <h4>Error Outcome</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="outcomeTab(event, 'outcomeChart')" id="outcomeOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksoutcome" onclick="outcomeTab(event, 'outcomeTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="outcomeChart" class="tabcontentoutcome">
-            <div id="sadrs-outcome"></div>
-
-        </div>
-
-        <div id="outcomeTable" class="tabcontentoutcome">
-            <table class="table table-condensed table-bordered" id="datatableoutcome">
-                <thead>
-                    <tr>
-                        <th>Error</th>
-                        <th>Medications Errors</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($error as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value[0]['error'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<hr>
-
-<div class="row-fluid">
-    <div class="span6">
-        <h4>Reporter Qualification</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="designationTab(event, 'designationChart')" id="designationOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksdesignation" onclick="designationTab(event, 'designationTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="designationChart" class="tabcontentdesignation">
-            <div id="sadrs-designation"></div>
-
-        </div>
-
-        <div id="designationTable" class="tabcontentdesignation">
-            <table class="table table-condensed table-bordered" id="datatabledesignation">
-                <thead>
-                    <tr>
-                        <th>Qualification</th>
-                        <th>Medications Errors</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($designation as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value['Designation']['name'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="span6">
-        <h4>Contributing Factor</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="factorTab(event, 'factorChart')" id="factorOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksfactor" onclick="factorTab(event, 'factorTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="factorChart" class="tabcontentfactor">
-            <div id="sadrs-factor"></div>
-
-        </div>
-
-        <div id="factorTable" class="tabcontentfactor">
-            <table class="table table-condensed table-bordered" id="datatablefactor">
-                <thead>
-                    <tr>
-                        <th>Factor</th>
-                        <th>Medications Errors</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($factor as $key => $value) {
-                        echo "<tr>";
-                        echo "<th>" . $value[0]['factor'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<hr>
-
+<hr> 
 <div class="row-fluid">
     <div class="span12">
         <h4>Product (Intended)</h4>
@@ -573,19 +371,7 @@ $this->Html->css('summary', null, array('inline' => false));
 </div>
 <hr>
 <script type="text/javascript">
-    function facilityTab(evt, facilitytabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentfacility");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksfacility");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(facilitytabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
+     
 
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
@@ -656,64 +442,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(monthtabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
-
-
-    function outcomeTab(evt, outcometabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentoutcome");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksoutcome");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(outcometabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    function designationTab(evt, designationtabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentdesignation");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksdesignation");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(designationtabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    function qualificationTab(evt, qualificationtabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentqualification");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksqualification");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(qualificationtabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    function factorTab(evt, factortabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentfactor");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksfactor");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(factortabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
+ 
     function piTab(evt, pitabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentpi");
@@ -774,12 +503,7 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
     document.getElementById("yearOpen").click();
-    document.getElementById("monthOpen").click();
-    document.getElementById("facilityOpen").click();
-    document.getElementById("qualificationOpen").click();
-    document.getElementById("outcomeOpen").click();
-    document.getElementById("designationOpen").click();
-    document.getElementById("factorOpen").click();
+    document.getElementById("monthOpen").click(); 
     document.getElementById("piOpen").click();
     document.getElementById("peOpen").click();
     document.getElementById("giOpen").click();
@@ -879,129 +603,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     this.point.y + ' ' + this.point.name.toLowerCase();
             }
         }
-    });
-    Highcharts.chart('sadrs-factor', {
-        data: {
-            table: 'datatablefactor'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-    Highcharts.chart('sadrs-designation', {
-        data: {
-            table: 'datatabledesignation'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-    Highcharts.chart('sadrs-qualification', {
-        data: {
-            table: 'datatablequalification'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-
-    Highcharts.chart('sadrs-outcome', {
-        data: {
-            table: 'datatableoutcome'
-        },
-        chart: {
-            type: 'pie'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-    Highcharts.chart('sadrs-facility', {
-        data: {
-            table: 'datatablefacility'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-
+    });  
     Highcharts.chart('sadrs-month', {
         data: {
             table: 'datatablemonth'
@@ -1026,8 +628,6 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-
-
     Highcharts.chart('sadrs-geo', {
         data: {
             table: 'datatablegeo'
