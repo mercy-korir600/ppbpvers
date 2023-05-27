@@ -263,11 +263,68 @@ class ReportsController extends AppController
         $this->render('sadrs_by_designation');
     }
 
+    public function generate_reports_per_vaccines_old($drug_name = null)
+    {
+        # code...   
+        $cond = array(); // Initialize $cond with an empty array
+
+        $subquery = $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
+            'conditions' => array(
+                'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
+            ),
+            'fields' => array('id'),
+            'recursive' => -1 // To avoid unnecessary recursive queries
+        ));
+
+        if ($subquery) {
+            $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
+                'conditions' => array(
+                    'AefiListOfVaccine.vaccine_id IN' => $subquery,
+                    'AefiListOfVaccine.aefi_id IS NOT NULL' // Exclude null values
+                ),
+                'keyField' => 'aefi_id',
+                'valueField' => 'aefi_id'
+            ));
+        }
+
+
+        return $cond;
+    }
     public function generate_reports_per_vaccines($drug_name = null)
     {
-       
-    }
+        # code...   
+        $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
+            'conditions' => array( 
+                    'AefiListOfVaccine.vaccine_id' => $drug_name,     
+                    'AefiListOfVaccine.aefi_id IS NOT NULL'           
+            ),
+            'fields' => array('aefi_id', 'aefi_id')
+        ));
+        return $cond;
+        // $cond = array(); // Initialize $cond with an empty array
 
+        // $subquery = $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
+        //     'conditions' => array(
+        //         'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
+        //     ),
+        //     'fields' => array('id'),
+        //     'recursive' => -1 // To avoid unnecessary recursive queries
+        // ));
+
+        // if ($subquery) {
+        //     $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
+        //         'conditions' => array(
+        //             'AefiListOfVaccine.vaccine_id IN' => $subquery,
+        //             'AefiListOfVaccine.aefi_id IS NOT NULL' // Exclude null values
+        //         ),
+        //         'keyField' => 'aefi_id',
+        //         'valueField' => 'aefi_id'
+        //     ));
+        // }
+
+
+        // return $cond;
+    }
     public function generate_reports_per_reaction($drug_name = null)
     {
         # code...
@@ -537,46 +594,15 @@ class ReportsController extends AppController
 
         // Start from Here::::
         if (!empty($this->request->data['Report']['vaccine'])) {
-            $this->loadModel('AefiListOfVaccine');
-            $vaccineName = $this->request->data['Report']['vaccine'];
-            $vaccine = $this->Aefi->AefiListOfVaccine->Vaccine->find() 
-                ->select(['id'])
-                ->where(['vaccine_name' => $vaccineName])
-                ->first();
-                debug($vaccine);
-                exit;
-        
-            if ($vaccine) {
-                $vaccineId = $vaccine->id;
-        
-                // Retrieve a list of aefi_id values from list_of_vaccines that match the Vaccine ID
-                $aefiIds = $this->Aefi->AefiListOfVaccine->find()
-                    ->select(['aefi_id'])
-                    ->where(['vaccine_id' => $vaccineId])
-                    ->extract('aefi_id')
-                    ->toArray(); 
-        
-                // Process the filtered Aefis as needed
-                // ...
-                $criteria['Aefi.id'] = $aefiIds;
+            $cond = array(); // Initialize $cond with an empty array
+            $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
+            if (!empty($ids)) {
+                foreach ($ids as $key => $value) {
+                    $id_arrays[] = $key;
+                }
             }
+            $criteria['Aefi.id'] = $id_arrays;
         }
-        
-        // if (!empty($this->request->data['Report']['vaccine'])) {
-        //     $vaccine=$this->request->data['Report']['vaccine'];
-        //     // $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
-        //     // debug($ids);
-        //     // exit;
-        //     // if (!empty($ids)) {
-        //     //     foreach ($ids as $key => $value) {
-        //     //         $id_arrays[] = $key;
-        //     //     }
-        //     // }
-        //     // debug($id_arrays);
-        //     // exit;
-        //     $criteria['Aefi.id'] = $ids;
-        //     // $criteria['Aefi.id'] = $id_arrays;
-        // }
 
         //get all the counties in the system without any relation
         $counties = $this->Aefi->County->find('list', array('order' => 'County.county_name ASC'));
