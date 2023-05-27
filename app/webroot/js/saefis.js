@@ -216,6 +216,79 @@ $(function () {
 	});
 	if ($('input[name="data[Saefi][serious]"][value="No"]').is(':checked')) { $('input[name="data[Saefi][serious_yes]"]').attr('disabled', true).attr('checked', false); }
 
+
+
+
+	// Start of Section B: 
+	$('.prescribing_error').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pprescribing_error:input').prop('disabled', false);
+		} else {
+			$('.pprescribing_error:input').val('');
+			$('.pprescribing_error:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiPrescribingErrorYes").is(':checked')) { $('.pprescribing_error:input').prop('disabled', false); }
+
+	// vaccine_unsterile
+	$('.vaccine_unsterile').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pvaccine_unsterile:input').prop('disabled', false);
+		} else {
+			$('.pvaccine_unsterile:input').val('');
+			$('.pvaccine_unsterile:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiVaccineUnsterileYes").is(':checked')) { $('.pvaccine_unsterile:input').prop('disabled', false); }
+	// vaccine_condition
+	$('.vaccine_condition').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pvaccine_condition:input').prop('disabled', false);
+		} else {
+			$('.pvaccine_condition:input').val('');
+			$('.pvaccine_condition:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiVaccineConditionYes").is(':checked')) { $('.pvaccine_condition:input').prop('disabled', false); }
+	// vaccine_reconstitution
+	$('.vaccine_reconstitution').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pvaccine_reconstitution:input').prop('disabled', false);
+		} else {
+			$('.pvaccine_reconstitution:input').val('');
+			$('.pvaccine_reconstitution:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiVaccineReconstitutionYes").is(':checked')) { $('.pvaccine_reconstitution:input').prop('disabled', false); }
+	// vaccine_handling
+	$('.vaccine_handling').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pvaccine_handling:input').prop('disabled', false);
+		} else {
+			$('.pvaccine_handling:input').val('');
+			$('.pvaccine_handling:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiVaccineHandlingYes").is(':checked')) { $('.pvaccine_handling:input').prop('disabled', false); }
+
+	// vaccine_administered
+	$('.vaccine_administered').on('change', function () {
+		var pilih = $(this).val();
+		if (pilih == 'Yes') {
+			$('.pvaccine_administered:input').prop('disabled', false);
+		} else {
+			$('.pvaccine_administered:input').val('');
+			$('.pvaccine_administered:input').prop('disabled', true);
+		}
+	});
+	if ($("#SaefiVaccineAdministeredYes").is(':checked')) { $('.pvaccine_administered:input').prop('disabled', false); }
+
+
 	var cache2 = {}, lastXhr;
 	$("#SaefiInstitutionCode").autocomplete({
 		source: function (request, response) {

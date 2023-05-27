@@ -97,7 +97,7 @@ class Saefi extends AppModel
 				'message'  => 'Please provide the place of vaccination'
 			),
 		),
-		
+
 
 		'designation_id' => array(
 			'numeric' => array(
@@ -133,7 +133,13 @@ class Saefi extends AppModel
 				'message'  => 'Please provide a valid email address'
 			),
 		),
-		'report_date' => array(
+		'vaccination_in' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide vaccination type'
+			),
+		), 'report_date' => array(
 			'notBlank' => array(
 				'rule'     => 'notBlank',
 				'required' => true,
@@ -147,68 +153,29 @@ class Saefi extends AppModel
 				'message'  => 'Please provide start date'
 			),
 		),
+		'site_type' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide site type'
+			),
+		),
+		'symptom_date' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide symptom date'
+			),
+		),
+		'hospitalization_date' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide symptom date'
+			),
+		),
 
-
-		// 'past_history_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'past_history', 'past_history_remarks'],
-		// 		'message' => 'Please provide past history remarks'
-		// 	)
-		// ),
-		// 'adverse_event_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'adverse_event', 'adverse_event_remarks'],
-		// 		'message' => 'Please provide past adverse event remarks'
-		// 	)
-		// ),
-		// 'allergy_history_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'allergy_history', 'allergy_history_remarks'],
-		// 		'message' => 'Please provide allergy history remarks'
-		// 	)
-		// ),
-		// 'comorbidity_disorder_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'comorbidity_disorder', 'comorbidity_disorder_remarks'],
-		// 		'message' => 'Please provide comorbidity disorder remarks'
-		// 	)
-		// ),
-		// 'existing_illness_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'existing_illness', 'existing_illness_remarks'],
-		// 		'message' => 'Please provide existing illness remarks'
-		// 	)
-		// ),
-		// 'covid_positive_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'covid_positive', 'covid_positive_remarks'],
-		// 		'message' => 'Please provide past covid positive remarks'
-		// 	)
-		// ),
-		// 'hospitalization_history_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'hospitalization_history', 'hospitalization_history_remarks'],
-		// 		'message' => 'Please provide hospitalization_history remarks'
-		// 	)
-		// ),
-		// 'medication_vaccination_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'medication_vaccination', 'medication_vaccination_remarks'],
-		// 		'message' => 'Please provide medication vaccination remarks'
-		// 	)
-		// ),
-		// 'faith_healers_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'faith_healers', 'faith_healers_remarks'],
-		// 		'message' => 'Please provide faith healers remarks'
-		// 	)
-		// ),
-		// 'family_history_remarks' => array(
-		// 	'seriousYes' => array(
-		// 		'rule' => ['checkFieldNotEmpty', 'family_history', 'family_history_remarks'],
-		// 		'message' => 'Please provide family history remarks'
-		// 	)
-		// ),
+		// Section Here
 		'examiner_name' => array(
 			'notBlank' => array(
 				'rule'     => 'notBlank',
@@ -245,11 +212,211 @@ class Saefi extends AppModel
 				'message'  => 'Please provide the Final Diagnosis'
 			),
 		),
+		// Start Here
+		'past_history_remarks' => array(
+			'pastHistoryYes' => array(
+				'rule'     => 'pastHistoryYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for past history!!'
+			),
+		),
+		'adverse_event_remarks' => array(
+			'adverseEventYes' => array(
+				'rule'     => 'adverseEventYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for adverse event!!'
+			),
+		),
+		'allergy_history_remarks' => array(
+			'allergyHistoryYes' => array(
+				'rule'     => 'allergyHistoryYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for allergy history!!'
+			),
+		),
+		'comorbidity_disorder_remarks' => array(
+			'comorbidityDisorderYes' => array(
+				'rule'     => 'comorbidityDisorderYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for comorbidity disorder!!'
+			),
+		),
+		'existing_illness_remarks' => array(
+			'existingIllnessYes' => array(
+				'rule'     => 'existingIllnessYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for existing illness!!'
+			),
+		),
+		'covid_positive_remarks' => array(
+			'covidPositiveYes' => array(
+				'rule'     => 'covidPositiveYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for covid positive!!'
+			),
+		),
+		'hospitalization_history_remarks' => array(
+			'hospitalizationHistoryYes' => array(
+				'rule'     => 'hospitalizationHistoryYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for hospitalization history!!'
+			),
+		),
+		'medication_vaccination_remarks' => array(
+			'medicationVaccinationYes' => array(
+				'rule'     => 'medicationVaccinationYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for medication vaccination!!'
+			),
+		),
 
+		'faith_healers_remarks' => array(
+			'faithHealersYes' => array(
+				'rule'     => 'faithHealersYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for faith healers!!'
+			),
+		),
+		'family_history_remarks' => array(
+			'familyHistoryYes' => array(
+				'rule'     => 'familyHistoryYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for family history!!'
+			),
+		),
+		'prescribing_error_specify' => array(
+			'prescribingErrorYes' => array(
+				'rule'     => 'prescribingErrorYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for prescribing error!!'
+			),
+		),
 
+		'vaccine_unsterile_specify' => array(
+			'vaccineUnsterileYes' => array(
+				'rule'     => 'vaccineUnsterileYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for vaccine unsterile!!'
+			),
+		),
 
+		'vaccine_condition_specify' => array(
+			'vaccineConditionYes' => array(
+				'rule'     => 'vaccineConditionYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for vaccine condition!'
+			),
+		),
+		'vaccine_reconstitution_specify' => array(
+			'vaccineReconstitutionYes' => array(
+				'rule'     => 'vaccineReconstitutionYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for vaccine reconstitution!'
+			),
+		),
+		'vaccine_handling_specify' => array(
+			'vaccineHandlingYes' => array(
+				'rule'     => 'vaccineHandlingYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for vaccine handling!'
+			),
+		),
+
+		'vaccine_administered_specify' => array(
+			'vaccineAdministeredYes' => array(
+				'rule'     => 'vaccineAdministeredYes',
+				'required' => false,
+				'message'  => 'Please specify the reason for vaccine administered!'
+			),
+		),
 	);
 
+	public function vaccineAdministeredYes($field = null)
+	{
+		if ($this->data['Saefi']['vaccine_administered'] == 'Yes') return !empty($this->data['Saefi']['vaccine_administered_specify']);
+		else return true;
+	}
+
+	public function vaccineHandlingYes($field = null)
+	{
+		if ($this->data['Saefi']['vaccine_handling'] == 'Yes') return !empty($this->data['Saefi']['vaccine_handling_specify']);
+		else return true;
+	}
+	public function vaccineReconstitutionYes($field = null)
+	{
+		if ($this->data['Saefi']['vaccine_reconstitution'] == 'Yes') return !empty($this->data['Saefi']['vaccine_reconstitution_specify']);
+		else return true;
+	}
+	public function vaccineConditionYes($field = null)
+	{
+		if ($this->data['Saefi']['vaccine_condition'] == 'Yes') return !empty($this->data['Saefi']['vaccine_condition_specify']);
+		else return true;
+	}
+	public function vaccineUnsterileYes($field = null)
+	{
+		if ($this->data['Saefi']['vaccine_unsterile'] == 'Yes') return !empty($this->data['Saefi']['vaccine_unsterile_specify']);
+		else return true;
+	}
+	public function prescribingErrorYes($field = null)
+	{
+		if ($this->data['Saefi']['prescribing_error'] == 'Yes') return !empty($this->data['Saefi']['prescribing_error_specify']);
+		else return true;
+	}
+	public function familyHistoryYes($field = null)
+	{
+		if ($this->data['Saefi']['family_history'] == 'Yes') return !empty($this->data['Saefi']['family_history_remarks']);
+		else return true;
+	}
+	public function faithHealersYes($field = null)
+	{
+		if ($this->data['Saefi']['faith_healers'] == 'Yes') return !empty($this->data['Saefi']['faith_healers_remarks']);
+		else return true;
+	}
+
+	public function medicationVaccinationYes($field = null)
+	{
+		if ($this->data['Saefi']['medication_vaccination'] == 'Yes') return !empty($this->data['Saefi']['medication_vaccination_remarks']);
+		else return true;
+	}
+
+	public function hospitalizationHistoryYes($field = null)
+	{
+		if ($this->data['Saefi']['hospitalization_history'] == 'Yes') return !empty($this->data['Saefi']['hospitalization_history_remarks']);
+		else return true;
+	}
+
+	public function covidPositiveYes($field = null)
+	{
+		if ($this->data['Saefi']['covid_positive'] == 'Yes') return !empty($this->data['Saefi']['covid_positive_remarks']);
+		else return true;
+	}
+
+	public function existingIllnessYes($field = null)
+	{
+		if ($this->data['Saefi']['existing_illness'] == 'Yes') return !empty($this->data['Saefi']['existing_illness_remarks']);
+		else return true;
+	}
+
+	public function comorbidityDisorderYes($field = null)
+	{
+		if ($this->data['Saefi']['comorbidity_disorder'] == 'Yes') return !empty($this->data['Saefi']['comorbidity_disorder_remarks']);
+		else return true;
+	}
+	public function allergyHistoryYes($field = null)
+	{
+		if ($this->data['Saefi']['allergy_history'] == 'Yes') return !empty($this->data['Saefi']['allergy_history_remarks']);
+		else return true;
+	}
+	public function adverseEventYes($field = null)
+	{
+		if ($this->data['Saefi']['adverse_event'] == 'Yes') return !empty($this->data['Saefi']['adverse_event_remarks']);
+		else return true;
+	}
+	public function pastHistoryYes($field = null)
+	{
+		if ($this->data['Saefi']['past_history'] == 'Yes') return !empty($this->data['Saefi']['past_history_remarks']);
+		else return true;
+	}
 	public function checkFieldNotEmpty($mainField = null, $subField = null)
 	{
 		if ($this->data['Saefi'][$mainField] == 'Yes') {
@@ -389,12 +556,9 @@ class Saefi extends AppModel
 		if (!empty($this->data[$this->alias]['complete_date'])) {
 			$this->data[$this->alias]['complete_date'] = date('Y-m-d', strtotime($this->data[$this->alias]['complete_date']));
 		}
-
-
-
-		// if (!empty($this->data[$this->alias]['time_of_first_symptom'])) {
-		// 	$this->data[$this->alias]['time_of_first_symptom'] = date('H:i:s', strtotime($this->data[$this->alias]['time_of_first_symptom']));
-		// }
+		if (!empty($this->data[$this->alias]['person_date'])) {
+			$this->data[$this->alias]['person_date'] = date('Y-m-d', strtotime($this->data[$this->alias]['person_date']));
+		}
 
 		// if (!empty($this->data['Saefi']['time_of_first_symptom'])) {
 		//     $time = strtotime($this->data['Saefi']['time_of_first_symptom']);

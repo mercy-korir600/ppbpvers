@@ -754,6 +754,7 @@ class AefisController extends AppController
 
         // debug($results->code);
         // debug($results->body);
+        // debug($results);
         // exit();
         if ($results->isOk()) {
             $body = $results->body;

@@ -265,26 +265,7 @@ class ReportsController extends AppController
 
     public function generate_reports_per_vaccines($drug_name = null)
     {
-        # code...  
-        $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
-            'conditions' => array(
-                'AefiListOfVaccine.vaccine_id IN' => $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
-                    'conditions' => array(
-                        'OR' => array(
-                            'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
-                            'Vaccine.description LIKE' => '%' . $drug_name . '%',
-                        )
-                    ),
-                    'fields' => array('id'),
-                    'recursive' => -1 // To avoid unnecessary recursive queries
-                ))
-            ),
-            'keyField' => 'aefi_id',
-            'valueField' => 'aefi_id'
-        ));
-        // debug($cond);
-        // exit;
-        return $cond;
+       
     }
 
     public function generate_reports_per_reaction($drug_name = null)
@@ -464,6 +445,52 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+        // Suspected Drug
+        $criterias['SadrListOfDrug.created >'] = '2020-04-01 08:08:08';
+        $criterias['SadrListOfDrug.drug_name >'] = '';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criterias['SadrListOfDrug.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $criterias['SadrListOfDrug.sadr_id'] = $this->Sadr->find('list', array('conditions' => array('Sadr.submitted' => '2', 'Sadr.copied !=' => '1', 'Sadr.report_type !=' => 'Followup', 'Sadr.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        } else {
+            $criteria['Sadr.submitted'] = '2';
+            $criteria['Sadr.report_type !='] = 'Followup';
+            $criterias['SadrListOfDrug.sadr_id'] = $this->Sadr->find('list', array(
+                'conditions' => $criteria,
+                'fields' => array('id', 'id')
+            ));
+        }
+
+        if ($this->Auth->User('user_type') == 'Public Health Program') {
+            $conditionsSubQuery['DrugDictionary.health_program'] = $this->Auth->User('health_program');
+
+            $db = $this->DrugDictionary->getDataSource();
+            $subQuery = $db->buildStatement(
+                array(
+                    'fields'     => array('DrugDictionary.drug_name'),
+                    'table'      => $db->fullTableName($this->DrugDictionary),
+                    'alias'      => 'DrugDictionary',
+                    'limit'      => null,
+                    'offset'     => null,
+                    'joins'      => array(),
+                    'conditions' => $conditionsSubQuery,
+                    'order'      => null,
+                    'group'      => null
+                ),
+                $this->DrugDictionary
+            );
+            $subQuery = 'SadrListOfDrug.drug_name IN (' . $subQuery . ') ';
+            $subQueryExpression = $db->expression($subQuery);
+
+            $criterias[] = $subQueryExpression;
+        }
+        $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
+            'fields' => array('SadrListOfDrug.drug_name as drug_name', 'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criterias,
+            'group' => array('SadrListOfDrug.drug_name'),
+            'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
+        ));
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
@@ -478,7 +505,8 @@ class ReportsController extends AppController
         $this->set(compact('seriousness_reason'));
         $this->set(compact('outcome_data'));
         $this->set(compact('facility_data'));
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'monthly', 'year', 'reaction', 'report_title', 'qualification', 'seriousness', 'seriousness_reason', 'outcome_data', 'facility_data');
+        $this->set(compact('suspected'));
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'monthly', 'year', 'reaction', 'report_title', 'qualification', 'seriousness', 'seriousness_reason', 'outcome_data', 'facility_data', 'suspected');
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_sadr_summary');
         } else {
@@ -489,7 +517,7 @@ class ReportsController extends AppController
     {
 
         // Load Data for Counties 
-        $id_arrays = array();
+        $id_arrays = array(0);
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
@@ -509,18 +537,46 @@ class ReportsController extends AppController
 
         // Start from Here::::
         if (!empty($this->request->data['Report']['vaccine'])) {
-
-            $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
-
-            if (!empty($ids)) {
-                foreach ($ids as $key => $value) {
-                    $id_arrays[] = $key;
-                }
-            }
-            if (!empty($id_arrays)) {
-                $criteria['Aefi.id'] = $id_arrays;
+            $this->loadModel('AefiListOfVaccine');
+            $vaccineName = $this->request->data['Report']['vaccine'];
+            $vaccine = $this->Aefi->AefiListOfVaccine->Vaccine->find() 
+                ->select(['id'])
+                ->where(['vaccine_name' => $vaccineName])
+                ->first();
+                debug($vaccine);
+                exit;
+        
+            if ($vaccine) {
+                $vaccineId = $vaccine->id;
+        
+                // Retrieve a list of aefi_id values from list_of_vaccines that match the Vaccine ID
+                $aefiIds = $this->Aefi->AefiListOfVaccine->find()
+                    ->select(['aefi_id'])
+                    ->where(['vaccine_id' => $vaccineId])
+                    ->extract('aefi_id')
+                    ->toArray(); 
+        
+                // Process the filtered Aefis as needed
+                // ...
+                $criteria['Aefi.id'] = $aefiIds;
             }
         }
+        
+        // if (!empty($this->request->data['Report']['vaccine'])) {
+        //     $vaccine=$this->request->data['Report']['vaccine'];
+        //     // $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine']);
+        //     // debug($ids);
+        //     // exit;
+        //     // if (!empty($ids)) {
+        //     //     foreach ($ids as $key => $value) {
+        //     //         $id_arrays[] = $key;
+        //     //     }
+        //     // }
+        //     // debug($id_arrays);
+        //     // exit;
+        //     $criteria['Aefi.id'] = $ids;
+        //     // $criteria['Aefi.id'] = $id_arrays;
+        // }
 
         //get all the counties in the system without any relation
         $counties = $this->Aefi->County->find('list', array('order' => 'County.county_name ASC'));
@@ -642,6 +698,7 @@ class ReportsController extends AppController
             );
         }
 
+        $criteriav = array(0);
         $criteriav['Vaccine.id >'] = 0;
 
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
@@ -653,18 +710,12 @@ class ReportsController extends AppController
             $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
         } else {
             $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array(
-                'conditions' => array(
-                    'Aefi.submitted' => '2',
-                    'Aefi.copied !=' => '1',
-                    'Aefi.report_type !=' => 'Followup',
-                ),
+                'conditions' => $conditions,
                 'fields' => array('id', 'id')
             ));
         }
 
-        if (!empty($this->request->data['Report']['vaccine'])) {
-            $criteriav['Vaccine.vaccine_name'] = $this->request->data['Report']['vaccine'];
-        }
+
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
             'contain' => array('Vaccine'),
