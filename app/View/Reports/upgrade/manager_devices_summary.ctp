@@ -1,5 +1,5 @@
 <?php
-$this->extend('/Reports/reports_manager');
+$this->extend('/Reports/upgrade/menu/device');
 $this->assign('devices-summary', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>

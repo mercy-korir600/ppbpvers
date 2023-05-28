@@ -294,9 +294,9 @@ class ReportsController extends AppController
     {
         # code...   
         $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
-            'conditions' => array( 
-                    'AefiListOfVaccine.vaccine_id' => $drug_name,     
-                    'AefiListOfVaccine.aefi_id IS NOT NULL'           
+            'conditions' => array(
+                'AefiListOfVaccine.vaccine_id' => $drug_name,
+                'AefiListOfVaccine.aefi_id IS NOT NULL'
             ),
             'fields' => array('aefi_id', 'aefi_id')
         ));
@@ -589,7 +589,19 @@ class ReportsController extends AppController
             $criteria['Aefi.gender'] = $this->request->data['Report']['gender'];
         }
         if (!empty($this->request->data['Report']['age_group'])) {
-            $criteria['Aefi.age_months'] = $this->request->data['Report']['age_group'];
+            $age_group = $this->request->data['Report']['age_group'];
+            $criteria['Aefi.age_months'] = "((CASE 
+        WHEN trim(age_months) IN ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') THEN age_months
+        WHEN age_months > 0 AND age_months < 1 THEN 'neonate'
+        WHEN age_months < 13 THEN 'infant'
+        WHEN age_months > 13 THEN 'child'
+        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 0 AND 1 THEN 'infant'
+        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 1 AND 10 THEN 'child'
+        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 18 AND 65 THEN 'adult'
+        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 10 AND 18 THEN 'adolescent'
+        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 65 AND 155 THEN 'elderly'
+        ELSE 'unknown'
+    END)) = '$age_group'";
         }
 
         // Start from Here::::
@@ -625,6 +637,7 @@ class ReportsController extends AppController
 
 
         // GET SUMMARY BY AGE GROUP 
+        
 
         $case = "((case 
         when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
@@ -638,6 +651,8 @@ class ReportsController extends AppController
         when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
         else 'unknown'
        end))";
+    //    debug($case);
+    //    exit;
 
         $age = $this->Aefi->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
@@ -782,7 +797,21 @@ class ReportsController extends AppController
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Pqmp.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
+        if (!empty($this->request->data['Report']['county_id'])) {
+            $criteria['Pqmp.county_id'] = $this->request->data['Report']['county_id'];
+        }
+        if (!empty($this->request->data['Report']['country_id'])) {
+            $criteria['Pqmp.country_id'] = $this->request->data['Report']['country_id'];
+        }
+        if (!empty($this->request->data['Report']['age_group'])) {
+            $age_group = $this->request->data['Report']['age_group'];
 
+            $criteria['Pqmp.age_months'] = $age_group;
+        }
+
+        // Start from Here::::
+        if (!empty($this->request->data['Report']['vaccine'])) {
+        }
 
         //    PQHPTs per County
         $geo = $this->Pqmp->find('all', array(
@@ -973,8 +1002,8 @@ class ReportsController extends AppController
 
         //get all the counties in the system without any relation
         $counties = $this->Pqmp->County->find('list', array('order' => 'County.county_name ASC'));
-
-
+        $countries = $this->Pqmp->Country->find('list');
+        $this->set('countries', $countries);
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('year'));
@@ -1018,8 +1047,11 @@ class ReportsController extends AppController
 
             $criteria['Device.gender'] = $gender; // ucfirst();
         }
-        if (!empty($this->request->data['Report']['age_group'])) {
-            $criteria['Device.age_years'] = $this->request->data['Report']['age_group'];
+        if (!empty($this->request->data['Report']['outcome'])) {
+            $criteria['Device.outcome'] = $this->request->data['Report']['outcome'];
+        }
+        if (!empty($this->request->data['Report']['serious'])) {
+            $criteria['Device.serious'] = $this->request->data['Report']['serious'];
         }
         $geo = $this->Device->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
