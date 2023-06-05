@@ -199,13 +199,6 @@ $nchecked = "&#x2610;";
                 <table style="width: 100%;">
                     <tr>
                         <td style="width: 20%;"><strong>Outcome:</strong></td>
-
-                        <!-- display the equivalent for  'recovered/resolved' => 'Recovered/resolved',
-                    'recovering/resolving' => 'Recovering/resolving',
-                    'recovered/resolved with sequelae' => 'Recovered/resolved with sequelae',
-                    'not recovered/not resolved' => 'Not recovered/not resolved',
-                    'fatal' => 'Fatal',
-                    'unknown' => 'Unknown', -->
                         <td style="width: 30%;">
                             <?php
                             $outcome = $padr['Padr']['outcome'];
@@ -223,6 +216,15 @@ $nchecked = "&#x2610;";
                                 echo 'Unknown';
                             }
                             ?> </td>
+                        <td style="width: 30%;"></td>
+                        <td style="width: 25%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;"><strong>Consent Given:</strong></td>
+                        <td style="width: 30%;">
+                            <?php
+                           echo $outcome = $padr['Padr']['consent'];
+                           ?> </td>
                         <td style="width: 30%;"></td>
                         <td style="width: 25%;"></td>
                     </tr>

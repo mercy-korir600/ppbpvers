@@ -87,10 +87,10 @@
                         array('controller' => 'feedbacks', 'action'=>'add', 'manager' => false ), array('escape' => false ));
                     ?>
              </li>
-             <li class="dropdown <?php echo $this->fetch('Profile') ?>">
+             <li class="dropdown <?php echo $this->fetch('Registry') ?>">
                 <?php
-                    // echo $this->Html->link('<i class="icon-user"></i> My Profile',
-                        // array('controller' => 'users', 'action'=>'profile', 'admin' => false ), array('escape' => false ));
+                    echo $this->Html->link('<i class="icon-cog"></i> Registry',
+                        array('controller' => 'drugs', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                 ?>
              </li>
         </ul>

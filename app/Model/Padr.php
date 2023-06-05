@@ -246,6 +246,16 @@ class Padr extends AppModel {
                 'message' => 'Please provide a valid phone number',
             ),
         ),
+		'consent' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+				'required' => true,
+                'message'  => 'Please provide Consent'
+            ),
+        ),
+
+
+		
 	);
 
 	public function atLeastYear($field = null) {
