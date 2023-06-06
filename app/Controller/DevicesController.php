@@ -37,10 +37,16 @@ class DevicesController extends AppController
         $criteria['Device.user_id'] = $this->Auth->User('id');
         //add deleted = 0 to criteria
         $criteria['Device.deleted'] = false;
-        if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
-            $criteria['Device.submitted'] = array(0, 1);
+        
+        if (isset($this->request->query['submitted'])) {
+
+            if ($this->request->query['submitted'] == 1) {
+                $criteria['Device.submitted'] = array(0, 1);
+            } else {
+                $criteria['Device.submitted'] = array(2, 3);
+            }
         } else {
-            $criteria['Device.submitted'] = array(2, 3);
+            $criteria['Device.submitted'] = array(0, 1, 2, 3);
         }
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
@@ -614,6 +620,11 @@ class DevicesController extends AppController
                     }
                     //**********************************    END   *********************************
 
+
+                    $serious = $device['Device']['serious'];
+                    if ($serious == "Serious") {
+                        $this->notifyCountyPharmacist($device);
+                    }
                     $this->Session->setFlash(__('The DEVICE has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Device->id));
                 }
@@ -633,7 +644,61 @@ class DevicesController extends AppController
         $designations = $this->Device->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
     }
-
+    public function notifyCountyPharmacist($device = null)
+    {
+        # code...
+        
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_device')));
+                    
+        $county_id = $device['Device']['county_id'];
+        $users = $this->Device->User->find('all', array(
+            'contain' => array(),
+            'conditions' => array(
+                'OR' => array(
+                    'User.group_id' => 2,
+                    array(
+                        'User.county_id' => $county_id,
+                        'User.user_type' => 'County Pharmacist'
+                    )
+                )
+            ),
+            'order' => array(
+                'User.id' => 'DESC'
+            )
+        ));
+       
+        foreach ($users as $user) {
+            $variables = array(
+                'name' => $user['User']['name'], 
+                'reference_no' => $device['Device']['reference_no'],
+                'reference_link' => $html->link(
+                    $device['Device']['reference_no'],
+                    array(
+                        'controller' => 'devices',
+                        'action' => 'view', $device['Device']['id'], 
+                        'manager' => true, 
+                        'full_base' => true),
+                    array('escape' => false)
+                ),
+                'modified' => $device['Device']['modified']
+            );
+            $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $device['Device']['id'], 
+                'user_id' => $user['User']['id'], 
+                'type' => 'serious_device', 
+                'model' => 'Device',
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+            );
+            $this->loadModel('Queue.QueuedTask');
+            $this->QueuedTask->createJob('GenericEmail', $datum);
+            $this->QueuedTask->createJob('GenericNotification', $datum);
+        }
+        
+    }
     public function api_add()
     {
 

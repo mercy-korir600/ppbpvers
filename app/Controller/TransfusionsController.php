@@ -518,10 +518,10 @@ class TransfusionsController extends AppController
             throw new NotFoundException(__('Invalid TRANSFUSION'));
         }
         $transfusion = $this->Transfusion->read(null, $id);
-        if ($transfusion['Transfusion']['submitted'] > 1) {
-            $this->Session->setFlash(__('The blood transfusion incident has been submitted'), 'alerts/flash_info');
-            $this->redirect(array('action' => 'view', $this->Transfusion->id));
-        }
+        // if ($transfusion['Transfusion']['submitted'] > 1) {
+        //     $this->Session->setFlash(__('The blood transfusion incident has been submitted'), 'alerts/flash_info');
+        //     $this->redirect(array('action' => 'view', $this->Transfusion->id));
+        // }
         if ($transfusion['Transfusion']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this TRANSFUSION!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -609,6 +609,10 @@ class TransfusionsController extends AppController
                     }
                     //**********************************    END   *********************************
 
+                    $serious = $transfusion['Transfusion']['faint'];
+                    if ($serious == "Severe") {
+                        $this->notifyCountyPharmacist($transfusion);
+                    }
                     $this->Session->setFlash(__('The blood transfusion reaction report has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Transfusion->id));
                 }
@@ -630,7 +634,61 @@ class TransfusionsController extends AppController
         $designations = $this->Transfusion->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('counties', 'designations'));
     }
-
+    public function notifyCountyPharmacist($transfusion = null)
+    {
+        # code...
+        
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_transfusion')));
+                    
+        $county_id = $transfusion['Transfusion']['county_id'];
+        $users = $this->Transfusion->User->find('all', array(
+            'contain' => array(),
+            'conditions' => array(
+                'OR' => array(
+                    'User.group_id' => 2,
+                    array(
+                        'User.county_id' => $county_id,
+                        'User.user_type' => 'County Pharmacist'
+                    )
+                )
+            ),
+            'order' => array(
+                'User.id' => 'DESC'
+            )
+        ));
+       
+        foreach ($users as $user) {
+            $variables = array(
+                'name' => $user['User']['name'], 
+                'reference_no' => $transfusion['Transfusion']['reference_no'],
+                'reference_link' => $html->link(
+                    $transfusion['Transfusion']['reference_no'],
+                    array(
+                        'controller' => 'transfusions',
+                        'action' => 'view', $transfusion['Transfusion']['id'], 
+                        'manager' => true, 
+                        'full_base' => true),
+                    array('escape' => false)
+                ),
+                'modified' => $transfusion['Transfusion']['modified']
+            );
+            $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $transfusion['Transfusion']['id'], 
+                'user_id' => $user['User']['id'], 
+                'type' => 'serious_transfusion', 
+                'model' => 'Transfusion',
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+            );
+            $this->loadModel('Queue.QueuedTask');
+            $this->QueuedTask->createJob('GenericEmail', $datum);
+            $this->QueuedTask->createJob('GenericNotification', $datum);
+        }
+        
+    }
     public function api_add($id = null)
     {
 

@@ -27,7 +27,7 @@ class SadrsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard','guest_add','guest_edit');
+        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit');
     }
 
     public function yellowcard($id = null)
@@ -139,7 +139,7 @@ class SadrsController extends AppController
             $criteria['Sadr.submitted'] = array(2);
         } else {
             if (isset($this->request->query['submitted'])) {
-                
+
                 if ($this->request->query['submitted'] == 1) {
                     $criteria['Sadr.submitted'] = array(0, 1);
                 } else {
@@ -247,10 +247,10 @@ class SadrsController extends AppController
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
         if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
         else $this->paginate['limit'] = reset($this->page_options);
- 
+
 
         $criteria = $this->Sadr->parseCriteria($this->passedArgs);
-       
+
         $criteria['Sadr.copied !='] = '1';
         // check if the user has select unsubmited sadrs
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
@@ -831,6 +831,12 @@ class SadrsController extends AppController
                     }
                     //**********************************    END   *********************************
 
+                    // If the report is serious sent an alert:
+                    $serious = $sadr['Sadr']['serious'];
+                    if ($serious == "Yes") {
+                        $this->notifyCountyPharmacist($sadr);
+                    }
+
                     $this->Session->setFlash(__('The SADR has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Sadr->id));
                 }
@@ -859,7 +865,60 @@ class SadrsController extends AppController
         $dose = $this->Sadr->SadrListOfDrug->Dose->find('list');
         $this->set(compact('dose'));
     }
-
+    public function notifyCountyPharmacist($sadr = null)
+    {
+        # code...
+        
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_sadr')));
+                    
+        $county_id = $sadr['Sadr']['county_id'];
+        $users = $this->Sadr->User->find('all', array(
+            'contain' => array(),
+            'conditions' => array(
+                'OR' => array(
+                    'User.group_id' => 2,
+                    array(
+                        'User.county_id' => $county_id,
+                        'User.user_type' => 'County Pharmacist'
+                    )
+                )
+            ),
+            'order' => array(
+                'User.id' => 'DESC'
+            )
+        ));
+       
+        foreach ($users as $user) {
+            $variables = array(
+                'name' => $user['User']['name'], 'reference_no' => $sadr['Sadr']['reference_no'],
+                'reference_link' => $html->link(
+                    $sadr['Sadr']['reference_no'],
+                    array(
+                        'controller' => 'sadrs',
+                        'action' => 'view', $sadr['Sadr']['id'], 
+                        'manager' => true, 
+                        'full_base' => true),
+                    array('escape' => false)
+                ),
+                'modified' => $sadr['Sadr']['modified']
+            );
+            $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $sadr['Sadr']['id'], 
+                'user_id' => $user['User']['id'], 
+                'type' => 'serious_sadr', 
+                'model' => 'Sadr',
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+            );
+            $this->loadModel('Queue.QueuedTask');
+            $this->QueuedTask->createJob('GenericEmail', $datum);
+            $this->QueuedTask->createJob('GenericNotification', $datum);
+        }
+        
+    }
     public function api_add()
     {
 
@@ -1137,10 +1196,10 @@ class SadrsController extends AppController
     public function guest_add($id = null)
     {
         $this->Sadr->create();
-        $this->Sadr->save(['Sadr' => [ 
-            'reference_no' => 'new', 
+        $this->Sadr->save(['Sadr' => [
+            'reference_no' => 'new',
             'report_type' => 'Initial',
-            'pqmp_id' => $id, 
+            'pqmp_id' => $id,
         ]], false);
         $this->Session->setFlash(__('The SADR has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'guest_edit', $this->Sadr->id));
@@ -1152,7 +1211,7 @@ class SadrsController extends AppController
             throw new NotFoundException(__('Invalid SADR'));
         }
         $sadr = $this->Sadr->read(null, $id);
-        
+
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
@@ -1176,7 +1235,7 @@ class SadrsController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_sadr_submit')));
                     $variables = array(
-                        'name' => 'Guest', 
+                        'name' => 'Guest',
                         'reference_no' => $sadr['Sadr']['reference_no'],
                         'reference_link' => $html->link(
                             $sadr['Sadr']['reference_no'],
@@ -1233,7 +1292,7 @@ class SadrsController extends AppController
                     //**********************************    END   *********************************
 
                     $this->Session->setFlash(__('The SADR has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                    $this->redirect(array('controller' => 'pages', 'action' => 'home'));
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The SADR has been saved'), 'alerts/flash_success');
