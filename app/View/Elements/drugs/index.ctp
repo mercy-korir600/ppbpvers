@@ -8,17 +8,17 @@ $this->assign('Registry', 'active');
     <?php
     echo $this->Session->flash();
     ?>
-      <div class="row-fluid">
-        <div class="span12">
-          <?php
-          if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')  echo $this->Html->link(
-            '<i class="fa fa-refresh" aria-hidden="true"></i>  Sync Data',
-            array('controller' => 'drugs', 'sync' => 'add'),
-            array('escape' => false, 'class' => 'btn btn-success')
-          );
-          ?>
-        </div>
-      </div> 
+    <div class="row-fluid">
+      <div class="span12">
+        <?php
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')  echo $this->Html->link(
+          '<i class="fa fa-refresh" aria-hidden="true"></i>  Sync Data',
+          array('controller' => 'drugs', 'action' => 'sync'),
+          array('escape' => false, 'class' => 'btn btn-success')
+        );
+        ?>
+      </div>
+    </div>
 
     <div class="marketing">
       <div class="row-fluid">
@@ -43,7 +43,7 @@ $this->assign('Registry', 'active');
             echo $this->Form->input(
               'brand_name',
               array(
-                'div' => false, 
+                'div' => false,
                 'class' => 'span12', 'label' => array('class' => 'required', 'text' => 'Brand Name')
               )
             );
@@ -54,19 +54,19 @@ $this->assign('Registry', 'active');
             echo $this->Form->input(
               'inn_name',
               array(
-                'div' => false, 
+                'div' => false,
                 'class' => 'unauthorized_index span10', 'label' => array('class' => 'required', 'text' => 'INN Name')
               )
             );
             ?>
           </td>
-          <td >
-          <?php
+          <td>
+            <?php
             echo $this->Form->input(
               'batch_number',
               array(
-                'div' => false, 
-                                'class' => 'span12', 'label' => array('class' => 'required', 'text' => 'Batch Number')
+                'div' => false,
+                'class' => 'span12', 'label' => array('class' => 'required', 'text' => 'Batch Number')
               )
             );
             ?>
@@ -76,63 +76,63 @@ $this->assign('Registry', 'active');
             echo $this->Form->input(
               'manufacturer',
               array(
-                'div' => false, 
-                                'class' => 'span12', 'label' => array('class' => 'required', 'text' => 'Manufacturer')
+                'div' => false,
+                'class' => 'span12', 'label' => array('class' => 'required', 'text' => 'Manufacturer')
               )
             );
             ?>
           </td>
-          <td> 
+          <td>
           </td>
-          <td> 
+          <td>
           </td>
         </tr>
-       
+
         <tr>
           <td>
             <?php
-           echo $this->Form->input(
+            echo $this->Form->input(
               'registration_status',
               array(
-                'div' => false, 
+                'div' => false,
                 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Registration Status')
               )
             );
             ?>
           </td>
-          <td> 
+          <td>
             <?php
-           echo $this->Form->input(
-            'retention_status',
-            array(
-              'div' => false, 
-              'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Retention Status')
-            )
-          );
+            echo $this->Form->input(
+              'retention_status',
+              array(
+                'div' => false,
+                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Retention Status')
+              )
+            );
             ?>
           </td>
           <td>
             <?php
-             echo $this->Form->input(
-                'donation',
-                array(
-                  'div' => false, 
-                  'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Donation')
-                )
-              );
+            echo $this->Form->input(
+              'donation',
+              array(
+                'div' => false,
+                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Donation')
+              )
+            );
             ?>
           </td>
           <td>
-            
+
           </td>
-          <td> 
+          <td>
           </td>
-          <td> 
+          <td>
           </td>
-          <td> 
+          <td>
           </td>
         </tr>
-      
+
         <tr>
           <td><label for="AefiPages" class="required">Pages</label></td>
           <td>
@@ -145,7 +145,7 @@ $this->assign('Registry', 'active');
             ));
             ?>
           </td>
-          <td> 
+          <td>
           </td>
           <td></td>
           <td>
@@ -163,7 +163,7 @@ $this->assign('Registry', 'active');
             ?>
           </td>
           <td>
-            
+
           </td>
         </tr>
       </tbody>
@@ -190,34 +190,36 @@ $this->assign('Registry', 'active');
       </ul>
     </div>
 
-    <table class="table  table-bordered table-striped">
+    <table class="table  table-bordered table-striped"> 
       <thead>
         <tr>
-        <th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('brand_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('inn_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('manufacturer'); ?></th>
-			<th><?php echo $this->Paginator->sort('batch_number'); ?></th>
-			<th><?php echo $this->Paginator->sort('registration_status'); ?></th>
-			<th><?php echo $this->Paginator->sort('retention_status'); ?></th>
-			<th><?php echo $this->Paginator->sort('donation'); ?></th>
-			<th><?php echo $this->Paginator->sort('created'); ?></th>
-			<th><?php echo $this->Paginator->sort('modified'); ?></th>
+          <th><?php echo $this->Paginator->sort('id'); ?></th>
+          <th><?php echo $this->Paginator->sort('brand_name'); ?></th>
+          <th><?php echo $this->Paginator->sort('inn_name'); ?></th>
+          <th><?php echo $this->Paginator->sort('manufacturer'); ?></th>
+          <th><?php echo $this->Paginator->sort('batch_number'); ?></th>
+          <th><?php echo $this->Paginator->sort('registration_status'); ?></th>
+          <th><?php echo $this->Paginator->sort('retention_status'); ?></th>
+          <th><?php echo $this->Paginator->sort('donation'); ?></th>
+          <th><?php echo $this->Paginator->sort('created'); ?></th>
+          <th><?php echo $this->Paginator->sort('modified'); ?></th>
         </tr>
       </thead>
       <tbody>
         <?php
         foreach ($drugs as $drug) : ?>
+        <tr>
           <td><?php echo h($drug['Drug']['id']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['brand_name']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['inn_name']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['manufacturer']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['batch_number']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['registration_status']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['retention_status']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['donation']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['created']); ?>&nbsp;</td>
-		<td><?php echo h($drug['Drug']['modified']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['brand_name']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['inn_name']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['manufacturer']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['batch_number']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['registration_status']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['retention_status']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['donation']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['created']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['modified']); ?>&nbsp;</td>
+          <tr>
         <?php endforeach; ?>
       </tbody>
     </table>

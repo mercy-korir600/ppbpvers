@@ -5,6 +5,7 @@ App::uses('CakeText', 'Utility');
 App::uses('ThemeView', 'View');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('Router', 'Routing');
+App::uses('HttpSocket', 'Network/Http');
 /**
  * Drugs Controller
  * * @property Drug $Drug
@@ -35,12 +36,46 @@ class DrugsController extends AppController {
         if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
         else $this->paginate['limit'] = reset($this->page_options);
         
-        // $criteria = $this->Drug->parseCriteria($this->passedArgs); 
- 
-        // $this->paginate['conditions'] = $criteria;
+        $criteria = $this->Drug->parseCriteria($this->passedArgs);  
+        $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Drug.created' => 'desc');       
         $this->set('page_options', $this->page_options); 
         $this->set('drugs', Sanitize::clean($this->paginate(), array('encode' => false)));
 	}
+
+    public function manager_sync()
+    {
+        # code...
+        $httpSocket = new HttpSocket();
+        // string data
+        $results = $httpSocket->get(Configure::read('drug_registry_api'),
+            false,
+            array('header' => array('Authorization' => Configure::read('drug_registry_header')))
+        );
+        if ($results->isOk()) {
+            $data = $results->body;
+			$data = json_decode($data); 
+			// for each data in the array
+			$this->Drug->query('TRUNCATE TABLE drugs');
+			//create a array to store the data 
+			foreach ($data as $drug) { 
+				// save the drug to the database
+				$this->Drug->create();
+				$this->Drug->save(array(
+					'batch_number' => $drug->registration_no,
+					'brand_name' => $drug->brand_name,
+					'inn_name' => $drug->inn_of_api,
+					'manufacturer' => $drug->mah_name,  
+				));
+			} 
+			$this->Flash->success('Drug list successfully updated');
+			$this->redirect($this->referer());
+        } else {
+            $body = $results->body; 
+            $this->Flash->error('Error syncing... please try again later!!');
+            $this->Flash->error($body);
+            $this->redirect($this->referer());
+        } 
+    }
 
 }

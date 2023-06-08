@@ -130,6 +130,9 @@ Configure::write('vigiflow_api', 'https://api.who-umc.org/demo/vigiflow/icsrs');
 Configure::write('vigiflow_key', '5ab835c4-3179-4590-bcd2-ff3c27d6b8ff'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
 Configure::write('API.token.pepper', 'touch2d34asdfpad'); //'https://api.who-umc.org/demo/vigiflow/icsrs'
 
+// Drug Registry
+Configure::write('drug_registry_api', 'https://rhris.pharmacyboardkenya.org/api_version/getProducts'); 
+Configure::write('drug_registry_header', '9nhJZKq1aeuwe13asloe[13d950XdZudqEmRWCarPacTdeAyMzuchz1rPQBeom4ivAEd'); 
 // usernameAT=afyamoja
 // apiKey=6347d9066545048e3d0ec2cc11034186861dc47c96c4bc268f9bac61899a357c
 // Configure::write('africastalking_api', 'https://api.africastalking.com/version1/messaging'); 
