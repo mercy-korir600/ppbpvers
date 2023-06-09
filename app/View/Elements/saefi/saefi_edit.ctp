@@ -1,5 +1,5 @@
 <?php
-$this->assign('AEFI', 'active');
+$this->assign('SAEFI', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
 $this->Html->script('jquery/jquery.datetimepicker.full', array('inline' => false));
 $this->Html->script('saefis', array('inline' => false));
@@ -2845,7 +2845,7 @@ echo $this->Form->create('Saefi', array(
 		</div>
 		<div class="row-fluid">
 			<div class="span12">
-				<?php echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachment']); ?>
+				<?php echo $this->element('multi/attachments', ['model' => 'Saefi', 'group' => 'attachment','examples'=>'(Autopsy Report, Lab Investigation results, Medical notes, Investigation report)']); ?>
 			</div>
 		</div>
 	</div>

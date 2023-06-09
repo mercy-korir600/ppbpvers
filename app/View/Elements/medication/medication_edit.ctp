@@ -572,7 +572,7 @@
             </div>
 
             
-            <?php echo $this->element('multi/attachments', ['model' => 'Medication', 'group' => 'attachment']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Medication', 'group' => 'attachment','examples'=>'']); ?>
             
 
             <hr>

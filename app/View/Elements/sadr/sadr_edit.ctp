@@ -1,10 +1,6 @@
 <?php
 $this->assign('SADR', 'active');
-$this->Html->script('jquery/combobox', array('inline' => false));
-// $this->Html->script('jUpload/vendor/jquery.ui.widget.js', array('inline' => false));
-//    $this->Html->script('jUpload/jquery.iframe-transport.js', array('inline' => false));
-//    $this->Html->script('jUpload/jquery.fileupload.js', array('inline' => false));
-//    $this->Html->script('jquery/jquery.blockUI.js', array('inline' => false));
+$this->Html->script('jquery/combobox', array('inline' => false)); 
 $this->Html->script('sadr', array('inline' => false)); 
 $this->Html->css('sadr', false, array('inline' => false));
 ?>
@@ -777,7 +773,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 			<!--/row-->
 			<hr>
 
-			<?php echo $this->element('multi/attachments', ['model' => 'Sadr', 'group' => 'attachment']); ?>
+			<?php echo $this->element('multi/attachments', ['model' => 'Sadr', 'group' => 'attachment','examples'=>'']); ?>
 
 			<div class="row-fluid">
 				<div class="span6">

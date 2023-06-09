@@ -16,6 +16,7 @@ $nchecked = "&#x2610;";
                 <div class="row-fluid">
                     <div class="span12" style="text-align: center;">
                         <?php
+                        // echo($this->Html->image('header-object.png', array('alt' => 'SAEFI', 'fullBase' => true)));
                         echo $this->Html->image('confidence.png', array('alt' => 'COA', 'full_base' => true));
                         ?>
                     </div>

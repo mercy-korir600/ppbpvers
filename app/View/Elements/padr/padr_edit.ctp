@@ -458,7 +458,7 @@ $this->Html->css('padr', false, array('inline' => false));
                 ?>
             </div>
             <!-- End of outcome section -->
-            <?php echo $this->element('multi/attachments', ['model' => 'Padr', 'group' => 'attachment']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Padr', 'group' => 'attachment','examples'=>'']); ?>
             <div class="row-fluid report">
                 <?php
                 echo $this->Form->input('consent', array(

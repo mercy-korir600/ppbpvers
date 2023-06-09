@@ -714,7 +714,7 @@ echo $this->Form->create('Pqmp', array(
 		</div>
 		<hr>
 
-		<?php echo $this->element('multi/attachments', ['model' => 'Pqmp', 'group' => 'attachment']); ?>
+		<?php echo $this->element('multi/attachments', ['model' => 'Pqmp', 'group' => 'attachment','examples'=>'']); ?>
 
 		<div class="row-fluid">
 			<div class="span6">

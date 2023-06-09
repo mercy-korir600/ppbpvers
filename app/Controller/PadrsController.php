@@ -61,6 +61,8 @@ class PadrsController extends AppController
         else $this->paginate['limit'] = reset($this->page_options);
 
         $criteria = $this->Padr->parseCriteria($this->passedArgs);
+
+        $criteria['Padr.copied !='] = '1';
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Padr.id' => 'DESC');
         $this->paginate['contain'] = array('County');
@@ -834,6 +836,47 @@ class PadrsController extends AppController
         $counties = $this->Padr->County->find('list', array('order' => array('County.county_name')));
         $this->set(compact('counties'));
     }
+    public function manager_copy($id=null) {
+        if ($this->request->is('post')) {
+            $this->Padr->id = $id;
+            if (!$this->Padr->exists()) {
+                throw new NotFoundException(__('Invalid PADR'));
+            }
+            $this->generate_copy($id);
+        }
+	}
+
+    public function generate_copy($id)
+    {
+        # code...
+        $padr = Hash::remove($this->Padr->find(
+            'first',
+            array(
+                'contain' => array('PadrListOfMedicine'),
+                'conditions' => array('Padr.id' => $id)
+            )
+        ), 'Padr.id');
+
+        if ($padr['Padr']['copied']) {
+            $this->Session->setFlash(__('A clean copy already exists. Click on edit to update changes.'), 'alerts/flash_error');
+            return $this->redirect(array('action' => 'index'));
+        }
+        $padr = Hash::remove($padr, 'PadrListOfMedicine.{n}.id'); 
+        $data_save = $padr['Padr'];
+        if (isset($sadr['PadrListOfMedicine'])) $data_save['PadrListOfMedicine'] = $sadr['PadrListOfMedicine'];
+        $data_save['padr_id'] = $id;
+        $data_save['user_id'] = $this->Auth->User('id');;
+        $this->Padr->saveField('copied', 1);
+        $data_save['copied'] = 2;
+
+        if ($this->Padr->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+            $this->Session->setFlash(__('Clean copy of ' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'edit', $this->Padr->id));
+        } else {
+            $this->Session->setFlash(__('The clean copy could not be created. Please, try again.'), 'alerts/flash_error');
+            $this->redirect($this->referer());
+        }
+    }
     public function manager_edit($id = null)
     {
         # code...
@@ -846,57 +889,48 @@ class PadrsController extends AppController
     public function general_editor($id = null)
     {
         # code...
-        // $sadr = $this->Padr->read(null, $id);
-        // if ($this->request->is('post') || $this->request->is('put')) {
-        //     $validate = false;
-        //     // $validate = 'first';                
-        //     if ($this->Padr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
-        //         if (isset($this->request->data['submitReport'])) {
-        //             $this->Sadr->saveField('submitted', 2);
-        //             $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
-        //             $sadr = $this->Sadr->read(null, $id);
+        $padr = $this->Padr->read(null, $id);
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $validate = false;
+            // $validate = 'first';                
+            if ($this->Padr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                // if (isset($this->request->data['submitReport'])) {
+                    $this->Padr->saveField('submitted', 2);
+                    $this->Padr->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    $sadr = $this->Padr->read(null, $id);
 
-        //             $this->Session->setFlash(__('The SADR has been saved'), 'alerts/flash_success');
-        //             $this->redirect(array('action' => 'view', $this->Sadr->id));
-        //         }
-        //         // debug($this->request->data);
-        //         $this->Session->setFlash(__('The SADR has been saved'), 'alerts/flash_success');
-        //         $this->redirect($this->referer());
-        //     } else {
-        //         $this->Session->setFlash(__('The SADR could not be saved. Please, try again.'), 'alerts/flash_error');
-        //     }
-        // } else {
-        //     $this->request->data = $this->Padr->read(null, $id);
-        // }
+                    $this->Session->setFlash(__('The PADR has been saved'), 'alerts/flash_success');
+                    $this->redirect(array('action' => 'view', $this->Padr->id));
+                // }
+                // // debug($this->request->data);
+                // $this->Session->setFlash(__('The PADR has been saved'), 'alerts/flash_success');
+                // $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The PADR could not be saved. Please, try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Padr->read(null, $id);
+        }
 
-        // //Manager will always edit a copied report
-        // $sadr = $this->Sadr->find('first', array(
-        //     'conditions' => array('Sadr.id' => $sadr['Sadr']['sadr_id']),
-        //     'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
-        // ));
-        // $this->set('sadr', $sadr);
+        //Manager will always edit a copied report
+        $padr = $this->Padr->find('first', array(
+            'conditions' => array('Padr.id' => $padr['Padr']['padr_id']),
+            'contain' => array('PadrListOfMedicine')
+        ));
+        $this->set('padr', $padr);
 
 
-        // if (strpos($this->request->url, 'pdf') !== false) {
-        //     $this->pdfConfig = array('filename' => 'SADR_' . $id . '.pdf',  'orientation' => 'portrait');
-        //     $this->response->download('SADR_' . $sadr['Sadr']['id'] . '.pdf');
-        // }
+        if (strpos($this->request->url, 'pdf') !== false) {
+            $this->pdfConfig = array('filename' => 'PADR_' . $id . '.pdf',  'orientation' => 'portrait');
+            $this->response->download('PADR_' . $padr['Padr']['id'] . '.pdf');
+        }
 
-        // $counties = $this->Sadr->County->find('list', array('order' => array('County.county_name' => 'ASC')));
-        // $this->set(compact('counties'));
-        // $sub_counties = $this->Sadr->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
-        // $this->set(compact('sub_counties'));
-
-        // // get designations ordered by name descending
-        // $designations = $this->Sadr->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
-        // // $designations = $this->Sadr->Designation->find('list');
-        // $this->set(compact('designations'));
-        // $routes = $this->Sadr->SadrListOfDrug->Route->find('list');
-        // $this->set(compact('routes'));
-        // $frequency = $this->Sadr->SadrListOfDrug->Frequency->find('list');
-        // $this->set(compact('frequency'));
-        // $dose = $this->Sadr->SadrListOfDrug->Dose->find('list');
-        // $this->set(compact('dose'));
+        $counties = $this->Padr->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
+        $sub_counties = $this->Padr->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties')); 
+        $designations = $this->Padr->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('designations')); 
     }
     /**
      * delete method

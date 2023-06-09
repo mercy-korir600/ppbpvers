@@ -858,7 +858,7 @@
 
 
             
-            <?php echo $this->element('multi/attachments', ['model' => 'Transfusion', 'group' => 'attachment']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Transfusion', 'group' => 'attachment','examples'=>'']); ?>
 
             <div class="row-fluid">
                 <div class="span6">

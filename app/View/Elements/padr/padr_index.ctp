@@ -276,6 +276,7 @@ echo $this->Session->flash();
           <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
           <th><?php echo $this->Paginator->sort('report_title'); ?></th>
           <th><?php echo $this->Paginator->sort('patient_name'); ?></th>
+          <?php if ($redir == 'manager' || $redir == 'reviewer') { ?><th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th> <?php } ?>
           <th><?php echo $this->Paginator->sort('created'); ?></th>
           <th class="actions"><?php echo __('Actions'); ?></th>
         </tr>
@@ -303,33 +304,39 @@ echo $this->Session->flash();
                 ?>&nbsp;
             </td>
             <td><?php echo h($padr['Padr']['patient_name']); ?>&nbsp;</td>
+            <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
+            <td><?php echo h($padr['Padr']['vigiflow_ref']); echo "\n" . $padr['Padr']['vigiflow_date']; ?></td> 
+            <?php } ?>
             <td><?php echo h($padr['Padr']['created']); ?>&nbsp;</td>
             <td class="actions">
               <?php
-              if ($padr['Padr']['submitted'] ==0) {
+              if ($padr['Padr']['submitted'] >= 0) {
                 echo $this->Html->link(
                   '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
                   array('controller' => 'padrs', 'action' => 'view', $padr['Padr']['id']),
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if ($redir == 'reporter') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'padrs', 'action' => 'followup', $padr['Padr']['id']), array('escape' => false), __('Add a followup report?'));
+                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'padrs', 'action' => 'followup', $padr['Padr']['id']), array('escape' => false), __('Add a followup report?'));
                 echo "&nbsp;";
                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'padrs', 'action' => 'download', $padr['Padr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
                 echo "&nbsp;";
-                if ($redir == 'manager') echo $this->Html->link(
+                if (($redir == 'manager' || $redir == 'reviewer') && empty($padr['Padr']['vigiflow_ref']) && $padr['Padr']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                   array('controller' => 'padrs', 'action' => 'vigiflow', $padr['Padr']['id'], 'manager' => false),
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
-                  '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
+
+                if (($redir == 'manager' || $redir == 'reviewer') && $padr['Padr']['copied'] == 2) echo $this->Html->link(
+                  '<span class="label label-success tooltipper" title="Copy & Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                   array('controller' => 'padrs', 'action' => 'edit', $padr['Padr']['id']),
                   array('escape' => false)
                 );
+                echo "&nbsp;";
+                if (($redir == 'manager' || $redir == 'reviewer') && $padr['Padr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'padrs', 'action' => 'copy', $padr['Padr']['id']), array('escape' => false), __('Create a clean copy to edit?'));
               } else {
-                if ($redir == 'reporter') echo $this->Html->link(
+                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                   array('controller' => 'padrs', 'action' => 'edit', $padr['Padr']['id']),
                   array('escape' => false)
@@ -341,6 +348,13 @@ echo $this->Session->flash();
                   array('escape' => false)
                 );
               }
+              echo "&nbsp;";
+              echo $this->Html->link(
+                '<span class="label label-default tooltipper" title="View"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF </span>',
+                array('controller' => 'padrs', 'action' => 'view', 'ext' => 'pdf', $padr['Padr']['id']),
+                array('escape' => false)
+              );
+              
               ?>
             </td>
           </tr>

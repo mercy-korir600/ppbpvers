@@ -780,7 +780,7 @@
             </div>
             <hr>            
 
-            <?php echo $this->element('multi/attachments', ['model' => 'Device', 'group' => 'attachment']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Device', 'group' => 'attachment','examples'=>'']); ?>
             <div class="row-fluid">
                 <div class="span6">
                     <?php

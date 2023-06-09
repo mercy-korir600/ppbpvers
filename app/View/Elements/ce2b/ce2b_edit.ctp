@@ -80,7 +80,7 @@ $this->Html->script('ce2b', array('inline' => false));
                 </div>
             </div>
             <hr> 
-            <?php echo $this->element('multi/attachments', ['model' => 'Ce2b', 'group' => 'attachment']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Ce2b', 'group' => 'attachment','examples'=>'']); ?>
 
             <div class="row-fluid">
                 <div class="span6">

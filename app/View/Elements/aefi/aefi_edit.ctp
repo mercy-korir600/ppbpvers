@@ -516,7 +516,7 @@ echo $this->Form->create('Aefi', array(
         </div>
         <!--/row-->
 
-        <?php echo $this->element('multi/attachments', ['model' => 'Aefi', 'group' => 'attachment']); ?>
+        <?php echo $this->element('multi/attachments', ['model' => 'Aefi', 'group' => 'attachment','examples'=>'']); ?>
 
         <div class="row-fluid">
             <div class="span6">
