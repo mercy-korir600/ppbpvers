@@ -306,7 +306,7 @@ echo $this->Session->flash();
             <td><?php echo h($padr['Padr']['created']); ?>&nbsp;</td>
             <td class="actions">
               <?php
-              if ($padr['Padr']['submitted'] > 1) {
+              if ($padr['Padr']['submitted'] ==0) {
                 echo $this->Html->link(
                   '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
                   array('controller' => 'padrs', 'action' => 'view', $padr['Padr']['id']),

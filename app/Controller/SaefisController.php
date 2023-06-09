@@ -53,10 +53,14 @@ class SaefisController extends AppController
 
         // Added criteria for reporter
         $criteria['Saefi.deleted'] = false;
-        if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
-            $criteria['Saefi.submitted'] = array(0, 1);
-        } elseif (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 2) {
-            $criteria['Saefi.submitted'] = array(2, 3);
+        if (isset($this->request->query['submitted'])) {
+            if ($this->request->query['submitted'] == 1) {
+                $criteria['Saefi.submitted'] = array(0, 1);
+            } else {
+                $criteria['Saefi.submitted'] = array(2, 3);
+            }
+        } else {
+            $criteria['Saefi.submitted'] = array(0,1,2, 3);
         }
 
         $this->paginate['conditions'] = $criteria;

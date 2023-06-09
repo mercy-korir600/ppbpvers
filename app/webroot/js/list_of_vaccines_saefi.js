@@ -101,8 +101,8 @@ $(function() {
 
         $(trWrapper).find('[name*="vaccine_id"]').append($("#SaefiLiboso > option").clone()).val('');
         $(trWrapper).find('[name*="vaccination_route"]').append($("#SaefiMlishi > option").clone()).val('');
-        $(trWrapper).find('[name*="hour"]').append($("#SaefiTimeAefiStartedHour > option").clone()).val('');
-        $(trWrapper).find('[name*="min"]').append($("#SaefiTimeAefiStartedMin > option").clone()).val('');
+        $(trWrapper).find('[name*="hour"]').append($("#SaefiTimeSaefiStartedHour > option").clone()).val('');
+        $(trWrapper).find('[name*="min"]').append($("#SaefiTimeSaefiStartedMin > option").clone()).val('');
         return trWrapper;
     }
 

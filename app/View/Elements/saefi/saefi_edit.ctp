@@ -381,7 +381,9 @@ echo $this->Form->create('Saefi', array(
 		<div class="row-fluid">
 			<h4 style="margin-left: 15%;">*Complete below table if vaccination information missing on the AEFI reporting form</h4>
 			<div class="col-xs-12">
-				<?php echo $this->element('multi/saefi_list_of_vaccines'); ?></div>
+				<?php 
+				echo $this->element('multi/saefi_list_of_vaccines'); 
+				?></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span6 editable">
@@ -2852,15 +2854,15 @@ echo $this->Form->create('Saefi', array(
 	<div class="my-sidebar" data-spy="affix">
 		<div class="awell">
 			<?php
-			// echo $this->Form->button('<i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes', array(
-			//     'name' => 'saveChanges',
-			//     'class' => 'btn btn-success mapop',
-			//     'formnovalidate' => 'formnovalidate',
-			//     'id' => 'SaefiSaveChanges', 'title' => 'Save & continue editing',
-			//     'data-content' => 'Save changes to form without submitting it.
-			//                                       The form will still be available for further editing.',
-			//     'div' => false,
-			// ));
+			echo $this->Form->button('<i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes', array(
+			    'name' => 'saveChanges',
+			    'class' => 'btn btn-success mapop',
+			    'formnovalidate' => 'formnovalidate',
+			    'id' => 'SaefiSaveChanges', 'title' => 'Save & continue editing',
+			    'data-content' => 'Save changes to form without submitting it.
+			                                      The form will still be available for further editing.',
+			    'div' => false,
+			));
 
 
 			?>
