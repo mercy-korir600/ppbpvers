@@ -6,13 +6,41 @@ $this->Html->script('holder/holder', array('inline' => false));
 $this->Html->css('landing', false, array('inline' => false));
 $this->Html->css('upgrade', false, array('inline' => false));
 ?>
-<hr>
+<style type="text/css">
+	.hero{
+        background-color: #F0F9F2;
+        display: flex;
+        width: 100%;
+        padding-top: 2%;
+	}
 
+	.image {
+		width: 30%;
+        margin-right: 20%;
+	}
+    </style>
+   
+<hr>
+    <div class="row-fluid hero">
+        <div class="span8" style="margin-left: 20%;">
+            <h2> What can you report on?</h2><br>
+            <p>Any member of the public is able to report any cases of adverse drug<br>reactions or incidents involving medical devices and poor quality medical products. For minors, parents/gaurdians<br>can report on their behalf.</p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="/padrs/add">
+                    <span style="line-height: 60px;">Submit a Report</span>
+                </a>
+            </p>
+
+        </div>
+        <div class="image">
+            <img src="/img/public2.png" />
+	    </div>
+    </div>
 
 <div class="container marketing">
     <br> <br> <br>
 
-    <div class="row-fluid">
+    <!-- <div class="row-fluid">
         <div class="span8">
             <h2> What can you report on?</h2><br>
             <p>Any member of the public is able to report any cases of adverse drug<br>reactions or incidents involving medical devices and poor quality medical products. For minors, parents/gaurdians<br>can report on their behalf.</p>
@@ -23,10 +51,10 @@ $this->Html->css('upgrade', false, array('inline' => false));
             </p>
 
         </div>
-        <div class="span4" style="background-color: white; position: relative; padding: 0; margin: 15; min-height: 200px; border-radius: 11px;">
-
+        <div class="span4">
+            <img src="/img/public2.png" />
         </div>
-    </div>
+    </div> -->
 
     <br><br>
     <div class="row-fluid">
