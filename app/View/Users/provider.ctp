@@ -6,39 +6,66 @@ $this->Html->script('holder/holder', array('inline' => false));
 $this->Html->css('landing', false, array('inline' => false));
 $this->Html->css('upgrade', false, array('inline' => false));
 ?>
-<hr>
 
+<style type="text/css">
+	.hero{
+        background-color: #F0F9F2;
+        width: 100%;
+        padding-top: 2%;
+	}
+    .buttons{
+        background-color: #B5CDB9;
+        width: 100%;
+    }
+    .left{
+        margin-left: 20%;
+    }
+    .buttons{
+        text-align: center;
+        padding: 0.5%;
+    }
+</style>
 
-<div class="container marketing">
-    <br> <br> <br>
-    <div class="row-fluid">
+<div class="container hero">
+    <div class="row-fluid left">
         <div class="span8">
             <h2>Who can report?</h2><br>
-            <p>Any healthcare provider and pharmaceuticals company can report on safety issues on medicines, products or vaccines. The reporting tools available include:</p>
-            <p style="text-align: left;">1. Adverse reactions caused by Drugs</p>
+            <p><b>Any healthcare provider and pharmaceuticals company can report on safety issues on medicines, products or vaccines. </b></p>
+            </p><br><br>
+        </div>
+        
+    </div>
+
+    <div class="row-fluid left">
+        <div class="span4">
+            <p>The reporting tools available include:</p><br>
             <p style="text-align: left;">2. Adverse Events Following Immunization</p>
             <p style="text-align: left;">3. Poor Quality Medical Products</p>
             <p style="text-align: left;">4. Medication Errors</p>
             <p style="text-align: left;">5. Reactions caused by Transfusion</p>
             <p style="text-align: left;">6. Medical Devices Incidences</p>
-            <p>All the information is received in confidence and will only be accessed by designated PPB staff. The Board will investigate the cases and where possible, provide feedback on the status/outcome of the review. The details of the reporter will always remain anonymous. The information collected will be used to improve patient safety.
+        </div>
+        <div class="span4">
+        <p>All the information is received in confidence and will only be accessed by designated PPB staff. The Board will investigate the cases and where possible, provide feedback on the status/outcome of the review. The details of the reporter will always remain anonymous. The information collected will be used to improve patient safety.
                 NOTE: Patient’s identity is held in strict confidence and the designated PPB staff shall not disclose the reporter’s identity in response to any public request. Information submitted by you will contribute to the improvement of drug safety and therapy in Kenya.</p>
             <p>
             <p>All health care workers are required to register first before they can submit reports. The registration details will be used for communication and follow up.</p>
-            <a class="btn btn-success btn-lg" href="/users/login">
-                <span style="line-height: 40px;">Login Now</span>
-            </a>
-            <a class="btn btn-primary btn-lg" href="/users/register">
-                <span style="line-height: 40px;">Register</span>
-            </a>
-            </p>
-        </div>
-        <div class="span4" style="background-color: white; position: relative; padding: 0; margin: 15; min-height: 200px; border-radius: 11px;">
-
         </div>
     </div>
+</div>
 
+<div class="container buttons"> 
+        <a class="btn btn-success btn-lg " href="/users/login">
+            <span style="line-height: 40px;">Login Now</span>
+        </a>
+        <a class="btn btn-primary btn-lg" href="/users/register">
+            <span style="line-height: 40px;">Register</span>
+        </a>
+</div>
 
+<div class="container marketing">
+    <br> <br> <br>
+  
     <br><br>
     <div class="row-fluid">
 
@@ -134,39 +161,6 @@ $this->Html->css('upgrade', false, array('inline' => false));
                             <p style="text-align: left;">4. Result in serious events/outcomes (death, hospitalization, congenital anomalies, permanent damage/impairment of a body function, life threatening)</p>
                             <p style="text-align: left;">Report events that do not also have serious outcomes.</p>
                             <p style="text-align: left;">The Pharmacy and Poisons Board investigates all incidents reported to us in order to identify any faults with medical devices and to prevent similar incidents happening again. The Board may contact the manufacturer of this medical device to request they carry out an investigation.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transfussion -->
-                <br>
-                <div class="card mb-0">
-                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
-                        <a class="card-title">
-                        Guide to reporting Blood Transfusion
-                        </a>
-                    </div>
-                    <div id="collapseFive" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <br>
-                            <p style="text-align: left;"> Report all transfusion reactions, incidents, near misses, errors, deviations from standard operating procedures and accidents associated with blood donation and transfusion. Fill this form immediately the reaction occurs.</p>
-                            
-                        </div>
-                    </div>
-                </div>
-                 <!--  Medical Errors -->
-                 <br>
-                <div class="card mb-0">
-                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix">
-                        <a class="card-title">
-                        Guide to reporting Medical Errors
-                        </a>
-                    </div>
-                    <div id="collapseSix" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <br>
-                            <p style="text-align: left;"> Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event. Patient’s identity is held in strict confidence and program staff is not is not expected to and will not disclose reporter’s identity in response to any public request.</p>
-                            
                         </div>
                     </div>
                 </div>

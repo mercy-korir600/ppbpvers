@@ -714,7 +714,7 @@ echo $this->Form->create('Pqmp', array(
 		</div>
 		<hr>
 
-		<?php echo $this->element('multi/attachments', ['model' => 'Pqmp', 'group' => 'attachment','examples'=>'']); ?>
+		<?php echo $this->element('multi/attachments', ['model' => 'Pqmp', 'group' => 'attachment', 'examples' => '']); ?>
 
 		<div class="row-fluid">
 			<div class="span6">
@@ -879,10 +879,30 @@ echo $this->Form->create('Pqmp', array(
 <script>
 	function confirmReportSubmission() {
 		var additionalMessage = '';
-		if ($("#PqmpAdverseReactionYes").is(':checked')) { 
-			additionalMessage = "You'll be required to submit a Suspected Drug reaction Form"
+		if ($("#PqmpAdverseReactionYes").is(':checked')) {
+
+			// check for the specific  adverse_reaction
+			if ($("#PqmpMedicinalProduct:checked").length > 0) {
+				// Checkbox is checked
+				additionalMessage = "You'll be required to submit a Suspected Drug reaction Form";
+			}
+			// else if blood_products display Blood Transfusion
+			else if ($("#PqmpBloodProducts:checked").length > 0) {
+				// Checkbox is checked
+				additionalMessage = "You'll be required to submit a Blood Transfusion Form";
+			} else if ($("#PqmpMedicalDevice:checked").length > 0) {
+				// Checkbox is checked
+				additionalMessage = "You'll be required to submit a Medical Device Incident Form";
+
+			} else if ($("#PqmpProductVaccine:checked").length > 0) {
+				// Checkbox is checked
+				additionalMessage = "You'll be required to submit a Adverse Event Following Immunization Form";
+			}
+			else {
+				additionalMessage = "You'll be required to submit a Suspected Drug reaction Form"
+			}
 		}
-		if ($("#PqmpMedicationErrorYes").is(':checked')) { 
+		if ($("#PqmpMedicationErrorYes").is(':checked')) {
 			additionalMessage = "You'll be required to submit a Medication Error Form"
 		}
 
