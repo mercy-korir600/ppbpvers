@@ -96,8 +96,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
         <tr> 
           <td>
           
-          </td> 
-          <td> </td>
+          </td>  
           <td>
             <?php
             echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
@@ -105,6 +104,11 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               'formnovalidate' => 'formnovalidate',
               'style' => array('margin-bottom: 5px')
             ));
+            ?>
+          </td>
+          <td>
+            <?php
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'pqmps_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
             ?>
           </td>
         </tr>

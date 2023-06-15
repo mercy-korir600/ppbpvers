@@ -1,5 +1,5 @@
 <?php
-$this->extend('/Reports/reports_manager');
+$this->extend('/Reports/upgrade/menu/sae');
 $this->assign('saes-summary', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>

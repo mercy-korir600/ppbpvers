@@ -1,5 +1,5 @@
 <?php
-$this->extend('/Reports/reports_manager');
+$this->extend('/Reports/upgrade/menu/medications');
 $this->assign('medications-summary', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>

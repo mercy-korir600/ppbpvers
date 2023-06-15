@@ -98,7 +98,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                         ?></td>
                 </tr>
                 <?php if ($this->Session->read('Auth.User.group_id') == 2) { ?>
-                   <td></td>
+                   <!-- <td></td>
                     <td>
                         <?php
                         echo $this->Form->input(
@@ -140,7 +140,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 
                         ?>
                     </td>
-                    </tr>
+                    </tr> -->
                 <?php } ?>
 
 
@@ -159,7 +159,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                     </td>
                     <td>
             <?php
-            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'devices_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'medications_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
             ?>
           </td>
                 </tr>

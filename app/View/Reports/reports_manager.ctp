@@ -103,14 +103,14 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               )
             ); ?>
           </td>
-         
+
           <td>
             <?php
             echo $this->Form->input(
               'age_group',
               array(
                 'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                'label' => array('class' => 'required', 'text' => 'Age Group'), 
+                'label' => array('class' => 'required', 'text' => 'Age Group'),
                 'type' => 'select',
                 'empty' => true,
                 'options' => array(
@@ -141,7 +141,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'empty' => true,
                 'options' => array(
                   'Male' => 'Male',
-                  'Female' => 'Female', 
+                  'Female' => 'Female',
                 ),
               )
             );
@@ -150,18 +150,21 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
             ?>
           </td>
         </tr>
-        <tr> 
+        <tr>
           <td>
-          
-          </td> 
-          <td> </td>
-          <td>
+
+          </td>
+          <td style="align-content: flex-end;">
             <?php
             echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
               'class' => 'btn btn-primary', 'div' => 'control-group', 'div' => false,
               'formnovalidate' => 'formnovalidate',
               'style' => array('margin-bottom: 5px')
             ));
+            ?></td>
+          <td>
+            <?php
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'index'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
             ?>
           </td>
         </tr>

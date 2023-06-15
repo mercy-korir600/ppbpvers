@@ -83,7 +83,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
                   'label' => array('class' => 'required', 'text' => 'County'),
                   'empty' => true,
-                  'options' => $counties, 
+                  'options' => $counties,
                   'default' => $this->Session->read('Auth.User.county_id')
 
 
@@ -100,21 +100,21 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               'vaccine',
               array(
                 'div' => false, 'type' => 'select', 'class' => 'span8 unauthorized_index',
-                'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),  
+                'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),
                 'empty' => true,
-                'options' => $vaccines,  
+                'options' => $vaccines,
 
               )
             ); ?>
           </td>
-         
+
           <td>
             <?php
             echo $this->Form->input(
               'age_group',
               array(
                 'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                'label' => array('class' => 'required', 'text' => 'Age Group'), 
+                'label' => array('class' => 'required', 'text' => 'Age Group'),
                 'type' => 'select',
                 'empty' => true,
                 'options' => array(
@@ -145,7 +145,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'empty' => true,
                 'options' => array(
                   'Male' => 'Male',
-                  'Female' => 'Female', 
+                  'Female' => 'Female',
                 ),
               )
             );
@@ -154,11 +154,10 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
             ?>
           </td>
         </tr>
-        <tr> 
+        <tr>
           <td>
-            
-          </td> 
-          <td> </td>
+
+          </td>
           <td>
             <?php
             echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
@@ -166,6 +165,11 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               'formnovalidate' => 'formnovalidate',
               'style' => array('margin-bottom: 5px')
             ));
+            ?>
+          </td>
+          <td>
+            <?php
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'aefi_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
             ?>
           </td>
         </tr>

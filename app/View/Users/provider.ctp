@@ -8,25 +8,36 @@ $this->Html->css('upgrade', false, array('inline' => false));
 ?>
 
 <style type="text/css">
-	.hero{
+	body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .hero{
         background-color: #F0F9F2;
-        width: 100%;
         padding-top: 2%;
+        text-align: left; 
 	}
+    .row-fluid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .span8{
+        padding-top: 20%;
+    }
     .buttons{
         background-color: #B5CDB9;
-        width: 100%;
+        text-align: center;     
     }
     .left{
-        margin-left: 20%;
-    }
-    .buttons{
-        text-align: center;
-        padding: 0.5%;
+        
     }
 </style>
 
-<div class="container hero">
+<div class="hero">
     <div class="row-fluid left">
         <div class="span8">
             <h2>Who can report?</h2><br>
@@ -54,7 +65,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
     </div>
 </div>
 
-<div class="container buttons"> 
+<div class="buttons"> 
         <a class="btn btn-success btn-lg " href="/users/login">
             <span style="line-height: 40px;">Login Now</span>
         </a>
