@@ -36,3 +36,6 @@ CREATE TABLE `imports` (
 
 
 ALTER TABLE `sadrs` ADD `product_category` VARCHAR(255) NULL DEFAULT NULL AFTER `report_therapeutic`;
+
+
+ALTER TABLE `sadrs` ADD `medication_id` INT(11) NULL DEFAULT NULL AFTER `pqmp_id`;

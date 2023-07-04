@@ -37,7 +37,7 @@
                         array('controller' => 'pqmps', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                     ?>
              </li>
-             <li class="<?php echo $this->fetch('CE2B') ?>">
+             <li class="<?php echo $this->fetch('E2B') ?>">
         <?php
              echo $this->Html->link('<i class="fa fa-medkit" aria-hidden="true"></i> E2Bs',
              array('controller' => 'ce2bs', 'action'=>'index', 'manager' => true ), array('escape' => false ));

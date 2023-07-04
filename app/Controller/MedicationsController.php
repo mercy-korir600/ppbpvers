@@ -603,10 +603,10 @@ class MedicationsController extends AppController
             throw new NotFoundException(__('Invalid MEDICATION'));
         }
         $medication = $this->Medication->read(null, $id);
-        if ($medication['Medication']['submitted'] > 1) {
-            $this->Session->setFlash(__('The medication has been submitted'), 'alerts/flash_info');
-            $this->redirect(array('action' => 'view', $this->Medication->id));
-        }
+        // if ($medication['Medication']['submitted'] > 1) {
+        //     $this->Session->setFlash(__('The medication has been submitted'), 'alerts/flash_info');
+        //     $this->redirect(array('action' => 'view', $this->Medication->id));
+        // }
         if ($medication['Medication']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this MEDICATION!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -694,14 +694,19 @@ class MedicationsController extends AppController
                         // CakeResque::enqueue('default', 'GenericEmailShell', array('sendEmail', $datum));
                         // CakeResque::enqueue('default', 'GenericNotificationShell', array('sendNotification', $datum));
                     }
-                    //**********************************    END   *********************************
-                    $serious = $medication['Medication']['reach_patient'];
-                    if ($serious == "Yes") {
+                    //**********************************    END   ********************************* Death
+                    $serious = $medication['Medication']['outcome'];
+                    if ($serious == "Treatment /intervention required-caused temporary harm" || $serious == "Initial/prolonged hospitalization-caused temporary harm" || $serious == "Caused permanent harm" || $serious == "Near death event" || $serious == "Death") {
                         $this->notifyCountyPharmacist($medication);
                     }
-
-                    $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('action' => 'view', $this->Medication->id));
+                    $serious = $medication['Medication']['adverse_reaction'];
+                    if ($serious == "Yes") {
+                        $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB, please proceed to submit a SADR Form'), 'alerts/flash_success');
+                        $this->redirect(array('controller' => 'sadrs', 'action' => 'addme', $this->Medication->id, 'reporter' => true)); 
+                    } else {
+                        $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB'), 'alerts/flash_success');
+                        $this->redirect(array('action' => 'view', $this->Medication->id));
+                    }
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The MEDICATION has been saved'), 'alerts/flash_success');
@@ -722,11 +727,11 @@ class MedicationsController extends AppController
     public function notifyCountyPharmacist($medication = null)
     {
         # code...
-        
+
         $this->loadModel('Message');
         $html = new HtmlHelper(new ThemeView());
         $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_medication')));
-                    
+
         $county_id = $medication['Medication']['county_id'];
         $users = $this->Medication->User->find('all', array(
             'contain' => array(),
@@ -743,27 +748,28 @@ class MedicationsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-       
+
         foreach ($users as $user) {
             $variables = array(
-                'name' => $user['User']['name'], 
+                'name' => $user['User']['name'],
                 'reference_no' => $medication['Medication']['reference_no'],
                 'reference_link' => $html->link(
                     $medication['Medication']['reference_no'],
                     array(
                         'controller' => 'medications',
-                        'action' => 'view', $medication['Medication']['id'], 
-                        'manager' => true, 
-                        'full_base' => true),
+                        'action' => 'view', $medication['Medication']['id'],
+                        'manager' => true,
+                        'full_base' => true
+                    ),
                     array('escape' => false)
                 ),
                 'modified' => $medication['Medication']['modified']
             );
             $datum = array(
                 'email' => $user['User']['email'],
-                'id' => $medication['Medication']['id'], 
-                'user_id' => $user['User']['id'], 
-                'type' => 'serious_medication', 
+                'id' => $medication['Medication']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'serious_medication',
                 'model' => 'Medication',
                 'subject' => CakeText::insert($message['Message']['subject'], $variables),
                 'message' => CakeText::insert($message['Message']['content'], $variables)
@@ -772,7 +778,6 @@ class MedicationsController extends AppController
             $this->QueuedTask->createJob('GenericEmail', $datum);
             $this->QueuedTask->createJob('GenericNotification', $datum);
         }
-        
     }
     public function api_add($id = null)
     {

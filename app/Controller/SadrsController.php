@@ -695,6 +695,29 @@ class SadrsController extends AppController
             'reference_no' => 'new', //'SADR/'.date('Y').'/'.$count,
             'report_type' => 'Initial',
             'pqmp_id' => $id,
+            'medication_id' => $id,
+            'designation_id' => $this->Auth->User('designation_id'),
+            'county_id' => $this->Auth->User('county_id'),
+            'institution_code' => $this->Auth->User('institution_code'),
+            'address' => $this->Auth->User('institution_address'),
+            'reporter_name' => $this->Auth->User('name'),
+            'reporter_email' => $this->Auth->User('email'),
+            'reporter_phone' => $this->Auth->User('phone_no'),
+            'contact' => $this->Auth->User('institution_contact'),
+            'name_of_institution' => $this->Auth->User('name_of_institution')
+        ]], false);
+        $this->Session->setFlash(__('The SADR has been created'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'edit', $this->Sadr->id));
+    }
+
+    public function reporter_addme($id = null)
+    {
+        $this->Sadr->create();
+        $this->Sadr->save(['Sadr' => [
+            'user_id' => $this->Auth->User('id'),
+            'reference_no' => 'new', //'SADR/'.date('Y').'/'.$count,
+            'report_type' => 'Initial',
+            'medication_id' => $id,
             'designation_id' => $this->Auth->User('designation_id'),
             'county_id' => $this->Auth->User('county_id'),
             'institution_code' => $this->Auth->User('institution_code'),
@@ -868,11 +891,11 @@ class SadrsController extends AppController
     public function notifyCountyPharmacist($sadr = null)
     {
         # code...
-        
+
         $this->loadModel('Message');
         $html = new HtmlHelper(new ThemeView());
         $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_sadr')));
-                    
+
         $county_id = $sadr['Sadr']['county_id'];
         $users = $this->Sadr->User->find('all', array(
             'contain' => array(),
@@ -889,7 +912,7 @@ class SadrsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-       
+
         foreach ($users as $user) {
             $variables = array(
                 'name' => $user['User']['name'], 'reference_no' => $sadr['Sadr']['reference_no'],
@@ -897,18 +920,19 @@ class SadrsController extends AppController
                     $sadr['Sadr']['reference_no'],
                     array(
                         'controller' => 'sadrs',
-                        'action' => 'view', $sadr['Sadr']['id'], 
-                        'manager' => true, 
-                        'full_base' => true),
+                        'action' => 'view', $sadr['Sadr']['id'],
+                        'manager' => true,
+                        'full_base' => true
+                    ),
                     array('escape' => false)
                 ),
                 'modified' => $sadr['Sadr']['modified']
             );
             $datum = array(
                 'email' => $user['User']['email'],
-                'id' => $sadr['Sadr']['id'], 
-                'user_id' => $user['User']['id'], 
-                'type' => 'serious_sadr', 
+                'id' => $sadr['Sadr']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'serious_sadr',
                 'model' => 'Sadr',
                 'subject' => CakeText::insert($message['Message']['subject'], $variables),
                 'message' => CakeText::insert($message['Message']['content'], $variables)
@@ -917,7 +941,6 @@ class SadrsController extends AppController
             $this->QueuedTask->createJob('GenericEmail', $datum);
             $this->QueuedTask->createJob('GenericNotification', $datum);
         }
-        
     }
     public function api_add()
     {

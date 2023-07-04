@@ -104,7 +104,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
                         <a class="card-title"> 
-                            Guide to reporting adverse reactions
+                            Guide to reporting side effects
                         </a>
                     </div>
                     <div id="collapseThree" class="collapse" data-parent="#accordion">

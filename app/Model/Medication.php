@@ -268,6 +268,14 @@ class Medication extends AppModel {
                 'message'  => 'In which process did the error occur?'
             ),
         ),
+        'adverse_reaction' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please specify if it resulted in adverse reaction?'
+            ),
+        ),
+        // 
         // 'correct_medication' => array(
         //     'notBlank' => array(
         //         'rule'     => 'notBlank',

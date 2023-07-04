@@ -150,7 +150,7 @@ class Ce2bsController extends AppController
             'conditions' => array('Ce2b.id' => $id),
         ));
         $e2b_content = $ce2b['Ce2b']['e2b_content'];
-        $filename = 'CE2B.xml'; //$ce2b['Ce2b']['id'] . ".xml";
+        $filename = 'E2B.xml'; //$ce2b['Ce2b']['id'] . ".xml";
         // Set the HTTP headers for file download
         header('Content-Type: application/xml');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -405,7 +405,7 @@ class Ce2bsController extends AppController
         ));
         $count++;
         $count = ($count < 10) ? "0$count" : $count;
-        $reference = 'CE2B/' . date('Y') . '/' . $count;
+        $reference = 'E2B/' . date('Y') . '/' . $count;
         //ensure that the reference number is unique
         $exists = $this->Ce2b->find('count',  array(
             'fields' => 'Ce2b.reference_no',

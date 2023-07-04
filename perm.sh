@@ -59,6 +59,7 @@ app/Console/cake acl grant Group.3 controllers/Users/edit
 app/Console/cake acl grant Group.3 controllers/Sadrs/sadrIndex
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_index
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_add
+app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_addme
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_followup
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_edit
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_view

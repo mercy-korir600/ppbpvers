@@ -226,7 +226,7 @@ $this->Html->css('padr', false, array('inline' => false));
                                         <input type="hidden" value="" id="SadrPersonSubmitting_" name="data[Padr][report_sadr]">
                                         <label class="radio">',
                                         'after' => '</label>&nbsp;&nbsp;',
-                                        'options' => array('Adverse Reaction' => 'Adverse Reaction'),
+                                        'options' => array('Side Effects' => 'Side Effects'),
                                     ));
                                     echo $this->Form->input('report_sadr', array(
                                         'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'person-submit',

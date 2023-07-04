@@ -1,5 +1,5 @@
 <?php
-  $this->assign('CE2B', 'active');
+  $this->assign('E2B', 'active');
  ?> 
 <section id="sadrsview">
   <ul id="reviewer_tab" class="nav nav-tabs">

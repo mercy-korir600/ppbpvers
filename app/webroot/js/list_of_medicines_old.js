@@ -69,9 +69,7 @@ $(function() {
             <td>\
                  <select class="span11" name="data[SadrListOfMedicine][{i}][dose_id]" id="SadrListOfMedicine{i}DoseId"></select>    </td>\
             <td> <select class="span11" name="data[SadrListOfMedicine][{i}][route_id]" id="SadrListOfMedicine{i}RouteId"></select>  </td>\
-            <td> <select class="span11" name="data[SadrListOfMedicine][{i}][frequency_id]" id="SadrListOfMedicine{i}FrequencyId"></select> \
-                <small class="help-block">If Other specify</small>\
-                <input class="span11" style="margin-top: 10px;" name="data[SadrListOfMedicine][{i}][frequency_other]" id="SadrListOfMedicine{i}FrequencyOther" type="text"></td>\
+            <td> <select class="span11" name="data[SadrListOfMedicine][{i}][frequency_id]" id="SadrListOfMedicine{i}FrequencyId"></select>     </td>\
             <td>\
               <input class="span11 date-pick-from" name="data[SadrListOfMedicine][{i}][start_date]" id="SadrListOfMedicine{i}StartDate" type="text">   </td>\
             <td>\

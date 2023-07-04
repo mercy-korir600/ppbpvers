@@ -197,7 +197,8 @@
 								<td><?php echo $sadrListOfDrug['dose'];
 										  if(!empty($sadrListOfDrug['Dose']['name'])) echo ' - '.$sadrListOfDrug['Dose']['name'];?></td>
 								<td style="width: 10%;"><?php if(!empty($sadrListOfDrug['Route']['name'])) echo $sadrListOfDrug['Route']['name'];?></td>
-								<td style="width: 10%;"><?php if(!empty($sadrListOfDrug['Frequency']['name'])) echo $sadrListOfDrug['Frequency']['name'];?></td>
+								<td style="width: 10%;"><?php if(!empty($sadrListOfDrug['Frequency']['name'])) echo $sadrListOfDrug['Frequency']['name'];?><br>
+								<span><?php echo $sadrListOfDrug['frequency_id_other'];?></span></td>
 								<td style="width: 10%;"><?php echo $sadrListOfDrug['start_date'];?></td>
 								<td style="width: 10%;"><?php echo $sadrListOfDrug['stop_date'];?></td>
 								<td style="width: 10%;"><?php echo $sadrListOfDrug['indication'];?></td>
@@ -237,7 +238,8 @@
 								<td><?php echo $sadrListOfMedicine['dose'];
 										  if(!empty($sadrListOfMedicine['Dose']['name'])) echo ' - '.$sadrListOfMedicine['Dose']['name'];?></td>
 								<td style="width: 10%;"><?php if(!empty($sadrListOfMedicine['Route']['name'])) echo $sadrListOfMedicine['Route']['name'];?></td>
-								<td style="width: 10%;"><?php if(!empty($sadrListOfMedicine['Frequency']['name'])) echo $sadrListOfMedicine['Frequency']['name'];?></td>
+								<td style="width: 10%;"><?php if(!empty($sadrListOfMedicine['Frequency']['name'])) echo $sadrListOfMedicine['Frequency']['name'];?><br>
+								<span><?php echo $sadrListOfMedicine['frequency_other'];?></span></td>
 								<td style="width: 10%;"><?php echo $sadrListOfMedicine['start_date'];?></td>
 								<td style="width: 10%;"><?php echo $sadrListOfMedicine['stop_date'];?></td>
 								<td style="width: 10%;"><?php echo $sadrListOfMedicine['indication'];?></td>
