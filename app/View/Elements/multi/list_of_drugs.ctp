@@ -386,8 +386,8 @@ $this->Html->script('list_of_drugs', array('inline' => false));
 									)
 								);
 								?>
-								<?php echo $this->Form->label('SadrListOfDrug.0.frequency_id_other', 'If Other specify', ['class' => 'small-label']) ?>
-								<?php echo $this->Form->input('SadrListOfDrug.0.frequency_id_other', [
+								<?php echo $this->Form->label('SadrListOfDrug.'. $i . '.frequency_id_other', 'If Other specify', ['class' => 'small-label']) ?>
+								<?php echo $this->Form->input('SadrListOfDrug.'. $i . '.frequency_id_other', [
 									'empty' => true,
 									'label' => false,
 									'between' => false,

@@ -109,6 +109,17 @@
                               'error' => array('attributes' => array( 'class' => 'help-block')),
                           ));
                         ?>
+                        	<?php echo $this->Form->label('SadrListOfMedicine.'. $i . '.frequency_other', 'If Other specify', ['class' => 'small-label']) ?>
+								<?php echo $this->Form->input('SadrListOfMedicine.'. $i . '.frequency_other', [
+									'empty' => true,
+									'label' => false,
+									'between' => false,
+									'after' => false,
+									'class' => 'span12 autosave-ignore other',
+									'type' => 'text',
+									'id' => 'SadrListOfMedicine0FrequencyIdOther',
+									'error' => ['attributes' => ['class' => 'help-block']],
+								]) ?>
                     </td> 
                     <td><?php 
                         echo $this->Form->input('SadrListOfMedicine.'.$i.'.start_date', array(
