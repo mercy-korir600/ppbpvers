@@ -51,7 +51,7 @@
             
             <div class="row-fluid">
                 <div class="span12">
-                    <p style="text-warning">In the event of a severe reaction following transfusion of blood or blood products please complete this form and send it to the laboratory with the specimens listed below.</p>
+                    <p>In the event of a reaction following transfusion of blood or blood products please complete this form and send it to the laboratory with the specimens listed below.</p>
                 </div>
             </div>
             <hr>
@@ -471,7 +471,7 @@
                 <div class="span6">
                     <?php
                         echo $this->Form->input('nurse_name', array(
-                            'label' => array('class' => 'control-label required', 'text' => 'Name of Nurse/Doctor'),
+                            'label' => array('class' => 'control-label required', 'text' => 'Name of Nurse/Clinician attending'),
                         ));
                     ?>
                 </div>
@@ -530,7 +530,7 @@
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <h5>Specimens required by the laboratory </h5>
+                    <h5>Specimens collected </h5>
                     <ol>
                         <li>10mls post-transfusion whole blood from patient from plain bottle </li>
                         <li>2mls of blood in EDTA bottle </li>
@@ -545,7 +545,7 @@
             
             <div class="row-fluid">
                 <div class="span12">
-                    <h4 style="text-decoration: underline; color: #884805; text-align: center;">LAB INVESTIGATION: (Transfusion manager)</h4>
+                    <h4 style="text-decoration: underline; color: #884805; text-align: center;">LAB INVESTIGATION: (BTU)</h4>
                 </div>
             </div>
 
@@ -748,6 +748,7 @@
                         ));
                     ?>
                 </div>
+ 
                 <div class="span4">
                     <h4 class="required controls">Incompatible</h4>
                     <?php
@@ -799,12 +800,14 @@
             <div class="row-fluid uliwahifadhi">
                 <div class="span6">
                     <?php 
-                        echo '<label class="required" style="padding-left: 15px;">If negative (inconclusive results in 8) set up compatibility with enzyme treated cells </label>';          
+                    //  (inconclusive results in 8) set up compatibility with 
+                        echo '<label class="required" style="padding-left: 15px;">If negative enzyme treated cells </label>';          
                         echo $this->Form->input('negative_result', array(
                             'rows' => 2, 'label' => array('class' => 'control-label required', 'text' => 'Result'), 'placeholder' => 'Result'
                         ));
-
-                        echo '<label class="required" style="padding-left: 15px;">In case of blood group O transfused to A or B or AB individual: Establish from the donor unit </label>';
+// Establish from the donor unit 
+                        echo '<label class="required" style="padding-left: 15px;">In case of blood group O transfused to A or B or AB individual:
+                            results of: </label>';
                         echo $this->Form->input('anti_a', array(
                             'label' => array('class' => 'control-label required', 'text' => 'Anti A titres')
                         ));
