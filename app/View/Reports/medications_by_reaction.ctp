@@ -7,7 +7,7 @@
 <div id="medications-by-reaction"></div>
 
 <hr>
-<h4>Was the adverse reaction related?</h4>
+<h4>Was the medicine side effects related?</h4>
 <table class="table table-condensed table-bordered" id="datatable8">
     <thead>
         <tr>
@@ -36,7 +36,7 @@ Highcharts.chart('medications-by-reaction', {
         type: 'column'
     },
     title: {
-        text: 'Was the adverse reaction related?'
+        text: 'Was the medicine side effects related?'
     },
     yAxis: {
         allowDecimals: false,

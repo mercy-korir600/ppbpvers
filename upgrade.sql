@@ -39,3 +39,4 @@ ALTER TABLE `sadrs` ADD `product_category` VARCHAR(255) NULL DEFAULT NULL AFTER 
 
 
 ALTER TABLE `sadrs` ADD `medication_id` INT(11) NULL DEFAULT NULL AFTER `pqmp_id`;
+ALTER TABLE `sadrs` ADD `report_misuse` TINYINT NULL DEFAULT NULL AFTER `report_therapeutic`;

@@ -827,7 +827,7 @@
                           'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
                           'class' => 'adverse_reaction',
                           'before' => '<div class="control-group ">   <label class="control-label required">
-                            Was the adverse reaction related to transfusion?  </label>  <div class="controls">
+                            Was the medicine side effects related to transfusion?  </label>  <div class="controls">
                             <input type="hidden" value="" id="TransfusionReactionGeneral_" name="data[Transfusion][adverse_reaction]"> <label class="radio inline">',
                           'after' => '</label>',
                           'options' => array('Yes' => 'Yes'),

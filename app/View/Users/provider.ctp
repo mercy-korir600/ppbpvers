@@ -51,7 +51,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
         <div class="span4">
             <p>The reporting tools available include:</p><br>
             <p style="text-align: left;">2. Adverse Events Following Immunization</p>
-            <p style="text-align: left;">3. Poor Quality Medical Products</p>
+            <p style="text-align: left;">3. Poor Quality health products and technologies</p>
             <p style="text-align: left;">4. Medication Errors</p>
             <p style="text-align: left;">5. Reactions caused by Transfusion</p>
             <p style="text-align: left;">6. Medical Devices Incidences</p>
@@ -89,13 +89,13 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" href="#collapseOne">
                         <a class="card-title">
-                            Guide to reporting poor quality medical products
+                            Guide to reporting poor quality health products and technologies
                         </a>
                     </div>
                     <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
                         <br>
-                        <p style="text-align: left;">i. Once on the PvERS page, click on “PQMP”</p>
-                        <p style="text-align: left;">ii. Clink on “new PQMP” and fill the details on the pink form</p>
+                        <p style="text-align: left;">i. Once on the PvERS page, click on “PQHPT”</p>
+                        <p style="text-align: left;">ii. Clink on “new PQHPT” and fill the details on the pink form</p>
                         <p style="text-align: left;">iii. Select the product category i.e., medicine, herbal product, vaccine, medical device, others (specify)</p>
                         <p style="text-align: left;">iv. Indicate facility details i.e., name of facility, name of county and sub-county, contact of facility (email and telephone)</p>
                         <p style="text-align: left;">v. Indicate product details i.e., the brand name, batch number or lot number, date of manufacture and date of expiry, INN name, name of manufacturer, name of supplier</p>
@@ -113,7 +113,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
                         <a class="card-title">
-                            Guide to reporting suspected adverse drug reaction
+                            Guide to reporting suspected medicine side effects
                         </a>
                     </div>
                     <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
@@ -122,7 +122,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
 
                             Report on the following:</p>
 
-                        <p style="text-align: left;">1. All expected and unexpected suspected adverse reactions due to medicines, herbal products and cosmeceuticals (cosmetics with medical claims)</p>
+                        <p style="text-align: left;">1. All expected and unexpected suspected medicine side effectss due to medicines, herbal products and cosmeceuticals (cosmetics with medical claims)</p>
                         <p style="text-align: left;">2. Any suspected therapeutic ineffectiveness.</p>
                         <p style="text-align: left;">3. All suspected ADRs and/or AEs that may be associated with suspected or confirmed quality defects including adulteration or contamination, or falsified medicine</p>
                         <p style="text-align: left;">4. Case reports of acute and chronic poisoning (toxicity)</p>
@@ -141,7 +141,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                     <div id="collapseThree" class="collapse" data-parent="#accordion">
                         <div class="card-body">
                             <br>
-                            <p style="text-align: left;"> An adverse event following immunization (Adverse Event Following Immunization) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
+                            <p style="text-align: left;"> An adverse event following immunization (AEFI) is defined as any unfavorable medical occurrence which follows immunization and which may or may not be caused by the usage of the vaccine. The adverse event may be any unfavorable or unintended sign, abnormal laboratory finding, symptom or disease.</p>
                             <br>
                             <p style="text-align: left;">Report any Adverse Event Following Immunization that is of concern, both minor and serious cases. They include:</p>
                             <p style="text-align: left;">a. Serious AEFIs i.e. adverse events or reactions that result in death, hospitalization (or prolongation of existing hospital stay), persistent or significant disability or incapacity (e.g. paralysis), or are potentially life threatening</p>
@@ -172,6 +172,36 @@ $this->Html->css('upgrade', false, array('inline' => false));
                             <p style="text-align: left;">4. Result in serious events/outcomes (death, hospitalization, congenital anomalies, permanent damage/impairment of a body function, life threatening)</p>
                             <p style="text-align: left;">Report events that do not also have serious outcomes.</p>
                             <p style="text-align: left;">The Pharmacy and Poisons Board investigates all incidents reported to us in order to identify any faults with medical devices and to prevent similar incidents happening again. The Board may contact the manufacturer of this medical device to request they carry out an investigation.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Medical Errors -->
+                <br>
+                <div class="card mb-0">
+                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+                        <a class="card-title">
+                            Guide to reporting medical errors
+                        </a>
+                    </div>
+                    <div id="collapseFive" class="collapse" data-parent="#accordion">
+                        <div class="card-body">
+                            <br>
+                            <p style="text-align: left;"> Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event. Patient’s identity is held in strict confidence and program staff is not is not expected to and will not disclose reporter’s identity in response to any public request.</p> 
+                        </div>
+                    </div>
+                </div>
+                <!-- Blood Transfusion -->
+                <br>
+                <div class="card mb-0">
+                    <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix">
+                        <a class="card-title">
+                            Guide to reporting blood transfusions
+                        </a>
+                    </div>
+                    <div id="collapseSix" class="collapse" data-parent="#accordion">
+                        <div class="card-body">
+                            <br>
+                            <p style="text-align: left;"> Report all transfusion reactions, incidents, near misses, errors, deviations from standard operating procedures and accidents associated with blood donation and transfusion. Fill this form immediately the reaction occurs.</p> 
                         </div>
                     </div>
                 </div>

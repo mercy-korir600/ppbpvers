@@ -320,7 +320,7 @@ $this->Html->css('padr', false, array('inline' => false));
                             echo $this->Form->input('description_of_reaction', array(
                                 'class' => 'span11', 'rows' => '1', 'between' => false, 'div' => false,
                                 'label' => array('class' => 'required', 'text' => 'Other side effects experienced'),
-                                'after' => '<span class="help-block">What were the signs of the side effect?</span>',
+                                'after' => '<span class="help-block"></span>',
                             ));
                             ?>
                         </div>
@@ -453,6 +453,26 @@ $this->Html->css('padr', false, array('inline' => false));
                     'label' => array('class' => 'control-label required', 'text' => 'Outcome'),
                     'after' => '<a onclick="$(\'#PadrOutcome\').removeAttr(\'disabled\'); $(\'#PadrOutcome\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a> </div>',
+                ));
+
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Outcome </div>
+                                <div class="controls">  <input type="hidden" value="" id="PadrReactionOn_" name="data[Padr][outcome]"> <label class="radio inline">',
+                    'after' => '</label>',
+                    'options' => array('recovered/resolved' => 'Recovered/resolved'),
+                ));
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'outcome',
+                    'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
+                    'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
+                    'before' => '<label class="radio inline">',
+                    'after' => '</label>
+                            <a class="tooltipper" data-original-title="Clears the checked value"
+                            onclick="$(\'.outcome\').removeAttr(\'checked disabled\')">
+                            <em class="accordion-toggle">clear!</em></a> 
+                            </div> </div>',
+                    'options' => array('unknown' => 'Unknown'),
                 ));
 
                 ?>

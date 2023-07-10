@@ -25,6 +25,7 @@ class Aefi extends AppModel {
         'vaccine_name' => array('type' => 'query', 'method' => 'findByVaccineName', 'encode' => true),
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
         'bcg' => array('type' => 'value'),
+        'device' => array('type' => 'value'),
         'convulsion' => array('type' => 'value'),
         'urticaria' => array('type' => 'value'),
         'high_fever' => array('type' => 'value'),

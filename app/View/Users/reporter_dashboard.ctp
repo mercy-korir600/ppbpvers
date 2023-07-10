@@ -187,7 +187,7 @@ $this->Html->script('dashboard', array('inline' => false));
           <?php 
           if($this->Session->read('Auth.User.user_type')=="Market Authority"){?> 
           <div class="span4 formbacka" style="padding: 4px;">
-            <h5>CE2Bs </h5>
+            <h5>E2Bs </h5>
             <?php
             echo '<ol>';
             foreach ($ce2bs as $ce) {

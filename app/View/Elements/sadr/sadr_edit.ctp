@@ -83,13 +83,19 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'type' => 'checkbox',  'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 						'between' => '<input type="hidden" value="0" id="Sadr_report_sadr_" name="data[Sadr][report_sadr]">
                                                                     <label class="checkbox">',
-						'after' => 'Suspected adverse drug reaction </label>',
+						'after' => 'Suspected medicine side effects </label>',
 					));
 					echo $this->Form->input('report_therapeutic', array(
 						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 						'between' => '<input type="hidden" value="0" id="Sadr_report_therapeutic_" name="data[Sadr][report_therapeutic]">
                                                                     <label class="checkbox">',
 						'after' => 'Suspected Therapeutic ineffectiveness </label>',
+					));
+					echo $this->Form->input('report_misuse', array(
+						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Sadr_report_misuse_" name="data[Sadr][report_misuse]">
+                                                                    <label class="checkbox">',
+						'after' => 'Suspected misuse, abuse and / or dependence on medicines </label>',
 					));
 					?>
 				</div>

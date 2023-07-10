@@ -29,6 +29,7 @@ class Sadr extends AppModel
         'medicine_name' => array('type' => 'query', 'method' => 'findByMedicineName', 'encode' => true),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
+        'device' => array('type' => 'value'),
         'medicinal_product' => array('type' => 'value'),
         'blood_products' => array('type' => 'value'),
         'herbal_product' => array('type' => 'value'),

@@ -24,7 +24,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
     <div class="row-fluid hero">
         <div class="span8" style="margin-left: 20%;">
             <h2> What can you report on?</h2><br>
-            <p>Any member of the public is able to report any cases of adverse drug<br>reactions or incidents involving medical devices and poor quality medical products. For minors, parents/gaurdians<br>can report on their behalf.</p>
+            <p>Any member of the public is able to report any cases of medicine side effects<br> or incidents involving medical devices and poor quality health products and technologies. For minors, parents/gaurdians<br>can report on their behalf.</p>
             <p>
                 <a class="btn btn-primary btn-lg" href="/padrs/add">
                     <span style="line-height: 60px;">Submit a Report</span>
@@ -38,23 +38,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
     </div>
 
 <div class="container marketing">
-    <br> <br> <br>
-
-    <!-- <div class="row-fluid">
-        <div class="span8">
-            <h2> What can you report on?</h2><br>
-            <p>Any member of the public is able to report any cases of adverse drug<br>reactions or incidents involving medical devices and poor quality medical products. For minors, parents/gaurdians<br>can report on their behalf.</p>
-            <p>
-                <a class="btn btn-primary btn-lg" href="/padrs/add">
-                    <span style="line-height: 60px;">Submit a Report</span>
-                </a>
-            </p>
-
-        </div>
-        <div class="span4">
-            <img src="/img/public2.png" />
-        </div>
-    </div> -->
+    <br> <br> <br> 
 
     <br><br>
     <div class="row-fluid">
@@ -65,27 +49,12 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <br>
             </div>
             <div id="accordion" class="accordion">
-                <!-- <div class="card mb-0">
-                    <div class="card-header collapsed" data-toggle="collapse" href="#collapseOne">
-                        <a class="card-title">
-                            What can you report on?
-                        </a>
-                    </div>
-                    <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
-                        <br>
-                        <p style="text-align: left;">i. Adverse reactions caused by Drugs</p>
-                        <p style="text-align: left;">ii. Adverse Events Following Immunization</p>
-                        <p style="text-align: left;">iii. Poor Quality Medical Products</p>
-                        <p style="text-align: left;">iv. Medication Errors</p>
-                        <p style="text-align: left;">v. Reactions caused by Transfusion</p>
-                        <p style="text-align: left;">vi.Medical Devices Incidences</p>
-                    </div>
-                </div> -->
+               
                 <br>
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
                         <a class="card-title">
-                            Guide to reporting poor quality medical products
+                            Guide to reporting poor quality health products and technologies
                         </a>
                     </div>
                     <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
@@ -112,9 +81,9 @@ $this->Html->css('upgrade', false, array('inline' => false));
                             <br>
                             <p style="text-align: left;">i. Indicate your name and county</p>
                             <p style="text-align: left;">ii. Indicate your contact- telephone number (It is important for follow up by the Pharmacy and Poisons Board and to obtain additional information as well as providing you with the feedback)</p>
-                            <p style="text-align: left;">iii. Select report on adverse reaction.</p>
+                            <p style="text-align: left;">iii. Select report on medicine side effects.</p>
                             <p style="text-align: left;">iv. Select the symptoms or condition you are experiencing from the list e.g Vomiting or diarrhoea, Dizziness or drowsiness, Headache e.tc</p>
-                            <p style="text-align: left;">v. If a symptom or condition is not the list provided, indicate it on the other side effects experienced.</p>
+                            <p style="text-align: left;">v. If a symptom or condition is not in the list provided, indicate it on the other side effects experienced.</p>
                             <p style="text-align: left;">vi. Indicate the date when the reaction started and select whether or not if you are still experiencing the condition.</p>
                             <p style="text-align: left;">vii. Indicate name of the product e.g. Xmol syrup</p>
                             <p style="text-align: left;">viii. Indicate where you bought / obtained the medicine from e.g., X Chemist</p>

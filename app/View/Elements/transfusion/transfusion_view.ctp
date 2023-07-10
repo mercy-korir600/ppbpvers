@@ -410,7 +410,7 @@
 					</tr>
 					<tr>
 						<td colspan="2"><h5>In case of blood group O transfused to A or B or AB individual: Establish from the donor unit </h5> </td>				
-						<td style="width: 25%;"> Was the adverse reaction related to transfusion? </td>
+						<td style="width: 25%;"> Was the medicine side effects related to transfusion? </td>
 						<td style="width: 25%;"><strong><?php echo $transfusion['Transfusion']['adverse_reaction'] ?>	</strong></td>
 					</tr>
 					<tr>

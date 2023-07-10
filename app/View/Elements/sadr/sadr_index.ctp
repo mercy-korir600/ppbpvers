@@ -265,7 +265,15 @@ echo $this->Session->flash();
                   'class' => 'input-xlarge'
                 ));  ?>
           </td>
-          <td></td>
+          <td><?php
+              echo $this->Form->input('device', array(
+                'type' => 'select', 'options' => [
+                  '0' => 'Web',
+                  '1' => 'Mobile', 
+                ], 'empty' => true,
+                'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
+                'class' => 'input-xlarge'
+              ));  ?></td>
           <td></td>
           <td></td>
           <td></td>

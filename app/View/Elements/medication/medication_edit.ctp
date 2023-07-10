@@ -571,7 +571,7 @@
                 </div>
                 <div class="span12">
                 <?php
-				echo "<h5>Did the drug result in an adverse reaction?</h5>";
+				echo "<h5>Did the drug result in an medicine side effects?</h5>";
 
 				echo $this->Form->input('adverse_reaction', array(
 					'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,

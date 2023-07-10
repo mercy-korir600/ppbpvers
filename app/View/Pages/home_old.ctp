@@ -18,7 +18,7 @@
               
               <p>You can report any cases of:
               	  <br>&nbsp;1. SADR/Adverse drug reactions (side effects)
-              	  <br>&nbsp;2. Poor-quality Medical Products And Health Technologies
+              	  <br>&nbsp;2. Poor-quality health products and technologies And Health Technologies
               	  <br>&nbsp;3. Incidents and errors during medication, vaccination or blood transfusion.</p>
               <p>The Board will investigate the cases and where possible, provide feedback on the status/outcome of the review.</p>
               <p><span class="label label-important"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> NOTE:</span> Patient's identity is held in strict confidence and programme staff is not expected to and will not disclose the reporter's identity in response to any public request. Information submitted by you will contribute to the improvement of drug safety and therapy in Kenya. 
@@ -39,7 +39,7 @@
 		            <div class="span6">
 		              <h5><i class="fa fa-users" aria-hidden="true"></i> Any member of the public or patient </h5>
 		           		
-		              <p><img src="/img/public2.png" style="width: 140px; margin-right: 10px;" class="pull-left"> Any member of the public is able to report any cases of adverse drug reactions or incidents involving medical devices. For minors, parents/gaurdians can report on their behalf.</p>
+		              <p><img src="/img/public2.png" style="width: 140px; margin-right: 10px;" class="pull-left"> Any member of the public is able to report any cases of medicine side effects or incidents involving medical devices. For minors, parents/gaurdians can report on their behalf.</p>
 		              <p><a class="btn btn-primary " href="/padrs/add">Report &raquo;</a></p>
 		            </div><!--/span-->
 		          </div><!--/row-->

@@ -272,7 +272,7 @@ class Medication extends AppModel {
             'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
-                'message'  => 'Please specify if it resulted in adverse reaction?'
+                'message'  => 'Please specify if it resulted in medicine side effects?'
             ),
         ),
         // 

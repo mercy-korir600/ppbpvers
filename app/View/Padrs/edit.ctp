@@ -5,7 +5,7 @@
 
 <div class="row-fluid">
 	<div class="span12">
-		<h4>This form is meant for members of the public and patients to report adverse drug reactions or incidents involving medical devices. Health care professionals should <a href="/users/register">register</a> 
+		<h4>This form is meant for members of the public and patients to report medicine side effects or incidents involving medical devices. Health care professionals should <a href="/users/register">register</a> 
 		and submit reports after successfull <a href="/users/login">authentication</a>.</h4>
 	</div>
 </div>

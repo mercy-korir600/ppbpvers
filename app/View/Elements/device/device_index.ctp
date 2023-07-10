@@ -258,6 +258,7 @@ $this->assign('DEV', 'active');
               'label' => array('class' => 'required', 'text' => 'Operator')
             ));
             ?>
+            
           </td>
           <td>
             <?php
@@ -281,6 +282,15 @@ $this->assign('DEV', 'active');
               array('div' => false, 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Reporter'), 'placeholder' => 'Name/Email')
             );
             ?>
+             <?php
+              echo $this->Form->input('sending_device', array(
+                'type' => 'select', 'options' => [
+                  '1' => 'Web',
+                  '2' => 'Mobile', 
+                ], 'empty' => true,
+                'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
+                'class' => 'input-xlarge'
+              ));  ?>
           </td>
           <td>
             <?php

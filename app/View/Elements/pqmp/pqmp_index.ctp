@@ -220,6 +220,7 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
               'class' => 'input-xlarge'
             ));   
             ?>
+            
           </td>
           <td>
             <h5>Complaint</h5>
@@ -230,6 +231,15 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
             echo $this->Form->input('caking', array('label' => 'Caking', 'hiddenField' => false));
             echo $this->Form->input('moulding', array('label' => 'Moulding', 'hiddenField' => false));
             ?>
+             <?php
+              echo $this->Form->input('sending_device', array(
+                'type' => 'select', 'options' => [
+                  '1' => 'Web',
+                  '2' => 'Mobile', 
+                ], 'empty' => true,
+                'label' => array('class' => 'control-label', 'text' => '<b>Sending Device</b>'),
+                'class' => 'input-xlarge'
+              ));  ?>
           </td>
           <td>
             <?php

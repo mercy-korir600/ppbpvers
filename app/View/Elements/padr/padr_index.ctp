@@ -196,7 +196,17 @@ echo $this->Session->flash();
             'class' => 'input-xlarge'
           ));  ?>
         </td>
-        <td></td>
+        <td> <?php
+              echo $this->Form->input('sending_device', array(
+                'type' => 'select', 'options' => [
+                  '1' => 'Web',
+                  '2' => 'Mobile',
+                  '3' => 'USSD',
+                  '4' => 'ITECH',
+                ], 'empty' => true,
+                'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
+                'class' => 'input-xlarge'
+              ));  ?></td>
         <td></td>
         <td></td>
         <td></td>
@@ -305,7 +315,8 @@ echo $this->Session->flash();
             </td>
             <td><?php echo h($padr['Padr']['patient_name']); ?>&nbsp;</td>
             <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
-            <td><?php echo h($padr['Padr']['vigiflow_ref']); echo "\n" . $padr['Padr']['vigiflow_date']; ?></td> 
+              <td><?php echo h($padr['Padr']['vigiflow_ref']);
+                  echo "\n" . $padr['Padr']['vigiflow_date']; ?></td>
             <?php } ?>
             <td><?php echo h($padr['Padr']['created']); ?>&nbsp;</td>
             <td class="actions">
@@ -354,7 +365,7 @@ echo $this->Session->flash();
                 array('controller' => 'padrs', 'action' => 'view', 'ext' => 'pdf', $padr['Padr']['id']),
                 array('escape' => false)
               );
-              
+
               ?>
             </td>
           </tr>

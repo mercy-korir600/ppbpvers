@@ -129,7 +129,7 @@
 						   <td><strong>Unassessable / unclassifiable</strong></td>
 						   <td>
 							<ul>
-								<li>Report suggesting an adverse reaction </li>
+								<li>Report suggesting an medicine side effects </li>
 								<li>Cannot be judged because of insufficient or contradictory information </li>
 								<li>Data cannot be supplemented or verified </li>
 							</ul>
