@@ -28,6 +28,13 @@
 					<div class="span2 columns">
 					<?php
 						echo $this->Html->link('Add a Facility', array('controller' => 'facility_codes', 'action' => 'add', 'admin' => true ), array('class' => 'btn btn-info'));
+					 
+						echo $this->Html->link('Upload Facilities', "#", array(
+							'class' => 'btn btn-success',
+							'data-toggle' => 'modal',
+							'data-target' => '#uploadModal'
+						));
+						
 					?>
 					</div>
 					<div class="span3 columns">
@@ -110,3 +117,36 @@
 			</div> <!-- /span6 -->
 		
 	   </div> <!-- /row-fluid -->
+
+
+	   <!-- Add this code wherever you want the modal to appear in your view -->
+<!-- Add this code wherever you want the modal to appear in your view -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload CSV</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"> 
+				<?php echo $this->Form->create('Upload', array('type' => 'file', 'url' => array('controller' => 'facility_codes', 'action' => 'upload'))); ?>
+
+                <?php echo $this->Form->input('csv_file', array('type' => 'file')); ?>
+            </div>
+            <div class="modal-footer">
+                <?php echo $this->Form->button('Upload', array('class' => 'btn btn-primary')); ?>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?php echo $this->Form->end(); ?>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .modal-header .close {
+        margin-top: -1.5rem;
+        margin-right: -0.5rem;
+    }
+</style>
+

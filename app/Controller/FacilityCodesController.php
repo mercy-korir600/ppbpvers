@@ -5,80 +5,92 @@ App::uses('AppController', 'Controller');
  *
  * @property FacilityCode $FacilityCode
  */
-class FacilityCodesController extends AppController {
+class FacilityCodesController extends AppController
+{
 
 	public $components = array('Search.Prg');
 	public $paginate = array();
 	public $presetVars = array(
-        array('field' => 'facility_code', 'type' => 'value'),
-        array('field' => 'facility_name', 'type' => 'value'),
-    );
+		array('field' => 'facility_code', 'type' => 'value'),
+		array('field' => 'facility_name', 'type' => 'value'),
+	);
 
-	
-	public function beforeFilter() {
+
+	public function beforeFilter()
+	{
 		parent::beforeFilter();
 		$this->Auth->allow('index', 'autocomplete', 'api_autocomplete', 'api_index');
 	}
-	
-	public function autocomplete($query = null) {
-		$this->RequestHandler->setContent('json', 'application/json' ); 
-		if (is_numeric($this->request->query['term'])) { 
-			$coders = $this->FacilityCode->finder($this->request->query['term'], 'N');
-		} else {
-			$coders = $this->FacilityCode->finder($this->request->query['term'], 'A');
-		}
-                $codes = array();
-		foreach ($coders as $key => $value) {
-			$codes[] = array('value' => $value['FacilityCode']['facility_code'], 'label' => $value['FacilityCode']['facility_name'],  'sub_county' => $value['FacilityCode']['district'], 
-							 'desc' => $value['FacilityCode']['county'], 'addr' => $value['FacilityCode']['official_address'], 'phone' => $value['FacilityCode']['official_mobile']);
-		}
-		$this->set('codes', $codes);
-        $this->set('_serialize', 'codes');
-	}
-	
-	public function api_autocomplete($query = null) {
-		$this->RequestHandler->setContent('json', 'application/json' ); 
-		if (is_numeric($this->request->query['term'])) { 
-			$coders = $this->FacilityCode->finder($this->request->query['term'], 'N');
-		} else {
-			$coders = $this->FacilityCode->finder($this->request->query['term'], 'A');
-		}
-                $codes = array();
-		foreach ($coders as $key => $value) {
-			$codes[] = array('value' => $value['FacilityCode']['facility_code'], 'label' => $value['FacilityCode']['facility_name'],  'sub_county' => $value['FacilityCode']['district'], 
-							 'desc' => $value['FacilityCode']['county'], 'addr' => $value['FacilityCode']['official_address'], 'phone' => $value['FacilityCode']['official_mobile']);
-		}
-		$this->set('codes', $codes);
-        $this->set('_serialize', 'codes');
-	}
-	
 
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
+	public function autocomplete($query = null)
+	{
+		$this->RequestHandler->setContent('json', 'application/json');
+		if (is_numeric($this->request->query['term'])) {
+			$coders = $this->FacilityCode->finder($this->request->query['term'], 'N');
+		} else {
+			$coders = $this->FacilityCode->finder($this->request->query['term'], 'A');
+		}
+		$codes = array();
+		foreach ($coders as $key => $value) {
+			$codes[] = array(
+				'value' => $value['FacilityCode']['facility_code'], 'label' => $value['FacilityCode']['facility_name'],  'sub_county' => $value['FacilityCode']['district'],
+				'desc' => $value['FacilityCode']['county'], 'addr' => $value['FacilityCode']['official_address'], 'phone' => $value['FacilityCode']['official_mobile']
+			);
+		}
+		$this->set('codes', $codes);
+		$this->set('_serialize', 'codes');
+	}
+
+	public function api_autocomplete($query = null)
+	{
+		$this->RequestHandler->setContent('json', 'application/json');
+		if (is_numeric($this->request->query['term'])) {
+			$coders = $this->FacilityCode->finder($this->request->query['term'], 'N');
+		} else {
+			$coders = $this->FacilityCode->finder($this->request->query['term'], 'A');
+		}
+		$codes = array();
+		foreach ($coders as $key => $value) {
+			$codes[] = array(
+				'value' => $value['FacilityCode']['facility_code'], 'label' => $value['FacilityCode']['facility_name'],  'sub_county' => $value['FacilityCode']['district'],
+				'desc' => $value['FacilityCode']['county'], 'addr' => $value['FacilityCode']['official_address'], 'phone' => $value['FacilityCode']['official_mobile']
+			);
+		}
+		$this->set('codes', $codes);
+		$this->set('_serialize', 'codes');
+	}
+
+
+	/**
+	 * index method
+	 *
+	 * @return void
+	 */
+	public function index()
+	{
 		$this->FacilityCode->recursive = 0;
 		$this->set('facilityCodes', $this->paginate());
 	}
 
-	public function admin_index() {
+	public function admin_index()
+	{
 		$this->Prg->commonProcess();
 		$criteria = $this->FacilityCode->parseCriteria($this->passedArgs);
 		// $criteria['Sadr.user_id'] = $this->Auth->user('id');
-        $this->paginate['conditions'] = $criteria;
- 		$this->FacilityCode->recursive = -1;
-        $this->paginate['limit'] = 20;
-        $this->paginate['order'] = array('FacilityCode.facility_name' => 'asc');
+		$this->paginate['conditions'] = $criteria;
+		$this->FacilityCode->recursive = -1;
+		$this->paginate['limit'] = 20;
+		$this->paginate['order'] = array('FacilityCode.facility_name' => 'asc');
 		$this->set('facility_Codes', $this->paginate());
 	}
 
-	public function api_index() {
+	public function api_index()
+	{
 		$this->FacilityCode->recursive = -1;
 		$result =  $this->FacilityCode->find('all', array(
-			'fields' =>  array('FacilityCode.facility_code', 'FacilityCode.facility_name' ,  'FacilityCode.official_address', 'FacilityCode.official_mobile', 'FacilityCode.district', 'FacilityCode.county' ), 
-			'order' => array('FacilityCode.facility_name' => 'asc')));
+			'fields' =>  array('FacilityCode.facility_code', 'FacilityCode.facility_name',  'FacilityCode.official_address', 'FacilityCode.official_mobile', 'FacilityCode.district', 'FacilityCode.county'),
+			'order' => array('FacilityCode.facility_name' => 'asc')
+		));
 		$facilityCodes = array();
 		foreach ($result as $key => $value) {
 			$facilityCodes[] = $value['FacilityCode'];
@@ -88,13 +100,14 @@ class FacilityCodesController extends AppController {
 		$this->set('_serialize', array('facilityCodes'));
 	}
 
-/**
- * view method
- *
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
+	/**
+	 * view method
+	 *
+	 * @param string $id
+	 * @return void
+	 */
+	public function view($id = null)
+	{
 		$this->FacilityCode->id = $id;
 		if (!$this->FacilityCode->exists()) {
 			throw new NotFoundException(__('Invalid facility code'));
@@ -102,12 +115,13 @@ class FacilityCodesController extends AppController {
 		$this->set('facilityCode', $this->FacilityCode->read(null, $id));
 	}
 
-/**
- * add method
- *
- * @return void
- */
-	public function add() {
+	/**
+	 * add method
+	 *
+	 * @return void
+	 */
+	public function add()
+	{
 		if ($this->request->is('post')) {
 			$this->FacilityCode->create();
 			if ($this->FacilityCode->save($this->request->data)) {
@@ -119,7 +133,8 @@ class FacilityCodesController extends AppController {
 		}
 	}
 
-	public function admin_add() {
+	public function admin_add()
+	{
 		if ($this->request->is('post')) {
 			$this->FacilityCode->create();
 			if ($this->FacilityCode->save($this->request->data)) {
@@ -131,13 +146,14 @@ class FacilityCodesController extends AppController {
 		}
 	}
 
-/**
- * edit method
- *
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
+	/**
+	 * edit method
+	 *
+	 * @param string $id
+	 * @return void
+	 */
+	public function edit($id = null)
+	{
 		$this->FacilityCode->id = $id;
 		if (!$this->FacilityCode->exists()) {
 			throw new NotFoundException(__('Invalid facility code'));
@@ -154,7 +170,8 @@ class FacilityCodesController extends AppController {
 		}
 	}
 
-	public function admin_edit($id = null) {
+	public function admin_edit($id = null)
+	{
 		$this->FacilityCode->id = $id;
 		if (!$this->FacilityCode->exists()) {
 			throw new NotFoundException(__('Invalid facility code'));
@@ -171,13 +188,14 @@ class FacilityCodesController extends AppController {
 		}
 	}
 
-/**
- * delete method
- *
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
+	/**
+	 * delete method
+	 *
+	 * @param string $id
+	 * @return void
+	 */
+	public function delete($id = null)
+	{
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
@@ -192,8 +210,9 @@ class FacilityCodesController extends AppController {
 		$this->Session->setFlash(__('Facility code was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
-	
-	public function admin_delete($id = null) {
+
+	public function admin_delete($id = null)
+	{
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
@@ -208,4 +227,134 @@ class FacilityCodesController extends AppController {
 		$this->Session->setFlash(__('Facility code was not deleted'), 'flash_error');
 		$this->redirect(array('action' => 'index'));
 	}
+
+	public function admin_upload()
+	{
+		if ($this->request->is('post')) {
+			// Handle form submission
+			$file = $this->request->data['Upload']['csv_file'];
+
+			if (!empty($file['tmp_name'])) {
+				$csvData = array_map('str_getcsv', file($file['tmp_name']));
+				$header = array_shift($csvData);
+				$this->FacilityCode->deleteAll(array('1' => '1'), false);
+
+				// Validate and save each row
+				foreach ($csvData as $row) {
+					$data = array(
+						'facility_code' => $this->verify_code($row[0]),
+						'facility_name' => $row[1],
+						'keph_level' => $row[4],
+						'type' => $row[5],
+						'owner' => $row[7],
+						'beds' => $row[10],
+						'cots' => $row[11],						
+						'province'=>$this->get_province_by_county($row[12]),
+						'county' => $row[12],
+						'constituency' => $row[13],
+						'operational_status' => $row[16],
+						'open_weekends' => $row[20],
+						'open_24hrs' => $this->determine_24_hour($row[18], $row[21]),
+
+						// Add more columns as needed
+					);
+					$this->FacilityCode->set($data);
+
+					if ($this->FacilityCode->validates()) {
+						$this->FacilityCode->create();
+						$this->FacilityCode->save($data);
+					} else {
+						$errors = $this->FacilityCode->validationErrors;
+						// Handle validation errors
+						$this->Session->setFlash(__('Experienced problems uploading data' . $errors), 'flash_error');
+						$this->redirect(array('action' => 'index'));
+					}
+				}
+				$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_success');
+				$this->redirect(array('action' => 'index'));
+			} else {
+				// Handle file upload error
+				$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_error');
+				$this->redirect(array('action' => 'index'));
+			}
+		}
+		$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_success');
+		$this->redirect(array('action' => 'index'));
+	}
+
+	public function verify_code($code)
+	{
+		if ($code == "None") {
+			return null;
+		}
+		return $code;
+	}
+
+	public function determine_24_hour($day, $night)
+	{
+		$fal = "No";
+		if ($day == "Yes" && $night == "Yes") {
+			$fal = "Yes";
+		}
+		return $fal;
+	}
+	public function get_province_by_county($countyName) {
+        $countyName = strtolower($countyName);
+        
+        $provinceMapping = array(
+            'nairobi' => 'Nairobi',
+            'mombasa' => 'Coast',
+            'kwale' => 'Coast',
+            'kilifi' => 'Coast',
+            'tana river' => 'Coast',
+            'lamu' => 'Coast',
+            'taita-taveta' => 'Coast',
+            'garissa' => 'North Eastern',
+            'wajir' => 'North Eastern',
+            'mandera' => 'North Eastern',
+            'marsabit' => 'Eastern',
+            'isiolo' => 'Eastern',
+            'meru' => 'Eastern',
+            'tharaka-nithi' => 'Eastern',
+            'embu' => 'Eastern',
+            'kitui' => 'Eastern',
+            'machakos' => 'Eastern',
+            'makueni' => 'Eastern',
+            'nyandarua' => 'Central',
+            'nyeri' => 'Central',
+            'kirinyaga' => 'Central',
+            'murang\'a' => 'Central',
+            'kiambu' => 'Central',
+            'turkana' => 'Rift Valley',
+            'west pokot' => 'Rift Valley',
+            'samburu' => 'Rift Valley',
+            'trans nzoia' => 'Rift Valley',
+            'uasin gishu' => 'Rift Valley',
+            'elgeyo-marakwet' => 'Rift Valley',
+            'nandi' => 'Rift Valley',
+            'baringo' => 'Rift Valley',
+            'laikipia' => 'Rift Valley',
+            'nakuru' => 'Rift Valley',
+            'narok' => 'Rift Valley',
+            'kajiado' => 'Rift Valley',
+            'kericho' => 'Rift Valley',
+            'bomet' => 'Rift Valley',
+            'kakamega' => 'Western',
+            'vihiga' => 'Western',
+            'bungoma' => 'Western',
+            'busia' => 'Western',
+            'siaya' => 'Nyanza',
+            'kisumu' => 'Nyanza',
+            'homa bay' => 'Nyanza',
+            'migori' => 'Nyanza',
+            'kisii' => 'Nyanza',
+            'nyamira' => 'Nyanza'
+        );
+
+        if (isset($provinceMapping[$countyName])) {
+            return $provinceMapping[$countyName];
+        }
+
+        return null;
+    }
 }
