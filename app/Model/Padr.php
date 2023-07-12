@@ -246,6 +246,13 @@ class Padr extends AppModel {
         //         'message' => 'Please provide a valid phone number',
         //     ),
         // ),
+		'outcome' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+				'required' => true,
+                'message'  => 'Please provide outcome'
+            ),
+        ),
 		'consent' => array(
             'notBlank' => array(
                 'rule'     => 'notBlank',

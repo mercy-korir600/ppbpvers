@@ -112,7 +112,7 @@
 						<td style="width: 25%;"><strong><?php echo $transfusion['Transfusion']['previous_reactions'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 25%;"> Current Medications</td>
+						<td style="width: 25%;"> Current Medication</td>
 						<td style="width: 25%;"><strong><?php echo $transfusion['Transfusion']['current_medications'] ?>	</strong></td>
 						<td style="width: 25%;"> </td>
 						<td style="width: 25%;"><strong><?php echo $transfusion['Transfusion']['reaction_comment'] ?>	</strong></td>
@@ -273,13 +273,13 @@
 					<tr>
 						<td colspan="4"> 
 							<h5>Specimens required by the laboratory </h5>
-		                    <ol>
-		                        <li>10mls post-transfusion whole blood from patient from plain bottle </li>
-		                        <li>2mls of blood in EDTA bottle </li>
-		                        <li>10mls First Void Urine </li>
-		                        <li>The blood that reacted together with the attached transfusion set </li>
-		                        <li>All empty blood bags of already transfused unit </li>
-		                    </ol>
+							<p> <?php echo ($transfusion['Transfusion']['specimens_post_transfusion']   ? $ichecked : $nchecked ); ?> 10mls post-transfusion whole blood from patient from plain bottle </p>
+							<p> <?php echo ($transfusion['Transfusion']['specimens_edta_blood']   ? $ichecked : $nchecked ); ?> 2mls of blood in EDTA bottle </p>
+							<p> <?php echo ($transfusion['Transfusion']['specimens_void_urine']   ? $ichecked : $nchecked ); ?> 10mls First Void Urine </p>
+							<p> <?php echo ($transfusion['Transfusion']['specimens_blood_reacted']   ? $ichecked : $nchecked ); ?> The blood that reacted together with the attached transfusion set  </p>
+							<p> <?php echo ($transfusion['Transfusion']['specimens_blood_bags']   ? $ichecked : $nchecked ); ?> All empty blood bags of already transfused unit </p>
+						
+		                   
                      	</td>
 					</tr>					
 				</table>

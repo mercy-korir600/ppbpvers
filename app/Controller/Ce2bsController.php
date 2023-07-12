@@ -40,7 +40,7 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
             $this->redirect('/');
         }
 
@@ -142,7 +142,7 @@ class Ce2bsController extends AppController
     {
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
             $this->redirect('/');
         }
 
@@ -163,7 +163,7 @@ class Ce2bsController extends AppController
         if ($this->request->is('post')) {
             $this->Ce2b->id = $id;
             if (!$this->Ce2b->exists()) {
-                throw new NotFoundException(__('Invalid Ce2b'));
+                throw new NotFoundException(__('Invalid E2b'));
             }
             $this->generate_copy($id);
         }
@@ -174,7 +174,7 @@ class Ce2bsController extends AppController
         if ($this->request->is('post')) {
             $this->Ce2b->id = $id;
             if (!$this->Ce2b->exists()) {
-                throw new NotFoundException(__('Invalid Ce2b'));
+                throw new NotFoundException(__('Invalid E2b'));
             }
             $this->generate_copy($id);
         }
@@ -213,7 +213,7 @@ class Ce2bsController extends AppController
     {
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            throw new NotFoundException(__('Invalid Ce2b'));
+            throw new NotFoundException(__('Invalid E2b'));
         }
         $this->general_editor($id);
     }
@@ -222,7 +222,7 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            throw new NotFoundException(__('Invalid Ce2b'));
+            throw new NotFoundException(__('Invalid E2b'));
         }
         $this->general_editor($id);
     }
@@ -232,15 +232,15 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            throw new NotFoundException(__('Invalid Ce2b'));
+            throw new NotFoundException(__('Invalid E2b'));
         }
         $ce2b = $this->Ce2b->read(null, $id);
         if ($ce2b['Ce2b']['submitted'] > 1) {
-            $this->Session->setFlash(__('The Ce2b has been submitted'), 'alerts/flash_info');
+            $this->Session->setFlash(__('The E2b has been submitted'), 'alerts/flash_info');
             $this->redirect(array('action' => 'view', $this->Ce2b->id));
         }
         if ($ce2b['Ce2b']['user_id'] !== $this->Auth->user('id')) {
-            $this->Session->setFlash(__('You don\'t have permission to edit this Ce2b!!'), 'alerts/flash_error');
+            $this->Session->setFlash(__('You don\'t have permission to edit this E2b!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
@@ -267,7 +267,7 @@ class Ce2bsController extends AppController
                             }
                         }
                         if (!$valid) {
-                            $this->Session->setFlash(__('The Ce2b file is not valid. Please try again later'), 'alerts/flash_error');
+                            $this->Session->setFlash(__('The E2b file is not valid. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
                         try {
@@ -354,14 +354,14 @@ class Ce2bsController extends AppController
                     }
                     // **********************************    END   *********************************
 
-                    $this->Session->setFlash(__('The Ce2b has been submitted to PPB'), 'alerts/flash_success');
+                    $this->Session->setFlash(__('The E2b has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Ce2b->id));
                 }
                 // debug($this->request->data);
-                $this->Session->setFlash(__('The Ce2b has been saved'), 'alerts/flash_success');
+                $this->Session->setFlash(__('The E2b has been saved'), 'alerts/flash_success');
                 $this->redirect($this->referer());
             } else {
-                $this->Session->setFlash(__('The Ce2b could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
+                $this->Session->setFlash(__('The E2b could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
             }
         } else {
             $this->request->data = $this->Ce2b->read(null, $id);
@@ -391,10 +391,10 @@ class Ce2bsController extends AppController
             'reporter_email' => $this->Auth->User('email'),
             'reporter_phone' => $this->Auth->User('phone_no'),
         ]], false);
-        $this->Session->setFlash(__('The Ce2b has been created'), 'alerts/flash_success');
+        $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-    }
 
+        }
     public function generateReferenceNumber()
     {
         $count = $this->Ce2b->find('count',  array(
@@ -432,7 +432,7 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
             $this->redirect('/');
         }
         $this->general_view($id);
@@ -443,7 +443,7 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
             $this->redirect('/');
         }
         $this->general_view($id);
@@ -482,7 +482,7 @@ class Ce2bsController extends AppController
         $this->set(['ce2b' => $ce2b, 'data' => $data]);
 
         if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'Ce2b' . $id . '.pdf',  'orientation' => 'portrait');
+            $this->pdfConfig = array('filename' => 'E2b' . $id . '.pdf',  'orientation' => 'portrait');
             $this->response->download('Ce2b_' . $ce2b['Ce2b']['id'] . '.pdf');
         }
     }
@@ -491,7 +491,7 @@ class Ce2bsController extends AppController
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
-            $this->Session->setFlash(__('Could not verify the Ce2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
             $this->redirect('/');
         }
         $this->general_view($id);
@@ -512,7 +512,7 @@ class Ce2bsController extends AppController
         }
         $ce2b = $this->Ce2b->read(null, $id);
         if ($ce2b['Ce2b']['submitted'] == 2) {
-            $this->Session->setFlash(__('You cannot delete a submitted Ce2b Report'), 'alerts/flash_error');
+            $this->Session->setFlash(__('You cannot delete a submitted E2b Report'), 'alerts/flash_error');
             $this->redirect($this->referer());
         }
         //update the field deleted to true and deleted_date to current date without validation 
@@ -523,7 +523,12 @@ class Ce2bsController extends AppController
             $this->Session->setFlash(__('Ce2b Report ' . $ce2b['Ce2b']['reference_no'] . ' has been deleted'), 'alerts/flash_info');
             $this->redirect($this->referer());
         }
-        $this->Session->setFlash(__('Ce2b was not deleted'), 'alerts/flash_error');
+        $this->Session->setFlash(__('E2b was not deleted'), 'alerts/flash_error');
         $this->redirect($this->referer());
     }
+    public function manager_archive($id=null) {
+
+        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'index'));
+	}
 }

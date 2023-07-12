@@ -1612,4 +1612,9 @@ class AefisController extends AppController
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
         $this->set(compact('vaccines'));
     }
+    public function manager_archive($id=null) {
+
+        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'index'));
+	}
 }

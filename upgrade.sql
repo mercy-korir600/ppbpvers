@@ -41,3 +41,6 @@ ALTER TABLE `sadrs` ADD `product_category` VARCHAR(255) NULL DEFAULT NULL AFTER 
 ALTER TABLE `sadrs` ADD `medication_id` INT(11) NULL DEFAULT NULL AFTER `pqmp_id`;
 ALTER TABLE `sadrs` ADD `report_misuse` TINYINT NULL DEFAULT NULL AFTER `report_therapeutic`;
 ALTER TABLE `facility_codes` ADD `keph_level` VARCHAR(255) NULL DEFAULT NULL AFTER `cots`;
+ALTER TABLE `sadrs` ADD `archived` BOOLEAN NULL DEFAULT NULL AFTER `deleted`, ADD `archived_date` DATETIME NULL DEFAULT NULL AFTER `archived`;
+ALTER TABLE `sadrs` CHANGE `archived` `archived` TINYINT(1) NULL DEFAULT '0';
+ALTER TABLE `transfusions` ADD `specimens_post_transfusion` TINYINT NULL DEFAULT NULL AFTER `clinic_venue`, ADD `specimens_edta_blood` TINYINT NULL DEFAULT NULL AFTER `specimens_post_transfusion`, ADD `specimens_void_urine` TINYINT NULL DEFAULT NULL AFTER `specimens_edta_blood`, ADD `specimens_blood_reacted` TINYINT NULL DEFAULT NULL AFTER `specimens_void_urine`, ADD `specimens_blood_bags` TINYINT NULL DEFAULT NULL AFTER `specimens_blood_reacted`;

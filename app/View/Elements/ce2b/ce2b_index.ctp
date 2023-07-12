@@ -12,13 +12,13 @@ echo $this->Session->flash();
         <?php
         if ($redir == 'reporter') {
             echo $this->Html->link(
-                '<i class="fa fa-file-o" aria-hidden="true"></i> New Ce2b',
+                '<i class="fa fa-file-o" aria-hidden="true"></i> New E2b',
                 array('controller' => 'ce2bs', 'action' => 'add'),
                 array('escape' => false, 'class' => 'btn btn-success')
             );
         }
         ?>
-        <h3>Ce2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
+        <h3>E2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
            
         </h3>
         <hr class="soften" style="margin: 7px 0px;">
@@ -203,6 +203,11 @@ echo $this->Session->flash();
                                 );
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'ce2bs', 'action' => 'copy', $ce2b['Ce2b']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                                echo $this->Html->link(
+                                    '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
+                                    array('controller' => 'ce2bs', 'action' => 'archive', $ce2b['Ce2b']['id']),
+                                    array('escape' => false), __('Are you sure you want to archive the report?')
+                                  );
                             } else {
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

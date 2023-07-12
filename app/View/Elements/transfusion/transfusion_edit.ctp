@@ -192,7 +192,7 @@
                             'label' => array('class' => 'control-label required', 'text' => 'Reason for transfusion'),
                         ));
                         echo $this->Form->input('current_medications', array(
-                            'label' => array('class' => 'control-label required', 'text' => 'Current Medications'),
+                            'label' => array('class' => 'control-label required', 'text' => 'Current Medication'),
                         ));
                     ?>
                 </div>
@@ -531,13 +531,41 @@
             <div class="row-fluid">
                 <div class="span12">
                     <h5>Specimens collected </h5>
-                    <ol>
-                        <li>10mls post-transfusion whole blood from patient from plain bottle </li>
-                        <li>2mls of blood in EDTA bottle </li>
-                        <li>10mls First Void Urine </li>
-                        <li>The blood that reacted together with the attached transfusion set </li>
-                        <li>All empty blood bags of already transfused unit </li>
-                    </ol>
+                    <?php
+                    
+                    echo $this->Form->input('specimens_post_transfusion', array(
+						'format' => array('error', 'before', 'label', 'between', 'input', 'after'),
+						'type' => 'checkbox',  'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Transfusion_specimens_post_transfusion_" name="data[Transfusion][specimens_post_transfusion]">
+                                                                    <label class="checkbox">',
+						'after' => '10mls post-transfusion whole blood from patient from plain bottle </label>',
+					));
+					echo $this->Form->input('specimens_edta_blood', array(
+						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Transfusion_specimens_edta_blood_" name="data[Transfusion][specimens_edta_blood]">
+                                                                    <label class="checkbox">',
+						'after' => '2mls of blood in EDTA bottle  </label>',
+					));
+					echo $this->Form->input('specimens_void_urine', array(
+						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Transfusion_specimens_void_urine_" name="data[Transfusion][specimens_void_urine]">
+                                                                    <label class="checkbox">',
+						'after' => '10mls First Void Urine </label>',
+					));
+                    echo $this->Form->input('specimens_blood_reacted', array(
+						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Transfusion_specimens_blood_reacted_" name="data[Transfusion][specimens_blood_reacted]">
+                                                                    <label class="checkbox">',
+						'after' => 'The blood that reacted together with the attached transfusion set </label>',
+					));
+                    echo $this->Form->input('specimens_blood_bags', array(
+						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+						'between' => '<input type="hidden" value="0" id="Transfusion_specimens_blood_bags_" name="data[Transfusion][specimens_blood_bags]">
+                                                                    <label class="checkbox">',
+						'after' => 'All empty blood bags of already transfused unit</label>',
+					));
+                    ?>
+                    
                 </div>
             </div>
             <hr>
@@ -717,7 +745,7 @@
             </div>
             <hr>
 
-            <p style="padding-left: 15px;">8. Compatibility testing recipient serum (pretransfusion sample) and donor cells (pack) </p>
+            <p style="padding-left: 15px;">8. Compatibility testing recipient serum (pretransfusion sample) and donor cells (pack) (Attach print out if applicable)</p>
             <div class="row-fluid uliwahifadhi">
                 <div class="span4">
                     <h4 class="required controls">Compatible</h4>

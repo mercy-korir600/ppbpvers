@@ -313,15 +313,15 @@ $this->assign('TRN', 'active');
             ?>
           </td>
           <td>
-          <?php
-              echo $this->Form->input('sending_device', array(
-                'type' => 'select', 'options' => [
-                  '1' => 'Web',
-                  '2' => 'Mobile', 
-                ], 'empty' => true,
-                'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
-                'class' => 'input-xlarge'
-              ));  ?>
+            <?php
+            echo $this->Form->input('sending_device', array(
+              'type' => 'select', 'options' => [
+                '1' => 'Web',
+                '2' => 'Mobile',
+              ], 'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
+              'class' => 'input-xlarge'
+            ));  ?>
           </td>
           <td></td>
           <td></td>
@@ -444,6 +444,13 @@ $this->assign('TRN', 'active');
                 );
                 echo "&nbsp;";
                 if (($redir == 'manager' || $redir == 'reviewer') && $transfusion['Transfusion']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'transfusions', 'action' => 'copy', $transfusion['Transfusion']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+
+                if (($redir == 'manager' || $redir == 'reviewer'))                echo $this->Html->link(
+                  '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
+                  array('controller' => 'transfusions', 'action' => 'archive', $transfusion['Transfusion']['id']),
+                  array('escape' => false),
+                  __('Are you sure you want to archive the report?')
+                );
               } else {
                 if ($redir == 'reporter') echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

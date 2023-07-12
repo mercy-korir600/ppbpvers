@@ -27,7 +27,7 @@ class TransfusionsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('guest_add','guest_edit');
+        $this->Auth->allow('guest_add', 'guest_edit');
     }
 
     /**
@@ -52,10 +52,14 @@ class TransfusionsController extends AppController
 
         // add deleted=false to criteria
         $criteria['Transfusion.deleted'] = false;
-        if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
-            $criteria['Transfusion.submitted'] = array(0, 1);
+        if (isset($this->request->query['submitted'])) {
+            if ($this->request->query['submitted'] == 1) {
+                $criteria['Transfusion.submitted'] = array(0, 1);
+            } else {
+                $criteria['Transfusion.submitted'] = array(2, 3);
+            }
         } else {
-            $criteria['Transfusion.submitted'] = array(2, 3);
+            $criteria['Transfusion.submitted'] = array(0, 1, 2, 3);
         }
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Transfusion.created' => 'desc');
@@ -82,7 +86,7 @@ class TransfusionsController extends AppController
 
         $page_options = array('5' => '5', '10' => '10', '25' => '25');
         (!empty($this->request->query('pages'))) ? $this->paginate['limit'] = $this->request->query('pages') :  $this->paginate['limit'] = reset($page_options);
- 
+
 
         $criteria = $this->Transfusion->parseCriteria($this->passedArgs);
         $criteria['Transfusion.user_id'] = $this->Auth->User('id');
@@ -116,7 +120,7 @@ class TransfusionsController extends AppController
         $page_options = array('25' => '25', '20' => '20');
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
         if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
-        else $this->paginate['limit'] = reset($page_options); 
+        else $this->paginate['limit'] = reset($page_options);
 
         $criteria = $this->Transfusion->parseCriteria($this->passedArgs);
         // add deleted=false to criteria
@@ -337,10 +341,10 @@ class TransfusionsController extends AppController
 
     public function manager_view($id = null)
     {
-       $this->general_view($id);
+        $this->general_view($id);
     }
 
-    public function general_view( $id = null)
+    public function general_view($id = null)
     {
         # code...
         $this->Transfusion->id = $id;
@@ -407,7 +411,7 @@ class TransfusionsController extends AppController
         }
         $this->Transfusion->saveField('assigned_by', '');
         $this->Transfusion->saveField('assigned_to', '');
-        $this->Transfusion->saveField('assigned_date', ''); 
+        $this->Transfusion->saveField('assigned_date', '');
 
         $this->Session->setFlash(__('The Transfusion has been unassigned successfully'), 'alerts/flash_success');
         $this->redirect(array('action' => 'view', $id));
@@ -420,13 +424,13 @@ class TransfusionsController extends AppController
         # code...
         $this->general_view($id);
     }
-    public function reviewer_copy( $id = null)
+    public function reviewer_copy($id = null)
     {
         # code...
         $this->general_copy($id);
     }
 
-    public function reviewer_edit( $id = null)
+    public function reviewer_edit($id = null)
     {
         # code...
         $this->general_edit($id);
@@ -637,11 +641,11 @@ class TransfusionsController extends AppController
     public function notifyCountyPharmacist($transfusion = null)
     {
         # code...
-        
+
         $this->loadModel('Message');
         $html = new HtmlHelper(new ThemeView());
         $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_transfusion')));
-                    
+
         $county_id = $transfusion['Transfusion']['county_id'];
         $users = $this->Transfusion->User->find('all', array(
             'contain' => array(),
@@ -658,27 +662,28 @@ class TransfusionsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-       
+
         foreach ($users as $user) {
             $variables = array(
-                'name' => $user['User']['name'], 
+                'name' => $user['User']['name'],
                 'reference_no' => $transfusion['Transfusion']['reference_no'],
                 'reference_link' => $html->link(
                     $transfusion['Transfusion']['reference_no'],
                     array(
                         'controller' => 'transfusions',
-                        'action' => 'view', $transfusion['Transfusion']['id'], 
-                        'manager' => true, 
-                        'full_base' => true),
+                        'action' => 'view', $transfusion['Transfusion']['id'],
+                        'manager' => true,
+                        'full_base' => true
+                    ),
                     array('escape' => false)
                 ),
                 'modified' => $transfusion['Transfusion']['modified']
             );
             $datum = array(
                 'email' => $user['User']['email'],
-                'id' => $transfusion['Transfusion']['id'], 
-                'user_id' => $user['User']['id'], 
-                'type' => 'serious_transfusion', 
+                'id' => $transfusion['Transfusion']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'serious_transfusion',
                 'model' => 'Transfusion',
                 'subject' => CakeText::insert($message['Message']['subject'], $variables),
                 'message' => CakeText::insert($message['Message']['content'], $variables)
@@ -687,7 +692,6 @@ class TransfusionsController extends AppController
             $this->QueuedTask->createJob('GenericEmail', $datum);
             $this->QueuedTask->createJob('GenericNotification', $datum);
         }
-        
     }
     public function api_add($id = null)
     {
@@ -803,7 +807,6 @@ class TransfusionsController extends AppController
     public function manager_copy($id = null)
     {
         $this->general_copy($id);
-       
     }
     public function general_copy($id = null)
     {
@@ -846,9 +849,8 @@ class TransfusionsController extends AppController
     public function manager_edit($id = null)
     {
         $this->general_edit($id);
-       
     }
-    public function general_edit( $id= null)
+    public function general_edit($id = null)
     {
         # code...
         $this->Transfusion->id = $id;
@@ -923,7 +925,6 @@ class TransfusionsController extends AppController
     public function reporter_delete($id = null)
     {
         $this->common_delete($id);
-       
     }
     public function common_delete($id = null)
     {
@@ -954,12 +955,12 @@ class TransfusionsController extends AppController
     {
         # code...
         $this->Transfusion->create();
-        $this->Transfusion->save(['Transfusion' => [ 
-            'reference_no' => 'new', 
-            'report_type' => 'Initial',  
+        $this->Transfusion->save(['Transfusion' => [
+            'reference_no' => 'new',
+            'report_type' => 'Initial',
         ]], false);
         $this->Session->setFlash(__('The Blood Transfusion Reaction has been created'), 'alerts/flash_success');
-      
+
         $this->redirect(array('action' => 'guest_edit', $this->Transfusion->id));
     }
 
@@ -970,7 +971,7 @@ class TransfusionsController extends AppController
             throw new NotFoundException(__('Invalid TRANSFUSION'));
         }
         $transfusion = $this->Transfusion->read(null, $id);
-               
+
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
@@ -1000,15 +1001,16 @@ class TransfusionsController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_transfusion_submit')));
                     $variables = array(
-                        'name' => 'Guest', 
+                        'name' => 'Guest',
                         'reference_no' => $transfusion['Transfusion']['reference_no'],
                         'reference_link' => $html->link(
                             $transfusion['Transfusion']['reference_no'],
                             array(
-                                'controller' => 'transfusions', 
-                                'action' => 'view', $transfusion['Transfusion']['id'], 
-                                'reporter' => true, 
-                                'full_base' => true),
+                                'controller' => 'transfusions',
+                                'action' => 'view', $transfusion['Transfusion']['id'],
+                                'reporter' => true,
+                                'full_base' => true
+                            ),
                             array('escape' => false)
                         ),
                         'modified' => $transfusion['Transfusion']['modified']
@@ -1060,13 +1062,13 @@ class TransfusionsController extends AppController
                     //**********************************    END   *********************************
 
                     $this->Session->setFlash(__('The blood transfusion reaction report has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                    $this->redirect(array('controller' => 'pages', 'action' => 'home'));
                     // $this->redirect($this->referer());
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The blood transfusion reaction report has been saved'), 'alerts/flash_success');
                 $this->redirect($this->referer());
-            } else { 
+            } else {
                 $this->Flash->error(__('The blood transfusion reaction could not be submitted to PPB. Please, correct the errors and try again.'));
             }
         } else {
@@ -1077,5 +1079,11 @@ class TransfusionsController extends AppController
         $counties = $this->Transfusion->County->find('list');
         $designations = $this->Transfusion->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('counties', 'designations'));
+    }
+    public function manager_archive($id = null)
+    {
+
+        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'index'));
     }
 }

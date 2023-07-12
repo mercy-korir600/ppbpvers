@@ -269,7 +269,7 @@ echo $this->Session->flash();
               echo $this->Form->input('device', array(
                 'type' => 'select', 'options' => [
                   '0' => 'Web',
-                  '1' => 'Mobile', 
+                  '1' => 'Mobile',
                 ], 'empty' => true,
                 'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
                 'class' => 'input-xlarge'
@@ -382,7 +382,7 @@ echo $this->Session->flash();
             </td>
             <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($sadr['Sadr']['patient_name']) : h($sadr['Sadr']['gender']); ?>&nbsp;</td>
             <?php if ($redir == 'manager' || $redir == 'reviewer') { ?><td><?php echo h($sadr['Sadr']['vigiflow_ref']);
-                                                                          echo "\n" . $sadr['Sadr']['vigiflow_date']; ?></td> <?php } ?>
+                                                                            echo "\n" . $sadr['Sadr']['vigiflow_date']; ?></td> <?php } ?>
             <td><?php echo h($sadr['Sadr']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($sadr['Sadr']['created']); ?>&nbsp;</td>
             <td><?php echo h($sadr['Sadr']['submitted_date']); ?>&nbsp;</td>
@@ -413,6 +413,12 @@ echo $this->Session->flash();
                 );
                 echo "&nbsp;";
                 if (($redir == 'manager' || $redir == 'reviewer') && $sadr['Sadr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'sadrs', 'action' => 'copy', $sadr['Sadr']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                echo $this->Html->link(
+                  '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
+                  array('controller' => 'sadrs', 'action' => 'archive', $sadr['Sadr']['id']),
+                  array('escape' => false),
+                  __('Are you sure you want to archive the report?')
+                );
               } else {
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

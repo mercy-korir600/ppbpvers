@@ -213,7 +213,7 @@ $this->Html->script('dashboard', array('inline' => false));
               }
             }
             echo '</ol>';
-            echo $this->Html->link('All CE2Bs >>', array('controller' => 'ce2bs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+            echo $this->Html->link('All E2Bs >>', array('controller' => 'ce2bs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
             ?>
 
           </div>

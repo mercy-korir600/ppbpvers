@@ -952,4 +952,10 @@ class PadrsController extends AppController
         }
         return $this->redirect(array('action' => 'index'));
     }
+    
+	public function manager_archive($id=null) {
+
+        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'index'));
+	}
 }

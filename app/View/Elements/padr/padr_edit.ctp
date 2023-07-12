@@ -436,49 +436,55 @@ $this->Html->css('padr', false, array('inline' => false));
                 <h5 style="text-align: center; text-decoration: underline;">OUTCOME DETAILS</h5>
             </div>
             <div class="row-fluid report">
+
+                <p class="required">Outcome</p>
                 <?php
-                echo $this->Form->input('outcome', array(
-                    'type' => 'select',
-                    'empty' => true,
-                    'options' => array(
-                        'recovered/resolved' => 'Recovered/resolved',
-                        'recovering/resolving' => 'Recovering/resolving',
-                        'recovered/resolved with sequelae' => 'Recovered/resolved with sequelae', //sequele meaning: you've recovered but still has hidden
-                        // 'recovered/resolved with sequelae' => 'Recovered/resolved with long term effects', //sequele meaning: you've recovered but still has hidden effects
-                        'not recovered/not resolved' => 'Not recovered/not resolved',
-                        'death' => 'Death',
-                        'unknown' => 'Unknown',
-                    ),
-                    'class' => 'span4',
-                    'label' => array('class' => 'control-label required', 'text' => 'Outcome'),
-                    'after' => '<a onclick="$(\'#PadrOutcome\').removeAttr(\'disabled\'); $(\'#PadrOutcome\').val(\'\');" >
-                                <em class="accordion-toggle">clear!</em></a> </div>',
-                ));
 
                 echo $this->Form->input('outcome', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
-                    'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Outcome </div>
-                                <div class="controls">  <input type="hidden" value="" id="PadrReactionOn_" name="data[Padr][outcome]"> <label class="radio inline">',
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<div class="control-group"> <label class="radio inline">',
                     'after' => '</label>',
                     'options' => array('recovered/resolved' => 'Recovered/resolved'),
                 ));
+
                 echo $this->Form->input('outcome', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'outcome',
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<label class="radio inline">',    'after' => '</label>',
+                    'options' => array('recovering/resolving' => 'Recovering/resolving'),
+                ));
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<label class="radio inline">',    'after' => '</label>',
+                    'options' => array('recovered/resolved with sequelae' => 'Recovered/resolved with sequelae'),
+                ));
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<label class="radio inline">',    'after' => '</label>',
+                    'options' => array('not recovered/not resolved' => 'Not recovered/not resolved'),
+                ));
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'outcome',
+                    'before' => '<label class="radio inline">',    'after' => '</label>',
+                    'options' => array('death' => 'Death'),
+                ));
+                echo $this->Form->input('outcome', array(
+                    'type' => 'radio',    'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'outcome',
                     'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
                     'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
                     'before' => '<label class="radio inline">',
                     'after' => '</label>
-                            <a class="tooltipper" data-original-title="Clears the checked value"
-                            onclick="$(\'.outcome\').removeAttr(\'checked disabled\')">
-                            <em class="accordion-toggle">clear!</em></a> 
-                            </div> </div>',
-                    'options' => array('unknown' => 'Unknown'),
+                            <a class="button"
+                                    onclick="$(\'.outcome\').removeAttr(\'checked\');" >
+                                    <em class="accordion-toggle">clear!</em></a>
+                        </div>',
+                    'options' => array('Unknown' => 'Unknown'),
                 ));
+
 
                 ?>
             </div>
             <!-- End of outcome section -->
-            <?php echo $this->element('multi/attachments', ['model' => 'Padr', 'group' => 'attachment','examples'=>'']); ?>
+            <?php echo $this->element('multi/attachments', ['model' => 'Padr', 'group' => 'attachment', 'examples' => '']); ?>
             <div class="row-fluid report">
                 <?php
                 echo $this->Form->input('consent', array(

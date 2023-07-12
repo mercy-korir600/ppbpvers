@@ -260,6 +260,8 @@ class SadrsController extends AppController
         }
         // add deleted condition to criteria
         $criteria['Sadr.deleted'] = false;
+        $criteria['Sadr.archived'] = false;
+        
         // if (!isset($this->passedArgs['submit'])) $criteria['Sadr.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Sadr.created' => 'desc');
@@ -1341,5 +1343,21 @@ class SadrsController extends AppController
         $this->set(compact('frequency'));
         $dose = $this->Sadr->SadrListOfDrug->Dose->find('list');
         $this->set(compact('dose'));
+    }
+    public function manager_archive($id = null)
+    {
+        $this->Sadr->id = $id;
+        if (!$this->Sadr->exists()) {
+            throw new NotFoundException(__('Invalid SADR'));
+        }
+        $sadr = $this->Sadr->read(null, $id);
+        $sadr['Sadr']['archived'] = true;
+        $sadr['Sadr']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Sadr->save($sadr, array('validate' => false))) {
+            $this->Session->setFlash(__('SADR Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('SADR was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
     }
 }

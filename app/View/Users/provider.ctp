@@ -50,6 +50,8 @@ $this->Html->css('upgrade', false, array('inline' => false));
     <div class="row-fluid left">
         <div class="span4">
             <p>The reporting tools available include:</p><br>
+
+            <p style="text-align: left;">1. Suspected Adverse Drug Reaction</p>
             <p style="text-align: left;">2. Adverse Events Following Immunization</p>
             <p style="text-align: left;">3. Poor Quality health products and technologies</p>
             <p style="text-align: left;">4. Medication Errors</p>
@@ -75,9 +77,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
 </div>
 
 <div class="container marketing">
-    <br> <br> <br>
-  
-    <br><br>
+    
     <div class="row-fluid">
 
         <div class="container">
@@ -113,7 +113,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
                         <a class="card-title">
-                            Guide to reporting suspected medicine side effects
+                            Guide to reporting suspected adverse drug reactions
                         </a>
                     </div>
                     <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">

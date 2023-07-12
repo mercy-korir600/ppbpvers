@@ -83,7 +83,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'type' => 'checkbox',  'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 						'between' => '<input type="hidden" value="0" id="Sadr_report_sadr_" name="data[Sadr][report_sadr]">
                                                                     <label class="checkbox">',
-						'after' => 'Suspected medicine side effects </label>',
+						'after' => 'Suspected adverse drug reaction </label>',
 					));
 					echo $this->Form->input('report_therapeutic', array(
 						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,

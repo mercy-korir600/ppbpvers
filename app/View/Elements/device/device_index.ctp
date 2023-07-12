@@ -440,6 +440,11 @@ $this->assign('DEV', 'active');
                 );
                 echo "&nbsp;";
                 if (($redir == 'manager' || $redir == 'reviewer') && $device['Device']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'devices', 'action' => 'copy', $device['Device']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                echo $this->Html->link(
+                  '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
+                  array('controller' => 'devices', 'action' => 'archive', $device['Device']['id']),
+                  array('escape' => false), __('Are you sure you want to archive the report?')
+                );
               } else {
                 echo $this->Html->link(
                   '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

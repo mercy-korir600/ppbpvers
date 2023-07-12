@@ -1162,4 +1162,9 @@ class MedicationsController extends AppController
         $designations = $this->Medication->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('counties', 'designations'));
     }
+    public function manager_archive($id=null) {
+
+        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
+        $this->redirect(array('action' => 'index'));
+	}
 }
