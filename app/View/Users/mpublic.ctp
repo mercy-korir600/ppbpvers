@@ -45,7 +45,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
 
         <div class="container">
             <div class="header_">
-                <h2>Guidelines</h2>
+                <h2>Guidance</h2>
                 <br>
             </div>
             <div id="accordion" class="accordion">

@@ -125,6 +125,7 @@ class SaefisController extends AppController
 
         $criteria = $this->Saefi->parseCriteria($this->passedArgs);
         $criteria['Saefi.deleted'] = false;
+        $criteria['Saefi.archived'] = false;
         $criteria['Saefi.copied !='] = '1';
         if (isset($this->request->query['submitted'])) {
             if ($this->request->query['submitted'] == 1) {
@@ -552,7 +553,18 @@ class SaefisController extends AppController
     }
     public function manager_archive($id=null) {
 
-        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
-        $this->redirect(array('action' => 'index'));
+        $this->Saefi->id = $id;
+        if (!$this->Saefi->exists()) {
+            throw new NotFoundException(__('Invalid SAEFI'));
+        }
+        $report = $this->Saefi->read(null, $id);
+        $report['Saefi']['archived'] = true;
+        $report['Saefi']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Saefi->save($report, array('validate' => false))) {
+            $this->Session->setFlash(__('SAEFI Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('SAEFI was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
 	}
 }

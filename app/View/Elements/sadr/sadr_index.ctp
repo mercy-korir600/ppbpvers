@@ -133,8 +133,12 @@ echo $this->Session->flash();
           <td colspan="2">
             <h5>Report on:</h5>
             <?php
-            echo $this->Form->input('report_sadr', array('label' => 'SADR', 'hiddenField' => false));
+            echo $this->Form->input('report_sadr', array('label' => 'Suspected adverse drug reaction', 'hiddenField' => false)); 
             echo $this->Form->input('report_therapeutic', array('label' => 'Therapeutic Ineffectiveness', 'hiddenField' => false));
+            echo $this->Form->input('report_misuse', array('label' => 'Suspected misuse, abuse and / or dependence on medicines', 'hiddenField' => false,'type' => 'checkbox',));
+            echo $this->Form->input('report_off_label', array('label' => 'Off-label', 'hiddenField' => false,'type' => 'checkbox',));
+            
+
             ?>
           </td>
           <td>

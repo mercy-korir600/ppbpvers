@@ -133,6 +133,7 @@ class Ce2bsController extends AppController
             $criteria['Ce2b.submitted'] = array(2, 3);
         }
         $criteria['Ce2b.deleted'] = false;
+        $criteria['Ce2b.archived'] = false;
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Ce2b.created' => 'desc');
         $this->set('ce2bs', Sanitize::clean($this->paginate(), array('encode' => false)));
@@ -274,11 +275,11 @@ class Ce2bsController extends AppController
                             $xmlString = $xml->asXML();
                             $this->Ce2b->saveField('e2b_content', $xmlString);
                         } catch (Exception $e) {
-                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later' . $e), 'alerts/flash_error');
+                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
                     } catch (XmlException $e) {
-                        $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later' . $e), 'alerts/flash_error');
+                        $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                     }
 
@@ -528,7 +529,18 @@ class Ce2bsController extends AppController
     }
     public function manager_archive($id=null) {
 
-        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
-        $this->redirect(array('action' => 'index'));
+        $this->Ce2b->id = $id;
+        if (!$this->Ce2b->exists()) {
+            throw new NotFoundException(__('Invalid E2B'));
+        }
+        $report = $this->Ce2b->read(null, $id);
+        $report['Ce2b']['archived'] = true;
+        $report['Ce2b']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Ce2b->save($report, array('validate' => false))) {
+            $this->Session->setFlash(__('E2B Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('E2B was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
 	}
 }

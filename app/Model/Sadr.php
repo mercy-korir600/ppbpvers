@@ -29,6 +29,8 @@ class Sadr extends AppModel
         'medicine_name' => array('type' => 'query', 'method' => 'findByMedicineName', 'encode' => true),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
+        'report_misuse' => array('type' => 'value'),
+        'report_off_label' => array('type' => 'value'),
         'device' => array('type' => 'value'),
         'medicinal_product' => array('type' => 'value'),
         'blood_products' => array('type' => 'value'),
@@ -522,7 +524,7 @@ class Sadr extends AppModel
 
     public function reportOn($field = null)
     {
-        return !empty($this->data['Sadr']['report_sadr']) || !empty($this->data['Sadr']['report_therapeutic']);
+        return !empty($this->data['Sadr']['report_sadr']) || !empty($this->data['Sadr']['report_therapeutic']) || !empty($this->data['Sadr']['report_misuse']) || !empty($this->data['Sadr']['report_off_label']);
     }
 
     public function productCategory($field = null)

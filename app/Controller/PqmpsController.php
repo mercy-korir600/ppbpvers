@@ -172,6 +172,8 @@ class PqmpsController extends AppController
         }
         // add deleted to criteria
         $criteria['Pqmp.deleted'] = false;
+        $criteria['Pqmp.archived'] = false;
+        
         // if (!isset($this->passedArgs['submit'])) $criteria['Pqmp.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Pqmp.created' => 'desc');
@@ -1236,7 +1238,18 @@ class PqmpsController extends AppController
     }
     public function manager_archive($id=null) {
 
-        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
-        $this->redirect(array('action' => 'index'));
+        $this->Pqmp->id = $id;
+        if (!$this->Pqmp->exists()) {
+            throw new NotFoundException(__('Invalid PQHTP'));
+        }
+        $report = $this->Pqmp->read(null, $id);
+        $report['Pqmp']['archived'] = true;
+        $report['Pqmp']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Pqmp->save($report, array('validate' => false))) {
+            $this->Session->setFlash(__('PQHTP Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('PQHTP was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
 	}
 }

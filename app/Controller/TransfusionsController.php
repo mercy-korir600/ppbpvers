@@ -156,6 +156,8 @@ class TransfusionsController extends AppController
         $criteria = $this->Transfusion->parseCriteria($this->passedArgs);
         // add deleted=false to criteria
         $criteria['Transfusion.deleted'] = false;
+        $criteria['Transfusion.archived'] = false;
+        
         $criteria['Transfusion.copied !='] = '1';
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
             $criteria['Transfusion.submitted'] = array(0, 1);
@@ -1082,8 +1084,18 @@ class TransfusionsController extends AppController
     }
     public function manager_archive($id = null)
     {
-
-        $this->Session->setFlash(__('Feature currently under development'), 'alerts/flash_success');
-        $this->redirect(array('action' => 'index'));
+        $this->Transfusion->id = $id;
+        if (!$this->Transfusion->exists()) {
+            throw new NotFoundException(__('Invalid blood transfusion reaction'));
+        }
+        $report = $this->Transfusion->read(null, $id);
+        $report['Transfusion']['archived'] = true;
+        $report['Transfusion']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Transfusion->save($report, array('validate' => false))) {
+            $this->Session->setFlash(__('Blood transfusion reaction  Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('Blood transfusion reaction  was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
     }
 }

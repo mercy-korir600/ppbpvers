@@ -82,7 +82,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
 
         <div class="container">
             <div class="header_">
-                <h2>Guidelines</h2>
+                <h2>Guidance</h2>
                 <br>
             </div>
             <div id="accordion" class="accordion">
@@ -122,7 +122,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
 
                             Report on the following:</p>
 
-                        <p style="text-align: left;">1. All expected and unexpected suspected medicine side effectss due to medicines, herbal products and cosmeceuticals (cosmetics with medical claims)</p>
+                        <p style="text-align: left;">1. All expected and unexpected Suspected adverse drug reactions due to medicines, herbal products and cosmeceuticals (cosmetics with medical claims)</p>
                         <p style="text-align: left;">2. Any suspected therapeutic ineffectiveness.</p>
                         <p style="text-align: left;">3. All suspected ADRs and/or AEs that may be associated with suspected or confirmed quality defects including adulteration or contamination, or falsified medicine</p>
                         <p style="text-align: left;">4. Case reports of acute and chronic poisoning (toxicity)</p>
@@ -180,7 +180,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                 <div class="card mb-0">
                     <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
                         <a class="card-title">
-                            Guide to reporting medical errors
+                            Guide to reporting medication errors
                         </a>
                     </div>
                     <div id="collapseFive" class="collapse" data-parent="#accordion">

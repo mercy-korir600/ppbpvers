@@ -209,7 +209,7 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
                 '1' => 'Unsubmitted'
               )
             ));
-           
+
             echo $this->Form->input('health_program', array(
               'type' => 'select', 'options' => [
                 'Malaria program' => 'Malaria program', 'National Vaccines and immunisation program' => 'National Vaccines and immunisation program',
@@ -218,9 +218,9 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
               ], 'empty' => true,
               'label' => array('class' => 'control-label', 'text' => 'Public Health Program'),
               'class' => 'input-xlarge'
-            ));   
+            ));
             ?>
-            
+
           </td>
           <td>
             <h5>Complaint</h5>
@@ -231,15 +231,15 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
             echo $this->Form->input('caking', array('label' => 'Caking', 'hiddenField' => false));
             echo $this->Form->input('moulding', array('label' => 'Moulding', 'hiddenField' => false));
             ?>
-             <?php
-              echo $this->Form->input('sending_device', array(
-                'type' => 'select', 'options' => [
-                  '1' => 'Web',
-                  '2' => 'Mobile', 
-                ], 'empty' => true,
-                'label' => array('class' => 'control-label', 'text' => '<b>Sending Device</b>'),
-                'class' => 'input-xlarge'
-              ));  ?>
+            <?php
+            echo $this->Form->input('sending_device', array(
+              'type' => 'select', 'options' => [
+                '1' => 'Web',
+                '2' => 'Mobile',
+              ], 'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => '<b>Sending Device</b>'),
+              'class' => 'input-xlarge'
+            ));  ?>
           </td>
           <td>
             <?php
@@ -410,10 +410,11 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
                 );
                 echo "&nbsp;";
                 if (($redir == 'manager' || $redir == 'reviewer') && $pqmp['Pqmp']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'pqmps', 'action' => 'copy', $pqmp['Pqmp']['id']), array('escape' => false), __('Create a clean copy to edit?'));
-                echo $this->Html->link(
+                if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                   array('controller' => 'pqmps', 'action' => 'archive', $pqmp['Pqmp']['id']),
-                  array('escape' => false), __('Are you sure you want to archive the report?')
+                  array('escape' => false),
+                  __('Are you sure you want to archive the report?')
                 );
               } else {
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
