@@ -1481,7 +1481,7 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-        $monthly = $this->Medication->find('all', array(
+        $months = $this->Medication->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -1660,7 +1660,7 @@ class ReportsController extends AppController
         $this->set(compact('age'));
         $this->set(compact('year'));
         $this->set(compact('facilities'));
-        $this->set(compact('monthly'));
+        $this->set(compact('months'));
         $this->set(compact('process'));
         $this->set(compact('error'));
         $this->set(compact('designation'));
@@ -1670,7 +1670,7 @@ class ReportsController extends AppController
         $this->set(compact('gi'));
         $this->set(compact('ge'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'monthly', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
 
 
         if ($this->Session->read('Auth.User.group_id') == 2) {

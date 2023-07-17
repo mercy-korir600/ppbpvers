@@ -197,12 +197,12 @@ echo $this->Session->flash();
           ));  ?>
         </td>
         <td> <?php
-              echo $this->Form->input('sending_device', array(
+              echo $this->Form->input('device', array(
                 'type' => 'select', 'options' => [
-                  '1' => 'Web',
-                  '2' => 'Mobile',
-                  '3' => 'USSD',
-                  '4' => 'ITECH',
+                  '0' => 'Web',
+                  '1' => 'Mobile',
+                  '2' => 'USSD',
+                  '3' => 'ITECH',
                 ], 'empty' => true,
                 'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
                 'class' => 'input-xlarge'

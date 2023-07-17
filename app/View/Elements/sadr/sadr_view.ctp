@@ -50,7 +50,7 @@
 							<p> <?php echo ($sadr['Sadr']['report_sadr']   ? $ichecked : $nchecked ); ?> Suspected adverse drug reaction  </p>
 							<p> <?php echo ($sadr['Sadr']['report_therapeutic']   ? $ichecked : $nchecked ); ?> Suspected Therapeutic ineffectiveness </p>
 							<p> <?php echo ($sadr['Sadr']['report_misuse']   ? $ichecked : $nchecked ); ?> Suspected misuse, abuse and / or dependence on medicines </p>
-							<p> <?php echo ($sadr['Sadr']['report_off_label']   ? $ichecked : $nchecked ); ?> Off-label </p>
+							<p> <?php echo ($sadr['Sadr']['report_off_label']   ? $ichecked : $nchecked ); ?> Off-label Use </p>
 						</td>
 						<td style="width: 50%;">
 							<h5>Product category (Tick appropriate box)</h5>

@@ -148,7 +148,7 @@ $this->Html->css('home', false, array('inline' => false));
         <div class="span5">
           <div class="card">
             <div class="card-header">
-              <h4>Patient Sex Distribution</h4>
+              <h4>Gender Distribution</h4>
             </div>
             <div class="card-body">
               <div class="tabs">
@@ -386,7 +386,7 @@ $this->Html->css('home', false, array('inline' => false));
           <div class="span6">
             <div class="inner_section_drugs">
               <div class="launch">
-                <h4>Patient Sex Distribution</h4>
+                <h4>Gender Distribution</h4>
                 <div class="tabs">
                   <ul style="background-color: transparent;">
                       <li style="background-color: #d3d3d3;  border: none;"><a href="#tabs-chart"><i class="fa fa-pie-chart"></i>Chart</a></li>

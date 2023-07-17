@@ -45,7 +45,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
     <div class="span6">
-        <h4>Patient Sex Distribution</h4>
+        <h4>Gender Distribution</h4>
         <div class="tab">
             <button class="tablinks" onclick="sexTab(event, 'sexChart')" id="sexOpen">
                 <i class="fa fa-pie-chart"></i> Chart
@@ -205,7 +205,7 @@ $this->Html->css('summary', null, array('inline' => false));
     </div>
 </div>
 <hr>
- 
+
 <div class="row-fluid">
     <div class="span12">
         <h4>Medication Errors per Product (Intended)</h4>
@@ -360,8 +360,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($process as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value['Medication']['process_occur']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['Medication']['process_occur'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -402,8 +402,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($gi as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value['MedicationProduct']['generic_name_i']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['MedicationProduct']['generic_name_i'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -444,8 +444,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($ge as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value['MedicationProduct']['generic_name_ii']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['MedicationProduct']['generic_name_ii'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -487,8 +487,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($factor as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value[0]['factor']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value[0]['factor'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -525,8 +525,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     <?php
                     foreach ($error as $key => $value) {
                         echo "<tr>";
-                        echo "<th>".$value[0]['error']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value[0]['error'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -606,6 +606,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(sextabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
     function genericTab(evt, generictabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentgeneric");
@@ -619,6 +620,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(generictabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
     function genericETab(evt, genericEtabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentgenericE");
@@ -632,6 +634,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(genericEtabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
     function ageTab(evt, agetabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentage");
@@ -788,7 +791,7 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("facilityOpen").click();
     document.getElementById("genericOpen").click();
     document.getElementById("genericEOpen").click();
-    
+
     Highcharts.chart('sadrs-generic', {
         data: {
             table: 'datatablegeneric'
@@ -870,8 +873,7 @@ $this->Html->css('summary', null, array('inline' => false));
             type: 'pie'
         },
         title: {
-            text: '',
-
+            text: ''
         },
         yAxis: {
             allowDecimals: false,
@@ -879,11 +881,16 @@ $this->Html->css('summary', null, array('inline' => false));
                 text: 'Units'
             }
         },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                }
             }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
         }
     });
     Highcharts.chart('sadrs-age', {
@@ -1047,11 +1054,16 @@ $this->Html->css('summary', null, array('inline' => false));
                 text: 'Units'
             }
         },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                }
             }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
         }
     });
     Highcharts.chart('sadrs-reason', {

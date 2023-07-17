@@ -27,9 +27,25 @@ class SadrsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit');
+        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit', 'manager_check_missing');
     }
-
+    public function manager_check_missing()
+    {
+        $data = $this->Sadr->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+                ),
+                'order' => array('Sadr.id' => 'DESC')
+            )
+        );
+        foreach($data as $dt){
+            debug($dt['Sadr']['reference_no']);
+            exit;
+        }
+       
+    }
     public function yellowcard($id = null)
     {
         $this->Sadr->id = $id;
@@ -261,7 +277,7 @@ class SadrsController extends AppController
         // add deleted condition to criteria
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
-        
+
         // if (!isset($this->passedArgs['submit'])) $criteria['Sadr.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Sadr.created' => 'desc');

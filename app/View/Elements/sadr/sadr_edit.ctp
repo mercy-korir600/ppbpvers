@@ -101,7 +101,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 						'between' => '<input type="hidden" value="0" id="Sadr_report_off_label_" name="data[Sadr][report_off_label]">
                                                                     <label class="checkbox">',
-						'after' => 'Off-label </label>',
+						'after' => 'Off-label Use</label>',
 					));
 					?>
 				</div>

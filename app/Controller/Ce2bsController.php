@@ -380,6 +380,9 @@ class Ce2bsController extends AppController
     public function reporter_add()
     {
         # code...
+        $user=$this->Auth->User();
+        // debug($user['name_of_institution']);
+        // exit;
         $this->Ce2b->create();
         $this->Ce2b->save(['Ce2b' => [
             'user_id' => $this->Auth->User('id'),
@@ -391,6 +394,7 @@ class Ce2bsController extends AppController
             'reporter_name' => $this->Auth->User('name'),
             'reporter_email' => $this->Auth->User('email'),
             'reporter_phone' => $this->Auth->User('phone_no'),
+            'company_name' =>$user['name_of_institution']
         ]], false);
         $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));

@@ -45,7 +45,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
     <div class="span6">
-        <h4>Patient Sex Distribution</h4>
+        <h4>Gender Distribution</h4>
         <div class="tab">
             <button class="tablinks" onclick="sexTab(event, 'sexChart')" id="sexOpen">
                 <i class="fa fa-pie-chart"></i> Chart
@@ -678,11 +678,16 @@ $this->Html->css('summary', null, array('inline' => false));
                 text: 'Units'
             }
         },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                }
             }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
         }
     });
     Highcharts.chart('sadrs-serious', {
@@ -702,11 +707,16 @@ $this->Html->css('summary', null, array('inline' => false));
                 text: 'Units'
             }
         },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                }
             }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
         }
     });
 
@@ -816,8 +826,7 @@ $this->Html->css('summary', null, array('inline' => false));
             type: 'pie'
         },
         title: {
-            text: '',
-
+            text: ''
         },
         yAxis: {
             allowDecimals: false,
@@ -825,13 +834,19 @@ $this->Html->css('summary', null, array('inline' => false));
                 text: 'Units'
             }
         },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                }
             }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
         }
     });
+
     Highcharts.chart('sadrs-age', {
         data: {
             table: 'datatableage'

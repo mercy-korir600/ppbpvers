@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="span6">
-        <h4>Patient Sex Distribution</h4>
+        <h4>Gender Distribution</h4>
         <div class="tab">
             <button class="tablinks" onclick="sexTab(event, 'sexChart')" id="sexOpen">
                 <i class="fa fa-pie-chart"></i> Chart
@@ -255,8 +255,7 @@
             type: 'pie'
         },
         title: {
-            text: '',
-
+            text: ''
         },
         yAxis: {
             allowDecimals: false,
@@ -267,7 +266,8 @@
         tooltip: {
             formatter: function() {
                 return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
+                    this.point.y + ' ' + this.point.name.toLowerCase() +
+                    ' (' + Highcharts.numberFormat(this.point.percentage, 1) + '%)';
             }
         }
     });

@@ -136,7 +136,7 @@ echo $this->Session->flash();
             echo $this->Form->input('report_sadr', array('label' => 'Suspected adverse drug reaction', 'hiddenField' => false)); 
             echo $this->Form->input('report_therapeutic', array('label' => 'Therapeutic Ineffectiveness', 'hiddenField' => false));
             echo $this->Form->input('report_misuse', array('label' => 'Suspected misuse, abuse and / or dependence on medicines', 'hiddenField' => false,'type' => 'checkbox',));
-            echo $this->Form->input('report_off_label', array('label' => 'Off-label', 'hiddenField' => false,'type' => 'checkbox',));
+            echo $this->Form->input('report_off_label', array('label' => 'Off-label Use', 'hiddenField' => false,'type' => 'checkbox',));
             
 
             ?>
