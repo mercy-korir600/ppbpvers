@@ -53,6 +53,15 @@ class Ce2b extends AppModel
 			'fields' => '',
 			'order' => ''
 		),
+		'FacilityCode' => array(
+			'className' => 'FacilityCode',
+			'foreignKey' => 'company_code',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+
+		// 
 	);
 	public $hasMany = array(
 		'Attachment' => array(

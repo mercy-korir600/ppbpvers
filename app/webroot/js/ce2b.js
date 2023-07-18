@@ -1,5 +1,31 @@
 $(document).ready(function () {
 
+    var cache3 = {}, lastXhr;
+    $("#Ce2bCompanyName").autocomplete({
+        source: function (request, response) {
+            var term = request.term;
+            if (term in cache3) {
+                response(cache3[term]);
+                return;
+            }
+
+            lastXhr = $.getJSON("/facility_codes/autocomplete.json", request, function (data, status, xhr) {
+                cache3[term] = data;
+                if (xhr === lastXhr) {
+                    response(data);
+                }
+            });
+        },
+        select: function (event, ui) {
+            $("#Ce2bCompanyName").val(ui.item.label);
+            $("#Ce2bCompanyCode").val(ui.item.value); 
+            return false;
+        }
+    })
+
+
+
+
     $("#Ce2bCountyId").combobox();
 
     if ($('#Ce2bReportType').val() == 'Followup') {

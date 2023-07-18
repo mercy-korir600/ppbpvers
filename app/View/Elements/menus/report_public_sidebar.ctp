@@ -268,5 +268,13 @@
                       array('escape' => false));
         ?>
       </li> -->
+
+      <li class="nav-header"><i class="fa fa-thermometer-full" aria-hidden="true"></i> E2B</li>
+      <li class="<?php echo $this->fetch('e2b-summary'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> E2B',  array('controller' => 'reports', 'action'=>'e2b_summary', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="divider"></li>
     </ul>

@@ -56,10 +56,12 @@ $this->Html->script('ce2b', array('inline' => false));
                     <?php
                     echo $this->Form->input('company_name', array(
                         'label' => array('class' => 'control-label required', 'text' => 'Company Name<span style="color:red;">*</span>'),
-                        'placeholder' => ' ', 'title' => 'Company Name',
-                        'data-content' => '',
+                        'placeholder' => ' ', 'title' => 'Company Name', 
                         'after' => '<p class="help-block"> </p></div>',
                         'class' => 'span9',
+                    ));
+                    echo $this->Form->input('company_code', array(
+                        'type'=>'hidden'
                     ));
                     echo $this->Form->input('comment', array(
                         'class' => 'span9',

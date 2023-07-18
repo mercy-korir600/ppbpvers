@@ -10,7 +10,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary');
+    public $uses = array('Sadr', 'Aefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary','Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -77,7 +77,8 @@ class ReportsController extends AppController
             'saes_by_gender',
             'saes_by_medicine',
             'saes_by_concomittant',
-            'landing'
+            'landing',
+            'e2b_summary'
         );
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
@@ -86,7 +87,45 @@ class ReportsController extends AppController
         $this->set('is_mobile', $this->is_mobile);
     }
 
+    public function e2b_summary()
+    {
+        $criteria['Ce2b.submitted'] = array(1, 2);
+        $criteria['Ce2b.copied !='] = '1';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Ce2b.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        
+        if (!empty($this->request->data['Report']['company_name'])) {
+            $criteria['Ce2b.company_name'] = $this->request->data['Report']['company_name'];
+        }
 
+        $facility_data = $this->Ce2b->find('all', array(
+            'fields' => array('company_name', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('company_name'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $year = $this->Ce2b->find('all', array(
+            'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('year(ifnull(created, created))'),
+            'order' => array('year'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $months = $this->Ce2b->find('all', array(
+            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $this->set(compact('facility_data','year','months'));
+        $this->set('_serialize','facility_data','year','months');
+        $this->render('upgrade/e2b_summary');
+    }
 
     /**
      * site inspections per month method
@@ -637,7 +676,7 @@ class ReportsController extends AppController
 
 
         // GET SUMMARY BY AGE GROUP 
-        
+
 
         $case = "((case 
         when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
@@ -651,8 +690,8 @@ class ReportsController extends AppController
         when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
         else 'unknown'
        end))";
-    //    debug($case);
-    //    exit;
+        //    debug($case);
+        //    exit;
 
         $age = $this->Aefi->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),

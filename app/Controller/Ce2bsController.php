@@ -376,12 +376,13 @@ class Ce2bsController extends AppController
         $this->set(compact('sub_counties'));
         $designations = $this->Ce2b->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
+ 
     }
     public function reporter_add()
     {
         # code...
         $user=$this->Auth->User();
-        // debug($user['name_of_institution']);
+        // debug($user);
         // exit;
         $this->Ce2b->create();
         $this->Ce2b->save(['Ce2b' => [
@@ -394,7 +395,10 @@ class Ce2bsController extends AppController
             'reporter_name' => $this->Auth->User('name'),
             'reporter_email' => $this->Auth->User('email'),
             'reporter_phone' => $this->Auth->User('phone_no'),
-            'company_name' =>$user['name_of_institution']
+            'company_name' =>$user['name_of_institution'],
+            'company_code' =>$this->Auth->User('institution_code'),
+
+            // 
         ]], false);
         $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
