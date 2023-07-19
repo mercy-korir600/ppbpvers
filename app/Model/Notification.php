@@ -13,6 +13,7 @@ class Notification extends AppModel {
             'reference_no' => array('type' => 'like', 'encode' => true),
             'protocol_no' => array('type' => 'like', 'encode' => true, 'field' => 'Notification.system_message'),
             'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'SiteInspection.created BETWEEN ? AND ?'),
+			'model' => array('type' => 'like', 'encode' => true),
         );
     public function makeRangeCondition($data = array()) {
             if(!empty($data['start_date'])) $start_date = date('Y-m-d', strtotime($data['start_date']));

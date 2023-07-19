@@ -58,6 +58,29 @@ $this->Html->script('highcharts/modules/data', array('inline' => false));
           </th>
           <th>
             <?php
+            echo $this->Form->input('model', array(
+              'div' => false, 'class' => 'span12 unauthorized_index',
+              'label' => array('class' => 'required', 'text' => 'Report Type.'),
+              'type' => 'select',
+              'empty' => true,
+              'options' => array(
+                'User'=>'User Registration',
+                'Sadr'=>'SADR',
+                'Padr' => 'PADR', 
+                'Aefi' =>'AEFI',
+                'Saefi' =>'Investigation Reports',
+                'Pqmp' => 'PQHPT',
+                'Ce2b' => 'E2B',
+                'Device' => 'Devices',
+                'Medication' =>'Medication Errors',
+                'Transfusion' =>'Transfusion Reaction'
+              ),
+            ));
+            ?>
+
+          </th>
+          <th>
+            <?php
             echo $this->Form->input('pages', array(
               'type' => 'select', 'div' => false, 'class' => 'span12', 'selected' => $this->request->params['paging']['Notification']['limit'],
               'empty' => true,
@@ -143,8 +166,8 @@ $this->Html->script('highcharts/modules/data', array('inline' => false));
     $(".start_date").datepicker({
       changeMonth: true,
       changeYear: true,
-      dateFormat: 'dd-mm-yy', 
-      maxDate: new Date(), 
+      dateFormat: 'dd-mm-yy',
+      maxDate: new Date(),
 
     });
     $(".end_date").datepicker({

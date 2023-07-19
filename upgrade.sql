@@ -55,6 +55,7 @@ ALTER TABLE `medications` ADD `archived` TINYINT NULL DEFAULT '0' AFTER `copied`
 ALTER TABLE `transfusions` ADD `archived` TINYINT NULL DEFAULT '0' AFTER `copied`, ADD `archived_date` DATETIME NULL DEFAULT NULL AFTER `archived`
 ALTER TABLE `ce2bs` ADD `company_code` INT NULL DEFAULT NULL AFTER `assigned_by`;
 ALTER TABLE `ce2bs` CHANGE `company_code` `company_code` VARCHAR(255) NULL DEFAULT NULL;
+ALTER TABLE `pqmps` ADD `reaction_comments` TEXT NULL DEFAULT NULL AFTER `adverse_reaction`;
 
 
 

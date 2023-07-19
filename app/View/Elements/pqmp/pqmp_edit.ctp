@@ -693,6 +693,15 @@ echo $this->Form->create('Pqmp', array(
 				?>
 
 				<?php
+				echo $this->Form->input('reaction_comments', array(
+					'class' => 'span8 only_follow_up', 
+					'rows' => '2',
+					'label' => array(
+						'class' => 'control-label required', 
+						'text' => 'Add comments'
+					),
+					'after' => '<p class="help-block">  </p></div>',
+				));
 				echo "<h5>Did the product result in a medication error?</h5>";
 
 				echo $this->Form->input('medication_error', array(
@@ -897,8 +906,7 @@ echo $this->Form->create('Pqmp', array(
 			} else if ($("#PqmpProductVaccine:checked").length > 0) {
 				// Checkbox is checked
 				additionalMessage = "You'll be required to submit a Adverse Event Following Immunization Form";
-			}
-			else {
+			} else {
 				additionalMessage = "You'll be required to submit a Suspected Drug reaction Form"
 			}
 		}

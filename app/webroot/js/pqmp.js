@@ -1,4 +1,9 @@
   $( function() {
+
+
+	// only_follow_up
+	if ($('#PqmprReportType').val() == 'Followup') {
+	}
     
     $( "#PqmpCountyId" ).combobox();
     $( "#toggle" ).on( "click", function() {

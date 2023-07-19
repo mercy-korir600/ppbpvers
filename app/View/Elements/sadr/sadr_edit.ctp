@@ -1,7 +1,7 @@
 <?php
 $this->assign('SADR', 'active');
-$this->Html->script('jquery/combobox', array('inline' => false)); 
-$this->Html->script('sadr', array('inline' => false)); 
+$this->Html->script('jquery/combobox', array('inline' => false));
+$this->Html->script('sadr', array('inline' => false));
 $this->Html->css('sadr', false, array('inline' => false));
 ?>
 
@@ -112,7 +112,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
 						'before' => '<label class="radio inline">',	'after' => '</label>',
 						'options' => array('Medicinal product' => 'Medicinal product'),
-						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")', 
+						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")',
 					));
 					echo $this->Form->input('product_category', array(
 						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
@@ -123,17 +123,17 @@ $this->Html->css('sadr', false, array('inline' => false));
 					echo $this->Form->input('product_category', array(
 						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
 						'before' => '<label class="radio inline">',	'after' => '</label>',
-						'options' => array('Cosmeceuticals' => 'Cosmeceuticals'), 
+						'options' => array('Cosmeceuticals' => 'Cosmeceuticals'),
 						'onclick' => '$("#SadrProductSpecify").attr("disabled","disabled")',
 					));
 					echo $this->Form->input('product_category', array(
 						'type' => 'radio',	'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'product_category',
 						'before' => '<label class="radio inline">',	'after' => '</label><br>',
-						'options' => array('Others' => 'Others'), 
+						'options' => array('Others' => 'Others'),
 						'onclick' => '$("#SadrProductSpecify").removeAttr("disabled")',
 					));
 
-				 
+
 
 					// echo $this->Form->input('medicinal_product', array(
 					// 	'format' => array('error', 'before', 'label', 'between', 'input', 'after'),
@@ -143,42 +143,42 @@ $this->Html->css('sadr', false, array('inline' => false));
 					// 	'before' => '<i class="fa fa-check" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #007bff; border-radius: 50%;"></i>',			
 					// 	'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 					// 	'between' => '<input type="hidden" value="0" id="Sadr_medicinal_product_" name="data[Sadr][medicinal_product]">
-                    //                                                 <label class="checkbox">',
+					//                                                 <label class="checkbox">',
 					// 	'after' => 'Medicinal product </label>',
 					// ));
 					// echo $this->Form->input('herbal_product', array(
 					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 					// 	'between' => '<input type="hidden" value="0" id="Sadr_herbal_product_" name="data[Sadr][herbal_product]">
-                    //                                                 <label class="checkbox">',
+					//                                                 <label class="checkbox">',
 					// 	'after' => 'Herbal product </label>',
 					// ));
 					// echo $this->Form->input('cosmeceuticals', array(
 					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 					// 	'between' => '<input type="hidden" value="0" id="Sadr_cosmeceuticals_" name="data[Sadr][cosmeceuticals]">
-                    //                                                 <label class="checkbox">',
+					//                                                 <label class="checkbox">',
 					// 	'after' => 'Cosmeceuticals </label>',
 					// ));
 					// echo $this->Form->input('product_other', array(
 					// 	'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
 					// 	'between' => '<input type="hidden" value="0" id="Sadr_product_other_" name="data[Sadr][product_other]">
-                    //                                                 <label class="checkbox">',
+					//                                                 <label class="checkbox">',
 					// 	'after' => 'Others </label>',
 					// ));
-					
-				
+
+
 					?>
 					<br>
 					<?php
-						echo $this->Form->input('product_specify', array(
-							'label' => false, 
-							'placeholder' => '(If others, specify)', 
-							'div' => false, 
-							'between' => false, 
-							'after' => false, 
-							'class' => false,
-							'disabled' => true, 
-						));
-					 
+					echo $this->Form->input('product_specify', array(
+						'label' => false,
+						'placeholder' => '(If others, specify)',
+						'div' => false,
+						'between' => false,
+						'after' => false,
+						'class' => false,
+						'disabled' => true,
+					));
+
 					?>
 				</div>
 			</div>
@@ -305,7 +305,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'onclick' => '$("#SadrKnownAllergySpecify").attr("disabled","disabled")',
 					));
 
-					echo $this->Form->input('known_allergy_specify', array( 
+					echo $this->Form->input('known_allergy_specify', array(
 						'label' => false, 'disabled' => true, 'placeholder' => 'If yes, specify',
 						'after' => '<p class="help-block"> (specify) </p></div>'
 					));
@@ -486,11 +486,12 @@ $this->Html->css('sadr', false, array('inline' => false));
 					<h5 style="color: #884805;">Dechallenge/Rechallenge</h5>
 					<?php
 					echo "<p>Did the reaction resolve after the drug was stopped or when the dose was reduced?</p>";
+
 					echo $this->Form->input('reaction_resolve', array(
 						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
 						'class' => 'reaction_resolve',
-						'before' => '<div class="control-group ">  <div>
-                            <input type="hidden" value="" id="TransfusionReactionResolve_" name="data[Sadr][reaction_resolve]"> <label class="radio inline">',
+						'before' => '<div class="control-group radio-spacing">  <div>
+					        <input type="hidden" value="" id="TransfusionReactionResolve_" name="data[Sadr][reaction_resolve]"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
@@ -512,46 +513,49 @@ $this->Html->css('sadr', false, array('inline' => false));
 						'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
 						'before' => '<label class="radio inline">',
 						'after' => '</label>
-                                <span class="help-inline" style="padding-top: 5px;"><a class="tooltipper" data-original-title="Clear selection"
-                                onclick="$(\'.reaction_resolve\').removeAttr(\'checked disabled\')">
-                                <em class="accordion-toggle">clear!</em></a> </span>
+					            <span class="help-inline" style="padding-top: 5px;"><a class="tooltipper" data-original-title="Clear selection"
+					            onclick="$(\'.reaction_resolve\').removeAttr(\'checked disabled\')">
+					            <em class="accordion-toggle">clear!</em></a> </span>
 
-                                </div> </div>',
+					            </div> </div>',
 						'options' => array('N/A' => 'N/A'),
 					));
+					?>
+					<?php
 
 					echo "<p>Did the reaction reappear after the drug was reintroduced?</p>";
 					echo $this->Form->input('reaction_reappear', array(
-						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+						'type' => 'radio', 'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
 						'class' => 'reaction_reappear',
-						'before' => '<div class="control-group ">  <div>
-                            <input type="hidden" value="" id="TransfusionReactionResolve_" name="data[Sadr][reaction_reappear]"> <label class="radio inline">',
+						'before' => '<div class="control-group ">
+						<div>
+							<input type="hidden" value="" id="TransfusionReactionResolve_" name="data[Sadr][reaction_reappear]"> <label class="radio inline">',
 						'after' => '</label>',
 						'options' => array('Yes' => 'Yes'),
 					));
 					echo $this->Form->input('reaction_reappear', array(
-						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+						'type' => 'radio', 'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
 						'class' => 'reaction_reappear',
 						'before' => '<label class="radio inline">', 'after' => '</label>',
 						'options' => array('No' => 'No')
 					));
 					echo $this->Form->input('reaction_reappear', array(
-						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+						'type' => 'radio', 'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
 						'class' => 'reaction_reappear',
 						'before' => '<label class="radio inline">', 'after' => '</label>',
 						'options' => array('Unknown' => 'Unknown')
 					));
 					echo $this->Form->input('reaction_reappear', array(
-						'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'reaction_reappear',
+						'type' => 'radio', 'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'reaction_reappear',
 						'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
 						'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
 						'before' => '<label class="radio inline">',
 						'after' => '</label>
-                                <span class="help-inline" style="padding-top: 5px;"><a class="tooltipper" data-original-title="Clear selection"
-                                onclick="$(\'.reaction_reappear\').removeAttr(\'checked disabled\')">
-                                <em class="accordion-toggle">clear!</em></a> </span>
+							<span class="help-inline" style="padding-top: 5px;"><a class="tooltipper" data-original-title="Clear selection" onclick="$(\'.reaction_reappear\').removeAttr(\'checked disabled\')">
+									<em class="accordion-toggle">clear!</em></a> </span>
 
-                                </div> </div>',
+						</div>
+					</div>',
 						'options' => array('N/A' => 'N/A'),
 					));
 					?>
@@ -785,7 +789,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 			<!--/row-->
 			<hr>
 
-			<?php echo $this->element('multi/attachments', ['model' => 'Sadr', 'group' => 'attachment','examples'=>'']); ?>
+			<?php echo $this->element('multi/attachments', ['model' => 'Sadr', 'group' => 'attachment', 'examples' => '']); ?>
 
 			<div class="row-fluid">
 				<div class="span6">
@@ -945,3 +949,10 @@ $this->Html->css('sadr', false, array('inline' => false));
 	</div> <!-- /row -->
 	<?php echo $this->Form->end(); ?>
 </section> <!-- /row -->
+
+<style>
+	/* Custom CSS for radio inputs */
+	.radio-spacing {
+        margin-right: 15px; /* Adjust this value to control the spacing between radio button and label */
+    }
+</style>
