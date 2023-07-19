@@ -9,7 +9,8 @@ $this->assign('SADR', 'active');
     <?php if (isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) { ?> <li><a href="#formoriginal" data-toggle="tab">Original</a></li> <?php } ?>
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($sadr['Sadr']['reference_no'])) ? $sadr['Sadr']['reference_no'] : $sadr['Sadr']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) ? $sadr['SadrOriginal']['ExternalComment'] : $sadr['ExternalComment']); ?>)</a></li>
-    <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li>
+    <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
+    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
   </ul>
 
   <div class="tab-content">
@@ -83,7 +84,36 @@ $this->assign('SADR', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $oid, 'foreign_key' => $oid,
-                'model' => 'Sadr', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Sadr', 'category' => 'external', 'url' => 'report_feedback',
+                'review' => false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) ? $sadr['SadrOriginal']['ReviewComment'] : $sadr['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) ? $sadr['SadrOriginal']['id'] : $sadr['Sadr']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Sadr',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true
               ]
             ])
             ?>

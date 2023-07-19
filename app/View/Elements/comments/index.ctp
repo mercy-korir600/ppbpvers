@@ -1,6 +1,5 @@
-<!-- <div class="row"> -->
-    <!-- <div class="col-xs-12"> -->
-      <?php 
+
+    <?php 
         foreach ($comments as $key => $comment) {
       ?>
       <a class="btn btn-link btn-comment" role="button" data-toggle="collapse" href="#comment<?php echo $comment['id'] ?>" aria-expanded="false" 
@@ -9,22 +8,10 @@
       </a>
         <div id="comment<?php echo $comment['id'] ?>" class="bs-example">
             <table class="table table-condensed">
-              <tbody>
+              <tbody>  
                 <tr>
-                  <th> <p><strong>Sender</strong></p> </th> 
-                  <td> 
-                    <div>
-                      <p class="form-control-static"><?php echo $comment['sender'] ?></p>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th> <p><strong>Subject</strong></th> 
-                  <td> <p class="form-control-static"><?php echo $comment['subject'] ?></p> </td>
-                </tr> 
-                <tr>
-                  <th> <p><strong> Content </strong></th> 
-                  <td> <p class="form-control-static"><?php echo $comment['content'] ?></p> </td>
+                  <th> <p><strong> Review </strong></th> 
+                  <td> <p class="form-control-static"><?php echo $comment['review'] ?></p> </td>
                 </div> 
                 <tr>
                   <th> <p> <strong> File(s) </strong> </p> </th>

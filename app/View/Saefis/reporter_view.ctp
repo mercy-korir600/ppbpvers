@@ -74,7 +74,8 @@ $this->Html->script('comments/reviews', array('inline' => false));
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $saefi['Saefi']['id'], 'foreign_key' => $saefi['Saefi']['id'],
-                'model' => 'Saefi', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Saefi', 'category' => 'external', 'url' => 'report_feedback',
+                'review' => false
               ]
             ])
             ?>

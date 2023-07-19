@@ -31,8 +31,6 @@ class CommentsController extends AppController
           $this->loadModel('Message');
           $html = new HtmlHelper(new ThemeView());
           $message = $this->Message->find('first', array('conditions' => array('name' => 'report_feedback')));
-          // $this->loadModel($Model);
-          // $entity = $this->Sadr->find('first', array(
           $entity = ClassRegistry::init($model)->find('first', array(
             'contain' => array(),
             'conditions' => array($model . '.id' => $this->request->data['Comment']['foreign_key'])
@@ -43,26 +41,30 @@ class CommentsController extends AppController
             'conditions' => array('OR' => array('User.id' => $entity[$model]['user_id'], 'User.group_id' => 2))
           ));
           foreach ($users as $user) {
-            $actioner = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
-            $variables = array(
-              'name' => $user['User']['name'], 'reference_no' => $entity[$model]['reference_no'],
-              'comment_subject' => $this->request->data['Comment']['subject'],
-              'comment_content' => $this->request->data['Comment']['content'],
-              'reference_link' => $html->link(
-                $entity[$model]['reference_no'],
-                array('controller' => 'sadrs', 'action' => 'view', $entity[$model]['id'], $actioner => true, 'full_base' => true),
-                array('escape' => false)
-              ),
-            );
-            $datum = array(
-              'email' => $user['User']['email'],
-              'id' => $this->request->data['Comment']['foreign_key'], 'user_id' => $user['User']['id'], 'type' => 'report_feedback', 'model' => $model,
-              'subject' => CakeText::insert($message['Message']['subject'], $variables),
-              'message' => CakeText::insert($message['Message']['content'], $variables)
-            );
-            $this->loadModel('Queue.QueuedTask');
-            $this->QueuedTask->createJob('GenericEmail', $datum);
-            $this->QueuedTask->createJob('GenericNotification', $datum);
+
+            if ($this->request->data['Comment']['category'] === 'review') {
+            } else {
+              $actioner = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
+              $variables = array(
+                'name' => $user['User']['name'], 'reference_no' => $entity[$model]['reference_no'],
+                'comment_subject' => $this->request->data['Comment']['subject'],
+                'comment_content' => $this->request->data['Comment']['content'],
+                'reference_link' => $html->link(
+                  $entity[$model]['reference_no'],
+                  array('controller' => 'sadrs', 'action' => 'view', $entity[$model]['id'], $actioner => true, 'full_base' => true),
+                  array('escape' => false)
+                ),
+              );
+              $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $this->request->data['Comment']['foreign_key'], 'user_id' => $user['User']['id'], 'type' => 'report_feedback', 'model' => $model,
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+              );
+              $this->loadModel('Queue.QueuedTask');
+              $this->QueuedTask->createJob('GenericEmail', $datum);
+              $this->QueuedTask->createJob('GenericNotification', $datum);
+            }
           }
           //**********************************    END   *********************************
 
@@ -173,6 +175,22 @@ class CommentsController extends AppController
 
   public function comment_file_download($id = null)
   {
-    # code...
+    # code... 
+    $this->loadModel('Attachment');
+
+    $attachment = $this->Attachment->find('first', array(
+      'conditions' => array('Attachment.id' => $id),
+
+    ));
+
+    $filename = $attachment['Attachment']['basename'];
+    $file = WWW_ROOT . 'media/transfer/img' . DS . $filename; // Assuming your files are in the "files" folder under the webroot directory.
+
+    $this->response->file($file, array(
+      'download' => true,
+      'name' => $filename,
+    ));
+
+    return $this->response;
   }
 }

@@ -9,7 +9,8 @@ $this->assign('TRN', 'active');
     <?php if (isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) { ?> <li><a href="#formoriginal" data-toggle="tab">Original</a></li> <?php } ?>
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($transfusion['Transfusion']['reference_no'])) ? $transfusion['Transfusion']['reference_no'] : $transfusion['Transfusion']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) ? $transfusion['TransfusionOriginal']['ExternalComment'] : $transfusion['ExternalComment']); ?>)</a></li>
-    <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li>
+    <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
+    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
   </ul>
 
   <div class="tab-content">
@@ -83,7 +84,8 @@ $this->assign('TRN', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $oid, 'foreign_key' => $oid,
-                'model' => 'Transfusion', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Transfusion', 'category' => 'external', 'url' => 'report_feedback',
+                'review' => false
               ]
             ])
             ?>

@@ -82,8 +82,12 @@ $this->assign('MED', 'active');
                         $oid = ((isset($medication['MedicationOriginal']['id']) && !empty($medication['MedicationOriginal']['id'])) ? $medication['MedicationOriginal']['id'] : $medication['Medication']['id']);
                         echo $this->element('comments/add', [
                             'model' => [
-                                'model_id' => $oid, 'foreign_key' => $oid,
-                                'model' => 'Medication', 'category' => 'external', 'url' => 'report_feedback'
+                                'model_id' => $oid,
+                                'foreign_key' => $oid,
+                                'model' => 'Medication',
+                                'category' => 'external',
+                                'url' => 'report_feedback',
+                                'review' => false
                             ]
                         ])
                         ?>

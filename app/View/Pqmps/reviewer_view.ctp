@@ -83,7 +83,8 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
                         echo $this->element('comments/add', [
                             'model' => [
                                 'model_id' => $oid, 'foreign_key' => $oid,
-                                'model' => 'Pqmp', 'category' => 'external', 'url' => 'report_feedback'
+                                'model' => 'Pqmp', 'category' => 'external', 'url' => 'report_feedback',
+                                'review' => false
                             ]
                         ])
                         ?>

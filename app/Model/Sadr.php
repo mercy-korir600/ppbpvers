@@ -249,6 +249,12 @@ class Sadr extends AppModel
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ExternalComment.model' => 'Sadr', 'ExternalComment.category' => 'external'),
+        ),
+        'ReviewComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ReviewComment.model' => 'Sadr', 'ReviewComment.category' => 'review'),
         )
     );
 

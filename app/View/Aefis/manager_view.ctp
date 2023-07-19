@@ -9,7 +9,8 @@ $this->assign('Adverse Event Following Immunization', 'active');
     <?php if (isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) { ?> <li><a href="#formoriginal" data-toggle="tab">Original</a></li> <?php } ?>
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($aefi['Aefi']['reference_no'])) ? $aefi['Aefi']['reference_no'] : $aefi['Aefi']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) ? $aefi['AefiOriginal']['ExternalComment'] : $aefi['ExternalComment']); ?>)</a></li>
-    <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li>
+    <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
+    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
   </ul>
 
   <div class="tab-content">
@@ -91,6 +92,34 @@ $this->assign('Adverse Event Following Immunization', 'active');
         </div>
       </div>
     </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/list', ['comments' => ((isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) ? $aefi['AefiOriginal']['ExternalComment'] : $aefi['ExternalComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) ? $aefi['AefiOriginal']['id'] : $aefi['Aefi']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Aefi',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' =>true,
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane" id="assign_manager">
 
       <div class="amend-form">
@@ -157,6 +186,6 @@ $this->assign('Adverse Event Following Immunization', 'active');
           ?>
           </div>
       </div>
-      
+
     </div>
 </section>

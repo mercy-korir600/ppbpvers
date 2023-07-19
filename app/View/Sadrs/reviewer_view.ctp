@@ -9,7 +9,7 @@ $this->assign('SADR', 'active');
     <?php if (isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) { ?> <li><a href="#formoriginal" data-toggle="tab">Original</a></li> <?php } ?>
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($sadr['Sadr']['reference_no'])) ? $sadr['Sadr']['reference_no'] : $sadr['Sadr']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) ? $sadr['SadrOriginal']['ExternalComment'] : $sadr['ExternalComment']); ?>)</a></li>
-   
+
   </ul>
 
   <div class="tab-content">
@@ -83,7 +83,8 @@ $this->assign('SADR', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $oid, 'foreign_key' => $oid,
-                'model' => 'Sadr', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Sadr', 'category' => 'external', 'url' => 'report_feedback',
+                'review' => false
               ]
             ])
             ?>
@@ -91,6 +92,6 @@ $this->assign('SADR', 'active');
         </div>
       </div>
     </div>
-    
+
   </div>
 </section>
