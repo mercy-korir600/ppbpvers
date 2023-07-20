@@ -93,6 +93,33 @@ $this->assign('TRN', 'active');
         </div>
       </div>
     </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) ? $transfusion['TransfusionOriginal']['ReviewComment'] : $transfusion['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) ? $transfusion['TransfusionOriginal']['id'] : $transfusion['Transfusion']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid, 'foreign_key' => $oid,
+                'model' => 'Transfusion',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane" id="assign_manager">
 
       <div class="amend-form">

@@ -308,15 +308,14 @@ class DevicesController extends AppController
     {
         # code...
         if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'DEVICE_' . $id . '.pdf',  'orientation' => 'portrait');
-            // $this->response->download('DEVICE_'.$device['Device']['id'].'.pdf');
+            $this->pdfConfig = array('filename' => 'DEVICE_' . $id . '.pdf',  'orientation' => 'portrait'); 
         }
 
         $device = $this->Device->find('first', array(
             'conditions' => array('Device.id' => $id),
             'contain' => array(
-                'ListOfDevice', 'County', 'Attachment', 'Designation', 'ExternalComment',
-                'DeviceOriginal', 'DeviceOriginal.ListOfDevice', 'DeviceOriginal.County',  'DeviceOriginal.Attachment', 'DeviceOriginal.Designation', 'DeviceOriginal.ExternalComment'
+                'ListOfDevice', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
+                'DeviceOriginal', 'DeviceOriginal.ListOfDevice', 'DeviceOriginal.County',  'DeviceOriginal.Attachment', 'DeviceOriginal.Designation', 'DeviceOriginal.ExternalComment','DeviceOriginal.ReviewComment','DeviceOriginal.ExternalComment.Attachment','DeviceOriginal.ReviewComment.Attachment'
             )
         ));
         $managers = $this->Device->User->find('list', array(

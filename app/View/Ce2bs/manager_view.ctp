@@ -43,7 +43,34 @@ $this->assign('E2B', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $ce2b['Ce2b']['id'], 'foreign_key' => $ce2b['Ce2b']['id'],
-                'model' => 'Ce2b', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Ce2b', 'category' => 'external', 'url' => 'report_feedback', 'review' => false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => $ce2b['ReviewComment']]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $ce2b['Ce2b']['id'],
+                'foreign_key' => $ce2b['Ce2b']['id'],
+                'model' => 'Ce2b',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true
               ]
             ])
             ?>

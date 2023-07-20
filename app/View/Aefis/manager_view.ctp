@@ -99,7 +99,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
         <div class="row-fluid">
           <div class="span8">
             <?php
-            echo $this->element('comments/list', ['comments' => ((isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) ? $aefi['AefiOriginal']['ExternalComment'] : $aefi['ExternalComment'])]);
+            echo $this->element('comments/index', ['comments' => ((isset($aefi['AefiOriginal']['id']) && !empty($aefi['AefiOriginal']['id'])) ? $aefi['AefiOriginal']['ReviewComment'] : $aefi['ReviewComment'])]);
             ?>
           </div>
           <div class="span4 lefty">

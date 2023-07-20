@@ -203,7 +203,16 @@ class Aefi extends AppModel {
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ExternalComment.model' => 'Aefi', 'ExternalComment.category' => 'external' ),
+        ),
+        'ReviewComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ReviewComment.model' => 'Aefi', 'ReviewComment.category' => 'review' ),
         )
+
+
+        
 	);
 
 	public $validate = array(

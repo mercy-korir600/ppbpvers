@@ -182,6 +182,12 @@ class Pqmp extends AppModel
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ExternalComment.model' => 'Pqmp', 'ExternalComment.category' => 'external'),
+        ),
+        'ReviewComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ReviewComment.model' => 'Pqmp', 'ReviewComment.category' => 'review'),
         )
     );
 

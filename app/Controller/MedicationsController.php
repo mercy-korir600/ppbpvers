@@ -377,8 +377,8 @@ class MedicationsController extends AppController
         $medication = $this->Medication->find('first', array(
             'conditions' => array('Medication.id' => $id),
             'contain' => array(
-                'MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment',
-                'MedicationOriginal.MedicationProduct', 'MedicationOriginal.County', 'MedicationOriginal.Attachment', 'MedicationOriginal.Designation', 'MedicationOriginal.ExternalComment'
+                'MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment', 'ExternalComment.Attachment','ReviewComment.Attachment',
+                'MedicationOriginal.MedicationProduct', 'MedicationOriginal.County', 'MedicationOriginal.Attachment', 'MedicationOriginal.Designation', 'MedicationOriginal.ExternalComment','MedicationOriginal.ReviewComment'
             )
         ));
         $managers = $this->Medication->User->find('list', array(

@@ -96,6 +96,34 @@ $this->assign('MED', 'active');
         </div>
       </div>
     </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($medication['MedicationOriginal']['id']) && !empty($medication['MedicationOriginal']['id'])) ? $medication['MedicationOriginal']['ReviewComment'] : $medication['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($medication['MedicationOriginal']['id']) && !empty($medication['MedicationOriginal']['id'])) ? $medication['MedicationOriginal']['id'] : $medication['Medication']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Medication',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true,
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane" id="assign_manager">
 
       <div class="amend-form">

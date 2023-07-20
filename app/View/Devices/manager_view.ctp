@@ -84,7 +84,32 @@ $this->assign('DEV', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $oid, 'foreign_key' => $oid,
-                'model' => 'Device', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Device', 'category' => 'external', 'url' => 'report_feedback','review'=>false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($device['DeviceOriginal']['id']) && !empty($device['DeviceOriginal']['id'])) ? $device['DeviceOriginal']['ReviewComment'] : $device['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($device['DeviceOriginal']['id']) && !empty($device['DeviceOriginal']['id'])) ? $device['DeviceOriginal']['id'] : $device['Device']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid, 'foreign_key' => $oid,
+                'model' => 'Device', 'category' => 'review', 'url' => 'report_feedback','review'=>true
               ]
             ])
             ?>

@@ -464,7 +464,7 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-            'contain' => array('Designation', 'Attachment', 'ExternalComment')
+            'contain' => array('Designation', 'Attachment', 'ExternalComment','ExternalComment.Attachment','ReviewComment','ReviewComment.Attachment')
         ));
 
         $data = [];

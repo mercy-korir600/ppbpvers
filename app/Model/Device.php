@@ -174,6 +174,12 @@ class Device extends AppModel
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ExternalComment.model' => 'Device', 'ExternalComment.category' => 'external'),
+        ),
+        'ReviewComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ReviewComment.model' => 'Device', 'ReviewComment.category' => 'review'),
         )
     );
 

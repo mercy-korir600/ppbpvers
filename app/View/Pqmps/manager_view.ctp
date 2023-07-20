@@ -93,6 +93,34 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
         </div>
       </div>
     </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+              echo $this->element('comments/index', ['comments' => ((isset($pqmp['PqmpOriginal']['id']) && !empty($pqmp['PqmpOriginal']['id'])) ? $pqmp['PqmpOriginal']['ReviewComment'] : $pqmp['ReviewComment'])]);
+             ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($pqmp['PqmpOriginal']['id']) && !empty($pqmp['PqmpOriginal']['id'])) ? $pqmp['PqmpOriginal']['id'] : $pqmp['Pqmp']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Pqmp',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' =>true,
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane" id="assign_manager">
       <div class="amend-form">
         <?php

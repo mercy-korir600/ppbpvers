@@ -27,7 +27,7 @@ $this->assign('PADR', 'active');
 				);
 				?>
 			</div>
-
+<!-- 
 			<div class="amend-form">
 				<?php
 
@@ -91,7 +91,7 @@ $this->assign('PADR', 'active');
 				}
 					?>
 					</div>
-			</div>
+			</div> -->
 			<hr>
 		</div>
 	</div>

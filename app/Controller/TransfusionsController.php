@@ -363,8 +363,8 @@ class TransfusionsController extends AppController
         $transfusion = $this->Transfusion->find('first', array(
             'conditions' => array('Transfusion.id' => $id),
             'contain' => array(
-                'Pint', 'County', 'Attachment', 'Designation', 'ExternalComment',
-                'TransfusionOriginal.Pint', 'TransfusionOriginal.County', 'TransfusionOriginal.Attachment', 'TransfusionOriginal.Designation', 'TransfusionOriginal.ExternalComment'
+                'Pint', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment','ExternalComment.Attachment','ReviewComment.Attachment',
+                'TransfusionOriginal.Pint', 'TransfusionOriginal.County', 'TransfusionOriginal.Attachment', 'TransfusionOriginal.Designation', 'TransfusionOriginal.ExternalComment', 'TransfusionOriginal.ReviewComment'
             )
         ));
         $managers = $this->Transfusion->User->find('list', array(
