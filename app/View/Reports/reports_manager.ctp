@@ -81,8 +81,10 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'county_id',
                 array(
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                  'label' => array('class' => 'required', 'text' => 'County'), 'empty' => true,
-                  'options' => $counties, 'default' => $this->Session->read('Auth.User.county_id')
+                  'label' => array('class' => 'required', 'text' => 'County'),  'empty' => 'All',
+                  'options' => $counties, 
+                  'default' => $this->Session->read('Auth.User.county_id'),
+                  'placeHolder' => 'All',
 
 
                 )
@@ -112,7 +114,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
                 'label' => array('class' => 'required', 'text' => 'Age Group'),
                 'type' => 'select',
-                'empty' => true,
+                'empty' => 'All',
                 'options' => array(
                   'neonate' => 'neonate [0-1 month]',
                   'infant' => 'infant [1 month-1 year]',
@@ -121,7 +123,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                   'adult' => 'adult [18-64 years]',
                   'elderly' => 'elderly [>65 years]',
                 ),
-
+               
 
               )
             );
@@ -138,11 +140,12 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'class' => 'span11 unauthorized_index',
                 'label' => array('class' => 'required', 'text' => 'Gender'),
                 'type' => 'select',
-                'empty' => true,
+                'empty' => 'All',
                 'options' => array(
                   'Male' => 'Male',
                   'Female' => 'Female',
                 ),
+                'placeHolder' => 'All',
               )
             );
 

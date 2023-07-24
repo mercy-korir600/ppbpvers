@@ -133,13 +133,13 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
                 <!-- Divide into equal 4 sections -->
 
                 <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> AEFI Reporting Form',
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Adverse Events Following Immunization Reporting Form',
                   array('controller' => 'aefis', 'action' => 'guest_add'),
                   array('escape' => false, 'class' => 'btn btn-success')
                 ); ?>
                 <hr>
                 <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> PQHPT Reporting Form',
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Poor Quality Health Products and Technologies Reporting Form',
                   array('controller' => 'pqmps', 'action' => 'guest_add'),
                   array('escape' => false, 'class' => 'btn btn-success')
                 ); ?>
@@ -147,7 +147,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
                 <hr>
 
                 <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> SADR Reporting Form',
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Suspected Adverse Drug Reaction Reporting Form',
                   array('controller' => 'sadrs', 'action' => 'guest_add'),
                   array('escape' => false, 'class' => 'btn btn-success')
                 ); ?>
@@ -165,7 +165,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
                 ); ?>
                 <hr>
                 <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Transfusion Reaction Reporting Form',
+                  '<i class="fa fa-file-o" aria-hidden="true"></i> Bloos Transfusion Reaction Reporting Form',
                   array('controller' => 'transfusions', 'action' => 'guest_add'),
                   array('escape' => false, 'class' => 'btn btn-success')
                 ); ?>

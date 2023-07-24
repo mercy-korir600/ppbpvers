@@ -82,7 +82,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 array(
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
                   'label' => array('class' => 'required', 'text' => 'County'),
-                  'empty' => true,
+                  'empty' => 'All',
                   'options' => $counties,
                   'default' => $this->Session->read('Auth.User.county_id')
 
@@ -101,7 +101,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               array(
                 'div' => false, 'type' => 'select', 'class' => 'span8 unauthorized_index',
                 'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),
-                'empty' => true,
+                'empty' => 'All',
                 'options' => $vaccines,
 
               )
@@ -116,7 +116,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
                 'label' => array('class' => 'required', 'text' => 'Age Group'),
                 'type' => 'select',
-                'empty' => true,
+                'empty' => 'All',
                 'options' => array(
                   'neonate' => 'neonate [0-1 month]',
                   'infant' => 'infant [1 month-1 year]',
@@ -142,7 +142,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'class' => 'span11 unauthorized_index',
                 'label' => array('class' => 'required', 'text' => 'Gender'),
                 'type' => 'select',
-                'empty' => true,
+                'empty' => 'All',
                 'options' => array(
                   'Male' => 'Male',
                   'Female' => 'Female',

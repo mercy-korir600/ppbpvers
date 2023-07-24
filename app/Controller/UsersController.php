@@ -993,7 +993,7 @@ class UsersController extends AppController
         $this->set('saes', $saes);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
-            'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
+            'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 6
         )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }

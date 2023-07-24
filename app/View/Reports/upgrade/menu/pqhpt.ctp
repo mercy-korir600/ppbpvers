@@ -69,7 +69,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'county_id',
                 array(
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                  'label' => array('class' => 'required', 'text' => 'County'), 'empty' => true,
+                  'label' => array('class' => 'required', 'text' => 'County'),  'empty' => 'All',
                   'options' => $counties, 'default' => $this->Session->read('Auth.User.county_id')
 
 
@@ -82,7 +82,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'country_id',
                 array(
                   'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
-                  'label' => array('class' => 'required', 'text' => 'Country'), 'empty' => true,
+                  'label' => array('class' => 'required', 'text' => 'Country'),  'empty' => 'All',
                   'options' => $countries
 
 
