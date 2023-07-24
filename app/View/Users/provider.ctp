@@ -8,14 +8,8 @@ $this->Html->css('upgrade', false, array('inline' => false));
 ?>
 
 <style type="text/css">
-	body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
 
-    .hero{
+    .provider{
         background-color: #F0F9F2;
         padding-top: 2%;
         text-align: left; 
@@ -26,7 +20,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
         align-items: center;
     }
     .span8{
-        padding-top: 20%;
+        padding-top: 2%;
     }
     .buttons{
         background-color: #B5CDB9;
@@ -37,7 +31,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
     }
 </style>
 
-<div class="hero">
+<div class="provider">
     <div class="row-fluid left">
         <div class="span8">
             <h2>Who can report?</h2><br>
@@ -47,7 +41,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
         
     </div>
 
-    <div class="row-fluid left">
+    <div class="row-fluid left tools">
         <div class="span4">
             <p>The reporting tools available include:</p><br>
 

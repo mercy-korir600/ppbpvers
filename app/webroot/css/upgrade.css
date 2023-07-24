@@ -283,6 +283,9 @@
         flex-direction: column;
         width: 70%;
     }
+    .tools{
+        flex-direction: column;
+    }
     .inner_section {
         width: 100%;
     }
