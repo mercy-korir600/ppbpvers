@@ -20,3 +20,37 @@
     width: 100%;
     padding: 5px;
 }
+
+.report {
+    margin-left: 5%;
+    margin-right: 20px;
+}
+
+/* Media Queries for responsiveness */
+
+@media only screen and (min-width: 979px) {
+    .phone{
+        margin: 0px 50px 0px 10px;
+    }
+    
+    
+ }
+ 
+ @media only screen and (min-width: 768px) {
+    .phone{
+        margin: 0px 50px 0px 10px;
+    }
+ 
+ }
+ 
+ @media only screen and (max-width: 767px) {
+    .phone{
+        margin: 0px 50px 0px 10px;
+    }
+ }
+ 
+ @media only screen and (max-width: 593px) {
+    .phone{
+        margin: 0px 50px 0px 10px;
+    }
+ }
