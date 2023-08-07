@@ -32,7 +32,19 @@
     .phone{
         margin: 0px 50px 0px 10px;
     }
-    
+
+    .set-input{
+        width: 330px;
+    }
+    .padr-med{
+        width: 4px;
+    }
+ }
+
+ @media only screen and (max-width: 979px) {
+    .padr-med{
+        width: 1px;
+    }
  }
  
  @media only screen and (min-width: 768px) {
@@ -45,10 +57,18 @@
     .phone{
         margin: 0px 50px 0px 10px;
     }
+    .set-input{
+        width: 320px;
+    }
+    
+    
  }
  
  @media only screen and (max-width: 593px) {
     .phone{
         margin: 0px 50px 0px 10px;
+    }
+    .padr-med{
+        width: 50px;
     }
  }
