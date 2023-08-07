@@ -141,7 +141,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
                     </td>
                     <td>
                         <?php
-                        echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'index'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
+                        echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'dhis2'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
                         ?>
                     </td>
                     <td>

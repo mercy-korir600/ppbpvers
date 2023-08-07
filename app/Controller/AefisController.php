@@ -50,24 +50,27 @@ class AefisController extends AppController
             $criteria['Aefi.submitted'] = array(2, 3);
             // $criteria['Aefi.submitted_date BETWEEN ? AND ?'] = array($startDate, $endDate);
 
+         
+
             if ($this->passedArgs['category'] === "country") {
 
                 $data = $this->generate_country_data($criteria);
             }
             if ($this->passedArgs['category'] === "county") {
-
+                if (empty($this->passedArgs['county'])) {
+                    $this->Session->setFlash(__('Please specify the county'), 'alerts/flash_error');
+                    $this->redirect($this->referer());
+                }
                 $criteria['Aefi.county_id'] = $this->passedArgs['county'];
-
                 $data = $this->generate_county_data($criteria);
             }
             if ($this->passedArgs['category'] === "ward") {
-                if (empty($this->passedArgs['sub_county'])){
+                if (empty($this->passedArgs['sub_county'])) {
                     $this->Session->setFlash(__('Please specify the sub county'), 'alerts/flash_error');
                     $this->redirect($this->referer());
                 }
                 $criteria['Aefi.sub_county_id'] = $this->passedArgs['sub_county'];
-                $data = $this->generate_county_data($criteria);
-                
+                $data = $this->generate_sub_county_data($criteria);
             }
         }
         $months = [
@@ -83,10 +86,56 @@ class AefisController extends AppController
 
         $this->set('counties', $counties);
         $this->set('years', $years);
-        $this->set('sub_counties',$sub_counties);
+        $this->set('sub_counties', $sub_counties);
         $this->set('months', $months);
         $this->set('page_options', $this->page_options);
         $this->set('data', Sanitize::clean($data, array('encode' => false)));
+    }
+    public function generate_sub_county_data($criteria)
+    {
+      
+        $data = array();
+        $facilities = $this->Aefi->find('all', array(
+            'fields' => array('name_of_institution','sub_county_id', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution','sub_county_id'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        // debug($facilities);
+        // exit;
+        foreach ($facilities as $ct) {
+            $dt['county_id'] = $ct['Aefi']['sub_county_id'];
+            $dt['county'] = $ct['Aefi']['name_of_institution'];
+            $bcg = $this->extract_reports_per_reaction('bcg', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $convulsion = $this->extract_reports_per_reaction('convulsion', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $urticaria = $this->extract_reports_per_reaction('urticaria', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $fever = $this->extract_reports_per_reaction('high_fever', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $abscess = $this->extract_reports_per_reaction('abscess', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $reaction = $this->extract_reports_per_reaction('local_reaction', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $anaphylaxis = $this->extract_reports_per_reaction('anaphylaxis', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $encephalopathy = $this->extract_reports_per_reaction('meningitis', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $paralysis = $this->extract_reports_per_reaction('paralysis', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $shock = $this->extract_reports_per_reaction('toxic_shock', 'sub_county_id', $ct['Aefi']['sub_county_id']);
+            $total = $bcg + $convulsion + $urticaria + $fever + $abscess + $reaction + $anaphylaxis + $encephalopathy + $paralysis + $shock;
+
+            $dt['bcg'] = $bcg;
+            $dt['convulsion'] = $convulsion;
+            $dt['urticaria'] = $urticaria;
+            $dt['fever'] = $fever;
+            $dt['abscess'] = $abscess;
+            $dt['reaction'] = $reaction;
+            $dt['anaphylaxis'] = $anaphylaxis;
+            $dt['encephalopathy'] = $encephalopathy;
+            $dt['paralysis'] = $paralysis;
+            $dt['shock'] = $shock;
+            $dt['total'] = $total;
+
+            $data[] = $dt;
+        }
+        return $data;
+
     }
     public function generate_county_data($criteria)
     {
