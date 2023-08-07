@@ -47,18 +47,18 @@ $this->Html->css('padr', false, array('inline' => false));
                 <div class="span6">
                     <?php
                     echo $this->Form->input('reporter_name', array(
-                        'class' => 'span6',
+                        'class' => 'set-input',
                         'div' => array('class' => 'control-group required'),
                         'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
                     ));
 
                     echo $this->Form->input('county_id', array(
-                        'class' => 'span6',
+                        'class' => 'set-input',
                         'label' => array(
                             'class' => 'control-label required',
                             'text' => 'County <span style="color:red;">*</span>'
                         ),
-                        'empty' => true, 'between' => '<div class="controls ui-widget">',
+                        'empty' => true, 'between' => '<div class="controls ui-widget set-input">',
                     ));
 
                     ?>
@@ -67,7 +67,7 @@ $this->Html->css('padr', false, array('inline' => false));
                 <div class="span6">
                     <?php
                     echo $this->Form->input('relation', array(
-                        'type' => 'select', 'empty' => true, 'class' => 'span6',
+                        'type' => 'select', 'empty' => true, 'class' => 'set-input',
                         'label' => array('class' => 'control-label required', 'text' => 'Relation'),
                         'options' => array('Self' => 'Self', 'Parent' => 'Parent', 'Guardian' => 'Guardian', 'Other' => 'Other')
                     ));
@@ -83,7 +83,7 @@ $this->Html->css('padr', false, array('inline' => false));
                     <div class="span5">
                         <?php
                         echo $this->Form->input('reporter_email', array(
-                            'class' => 'span7',
+                            'class' => 'set-input',
                             'type' => 'email',
                             'div' => array('class' => 'control-group required'), 'required' => false,
                             'label' => array('class' => 'control-label required', 'text' => 'Email Address')
@@ -105,7 +105,7 @@ $this->Html->css('padr', false, array('inline' => false));
                             'placeholder' => '', 'title' => 'Mobile No.',
                             'data-content' => 'It is important for follow up by the Pharmacy and Poisons Board and to obtain additional information as well as providing you with the feedback',
                             'after' => '<p class="help-block phone"> Your phone number is important for follow up by the <br> Pharmacy and Poisons Board and to obtain <br> additional information as well as providing you with the feedback </p></div>',
-                            'class' => 'span6',
+                            'class' => 'set-input',
                         ));
                         ?>
                         <span></span>
@@ -124,7 +124,7 @@ $this->Html->css('padr', false, array('inline' => false));
                         'class' => 'span11',
                         'label' => array('class' => 'control-label required', 'text' =>  'Patient\'s Name <span style="color:red;">*</span>'),
                         // 'after'=>'<span class="muted"> or initials e.g E.O.O </span></div>',
-                        'placeholder' => 'Name or Initials', 'class' => 'tooltipper span6',
+                        'placeholder' => 'Name or Initials', 'class' => 'set-input',
                     ));
                     ?>
                 </div>
@@ -172,7 +172,7 @@ $this->Html->css('padr', false, array('inline' => false));
                                 $(\'#PadrAgeGroup\').attr(\'disabled\',\'disabled\'); $(\'#PadrAgeGroup\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a>
                                 <p class="help-block">  If selected, year is mandatory.  </p></div>',
-                        'class' => 'tooltipper span3',
+                        'class' => 'tooltipper set-input',
                     ));
 
                     ?>
@@ -199,7 +199,7 @@ $this->Html->css('padr', false, array('inline' => false));
                         'after' => '<a onclick="$(\'#PadrAgeGroup\').removeAttr(\'disabled\'); $(\'#PadrAgeGroup\').val(\'\');
                                     $(\'.birthdate\').attr(\'disabled\',\'disabled\'); $(\'.birthdate\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a> </div>',
-                        'class' => 'span6',
+                        'class' => 'set-input',
                     ));
 
                     ?>
