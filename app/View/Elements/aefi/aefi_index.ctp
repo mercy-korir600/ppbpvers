@@ -25,8 +25,15 @@ $this->assign('Adverse Event Following Immunization', 'active');
     <div class="marketing">
       <div class="row-fluid">
         <div class="span12">
-          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
+          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>  <?php if ($redir == 'manager') {
+            echo $this->Html->link(
+              '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
+              array('controller' => 'aefis', 'action' => 'dhis2'),
+              array('escape' => false, 'class' => 'btn btn-success')
+            );
+          } ?></h3>
           <hr class="soften" style="margin: 7px 0px;">
+        
         </div>
       </div>
     </div>
@@ -264,7 +271,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
               echo $this->Form->input('device', array(
                 'type' => 'select', 'options' => [
                   '0' => 'Web',
-                  '1' => 'Mobile', 
+                  '1' => 'Mobile',
                 ], 'empty' => true,
                 'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
                 'class' => 'input-xlarge'
@@ -412,10 +419,10 @@ $this->assign('Adverse Event Following Immunization', 'active');
 
                 echo "&nbsp;";
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
-                  if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] !=$this->Session->read('Auth.User.id'))  {
+                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
                     echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i> Investigation</span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
-                  }else{
-                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
+                  } else {
+                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
                   }
                 }
                 echo "&nbsp;";
@@ -430,7 +437,8 @@ $this->assign('Adverse Event Following Immunization', 'active');
                 if (($redir == 'manager' || $redir == 'reviewer'))  echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                   array('controller' => 'aefis', 'action' => 'archive', $aefi['Aefi']['id']),
-                  array('escape' => false), __('Are you sure you want to archive the report?')
+                  array('escape' => false),
+                  __('Are you sure you want to archive the report?')
                 );
               } else {
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Html->link(

@@ -30,7 +30,197 @@ class AefisController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit');
+        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit', 'dhis2');
+    }
+    public function manager_dhis2()
+    {
+        $data = array();
+        $this->Prg->commonProcess();
+        if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
+        else $this->paginate['limit'] = reset($this->page_options);
+
+        if (!empty($this->passedArgs['category']) || !empty($this->passedArgs['month']) || !empty($this->passedArgs['year'])) {
+            $month = $this->passedArgs['month'];
+            $year = $this->passedArgs['year'];
+            $startDate = date('Y-m-01', strtotime($month . ' ' . $year));
+            $endDate = date('Y-m-t', strtotime($month . ' ' . $year));
+            $criteria['Aefi.deleted'] = false;
+            $criteria['Aefi.archived'] = false;
+            $criteria['Aefi.copied !='] = '1';
+            $criteria['Aefi.submitted'] = array(2, 3);
+            // $criteria['Aefi.submitted_date BETWEEN ? AND ?'] = array($startDate, $endDate);
+
+            if ($this->passedArgs['category'] === "country") {
+
+                $data = $this->generate_country_data($criteria);
+            }
+            if ($this->passedArgs['category'] === "county") {
+
+                $criteria['Aefi.county_id'] = $this->passedArgs['county'];
+
+                $data = $this->generate_county_data($criteria);
+            }
+            if ($this->passedArgs['category'] === "ward") {
+                if (empty($this->passedArgs['sub_county'])){
+                    $this->Session->setFlash(__('Please specify the sub county'), 'alerts/flash_error');
+                    $this->redirect($this->referer());
+                }
+                $criteria['Aefi.sub_county_id'] = $this->passedArgs['sub_county'];
+                $data = $this->generate_county_data($criteria);
+                
+            }
+        }
+        $months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        $currentYear = date('Y');
+        $years = range($currentYear, $currentYear - 19);
+        $years = array_combine($years, $years);
+        $counties =  $this->Aefi->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $sub_counties = $this->Aefi->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+
+        $this->set('counties', $counties);
+        $this->set('years', $years);
+        $this->set('sub_counties',$sub_counties);
+        $this->set('months', $months);
+        $this->set('page_options', $this->page_options);
+        $this->set('data', Sanitize::clean($data, array('encode' => false)));
+    }
+    public function generate_county_data($criteria)
+    {
+
+        $data = array();
+        $sub_counties = $this->Aefi->find('all', array(
+            'fields' => array('SubCounty.sub_county_name', 'SubCounty.county_id', 'COUNT(*) as cnt'),
+            'contain' => array('SubCounty'),
+            'conditions' => $criteria,
+            'group' => array('SubCounty.county_name', 'SubCounty.id', 'SubCounty.county_id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        foreach ($sub_counties as $ct) {
+            $dt['county_id'] = $ct['SubCounty']['id'];
+            $dt['county'] = $ct['SubCounty']['sub_county_name'];
+            $bcg = $this->extract_reports_per_reaction('bcg', 'sub_county_id', $ct['SubCounty']['id']);
+            $convulsion = $this->extract_reports_per_reaction('convulsion', 'sub_county_id', $ct['SubCounty']['id']);
+            $urticaria = $this->extract_reports_per_reaction('urticaria', 'sub_county_id', $ct['SubCounty']['id']);
+            $fever = $this->extract_reports_per_reaction('high_fever', 'sub_county_id', $ct['SubCounty']['id']);
+            $abscess = $this->extract_reports_per_reaction('abscess', 'sub_county_id', $ct['SubCounty']['id']);
+            $reaction = $this->extract_reports_per_reaction('local_reaction', 'sub_county_id', $ct['SubCounty']['id']);
+            $anaphylaxis = $this->extract_reports_per_reaction('anaphylaxis', 'sub_county_id', $ct['SubCounty']['id']);
+            $encephalopathy = $this->extract_reports_per_reaction('meningitis', 'sub_county_id', $ct['SubCounty']['id']);
+            $paralysis = $this->extract_reports_per_reaction('paralysis', 'sub_county_id', $ct['SubCounty']['id']);
+            $shock = $this->extract_reports_per_reaction('toxic_shock', 'sub_county_id', $ct['SubCounty']['id']);
+            $total = $bcg + $convulsion + $urticaria + $fever + $abscess + $reaction + $anaphylaxis + $encephalopathy + $paralysis + $shock;
+
+            $dt['bcg'] = $bcg;
+            $dt['convulsion'] = $convulsion;
+            $dt['urticaria'] = $urticaria;
+            $dt['fever'] = $fever;
+            $dt['abscess'] = $abscess;
+            $dt['reaction'] = $reaction;
+            $dt['anaphylaxis'] = $anaphylaxis;
+            $dt['encephalopathy'] = $encephalopathy;
+            $dt['paralysis'] = $paralysis;
+            $dt['shock'] = $shock;
+            $dt['total'] = $total;
+
+            $data[] = $dt;
+        }
+        return $data;
+    }
+    public function generate_country_data($criteria = array())
+    {
+        $data = array();
+        $counties = $this->Aefi->find('all', array(
+            'fields' => array('County.county_name', 'COUNT(*) as cnt'),
+            'contain' => array('County'),
+            'conditions' => $criteria,
+            'group' => array('County.county_name', 'County.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        foreach ($counties as $ct) {
+            $dt['county_id'] = $ct['County']['id'];
+            $dt['county'] = $ct['County']['county_name'];
+            $bcg = $this->extract_reports_per_reaction('bcg', 'county_id', $ct['County']['id']);
+            $convulsion = $this->extract_reports_per_reaction('convulsion', 'county_id', $ct['County']['id']);
+            $urticaria = $this->extract_reports_per_reaction('urticaria', 'county_id', $ct['County']['id']);
+            $fever = $this->extract_reports_per_reaction('high_fever', 'county_id', $ct['County']['id']);
+            $abscess = $this->extract_reports_per_reaction('abscess', 'county_id', $ct['County']['id']);
+            $reaction = $this->extract_reports_per_reaction('local_reaction', 'county_id', $ct['County']['id']);
+            $anaphylaxis = $this->extract_reports_per_reaction('anaphylaxis', 'county_id', $ct['County']['id']);
+            $encephalopathy = $this->extract_reports_per_reaction('meningitis', 'county_id', $ct['County']['id']);
+            $paralysis = $this->extract_reports_per_reaction('paralysis', 'county_id', $ct['County']['id']);
+            $shock = $this->extract_reports_per_reaction('toxic_shock', 'county_id', $ct['County']['id']);
+            $total = $bcg + $convulsion + $urticaria + $fever + $abscess + $reaction + $anaphylaxis + $encephalopathy + $paralysis + $shock;
+
+            $dt['bcg'] = $bcg;
+            $dt['convulsion'] = $convulsion;
+            $dt['urticaria'] = $urticaria;
+            $dt['fever'] = $fever;
+            $dt['abscess'] = $abscess;
+            $dt['reaction'] = $reaction;
+            $dt['anaphylaxis'] = $anaphylaxis;
+            $dt['encephalopathy'] = $encephalopathy;
+            $dt['paralysis'] = $paralysis;
+            $dt['shock'] = $shock;
+            $dt['total'] = $total;
+
+            $data[] = $dt;
+        }
+        return $data;
+    }
+
+
+    public function extract_reports_per_reaction($column, $parent, $county_id)
+    {
+        $criteria = array();
+        $criteria['Aefi.deleted'] = false;
+        $criteria['Aefi.archived'] = false;
+        $criteria['Aefi.copied !='] = '1';
+        $criteria['Aefi.submitted'] = array(2, 3);
+        $criteria['Aefi.' . $parent] = $county_id;
+        $criteria['Aefi.' . $column] = $column;
+        $count = $this->Aefi->find('count', array(
+            'conditions' => $criteria
+        ));
+        return $count;
+    }
+    public function dhis2($id)
+    {
+        if ($id < 1) {
+            $this->set([
+                'status' => 'failed',
+                'message' => 'Month numbers can only be between 1 and 12',
+                '_serialize' => ['status', 'message']
+            ]);
+            return;
+        }
+        if ($id > 12) {
+            $this->set([
+                'status' => 'failed',
+                'message' => 'Month numbers can only be between 1 and 12',
+                '_serialize' => ['status', 'message']
+            ]);
+            return;
+        }
+        $month = $id;
+        $data = array(
+            'facility' => array(),
+            'ward' => array(),
+            'sub-county' => array(),
+            'county' => array(),
+            'countrywide' => array()
+        );
+        $this->set([
+            'status' => 'success',
+            'month' => $month,
+            'data' => $data,
+            '_serialize' => ['status', 'month', 'data']
+        ]);
     }
 
     public function yellowcard($id = null)
@@ -296,7 +486,6 @@ class AefisController extends AppController
         } else {
             $criteria['Aefi.submitted'] = array(2, 3);
         }
-        // if (!isset($this->passedArgs['submit'])) $criteria['Aefi.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Aefi.created' => 'desc');
         $this->paginate['contain'] = array('County', 'SubCounty', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
@@ -571,7 +760,7 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment','ExternalComment.Attachment','ReviewComment','ReviewComment.Attachment',
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
                 'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment', 'AefiOriginal.ReviewComment'
             )
         ));
@@ -1114,7 +1303,7 @@ class AefisController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
-            
+
             if ($this->Saefi->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Saefi->saveField('submitted', 2);
@@ -1413,7 +1602,7 @@ class AefisController extends AppController
             $data_save['district'] = $aefi['Aefi']['sub_county_id'];
             $data_save['age_at_onset_months'] = $aefi['Aefi']['age_months'];
             $data_save['reference_no'] = $aefi['Aefi']['reference_no'];
-            $data_save['user_id']=$this->Auth->user('id');
+            $data_save['user_id'] = $this->Auth->user('id');
             $data_save['submitted'] = 0;
             $this->loadModel('Saefi');
             if ($this->Saefi->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
@@ -1424,7 +1613,6 @@ class AefisController extends AppController
                 $this->redirect($this->referer());
             }
         }
- 
     }
 
 
@@ -1613,7 +1801,8 @@ class AefisController extends AppController
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
         $this->set(compact('vaccines'));
     }
-    public function manager_archive($id=null) {
+    public function manager_archive($id = null)
+    {
 
         $this->Aefi->id = $id;
         if (!$this->Aefi->exists()) {
@@ -1628,5 +1817,5 @@ class AefisController extends AppController
         }
         $this->Session->setFlash(__('AEFI was not archied'), 'alerts/flash_error');
         $this->redirect($this->referer());
-	}
+    }
 }

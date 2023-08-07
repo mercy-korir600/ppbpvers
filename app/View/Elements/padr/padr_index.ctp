@@ -202,7 +202,7 @@ echo $this->Session->flash();
                   '0' => 'Web',
                   '1' => 'Mobile',
                   '2' => 'USSD',
-                  '3' => 'ITECH',
+                  '3' => 'USSD 2',
                 ], 'empty' => true,
                 'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
                 'class' => 'input-xlarge'
