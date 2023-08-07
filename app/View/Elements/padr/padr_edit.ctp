@@ -5,13 +5,6 @@ $this->Html->script('padr', array('inline' => false));
 $this->Html->css('padr', false, array('inline' => false));
 ?>
 
-<style>
-    .report {
-        margin-left: 5%;
-        margin-right: 20px;
-    }
-</style>
-
 <!-- PADR
     ================================================== -->
 <section id="padrsadd">
@@ -111,7 +104,7 @@ $this->Html->css('padr', false, array('inline' => false));
                             'label' => array('class' => 'control-label required', 'text' => 'Mobile No.<span style="color:red;">*</span>'),
                             'placeholder' => '', 'title' => 'Mobile No.',
                             'data-content' => 'It is important for follow up by the Pharmacy and Poisons Board and to obtain additional information as well as providing you with the feedback',
-                            'after' => '<p class="help-block"> Your phone number is important for follow up by the Pharmacy and Poisons Board <br> and to obtain additional information as well as providing you with the feedback </p></div>',
+                            'after' => '<p class="help-block phone"> Your phone number is important for follow up by the <br> Pharmacy and Poisons Board and to obtain <br> additional information as well as providing you with the feedback </p></div>',
                             'class' => 'span6',
                         ));
                         ?>
