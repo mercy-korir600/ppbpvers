@@ -487,7 +487,7 @@ $this->Html->css('padr', false, array('inline' => false));
                         'Yes' => 'Yes',
                         'No' => 'No',
                     ),
-                    'class' => 'span4',
+                    'class' => 'set-input',
                     'label' => array('class' => 'control-label required', 'text' => 'If we need further information to help us understand the case do we have your permission to contact you?'),
                     'after' => '<a onclick="$(\'#PadrConsent\').removeAttr(\'disabled\'); $(\'#PadrConsent\').val(\'\');" >
                                 <em class="accordion-toggle">clear!</em></a> </div>',
@@ -498,11 +498,12 @@ $this->Html->css('padr', false, array('inline' => false));
             <div class="row-fluid">
                 <div class="span4">
                     <label class="required pull-right" style="color: purple; padding-top: 4px;">Please solve the riddle <i class="fa fa-smile-o" aria-hidden="true"></i></label>
-                </div>
-                <div class="span8">
                     <?php
                     echo $this->Captcha->input('Padr', array('label' => false, 'type' => 'number'));
                     ?>
+                </div>
+                <div class="span8 pull-left">
+                    
                 </div>
             </div>
 
