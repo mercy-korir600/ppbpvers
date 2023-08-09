@@ -25,6 +25,7 @@ $this->Html->css('summary', null, array('inline' => false));
 
         <div id="geoTable" class="tabcontentgeo">
             <table class="table table-condensed table-bordered" id="datatablegeo">
+                <?php $c = 0; ?>
                 <thead>
                     <tr>
                         <th>County</th>
@@ -33,7 +34,10 @@ $this->Html->css('summary', null, array('inline' => false));
                 </thead>
                 <tbody>
                     <?php
+
                     foreach ($geo as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['County']['county_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -41,6 +45,12 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
+                <!-- <tfooter>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tfooter> -->
             </table>
         </div>
     </div>
@@ -63,6 +73,7 @@ $this->Html->css('summary', null, array('inline' => false));
 
         <div id="sexTable" class="tabcontentsex">
             <table class="table table-condensed table-bordered" id="datatablesex">
+                <?php $c = 0; ?>
                 <thead>
                     <tr>
                         <th>Sex</th>
@@ -72,6 +83,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($sex as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -79,6 +92,12 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
+                <!-- <tfooter>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tfooter> -->
             </table>
         </div>
     </div>
@@ -204,7 +223,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr> 
+<hr>
 <script type="text/javascript">
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
@@ -275,13 +294,13 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
- 
+
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
     document.getElementById("monthOpen").click();
-    document.getElementById("yearOpen").click(); 
+    document.getElementById("yearOpen").click();
 
 
     Highcharts.chart('sadrs-geo', {
@@ -308,6 +327,7 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
+    
     Highcharts.chart('sadrs-sex', {
         data: {
             table: 'datatablesex'
@@ -334,8 +354,23 @@ $this->Html->css('summary', null, array('inline' => false));
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.y}</b><br/>Percentage: <b>{point.percentage:.1f}%</b>'
-        }
+        },
+        series: [{
+            data: {
+                parsed: function(columns) {
+                    // Find the "Total" row index
+                    var totalIndex = columns[0].indexOf('Total');
+
+                    // Remove the "Total" row from the data
+                    if (totalIndex !== -1) {
+                        columns[0].splice(totalIndex, 1);
+                        columns[1].splice(totalIndex, 1);
+                    }
+                }
+            }
+        }]
     });
+
     Highcharts.chart('sadrs-age', {
         data: {
             table: 'datatableage'
@@ -408,6 +443,5 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    
 </script>
 <?php $this->end(); ?>
