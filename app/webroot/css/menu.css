@@ -1,0 +1,12 @@
+.responsive-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Reverting to horizontal layout on screens larger than 'sm' */
+@media (min-width: 576px) {
+    .responsive-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
