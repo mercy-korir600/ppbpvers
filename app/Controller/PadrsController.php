@@ -94,7 +94,7 @@ class PadrsController extends AppController
         if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
         else $this->paginate['limit'] = reset($this->page_options);
 
-        $criteria = $this->Padr->parseCriteria($this->passedArgs);
+        $criteria = $this->Padr->parseCriteria($this->passedArgs); 
 
         $criteria['Padr.assigned_to'] = $this->Auth->User('id');
         $this->paginate['conditions'] = $criteria;

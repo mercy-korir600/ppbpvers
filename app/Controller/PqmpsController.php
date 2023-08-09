@@ -17,11 +17,22 @@ class PqmpsController extends AppController
     public $paginate = array();
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
+    
+    public function beforeFilter()
+    {
+        parent::beforeFilter(); 
+        $this->Auth->allow('reset_reference_numbers');
+    }
 
     public function beforeFilter()
     {
         parent::beforeFilter();
         $this->Auth->allow('guest_add','guest_edit');
+    }
+
+    public function blackhole($type) {
+        $this->Session->setFlash(__('Sorry! The page has expired due to a '.$type.' error. Please refresh the page.'), 'flash_error');
+        $this->redirect($this->referer());
     }
     /**
      * index method

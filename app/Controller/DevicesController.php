@@ -50,7 +50,7 @@ class DevicesController extends AppController
         }
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -115,7 +115,7 @@ class DevicesController extends AppController
         $criteria['Device.deleted'] = false;
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -187,7 +187,7 @@ class DevicesController extends AppController
         $criteria['Device.assigned_to'] = $this->Auth->User('id');
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation', 'ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -452,7 +452,6 @@ class DevicesController extends AppController
         $this->redirect(array('action' => 'edit', $this->Device->id));
     }
 
-
     public function reporter_followup($id = null)
     {
         if ($this->request->is('post')) {
@@ -543,7 +542,6 @@ class DevicesController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
-
 
             if ($this->Device->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {

@@ -17,6 +17,10 @@ class TestShell extends AppShell {
        $email->subject('test email'); 
        if(!$email->send('My message to youhouhou')) {
            $this->log($email, 'test_email');
+           $this->out('Experienced problems!!.');
+       }else{
+        $this->out('Successfully Sent!!!.');
        }
+
     }
 }

@@ -133,6 +133,17 @@ Configure::write('API.token.pepper', 'touch2d34asdfpad'); //'https://api.who-umc
 // Drug Registry
 Configure::write('drug_registry_api', 'https://rhris.pharmacyboardkenya.org/api_version/getProducts'); 
 Configure::write('drug_registry_header', '9nhJZKq1aeuwe13asloe[13d950XdZudqEmRWCarPacTdeAyMzuchz1rPQBeom4ivAEd'); 
+
+// Configure Yellow Card 
+Configure::write('mhra_auth_api', 'https://med-safety-hub-api.redant.cloud/v1/login'); 
+Configure::write('mhra_api', 'https://med-safety-hub-api.redant.cloud/v1/report'); 
+Configure::write('mhra_platform', 'ab1057ca-8e5d-4470-a595-36e7a3901697'); 
+Configure::write('mhra_incidents', 'https://med-safety-hub-api.redant.cloud/v1/integration/incidents/reports/e2bjs'); //added 
+Configure::write('mhra_xapp_id', 'f568e0e4-58af-439f-b14d-cd8c121bbfe6');  
+Configure::write('mhra_api_key', '37221476-7cce-40e4-8e8f-32d9b9d2c069');  
+Configure::write('mhra_password', 'uxLPyc3FM1'); 
+Configure::write('mhra_username', 'gmurimi@pharmacyboardkenya.org');
+
 // usernameAT=afyamoja
 // apiKey=6347d9066545048e3d0ec2cc11034186861dc47c96c4bc268f9bac61899a357c
 // Configure::write('africastalking_api', 'https://api.africastalking.com/version1/messaging'); 

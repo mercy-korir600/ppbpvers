@@ -28,12 +28,55 @@ class UsersController extends AppController
 
     public $helpers = array('Tools.Captcha' => array('type' => 'active'));
 
+<<<<<<< HEAD
+=======
+    
+
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
     public function beforeFilter()
     {
         parent::beforeFilter();
         // remove initDb
+<<<<<<< HEAD
         // $this->initDB();
         $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder');
+=======
+        $this->_clear_cache();
+        //  $this->initDb();
+        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'initDB');
+    }
+
+
+    function _clear_cache()
+    {
+
+        Cache::clear();
+        clearCache();
+
+        $files = array();
+        $files = array_merge($files, glob(CACHE . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'css' . DS . '*')); // remove cached css
+        $files = array_merge($files, glob(CACHE . 'js' . DS . '*'));  // remove cached js
+        $files = array_merge($files, glob(CACHE . 'models' . DS . '*'));  // remove cached models
+        $files = array_merge($files, glob(CACHE . 'persistent' . DS . '*'));  // remove cached persistent
+
+        foreach ($files as $f) {
+            if (is_file($f)) {
+                try {
+                    @unlink($f);
+                } catch (Exception $ex) {
+                    $files['errors'][] = $ex->getMessage();
+                }
+            }
+        }
+
+        if (function_exists('apc_clear_cache')) :
+            apc_clear_cache();
+            apc_clear_cache('user');
+        endif;
+
+        return $files;
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
     }
     public function api_auth()
     {
@@ -49,10 +92,28 @@ class UsersController extends AppController
 
             // unset the request and apend new values
 
+<<<<<<< HEAD
+=======
+    public function api_auth()
+    {
+        # code...
+        $this->RequestHandler->renderAs($this, 'json');
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            if (!isset($data['username']) || !isset($data['password']) || empty($data['username']) || empty($data['password'])) {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Missing username or password', '_serialize' => ['message']]);
+                return;
+            }
+
+            // unset the request and apend new values
+
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
             $this->request->data['User']['username'] = $this->request->data['username'];
             $this->request->data['User']['password'] = $this->request->data['password'];
             unset($this->request->data['username']);
             unset($this->request->data['password']);
+<<<<<<< HEAD
 
             if ($this->Auth->login()) {
                 $user = $this->Auth->User();
@@ -101,6 +162,43 @@ class UsersController extends AppController
 
     public function login()
     {
+=======
+
+            if ($this->Auth->login()) {
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                                
+                if ($user) {
+                    // only add the neccessary fields from the user 
+                    $datum=array('id'=>$user['id'],'name'=>$user['name'],'created'=>$user['created']);
+                    $this->set('user', $datum);
+                    $this->set('token', $token);
+                    $this->set('_serialize', array('user', 'token'));
+                } else {
+                    $this->set([
+                        'success' => false,
+                        'data' => $this->request->data,
+                        '_serialize' => ['success', 'data']
+                    ]);
+                }
+            } else {
+                $this->response->statusCode(400);
+                $this->set(['message' => 'Invalid request, Invalid username or password', '_serialize' => ['message']]);
+                return;
+            }
+        } else {
+            $this->response->statusCode(405);
+            $this->set([
+                'error' => 'Only POST Request Allowed',
+                '_serialize' => ['error']
+            ]);
+        }
+    }
+    public function login()
+    {
+      
+
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         if ($this->Session->read('Auth.User')) {
             $this->Session->setFlash('You are logged in!', 'alerts/flash_success');
             $this->redirect('/', null, false);
@@ -127,6 +225,7 @@ class UsersController extends AppController
                     $this->redirect($this->Auth->logout());
                 }
 
+<<<<<<< HEAD
                 // Check if it's the mini manager::: Check active date
                 if ($this->Auth->User('group_id') == '5') {
                     $active_date = $this->Auth->User('active_date');
@@ -147,11 +246,25 @@ class UsersController extends AppController
                 }
 
 
+=======
+
+                // $this->redirect($this->Auth->redirect());
+                // if(strlen($this->Auth->redirect()) > 12) {
+                //     return $this->redirect($this->Auth->redirect());           
+                // }
+                $user = $this->Auth->User();
+                $token = JWT::encode($user['id'], Configure::read('Security.salt'));
+                // debug($token);
+                // exit;
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
                 if ($this->Auth->User('group_id') == '1') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
                 if ($this->Auth->User('group_id') == '2') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'manager' => true));
                 if ($this->Auth->User('group_id') == '3') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reporter' => true));
                 if ($this->Auth->User('group_id') == '4') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'partner' => true));
+<<<<<<< HEAD
                 if ($this->Auth->User('group_id') == '5') $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'reviewer' => true));
+=======
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
             } else {
                 $this->Session->setFlash('Your username or password is incorrect.', 'alerts/flash_error');
             }
@@ -170,9 +283,13 @@ class UsersController extends AppController
 
     public function api_login()
     {
+<<<<<<< HEAD
         // if (!class_exists('JWT')) {
         //     throw new RuntimeException('Your desired vendor library cannot be found');
         // }
+=======
+         
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
                 $user = $this->Auth->User();
@@ -282,6 +399,10 @@ class UsersController extends AppController
 
     public function logout()
     {
+<<<<<<< HEAD
+=======
+        // $this->initDb();
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         $this->Session->setFlash('Good-Bye', 'flash_info');
         $this->redirect($this->Auth->logout());
     }
@@ -482,6 +603,11 @@ class UsersController extends AppController
      */
     public function index()
     {
+<<<<<<< HEAD
+=======
+
+        $this->initDb();
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
     }
@@ -793,6 +919,7 @@ class UsersController extends AppController
             ),
         ));
         $this->set('sadrs', $sadrs);
+<<<<<<< HEAD
         $user_id = $this->Auth->User('id');
         $user_type = $this->Auth->User('user_type');
 
@@ -802,10 +929,13 @@ class UsersController extends AppController
         );
 
 
+=======
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+<<<<<<< HEAD
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => $conditions,
@@ -825,6 +955,8 @@ class UsersController extends AppController
         $serious_aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+=======
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => $conditions,
@@ -848,9 +980,13 @@ class UsersController extends AppController
 
             ),
         ));
+<<<<<<< HEAD
         $this->set('saefis', $saefis);
 
 
+=======
+        $this->set('aefis', $aefis);
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
 
         $pqmps = $this->User->Pqmp->find('all', array(
             'limit' => 7, 'contain' => array(),
@@ -919,7 +1055,11 @@ class UsersController extends AppController
                 'Ce2b.user_id' => $this->Auth->User('id')
             ),
         ));
+<<<<<<< HEAD
         $this->set('ce2bs', $ce2bs);
+=======
+        $this->set('transfusions', $transfusions);
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
 
         $this->set('notifications', $this->User->Notification->find('all', array(
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
@@ -993,7 +1133,11 @@ class UsersController extends AppController
         $this->set('saes', $saes);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
+<<<<<<< HEAD
             'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 6
+=======
+            'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }
@@ -1056,6 +1200,7 @@ class UsersController extends AppController
         ));
         $this->set('padrs', $padrs);
 
+<<<<<<< HEAD
         $saes = $this->User->Sae->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Sae.id', 'Sae.form_type', 'Sae.reference_no', 'Sae.created'),
@@ -1069,6 +1214,8 @@ class UsersController extends AppController
         )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }
+=======
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
     public function partner_dashboard()
     {
         $sadrs = $this->User->Sadr->find('all', array(
@@ -1140,6 +1287,12 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+<<<<<<< HEAD
+=======
+        // debug(';manager');
+        // debug($id);
+        // exit;
+>>>>>>> 7f1f38230cf5b8b2d8af363655428c5911be67f4
         $this->User->id = $id;
         if (!$this->User->exists()) {
             $this->Session->setFlash(__('The user does not exist.'), 'flash_info');
@@ -1149,8 +1302,7 @@ class UsersController extends AppController
             $this->Session->setFlash(__('You do not have permission to edit this user!'), 'flash_info');
             $this->redirect('/', null, false);
         }
-        if ($this->request->is('post') || $this->request->is('put')) {
-            // $this->request->data['User']['group_id'] = 2;
+        if ($this->request->is('post') || $this->request->is('put')) { 
             unset($this->User->validate['username']);
             unset($this->User->validate['password']);
             unset($this->User->validate['confirm_password']);
@@ -1160,7 +1312,8 @@ class UsersController extends AppController
             } else {
                 $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'flash_error');
             }
-        } else {
+        } 
+        else {
             $this->request->data = $this->User->read(null, $id);
         }
         $designations = $this->User->Designation->find('list', array(
@@ -1305,6 +1458,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Users/manager_dashboard');
         $this->Acl->allow($group, 'controllers/Sadrs');
         $this->Acl->allow($group, 'controllers/Aefis');
+        $this->Acl->allow($group, 'controllers/Aefis/yellowcard');
         $this->Acl->allow($group, 'controllers/SadrFollowups');
         $this->Acl->allow($group, 'controllers/Pqmps');
         $this->Acl->allow($group, 'controllers/Devices');

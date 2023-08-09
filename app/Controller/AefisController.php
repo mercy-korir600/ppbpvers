@@ -272,6 +272,13 @@ class AefisController extends AppController
         ]);
     }
 
+    // Short Term Goal 
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->Auth->allow('yellowcard');
+    }
+  
     public function yellowcard($id = null)
     {
         $this->autoRender = false;
@@ -284,26 +291,74 @@ class AefisController extends AppController
 
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
-            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation'),
+            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation', 'AefiListOfVaccine.Vaccine'),
 
         ));
         $aefi = Sanitize::clean($aefi, array('escape' => true));
 
+        if ($aefi['Aefi']['bcg'] == '1') {
+            $reactions[] = "BCG Lymphadenitis";
+        }
+        if ($aefi['Aefi']['convulsion'] == '1') {
+            $reactions[] = "Generalized urticaria (hives)";
+        }
+        if ($aefi['Aefi']['urticaria'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['high_fever'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['abscess'] == '1') {
+            $reactions[] = "Injection site abscess";
+        }
+        if ($aefi['Aefi']['local_reaction'] == '1') {
+            $reactions[] = "Severe Local Reaction";
+        }
+        if ($aefi['Aefi']['anaphylaxis'] == '1') {
+            $reactions[] = "Anaphylaxis";
+        }
+        if ($aefi['Aefi']['meningitis'] == '1') {
+            $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+        }
+        if ($aefi['Aefi']['paralysis'] == '1') {
+            $reactions[] = "Paralysis";
+        }
+        if ($aefi['Aefi']['toxic_shock'] == '1') {
+            $reactions[] = "Toxic shock";
+        }
+        if ($aefi['Aefi']['complaint_other'] == '1') {
+            $other = $aefi['Aefi']['complaint_other_specify'];
+            if (!empty($other)) {
+                $reactions[] = $other;
+            }
+        }
+        $reactions[] = $aefi['Aefi']['aefi_symptoms'];
 
+        // added reactions
+
+        $multiple = $aefi['AefiDescription'];
+        if (!empty($multiple)) {
+            foreach ($multiple as $other) {
+                $reactions[] = $other['description'];
+            }
+        }
 
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
         $view->layout = false; // if you want to disable layout 
         $view->set('aefi', $aefi); // set your variables for view here
+        $view->set('reactions', $reactions);
         $html = $view->render('json');
+        libxml_use_internal_errors(TRUE);
         $xml = simplexml_load_string($html);
         $json = json_encode($xml);
         $report = json_decode($json, TRUE);
 
-        // debug($report);
-        //  exit;
-
-        $HttpSocket = new HttpSocket();
+        // stream_context_set_default(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        $options = array(
+            'ssl_verify_peer' => false
+        );
+        $HttpSocket = new HttpSocket($options);
 
         //Request Access Token
         $initiate = $HttpSocket->post(
@@ -327,13 +382,19 @@ class AefisController extends AppController
                 'userId' => $userId,
                 'organisationId' => $organisationId,
                 'report' => $report
-
             );
 
+            // debug($report);
+            // exit;
             $results = $HttpSocket->post(
-                Configure::read('mhra_api'),
+                Configure::read('mhra_incidents'),
                 $payload,
-                array('header' => array('Authorization' => 'Bearer ' . $token))
+                array('header' => array(
+                    'X-App-Id' => Configure::read('mhra_xapp_id'),
+                    'Authorization' => 'Bearer ' . $token, //original 
+                    'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
+
+                ))
             );
 
             if ($results->isOk()) {
@@ -342,12 +403,12 @@ class AefisController extends AppController
                 $this->Aefi->saveField('webradr_message', $body);
                 $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
                 $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
-                $this->Flash->success('Yello Card Scheme integration success!!');
+                $this->Flash->success('Yellow Card Scheme integration success!!');
                 $this->Flash->success($body);
                 $this->redirect($this->referer());
             } else {
                 $body = $results->body;
-                $this->Aefi->saveField('webradr_message', $body);
+                // $this->Aefi->saveField('webradr_message', $body);
                 $this->Flash->error('Error sending report to Yello Card Scheme:');
                 $this->Flash->error($body);
                 $this->redirect($this->referer());
@@ -355,7 +416,188 @@ class AefisController extends AppController
         } else {
             $body = $initiate->body;
             $this->Aefi->saveField('webradr_message', $body);
-            $this->Flash->error('Error sending report to Yello Card Scheme:');
+            $this->Flash->error('Error initiating report to Yellow Card Scheme:');
+            $this->Flash->error($body);
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function yellowcard_recent($id = null)
+    {
+        $this->autoRender = false;
+
+        $this->Aefi->id = $id;
+        if (!$this->Aefi->exists()) {
+            $this->Session->setFlash(__('Could not verify the AEFI report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->redirect('/');
+        }
+
+        $aefi = $this->Aefi->find('first', array(
+            'conditions' => array('Aefi.id' => $id),
+            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation', 'AefiListOfVaccine.Vaccine'),
+
+        ));
+        $aefi = Sanitize::clean($aefi, array('escape' => true));
+
+        if ($aefi['Aefi']['bcg'] == '1') {
+            $reactions[] = "BCG Lymphadenitis";
+        }
+        if ($aefi['Aefi']['convulsion'] == '1') {
+            $reactions[] = "Generalized urticaria (hives)";
+        }
+        if ($aefi['Aefi']['urticaria'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['high_fever'] == '1') {
+            $reactions[] = "High Fever";
+        }
+        if ($aefi['Aefi']['abscess'] == '1') {
+            $reactions[] = "Injection site abscess";
+        }
+        if ($aefi['Aefi']['local_reaction'] == '1') {
+            $reactions[] = "Severe Local Reaction";
+        }
+        if ($aefi['Aefi']['anaphylaxis'] == '1') {
+            $reactions[] = "Anaphylaxis";
+        }
+        if ($aefi['Aefi']['meningitis'] == '1') {
+            $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+        }
+        if ($aefi['Aefi']['paralysis'] == '1') {
+            $reactions[] = "Paralysis";
+        }
+        if ($aefi['Aefi']['toxic_shock'] == '1') {
+            $reactions[] = "Toxic shock";
+        }
+        if ($aefi['Aefi']['complaint_other'] == '1') {
+            $other = $aefi['Aefi']['complaint_other_specify'];
+            if (!empty($other)) {
+                $reactions[] = $other;
+            }
+        }
+        $reactions[] = $aefi['Aefi']['aefi_symptoms'];
+
+        // added reactions
+
+        $multiple = $aefi['AefiDescription'];
+        if (!empty($multiple)) {
+            foreach ($multiple as $other) {
+                $reactions[] = $other['description'];
+            }
+        }
+
+        $view = new View($this, false);
+        $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
+        $view->layout = false; // if you want to disable layout 
+        $view->set('aefi', $aefi); // set your variables for view here
+        $view->set('reactions', $reactions);
+        $html = $view->render('json');
+        libxml_use_internal_errors(TRUE);
+        $xml = simplexml_load_string($html);
+        $json = json_encode($xml);
+        $report = json_decode($json, TRUE);
+
+        // debug($report);
+        // exit;
+        $live = new HttpSocket();
+
+        // //Request Access Token
+        // $initiate = $live->post('https://med-safety-hub-api.redant.cloud/v1/login',
+        //     array(
+        //         "email"=>"gmurimi@pharmacyboardkenya.org",
+        //         "password"=>"uxLPyc3FM1",
+        //         "platformId"=>"ab1057ca-8e5d-4470-a595-36e7a3901697"
+        //     )
+        // );
+        $httpSocket = new HttpSocket();
+        $request = array(
+            'method' => 'POST',
+            'uri' => array(
+                'schema' => 'https',
+                'host' => 'med-safety-hub-api.redant.cloud',
+                'path' => 'v1/login',
+                'email' => 'gmurimi@pharmacyboardkenya.org',
+                'password' => 'uxLPyc3FM1',
+                'platformId' => 'ab1057ca-8e5d-4470-a595-36e7a3901697'
+            ),
+            'body' => array(
+                'email' => 'gmurimi@pharmacyboardkenya.org',
+                'password' => 'uxLPyc3FM1',
+                'platformId' => 'ab1057ca-8e5d-4470-a595-36e7a3901697'
+            )
+        );
+        $initiate = $httpSocket->request($request);
+        // debug($initiate);
+        // exit;
+        if ($initiate->isOk()) {
+
+            $body = $initiate->body;
+            $resp = json_decode($body, true);
+            $userId = $resp['id'];
+            $token = $resp['token'];
+            $organisationId = $resp['organisationId'];
+
+            $payload = array(
+                'userId' => $userId,
+                'organisationId' => $organisationId,
+                'report' => $report
+            );
+
+            // debug($token);
+            // exit;
+            // $results = $httpSocket->post(
+            //     Configure::read('mhra_incidents'),
+            //     $payload,
+            //     array('header' => array(
+            //         'X-App-Id' => Configure::read('mhra_xapp_id'),
+            //         'Authorization' => 'Bearer ' . $token, //original 
+            //         'Authorization' => 'API_KEY ' . Configure::read('mhra_api_key'),
+
+            //     ))
+            // );
+            // debug($token);
+            // exit;
+            $httpSocket = new HttpSocket();
+            $request2 = array(
+                'method' => 'POST',
+                'uri' => array(
+                    'schema' => 'https',
+                    'host' => 'med-safety-hub-api.redant.cloud',
+                    'path' => 'v1/integration/incidents/reports/e2bjs',
+                ),
+                'body' => $payload,
+                'header' => [
+                    'X-App-Id' => '5d3298a9-14dc-4ee1-8318-4a3f25b04a99',
+                    'Authorization' => 'Bearer ' . $token, //original 
+                    'Authorization' => 'API_KEY d04aa2d0-92f8-480a-a3b9-54beb746e399'
+
+                ],
+
+            );
+            $results = $httpSocket->request($request2);
+            debug($results);
+            exit;
+
+            if ($results->isOk()) {
+                $body = $results->body;
+                $resp = json_decode($body, true);
+                $this->Aefi->saveField('webradr_message', $body);
+                $this->Aefi->saveField('webradr_date', date('Y-m-d H:i:s'));
+                $this->Aefi->saveField('webradr_ref', $resp['report']['id']);
+                $this->Flash->success('Yellow Card Scheme integration success!!');
+                $this->Flash->success($body);
+                $this->redirect($this->referer());
+            } else {
+                $body = $results->body;
+                // $this->Aefi->saveField('webradr_message', $body);
+                $this->Flash->error('Error sending report to Yello Card Scheme:');
+                $this->Flash->error($body);
+                $this->redirect($this->referer());
+            }
+        } else {
+            $body = $initiate->body;
+            $this->Aefi->saveField('webradr_message', $body);
+            $this->Flash->error('Error initiating report to Yellow Card Scheme:');
             $this->Flash->error($body);
             $this->redirect($this->referer());
         }
@@ -896,8 +1138,11 @@ class AefisController extends AppController
 
         //Manager will always edit a copied report
         $aefi = $this->Aefi->find('first', array(
-            'conditions' => array('Aefi.id' => $aefi['Aefi']['aefi_id']),
-            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
+            'conditions' => array('Aefi.id' => $id),
+            'contain' => array(
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
+                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+            )
         ));
         $this->set('aefi', $aefi);
 
@@ -983,6 +1228,7 @@ class AefisController extends AppController
         $html = $view->render('download');
 
         // debug($html);
+        // exit;
         $HttpSocket = new HttpSocket();
         // string data
         $results = $HttpSocket->post(
@@ -1386,9 +1632,41 @@ class AefisController extends AppController
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
 
-                    $this->loadModel('Queue.QueuedTask');
-                    $this->QueuedTask->createJob('GenericEmail', $datum);
-                    $this->QueuedTask->createJob('GenericNotification', $datum);
+                $aefi = $this->Aefi->read(null, $this->Aefi->id);
+                $id = $this->Aefi->id;
+
+                //******************       Send Email and Notifications to Applicant and Managers          *****************************
+                $this->loadModel('Message');
+                $html = new HtmlHelper(new ThemeView());
+                $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
+                $variables = array(
+                    'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
+                    'reference_link' => $html->link(
+                        $aefi['Aefi']['reference_no'],
+                        array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
+                        array('escape' => false)
+                    ),
+                    'modified' => $aefi['Aefi']['modified']
+                );
+                $datum = array(
+                    'email' => $aefi['Aefi']['reporter_email'],
+                    'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                    'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                    'message' => CakeText::insert($message['Message']['content'], $variables)
+                );
+
+                $this->loadModel('Queue.QueuedTask');
+                $this->QueuedTask->createJob('GenericEmail', $datum);
+                $this->QueuedTask->createJob('GenericNotification', $datum);
+
+
+                //Send SMS
+                if (!empty($aefi['Aefi']['reporter_phone']) && strlen(substr($aefi['Aefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Aefi']['reporter_phone'], -9))) {
+                    $datum['phone'] = '254' . substr($aefi['Aefi']['reporter_phone'], -9);
+                    $variables['reference_url'] = Router::url(['controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true]);
+                    $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                    $this->QueuedTask->createJob('GenericSms', $datum);
+                }
 
                     //Send SMS
                     if (!empty($aefi['Saefi']['reporter_phone']) && strlen(substr($aefi['Saefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Saefi']['reporter_phone'], -9))) {

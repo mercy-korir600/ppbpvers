@@ -16,7 +16,6 @@ $nchecked = "&#x2610;";
                 <div class="row-fluid">
                     <div class="span12" style="text-align: center;">
                         <?php
-                        // echo($this->Html->image('header-object.png', array('alt' => 'SAEFI', 'fullBase' => true)));
                         echo $this->Html->image('confidence.png', array('alt' => 'COA', 'full_base' => true));
                         ?>
                     </div>
@@ -128,6 +127,15 @@ $nchecked = "&#x2610;";
                                     ?></strong>
                             Is the reaction still on?
                             <strong><?php echo $padr['Padr']['reaction_on'] ?></strong>
+                            <br> When did the reaction stop?
+                            <strong><?php
+                                    $rod = $padr['Padr']['date_of_end_of_reaction'];
+                                    $dor = '';
+                                    if (isset($rod['day'])) $dor .= $rod['day'] . '-';
+                                    if (isset($rod['month'])) $dor .= $rod['month'] . '-';
+                                    if (isset($rod['year'])) $dor .= $rod['year'];
+                                    echo $dor;
+                                    ?></strong>
                         </td>
                     </tr>
                 </table>

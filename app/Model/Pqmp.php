@@ -208,9 +208,9 @@ class Pqmp extends AppModel
                 'required' => true,
                 'message'  => 'Please provide the brand name of the product'
             ),
-        ),
-        'batch_number' => array(
-            'notBlank' => array(
+		),
+		'batch_number' => array(
+			'notBlank' => array(
                 'rule'     => 'notBlank',
                 'required' => true,
                 'message'  => 'Please provide the batch number of the product'

@@ -245,7 +245,7 @@
                               'Unknown' => 6];
                 if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];
                 ?></reactionoutcome>
-            </reaction>
+            </reaction>            
             <?php foreach ($aefi['AefiListOfVaccine'] as $num => $listOfVaccine): ?>
             <drug>
                 <drugcharacterization><?php
@@ -297,8 +297,7 @@
                     <drugresult/>
                 </drugreactionrelatedness>
             </drug>
-            <?php  endforeach; ?>
-            <summary>
+            <?php  endforeach; ?><summary>
                 <narrativeincludeclinical><?php echo $aefi['Aefi']['description_of_reaction']; ?></narrativeincludeclinical>
                 <reportercomment/>
                 <senderdiagnosismeddraversion>23.0</senderdiagnosismeddraversion>

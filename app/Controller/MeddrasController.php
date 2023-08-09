@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('HttpSocket', 'Network/Http');
 /**
  * Meddras Controller
  *
@@ -23,7 +24,7 @@ class MeddrasController extends AppController
 	public function beforeFilter()
 	{
 		parent::beforeFilter();
-		$this->Auth->allow('autocomplete', 'api_autocomplete');
+		$this->Auth->allow('autocomplete', 'api_autocomplete','autosync');
 	}
 
 	public function autocomplete($query = null)

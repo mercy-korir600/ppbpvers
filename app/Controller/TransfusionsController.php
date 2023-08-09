@@ -516,7 +516,6 @@ class TransfusionsController extends AppController
      * @param string $id
      * @return void
      */
-
     public function reporter_edit($id = null)
     {
         $this->Transfusion->id = $id;

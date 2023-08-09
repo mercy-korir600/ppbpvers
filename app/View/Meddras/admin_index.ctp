@@ -9,7 +9,10 @@
 		<div class="span0 columns">
 			<div class="row-fluid">
 				<div class="span12">
-					  <?php //echo $this->element('admin/contentmenu')?>
+					  <?php
+				 
+					  
+					  ?>
 					  
 				</div><!--/span-->
 			</div><!--/row-->	
@@ -40,8 +43,17 @@
 						echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
 									'class' => 'btn btn-inverse', 'div' => 'control-group', 'div' => false,
 								));
+								 
 						echo $this->Form->end();
+
+						echo $this->Html->link(
+							'<span class="label label-info tooltipper" title="Auto Sync"><i class="fa fa-refresh" aria-hidden="true"></i> Auto Sync </span>',
+							array('controller' => 'meddras', 'action' => 'autosync', 'manager' => false),
+							array('escape' => false)
+						  );
 					?>
+
+					
 					</div>
 				</div>
 				

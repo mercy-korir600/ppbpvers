@@ -83,6 +83,11 @@
 	$("#AefiAefiSymptoms").autocomplete({
 			source: "/meddras/autocomplete.json"
 	});
+	$("#AefiAefiDescriptionDescription").autocomplete({
+		source: "/meddras/autocomplete.json"
+});
+
+ 
 
 	 
 

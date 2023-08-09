@@ -50,9 +50,20 @@ class SadrsController extends AppController
     {
         $this->Sadr->id = $id;
         if (!$this->Sadr->exists()) {
-            $this->Session->setFlash(__('Could not verify the suspected adverse drug report ID. Please ensure the ID is correct.'), 'flash_error');
-            $this->redirect('/');
+            throw new NotFoundException(__('Invalid SADR'));
         }
+        $this->Sadr->saveField('submitted', 2);
+        $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
+        //lucian
+        $sadr = $this->Sadr->read(null, $id);
+         
+        if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
+            $reference = $this->generate_inner_reference();
+            $this->Sadr->saveField('reference_no', $reference); 
+        }
+        //bokelo
+        $sadr = $this->Sadr->read(null, $id);
+       
 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
@@ -83,7 +94,7 @@ class SadrsController extends AppController
                 'password' => Configure::read('mhra_password'),
                 'platformId' => Configure::read('mhra_platform')
             ),
-            array('header' => array('umc-client-key' => '5ab835c4-3179-4590-bcd2-ff3c27d6b8ff'))
+            'modified' => $sadr['Sadr']['modified']
         );
         if ($initiate->isOk()) {
 
@@ -133,6 +144,23 @@ class SadrsController extends AppController
 
         $this->autoRender = false;
     }
+    public function generate_inner_reference()
+    {
+        # code...
+        $count = $this->Sadr->find('count',  array(
+            'fields' => 'Sadr.reference_no',
+            'conditions' => array(
+                'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+            )
+        ));
+        $count++; 
+  $count = ($count < 10) ? "0$count" : $count;
+          return $reference_number = 'SADR/' . date('Y') . '/' . $count;
+    }
+    /**
+     * index method
+     */
+
 
     /**
      * index method
@@ -264,7 +292,6 @@ class SadrsController extends AppController
         if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
         else $this->paginate['limit'] = reset($this->page_options);
 
-
         $criteria = $this->Sadr->parseCriteria($this->passedArgs);
 
         $criteria['Sadr.copied !='] = '1';
@@ -287,7 +314,7 @@ class SadrsController extends AppController
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
             $this->csv_export($this->Sadr->find(
                 'all',
-                array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'limit' => 1000)
+                array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'limit' => 10000)
             ));
         }
         //end csv export
@@ -598,6 +625,7 @@ class SadrsController extends AppController
         $html = $view->render('download');
 
         // debug($html);
+        // exit;
         $HttpSocket = new HttpSocket();
         // string data
         $results = $HttpSocket->post(
@@ -606,8 +634,6 @@ class SadrsController extends AppController
             array('header' => array('umc-client-key' => Configure::read('vigiflow_key')))
         );
 
-        // debug($results->code);
-        // debug($results->body);
         if ($results->isOk()) {
             $body = $results->body;
             $this->Sadr->saveField('vigiflow_message', $body);
