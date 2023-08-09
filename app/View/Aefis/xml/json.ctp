@@ -71,7 +71,7 @@ echo "\n"; ?>
         <receiverfaxcountrycode>+44</receiverfaxcountrycode>
         <receiveremailaddress>Mick.Foy@mhra.gsi.gov.uk</receiveremailaddress>
     </receiver>
-    <medicallyconfirm> <?php if (!in_array($aefi['Aefi']['designation_id'], [26, 27])) {
+    <medicallyconfirm><?php if (!in_array($aefi['Aefi']['designation_id'], [26, 27])) {
                             echo 1;
                         } else {
                             echo 2;
@@ -83,16 +83,22 @@ echo "\n"; ?>
     <patientgpmedicalrecordnumb><?php echo $aefi['Aefi']['ip_no']; ?></patientgpmedicalrecordnumb>
     <?php
     if (!empty($aefi['Aefi']['date_of_birth'])) {
-        $birthdatef = 102;
-        if (empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
-            $birthdatef = 602;
-        } else if (empty($aefi['Aefi']['date_of_birth']['day']) && !empty($aefi['Aefi']['date_of_birth']['month'])) {
-            $birthdatef = 610;
-        } else if (!empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
-            $birthdatef = 602;
+        $string = $aefi['Aefi']['date_of_birth'];
+        if (strlen($string) > 7) {
+            $birthdatef = 102;
+            if (empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
+                $birthdatef = 602;
+            } else if (empty($aefi['Aefi']['date_of_birth']['day']) && !empty($aefi['Aefi']['date_of_birth']['month'])) {
+                $birthdatef = 610;
+            } else if (!empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
+                $birthdatef = 602;
+            }
+            echo '<patientbirthdateformat>' . $birthdatef . '</patientbirthdateformat>';
+            echo "\n";
+        } else {
+            echo '<patientbirthdateformat/>';
+            echo "\n";
         }
-        echo '<patientbirthdateformat>' . $birthdatef . '</patientbirthdateformat>';
-        echo "\n";
     } else {
         echo '<patientbirthdateformat/>';
         echo "\n";
@@ -201,9 +207,10 @@ echo "\n"; ?>
             <reportertitle></reportertitle>
             <?php $arr = preg_split("/[\s]+/", $aefi['Aefi']['reporter_name']); ?>
             <reportergivename><?php if (isset($arr[0])) echo $arr[0]; ?></reportergivename>
-            <reporterfamilyname><?php if (isset($arr[1])){
-                if(!empty($arr[1]))echo $arr[1];else echo "N/A";
-            }else echo $arr[0]; ?></reporterfamilyname>
+            <reporterfamilyname><?php if (isset($arr[1])) {
+                                    if (!empty($arr[1])) echo $arr[1];
+                                    else echo "N/A";
+                                } else echo $arr[0]; ?></reporterfamilyname>
             <reporterorganization><?php echo $aefi['Aefi']['name_of_institution']; ?></reporterorganization>
             <reporterstreet></reporterstreet>
             <reportercity></reportercity>

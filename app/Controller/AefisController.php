@@ -32,6 +32,7 @@ class AefisController extends AppController
         parent::beforeFilter();
         $this->Auth->allow('yellowcard');
     }
+  
     public function yellowcard($id = null)
     {
         $this->autoRender = false;
@@ -725,6 +726,8 @@ class AefisController extends AppController
 
         // debug($results->code);
         // debug($results->body);
+        // debug($results);
+        // exit;
         if ($results->isOk()) {
             $body = $results->body;
             $this->Aefi->saveField('vigiflow_message', $body);

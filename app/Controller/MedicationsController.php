@@ -25,10 +25,16 @@ class MedicationsController extends AppController
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 
     /**
-     * index method
+     * index method reset_reference_numbers
      *
      * @return void
      */
+
+     public function beforeFilter()
+     {
+         parent::beforeFilter(); 
+         $this->Auth->allow('manager_reset_reference_numbers','reset_reference_numbers');
+     }
     public function reporter_index()
     {
         $this->Prg->commonProcess();
@@ -485,7 +491,36 @@ class MedicationsController extends AppController
             return $reference_no;
         }
     }
-
+    public function manager_reset_reference_numbers($id = null)
+    {
+        # code...
+        $this->Medication->id = $id;
+        if (!$this->Medication->exists()) {
+            throw new NotFoundException(__('Invalid Medication'));
+        }
+        // $this->Medication->saveField('submitted', 2);
+        // $this->Medication->saveField('submitted_date', date("Y-m-d H:i:s"));
+        //lucian
+        $medication = $this->Medication->read(null, $id);
+         
+        if (!empty($medication['Medication']['reference_no']) && $medication['Medication']['reference_no'] == 'new') {
+            
+            $count = $this->Medication->find('count',  array(
+                'fields' => 'Medication.reference_no',
+                'conditions' => array(
+                    'Medication.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Medication.reference_no !=' => 'new'
+                )
+            ));
+            $count++;
+            $count = ($count < 10) ? "0$count" : $count;
+            $reference_no = 'ME/' . date('Y') . '/' . $count;
+            $this->Medication->saveField('reference_no', $reference_no); 
+        }
+        //bokelo
+        $medication = $this->Medication->read(null, $id); 
+        debug($medication);
+        exit;
+    }
     public function reporter_edit($id = null)
     {
         $this->Medication->id = $id;
@@ -512,7 +547,16 @@ class MedicationsController extends AppController
                     $this->Medication->saveField('submitted_date', date("Y-m-d H:i:s"));
                     //lucian
                     if (!empty($medication['Medication']['reference_no']) && $medication['Medication']['reference_no'] == 'new') {
-                        $reference_no = $this->generate_reference();
+                        // $reference_no = $this->generate_reference();
+                        $count = $this->Medication->find('count',  array(
+                            'fields' => 'Medication.reference_no',
+                            'conditions' => array(
+                                'Medication.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Medication.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $reference_no = 'ME/' . date('Y') . '/' . $count;
                         $this->Medication->saveField('reference_no', $reference_no);
                     }
                     //bokelo

@@ -605,8 +605,8 @@ class SadrsController extends AppController
                             )
                         ));
                         $count++; 
-                  $count = ($count < 10) ? "0$count" : $count;
-                          $reference_number = 'SADR/' . date('Y') . '/' . $count;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $reference_number = 'SADR/' . date('Y') . '/' . $count;
                         $this->Sadr->saveField('reference_no', $reference_number); 
                     }
                     //bokelo
