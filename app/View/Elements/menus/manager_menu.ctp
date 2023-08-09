@@ -1,6 +1,7 @@
+<?= $this->Html->css('menu.css') ?>
     <div class="menu text-center">
 
-        <ul class="nav nav-pills center-pills">
+        <ul class="nav nav-pills center-pills responsive-menu">
             <li class="<?php echo $this->fetch('Dashboard') ?>">
                 <?php
                     echo $this->Html->link('<i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard',
