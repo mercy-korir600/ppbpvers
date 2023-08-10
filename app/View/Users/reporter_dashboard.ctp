@@ -127,10 +127,10 @@ $this->Html->script('dashboard', array('inline' => false));
                   array('escape' => false, 'class' => 'text-' . ((isset($aefi['Aefi']['serious']) && $aefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
                 );
                 echo "&nbsp;";
-                if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] !=$this->Session->read('Auth.User.id'))  {
+                if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
                   echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
-                }else{
-                echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
+                } else {
+                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
                 }
                 echo "</li>";
               } else {
@@ -149,79 +149,100 @@ $this->Html->script('dashboard', array('inline' => false));
             ?>
 
           </div>
-          <?php if($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
-          <div class="span4 formbacka" style="padding: 4px;">
-            <h5>County Submitted Serious Reports </h5>
-            <?php
-            echo '<ol>';
-            foreach ($serious_aefis as $saefi) {
-              if ($saefi['Aefi']['submitted'] > 1) { 
-                echo "<li>";
-                $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Aefi']['reference_no'];
-                echo $this->Html->link(
-                  $vname . ' <small class="muted">(' . $saefi['Aefi']['reference_no'] . ')</small>',
-                  array('controller' => 'aefis', 'action' => 'view', $saefi['Aefi']['id']),
-                  array('escape' => false, 'class' => 'text-' . ((isset($saefi['Aefi']['serious']) && $saefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
-                );
-                echo "&nbsp;"; 
-                if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $saefi['Aefi']['user_id'] !=$this->Session->read('Auth.User.id'))  {
-                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+          <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
+            <div class="span4 formbacka" style="padding: 4px;">
+              <h5>County Submitted Serious Reports </h5>
+              <h6>AEFI </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_aefis as $saefi) {
+                if ($saefi['Aefi']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Aefi']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $saefi['Aefi']['reference_no'] . ')</small>',
+                    array('controller' => 'aefis', 'action' => 'view', $saefi['Aefi']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($saefi['Aefi']['serious']) && $saefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "&nbsp;";
+                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $saefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
+                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                  }
+                  echo "</li>";
+                } else {
+                  echo "<li>";
+                  echo $this->Html->link(
+                    $saefi['Aefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
+                    array('controller' => 'aefis', 'action' => 'edit', $saefi['Aefi']['id']),
+                    array('escape' => false)
+                  );
+                  echo "</li>";
                 }
-                echo "</li>";
-              } else {
-                echo "<li>";
-                echo $this->Html->link(
-                  $saefi['Aefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
-                  array('controller' => 'aefis', 'action' => 'edit', $saefi['Aefi']['id']),
-                  array('escape' => false)
-                );
-                echo "</li>";
               }
-            }
-            echo '</ol>';
-            echo $this->Html->link('All AEFIs >>', array('controller' => 'aefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-            ?>
+              echo '</ol>';
+              echo $this->Html->link('All AEFIs >>', array('controller' => 'aefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+              ?>
+              <h6>SADR </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  ); 
+                  echo "</li>";
+                } 
+              }
+              echo '</ol>';
+              echo $this->Html->link('All SADRs >>', array('controller' => 'sadrs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
 
-          </div>
+              ?>
+
+            </div>
           <?php } ?>
-          <?php 
-          if($this->Session->read('Auth.User.user_type')=="Market Authority"){?> 
-          <div class="span4 formbacka" style="padding: 4px;">
-            <h5>E2Bs </h5>
-            <?php
-            echo '<ol>';
-            foreach ($ce2bs as $ce) {
-              if ($ce['Ce2b']['submitted'] > 1) { 
-                echo "<li>";
-               echo $this->Html->link(' <small class="muted">(' . $ce['Ce2b']['reference_no'] . ')</small>',
-                  array('controller' => 'ce2bs', 'action' => 'view', $ce['Ce2b']['id']),
-                  array('escape' => false, 'class' => 'text-success')
-                );
-                echo "&nbsp;"; 
-                if($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $ce['Ce2b']['user_id'] !=$this->Session->read('Auth.User.id'))  {
-                  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+          <?php
+          if ($this->Session->read('Auth.User.user_type') == "Market Authority") { ?>
+            <div class="span4 formbacka" style="padding: 4px;">
+              <h5>E2Bs </h5>
+              <?php
+              echo '<ol>';
+              foreach ($ce2bs as $ce) {
+                if ($ce['Ce2b']['submitted'] > 1) {
+                  echo "<li>";
+                  echo $this->Html->link(
+                    ' <small class="muted">(' . $ce['Ce2b']['reference_no'] . ')</small>',
+                    array('controller' => 'ce2bs', 'action' => 'view', $ce['Ce2b']['id']),
+                    array('escape' => false, 'class' => 'text-success')
+                  );
+                  echo "&nbsp;";
+                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $ce['Ce2b']['user_id'] != $this->Session->read('Auth.User.id')) {
+                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                  }
+                  echo "</li>";
+                } else {
+                  echo "<li>";
+                  echo $this->Html->link(
+                    $ce['Ce2b']['created'] . ' <small class="muted">(unsubmitted)</small>',
+                    array('controller' => 'ce2bs', 'action' => 'edit', $ce['Ce2b']['id']),
+                    array('escape' => false)
+                  );
+                  echo "</li>";
                 }
-                echo "</li>";
-              } else {
-                echo "<li>";
-                echo $this->Html->link(
-                  $ce['Ce2b']['created'] . ' <small class="muted">(unsubmitted)</small>',
-                  array('controller' => 'ce2bs', 'action' => 'edit', $ce['Ce2b']['id']),
-                  array('escape' => false)
-                );
-                echo "</li>";
               }
-            }
-            echo '</ol>';
-            echo $this->Html->link('All E2Bs >>', array('controller' => 'ce2bs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-            ?>
+              echo '</ol>';
+              echo $this->Html->link('All E2Bs >>', array('controller' => 'ce2bs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+              ?>
 
-          </div>
+            </div>
           <?php } ?>
         </div>
         <hr>
         <div class="row-fluid">
-        <div class="span4 formbackp" style="padding: 4px;">
+          <div class="span4 formbackp" style="padding: 4px;">
             <h5>Poor-Quality Health Products and Technologies</h5>
             <?php
             echo '<ol>';
@@ -316,7 +337,7 @@ $this->Html->script('dashboard', array('inline' => false));
         </div>
         <hr>
         <div class="row-fluid">
-         
+
           <div class="span4 formbackt" style="padding: 4px;">
             <h5>Transfusions Reactions</h5>
             <?php
@@ -358,39 +379,39 @@ $this->Html->script('dashboard', array('inline' => false));
                       <div class="tab-pane" id="internal_report_comments">12600 Letters debat</div>
                     </div> -->
           </div>
-          <?php if($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
-          <div class="span4 formbacka" style="padding: 4px;">
-            <h5>Investigation Reports </h5>
-            <?php
-            echo '<ol>';
-            foreach ($saefis as $saefi) {
-              if ($saefi['Saefi']['submitted'] > 1) { 
-                echo "<li>";
-                $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Saefi']['reference_no'];
-                echo $this->Html->link(
-                  $vname . ' <small class="muted">(' . $saefi['Saefi']['reference_no'] . ')</small>',
-                  array('controller' => 'saefis', 'action' => 'view', $saefi['Saefi']['id']),
-                  array('escape' => false, 'class' => 'text-' . ((isset($saefi['Saefi']['serious']) && $saefi['Saefi']['serious'] == 'Yes') ? 'error' : 'success'))
-                );
-                echo "&nbsp;";
-                // echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>', array('controller' => 'saefis', 'action' => 'followup', $saefi['Saefi']['id']), array('escape' => false), __('Add a followup report?'));
-                echo "</li>";
-              } else {
-                echo "<li>";
-                echo $this->Html->link(
-                  $saefi['Saefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
-                  array('controller' => 'saefis', 'action' => 'edit', $saefi['Saefi']['id']),
-                  array('escape' => false)
-                );
-                echo "</li>";
+          <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
+            <div class="span4 formbacka" style="padding: 4px;">
+              <h5>Investigation Reports </h5>
+              <?php
+              echo '<ol>';
+              foreach ($saefis as $saefi) {
+                if ($saefi['Saefi']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Saefi']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $saefi['Saefi']['reference_no'] . ')</small>',
+                    array('controller' => 'saefis', 'action' => 'view', $saefi['Saefi']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($saefi['Saefi']['serious']) && $saefi['Saefi']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "&nbsp;";
+                  // echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>', array('controller' => 'saefis', 'action' => 'followup', $saefi['Saefi']['id']), array('escape' => false), __('Add a followup report?'));
+                  echo "</li>";
+                } else {
+                  echo "<li>";
+                  echo $this->Html->link(
+                    $saefi['Saefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
+                    array('controller' => 'saefis', 'action' => 'edit', $saefi['Saefi']['id']),
+                    array('escape' => false)
+                  );
+                  echo "</li>";
+                }
               }
-            }
-            echo '</ol>';
-            echo $this->Html->link('All SAEFIs >>', array('controller' => 'saefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-            // if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report SAEFI', array('controller' => 'saefis', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report  New SAEFI?'));
-            ?>
+              echo '</ol>';
+              echo $this->Html->link('All SAEFIs >>', array('controller' => 'saefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+              // if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report SAEFI', array('controller' => 'saefis', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report  New SAEFI?'));
+              ?>
 
-          </div>
+            </div>
           <?php } ?>
         </div>
       <?php } ?>

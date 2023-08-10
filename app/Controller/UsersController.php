@@ -821,16 +821,34 @@ class UsersController extends AppController
                 'Aefi.submitted' => 2,
                 'Aefi.county_id' => $this->Auth->User('county_id')
             );
+            $conditionb = array(
+                'Sadr.deleted' => false,
+                'Sadr.serious' => "Yes",
+                'Sadr.submitted' => 2,
+                'Sadr.county_id' => $this->Auth->User('county_id')
+            );
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
-            'limit' => 7, 'contain' => array(),
-            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
+            'limit' => 3, 'contain' => array(),
+            'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
             'conditions' => $conditions,
 
         ));
         $this->set('serious_aefis', $serious_aefis);
+
+        // SADR Serious Reports
+        $serious_sadr = $this->User->Sadr->find('all', array(
+            'limit' => 3, 'contain' => array(),
+            'fields' => array('Sadr.id','Sadr.report_title', 'Sadr.user_id', 'Sadr.created', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.serious'), 
+            'order' => array('Sadr.created' => 'desc'),
+            'conditions' => $conditionb,
+
+        ));
+        // debug($serious_sadr);
+        // exit;
+        $this->set('serious_sadr', $serious_sadr);
 
         // SAEFIs Reports
         $saefis = $this->User->Saefi->find('all', array(

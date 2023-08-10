@@ -10,7 +10,11 @@ $this->assign('SADR', 'active');
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($sadr['Sadr']['reference_no'])) ? $sadr['Sadr']['reference_no'] : $sadr['Sadr']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($sadr['SadrOriginal']['id']) && !empty($sadr['SadrOriginal']['id'])) ? $sadr['SadrOriginal']['ExternalComment'] : $sadr['ExternalComment']); ?>)</a></li>
     <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
-    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php
+    if ($sadr['Sadr']['serious'] == "Yes") {
+    ?>
+      <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php } ?>
   </ul>
 
   <div class="tab-content">

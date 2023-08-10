@@ -40,110 +40,12 @@ class SadrsController extends AppController
                 'order' => array('Sadr.id' => 'DESC')
             )
         );
-        foreach($data as $dt){
+        foreach ($data as $dt) {
             debug($dt['Sadr']['reference_no']);
             exit;
         }
-       
     }
-    public function yellowcard($id = null)
-    {
-        $this->Sadr->id = $id;
-        if (!$this->Sadr->exists()) {
-            throw new NotFoundException(__('Invalid SADR'));
-        }
-        $this->Sadr->saveField('submitted', 2);
-        $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
-        //lucian
-        $sadr = $this->Sadr->read(null, $id);
-         
-        if (!empty($sadr['Sadr']['reference_no']) && $sadr['Sadr']['reference_no'] == 'new') {
-            $reference = $this->generate_inner_reference();
-            $this->Sadr->saveField('reference_no', $reference); 
-        }
-        //bokelo
-        $sadr = $this->Sadr->read(null, $id);
-       
 
-        $sadr = $this->Sadr->find('first', array(
-            'conditions' => array('Sadr.id' => $id),
-            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'County', 'SubCounty', 'Attachment', 'Designation')
-        ));
-        $sadr = Sanitize::clean($sadr, array('escape' => true));
-
-        $view = new View($this, false);
-        $view->viewPath = 'Sadrs/xml';  // Directory inside view directory to search for .ctp files
-        $view->layout = false; // if you want to disable layout
-        $view->set('sadr', $sadr); // set your variables for view here
-        $html = $view->render('json');
-        $xml = simplexml_load_string($html);
-        $json = json_encode($xml);
-        $report = json_decode($json, TRUE);
-
-
-        // debug($report);
-        // exit;
-
-        $HttpSocket = new HttpSocket();
-
-        //Request Access Token
-        $initiate = $HttpSocket->post(
-            Configure::read('mhra_auth_api'),
-            array(
-                'email' => Configure::read('mhra_username'),
-                'password' => Configure::read('mhra_password'),
-                'platformId' => Configure::read('mhra_platform')
-            ),
-            'modified' => $sadr['Sadr']['modified']
-        );
-        if ($initiate->isOk()) {
-
-            $body = $initiate->body;
-            $resp = json_decode($body, true);
-            $userId = $resp['id'];
-            $token = $resp['token'];
-            $organisationId = $resp['organisationId'];
-
-            $payload = array(
-                'userId' => $userId,
-                'organisationId' => $organisationId,
-                'report' => $report
-
-            );
-
-            $results = $HttpSocket->post(
-                Configure::read('mhra_api'),
-                $payload,
-                array('header' => array('Authorization' => 'Bearer ' . $token))
-            );
-
-            if ($results->isOk()) {
-                $body = $results->body;
-                $resp = json_decode($body, true);
-                $this->Sadr->saveField('webradr_message', $body);
-                $this->Sadr->saveField('webradr_date', date('Y-m-d H:i:s'));
-                $this->Sadr->saveField('webradr_ref', $resp['report']['id']);
-                $this->Flash->success('Yello Card Scheme integration success!!');
-                $this->Flash->success($body);
-                $this->redirect($this->referer());
-            } else {
-                $body = $results->body;
-                $this->Sadr->saveField('webradr_message', $body);
-                $this->Flash->error('Error sending report to Yello Card Scheme:');
-                $this->Flash->error($body);
-                $this->redirect($this->referer());
-            }
-        } else {
-            $body = $initiate->body;
-            $this->Sadr->saveField('webradr_message', $body);
-            $this->Flash->error('Error sending report to Yello Card Scheme:');
-            $this->Flash->error($body);
-            $this->redirect($this->referer());
-        }
-
-
-        $this->autoRender = false;
-    }
     public function generate_inner_reference()
     {
         # code...
@@ -153,9 +55,9 @@ class SadrsController extends AppController
                 'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
             )
         ));
-        $count++; 
-  $count = ($count < 10) ? "0$count" : $count;
-          return $reference_number = 'SADR/' . date('Y') . '/' . $count;
+        $count++;
+        $count = ($count < 10) ? "0$count" : $count;
+        return $reference_number = 'SADR/' . date('Y') . '/' . $count;
     }
     /**
      * index method
@@ -178,7 +80,20 @@ class SadrsController extends AppController
         }
 
         $criteria = $this->Sadr->parseCriteria($this->passedArgs);
-        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Sadr.user_id'] = $this->Auth->User('id');
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+            if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
+                $criteria['OR'] = array(
+                    'Sadr.user_id' => $this->Auth->user('id'), 
+                    array(
+                        'Sadr.serious' => 'Yes',
+                        'Sadr.submitted' => array(2, 3),
+                        'Sadr.county_id' => $this->Auth->user('county_id') // Change this to the appropriate field name for county ID
+                    )
+                );
+            } else {
+                $criteria['Sadr.user_id'] = $this->Auth->User('id');
+            }
+        }
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') {
             $criteria['Sadr.submitted'] = array(2);
         } else {
@@ -422,7 +337,7 @@ class SadrsController extends AppController
 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
-            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment','SadrOriginal.ReviewComment', 'ReviewComment.Attachment','ExternalComment')
         ));
         $this->set('sadr', $sadr);
 
@@ -493,8 +408,8 @@ class SadrsController extends AppController
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
             'contain' => array(
-                'SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment','ExternalComment.Attachment','ReviewComment','ReviewComment.Attachment',
-                'SadrOriginal', 'SadrOriginal.SadrDescription', 'SadrOriginal.SadrListOfDrug', 'SadrOriginal.SadrListOfDrug.Route', 'SadrOriginal.SadrListOfDrug.Frequency', 'SadrOriginal.SadrListOfDrug.Dose', 'SadrOriginal.SadrListOfMedicine', 'SadrOriginal.SadrListOfMedicine.Route', 'SadrOriginal.SadrListOfMedicine.Frequency', 'SadrOriginal.SadrListOfMedicine.Dose', 'SadrOriginal.County', 'SadrOriginal.SubCounty', 'SadrOriginal.Attachment', 'SadrOriginal.Designation', 'SadrOriginal.ExternalComment','SadrOriginal.ReviewComment'
+                'SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
+                'SadrOriginal', 'SadrOriginal.SadrDescription', 'SadrOriginal.SadrListOfDrug', 'SadrOriginal.SadrListOfDrug.Route', 'SadrOriginal.SadrListOfDrug.Frequency', 'SadrOriginal.SadrListOfDrug.Dose', 'SadrOriginal.SadrListOfMedicine', 'SadrOriginal.SadrListOfMedicine.Route', 'SadrOriginal.SadrListOfMedicine.Frequency', 'SadrOriginal.SadrListOfMedicine.Dose', 'SadrOriginal.County', 'SadrOriginal.SubCounty', 'SadrOriginal.Attachment', 'SadrOriginal.Designation', 'SadrOriginal.ExternalComment', 'SadrOriginal.ReviewComment'
             )
         ));
         $managers = $this->Sadr->User->find('list', array(
@@ -943,6 +858,7 @@ class SadrsController extends AppController
         $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_sadr')));
 
         $county_id = $sadr['Sadr']['county_id'];
+
         $users = $this->Sadr->User->find('all', array(
             'contain' => array(),
             'conditions' => array(
@@ -958,8 +874,14 @@ class SadrsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-
+        // debug($users);
+        // exit;
         foreach ($users as $user) {
+            $model =  'reporter';
+            if ($user['User']['group_id'] == 2) {
+                $model =  'manager';
+            }
+
             $variables = array(
                 'name' => $user['User']['name'], 'reference_no' => $sadr['Sadr']['reference_no'],
                 'reference_link' => $html->link(
@@ -967,7 +889,7 @@ class SadrsController extends AppController
                     array(
                         'controller' => 'sadrs',
                         'action' => 'view', $sadr['Sadr']['id'],
-                        'manager' => true,
+                        $model => true,
                         'full_base' => true
                     ),
                     array('escape' => false)
