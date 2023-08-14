@@ -10,7 +10,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary','Ce2b');
+    public $uses = array('Sadr', 'Aefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -78,13 +78,31 @@ class ReportsController extends AppController
             'saes_by_medicine',
             'saes_by_concomittant',
             'landing',
-            'e2b_summary'
+            'e2b_summary',
+            's_summary'
         );
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
         }
         $this->set('is_mobile', $this->is_mobile);
+    }
+    public function s_summary()
+    {
+        $aefis = [
+            ['aefis' => 'Serious received', 'cnt' => 10],
+            ['aefis' => 'Investigation conducted', 'cnt' => 8],
+            // Add more data entries as needed
+        ];
+        $sadr = [
+            ['sadr' => 'Serious received', 'cnt' => 12],
+            ['sadr' => 'Investigation conducted', 'cnt' => 4],
+            // Add more data entries as needed
+        ];
+
+        $this->set(compact('sadr'));
+        $this->set(compact('aefis'));
+        $this->render('upgrade/s_summary');
     }
 
     public function e2b_summary()
@@ -93,7 +111,7 @@ class ReportsController extends AppController
         $criteria['Ce2b.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Ce2b.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        
+
         if (!empty($this->request->data['Report']['company_name'])) {
             $criteria['Ce2b.company_name'] = $this->request->data['Report']['company_name'];
         }
@@ -122,8 +140,8 @@ class ReportsController extends AppController
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
-        $this->set(compact('facility_data','year','months'));
-        $this->set('_serialize','facility_data','year','months');
+        $this->set(compact('facility_data', 'year', 'months'));
+        $this->set('_serialize', 'facility_data', 'year', 'months');
         $this->render('upgrade/e2b_summary');
     }
 

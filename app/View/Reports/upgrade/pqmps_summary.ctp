@@ -24,6 +24,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="geoTable" class="tabcontentgeo">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegeo">
                 <thead>
                     <tr>
@@ -34,12 +35,23 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($geo as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['County']['county_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -62,6 +74,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="yearTable" class="tabcontentyear">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
@@ -72,6 +85,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($year as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value[0]['year'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -80,9 +95,18 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-</div>   
+</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
@@ -103,6 +127,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="brandsTable" class="tabcontentbrands">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablebrands">
                 <thead>
                     <tr>
@@ -113,6 +138,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($brands as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['Pqmp']['brand_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -121,10 +148,19 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-</div>  
+</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
@@ -145,6 +181,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="generic_nameTable" class="tabcontentgeneric_name">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegeneric_name">
                 <thead>
                     <tr>
@@ -155,6 +192,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($generic_name as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['Pqmp']['generic_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -163,11 +202,20 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
 </div>
-<hr> 
+<hr>
 <div class="row-fluid">
     <div class="span12">
         <h4>Month</h4>
@@ -187,6 +235,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="monthlyTable" class="tabcontentmonthly">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablemonthly">
                 <thead>
                     <tr>
@@ -197,6 +246,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($monthly as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value[0]['month'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -205,11 +256,20 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
 </div>
-<hr>  
+<hr>
 <script type="text/javascript">
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
@@ -237,7 +297,8 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
-    }   
+    }
+
     function brandsTab(evt, brandstabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentbrands");
@@ -250,7 +311,7 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(brandstabName).style.display = "block";
         evt.currentTarget.className += " active";
-    }  
+    }
 
     function generic_nameTab(evt, generic_nametabName) {
         var i, tabcontent, tablinks;
@@ -264,7 +325,7 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(generic_nametabName).style.display = "block";
         evt.currentTarget.className += " active";
-    } 
+    }
 
     function monthlyTab(evt, monthlytabName) {
         var i, tabcontent, tablinks;
@@ -278,14 +339,14 @@ $this->Html->css('summary', null, array('inline' => false));
         }
         document.getElementById(monthlytabName).style.display = "block";
         evt.currentTarget.className += " active";
-    } 
+    }
     // Get the element with id="defaultOpen" and click on it qualification formulation category complaint medical brands manufacturer supplier country  generic_name country monthly facility
     document.getElementById("geoOpen").click();
-    document.getElementById("yearOpen").click();   
-    document.getElementById("brandsOpen").click();  
-    document.getElementById("generic_nameOpen").click(); 
-    document.getElementById("monthlyOpen").click(); 
- 
+    document.getElementById("yearOpen").click();
+    document.getElementById("brandsOpen").click();
+    document.getElementById("generic_nameOpen").click();
+    document.getElementById("monthlyOpen").click();
+
 
     Highcharts.chart('sadrs-monthly', {
         data: {
@@ -310,8 +371,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     this.point.y + ' ' + this.point.name.toLowerCase();
             }
         }
-    }); 
- 
+    });
+
     Highcharts.chart('sadrs-generic_name', {
         data: {
             table: 'datatablegeneric_name'
@@ -335,7 +396,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     this.point.y + ' ' + this.point.name.toLowerCase();
             }
         }
-    }); 
+    });
 
     Highcharts.chart('sadrs-brands', {
         data: {
@@ -360,7 +421,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     this.point.y + ' ' + this.point.name.toLowerCase();
             }
         }
-    });   
+    });
 
     Highcharts.chart('sadrs-geo', {
         data: {

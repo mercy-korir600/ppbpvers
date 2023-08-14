@@ -559,6 +559,11 @@ class Saefi extends AppModel
 		if (!empty($this->data[$this->alias]['person_date'])) {
 			$this->data[$this->alias]['person_date'] = date('Y-m-d', strtotime($this->data[$this->alias]['person_date']));
 		}
+		if (!empty($this->data[$this->alias]['date_of_birth'])) {
+			$this->data[$this->alias]['date_of_birth'] = date('Y-m-d', strtotime($this->data[$this->alias]['date_of_birth']));
+		}
+
+		// Error: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect date value: '2011-02-30' for column '' at row 1
 
 		// if (!empty($this->data['Saefi']['time_of_first_symptom'])) {
 		//     $time = strtotime($this->data['Saefi']['time_of_first_symptom']);

@@ -829,7 +829,7 @@ class UsersController extends AppController
             );
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
-            'limit' => 3, 'contain' => array(),
+            'limit' => 2, 'contain' => array(),
             'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.serious'),
             'contain' => array('AefiListOfVaccine', 'AefiListOfVaccine.Vaccine'),
             'order' => array('Aefi.created' => 'desc'),
@@ -840,7 +840,7 @@ class UsersController extends AppController
 
         // SADR Serious Reports
         $serious_sadr = $this->User->Sadr->find('all', array(
-            'limit' => 3, 'contain' => array(),
+            'limit' => 2, 'contain' => array(),
             'fields' => array('Sadr.id','Sadr.report_title', 'Sadr.user_id', 'Sadr.created', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.serious'), 
             'order' => array('Sadr.created' => 'desc'),
             'conditions' => $conditionb,

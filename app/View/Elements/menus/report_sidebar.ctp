@@ -70,5 +70,12 @@
                       array('escape' => false));
         ?>
       </li>
+      <li class="nav-header"><i class="fa fa-thermometer-full" aria-hidden="true"></i> SERIOUS CASES</li>
+      <li class="<?php echo $this->fetch('s-summary'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Serious Reports',  array('controller' => 'reports', 'action'=>'s_summary', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
       <li class="divider"></li>
     </ul>

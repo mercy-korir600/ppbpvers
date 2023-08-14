@@ -149,61 +149,35 @@ $this->Html->script('dashboard', array('inline' => false));
             ?>
 
           </div>
-          <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
-            <div class="span4 formbacka" style="padding: 4px;">
-              <h5>County Submitted Serious Reports </h5>
-              <h6>AEFI </h6>
-              <?php
-              echo ' <ol>';
-              foreach ($serious_aefis as $saefi) {
-                if ($saefi['Aefi']['submitted'] > 1) {
-                  echo "<li>";
-                  $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Aefi']['reference_no'];
-                  echo $this->Html->link(
-                    $vname . ' <small class="muted">(' . $saefi['Aefi']['reference_no'] . ')</small>',
-                    array('controller' => 'aefis', 'action' => 'view', $saefi['Aefi']['id']),
-                    array('escape' => false, 'class' => 'text-' . ((isset($saefi['Aefi']['serious']) && $saefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
-                  );
-                  echo "&nbsp;";
-                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $saefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
-                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
-                  }
-                  echo "</li>";
-                } else {
-                  echo "<li>";
-                  echo $this->Html->link(
-                    $saefi['Aefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
-                    array('controller' => 'aefis', 'action' => 'edit', $saefi['Aefi']['id']),
-                    array('escape' => false)
-                  );
-                  echo "</li>";
-                }
+          <div class="span4 formbackp" style="padding: 4px;">
+            <h5>Poor-Quality Health Products and Technologies</h5>
+            <?php
+            echo '<ol>';
+            foreach ($pqmps as $pqmp) {
+              if ($pqmp['Pqmp']['submitted'] > 1) {
+                echo "<li>";
+                echo $this->Html->link(
+                  $pqmp['Pqmp']['brand_name'] . ' <small class="muted">(' . $pqmp['Pqmp']['reference_no'] . ')</small>',
+                  array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id']),
+                  array('escape' => false, 'class' => 'text-' . ((in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
+                    || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']) ? 'error' : 'success'))
+                );
+                echo "</li>";
+              } else {
+                echo "<li>";
+                echo $this->Html->link(
+                  $pqmp['Pqmp']['reference_no'] . ' <small class="muted">(unsubmitted)</small>',
+                  array('controller' => 'pqmps', 'action' => 'edit', $pqmp['Pqmp']['id']),
+                  array('escape' => false)
+                );
+                echo "</li>";
               }
-              echo '</ol>';
-              echo $this->Html->link('All AEFIs >>', array('controller' => 'aefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-              ?>
-              <h6>SADR </h6>
-              <?php
-              echo ' <ol>';
-              foreach ($serious_sadr as $adr) {
-                if ($adr['Sadr']['submitted'] > 1) {
-                  echo "<li>";
-                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
-                  echo $this->Html->link(
-                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
-                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
-                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
-                  ); 
-                  echo "</li>";
-                } 
-              }
-              echo '</ol>';
-              echo $this->Html->link('All SADRs >>', array('controller' => 'sadrs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-
-              ?>
-
-            </div>
-          <?php } ?>
+            }
+            echo '</ol>';
+            echo $this->Html->link('All PQHPTs >>', array('controller' => 'pqmps', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+            if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report  PQHPT', array('controller' => 'pqmps', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('ReportPoor-Quality Health Products and Technologies?'));
+            ?>
+          </div>
           <?php
           if ($this->Session->read('Auth.User.user_type') == "Market Authority") { ?>
             <div class="span4 formbacka" style="padding: 4px;">
@@ -242,35 +216,7 @@ $this->Html->script('dashboard', array('inline' => false));
         </div>
         <hr>
         <div class="row-fluid">
-          <div class="span4 formbackp" style="padding: 4px;">
-            <h5>Poor-Quality Health Products and Technologies</h5>
-            <?php
-            echo '<ol>';
-            foreach ($pqmps as $pqmp) {
-              if ($pqmp['Pqmp']['submitted'] > 1) {
-                echo "<li>";
-                echo $this->Html->link(
-                  $pqmp['Pqmp']['brand_name'] . ' <small class="muted">(' . $pqmp['Pqmp']['reference_no'] . ')</small>',
-                  array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id']),
-                  array('escape' => false, 'class' => 'text-' . ((in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
-                    || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']) ? 'error' : 'success'))
-                );
-                echo "</li>";
-              } else {
-                echo "<li>";
-                echo $this->Html->link(
-                  $pqmp['Pqmp']['reference_no'] . ' <small class="muted">(unsubmitted)</small>',
-                  array('controller' => 'pqmps', 'action' => 'edit', $pqmp['Pqmp']['id']),
-                  array('escape' => false)
-                );
-                echo "</li>";
-              }
-            }
-            echo '</ol>';
-            echo $this->Html->link('All PQHPTs >>', array('controller' => 'pqmps', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
-            if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report  PQHPT', array('controller' => 'pqmps', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('ReportPoor-Quality Health Products and Technologies?'));
-            ?>
-          </div>
+          <!-- here -->
           <div class="span4 formbackd" style="padding: 4px;">
             <h5>Medical Devices</h5>
             <?php
@@ -334,10 +280,7 @@ $this->Html->script('dashboard', array('inline' => false));
             if ($this->Session->read('Auth.User.user_type') != 'Public Health Program')   echo $this->Form->postLink('Report Medication Error', array('controller' => 'medications', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report New Medication Error?'));
             ?>
           </div>
-        </div>
-        <hr>
-        <div class="row-fluid">
-
+          <!-- Here -->
           <div class="span4 formbackt" style="padding: 4px;">
             <h5>Transfusions Reactions</h5>
             <?php
@@ -370,15 +313,143 @@ $this->Html->script('dashboard', array('inline' => false));
               echo $this->Form->postLink('Report Transfusion', array('controller' => 'transfusions', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini'), __('Report New Transfusion Reaction?'));
             }
             ?>
-            <!-- <ul id="reviewer_tab" class="nav nav-tabs">
-                        <li class="active"><a href="#formview" data-toggle="tab">Aha</a></li>
-                        <li><a href="#internal_report_comments" data-toggle="tab">Feedback ()</a></li>
-                    </ul>
-                    <div class="tab-content">
-                      <div class="tab-pane active" id="formview">bakoloa</div>
-                      <div class="tab-pane" id="internal_report_comments">12600 Letters debat</div>
-                    </div> -->
+
           </div>
+        </div>
+        <hr>
+        <div class="row-fluid">
+
+
+          <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
+            <div class="span4 formbacka" style="padding: 4px;">
+              <h5>County Submitted Serious Reports </h5>
+              <h6>AEFI </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_aefis as $saefi) {
+                if ($saefi['Aefi']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'])) ? $saefi['AefiListOfVaccine'][0]['Vaccine']['vaccine_name'] : $saefi['Aefi']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $saefi['Aefi']['reference_no'] . ')</small>',
+                    array('controller' => 'aefis', 'action' => 'view', $saefi['Aefi']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($saefi['Aefi']['serious']) && $saefi['Aefi']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "&nbsp;";
+                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $saefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
+                    echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i></span>', array('controller' => 'aefis', 'action' => 'investigation', $saefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
+                  }
+                  echo "</li>";
+                } else {
+                  echo "<li>";
+                  echo $this->Html->link(
+                    $saefi['Aefi']['created'] . ' <small class="muted">(unsubmitted)</small>',
+                    array('controller' => 'aefis', 'action' => 'edit', $saefi['Aefi']['id']),
+                    array('escape' => false)
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All AEFIs >>', array('controller' => 'aefis', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+              ?>
+              <h6>SADR </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All SADRs >>', array('controller' => 'sadrs', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+
+              ?>
+              <h6>PQHPT </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All PQHPT >>', array('controller' => 'pqmps', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+
+              ?>
+              <h6>Medical Devices </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All Incidents >>', array('controller' => 'devices', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+
+              ?>
+              <h6>Medication Errors </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All Errors >>', array('controller' => 'medications', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+
+              ?>
+              <h6>Transfusions Reactions </h6>
+              <?php
+              echo ' <ol>';
+              foreach ($serious_sadr as $adr) {
+                if ($adr['Sadr']['submitted'] > 1) {
+                  echo "<li>";
+                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  echo $this->Html->link(
+                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                  );
+                  echo "</li>";
+                }
+              }
+              echo '</ol>';
+              echo $this->Html->link('All BTs >>', array('controller' => 'transfusions', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
+
+              ?>
+            </div>
+          <?php } ?>
           <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
             <div class="span4 formbacka" style="padding: 4px;">
               <h5>Investigation Reports </h5>

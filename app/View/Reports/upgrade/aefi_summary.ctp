@@ -24,6 +24,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="geoTable" class="tabcontentgeo">
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegeo">
                 <thead>
                     <tr>
@@ -34,12 +35,23 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($geo as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['County']['county_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -62,6 +74,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="sexTable" class="tabcontentsex">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablesex">
                 <thead>
                     <tr>
@@ -72,12 +85,23 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($sex as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['Aefi']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -104,6 +128,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="ageTable" class="tabcontentage">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableage">
                 <thead>
                     <tr>
@@ -114,12 +139,23 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($age as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value[0]['ager'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -142,6 +178,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="yearTable" class="tabcontentyear">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
@@ -152,12 +189,23 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($year as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value[0]['year'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -183,6 +231,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="vaccineTable" class="tabcontentvaccine">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablevaccine">
                 <thead>
                     <tr>
@@ -193,6 +242,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($vaccine as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value['Vaccine']['vaccine_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -201,9 +252,18 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-</div> 
+</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
@@ -224,6 +284,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="monthTable" class="tabcontentmonth">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablemonth">
                 <thead>
                     <tr>
@@ -234,6 +295,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($months as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
                         echo "<tr>";
                         echo "<th>" . $value[0]['month'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -242,13 +305,20 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 <hr>
 <script type="text/javascript">
-    
-
     function vaccineTab(evt, vaccinetabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentvaccine");
@@ -318,7 +388,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(yeartabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
-  
+
 
     function monthTab(evt, monthtabName) {
         var i, tabcontent, tablinks;
@@ -338,7 +408,7 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
-    document.getElementById("yearOpen").click(); 
+    document.getElementById("yearOpen").click();
     document.getElementById("monthOpen").click();
     Highcharts.chart('sadrs-month', {
         data: {
@@ -363,7 +433,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     this.point.y + ' ' + this.point.name.toLowerCase();
             }
         }
-    }); 
+    });
     Highcharts.chart('sadrs-vaccine', {
         data: {
             table: 'datatablevaccine'

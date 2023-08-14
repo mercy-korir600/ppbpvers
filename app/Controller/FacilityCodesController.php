@@ -237,10 +237,14 @@ class FacilityCodesController extends AppController
 			if (!empty($file['tmp_name'])) {
 				$csvData = array_map('str_getcsv', file($file['tmp_name']));
 				$header = array_shift($csvData);
-				$this->FacilityCode->deleteAll(array('1' => '1'), false);
+				set_time_limit(600);
+				// $this->FacilityCode->deleteAll(array('1' => '1'), false);
 
 				// Validate and save each row
 				foreach ($csvData as $row) {
+
+					$existingRecord = $this->FacilityCode->findByFacilityCode($this->verify_code($row[0]));
+
 					$data = array(
 						'facility_code' => $this->verify_code($row[0]),
 						'facility_name' => $row[1],
@@ -258,11 +262,17 @@ class FacilityCodesController extends AppController
 
 						// Add more columns as needed
 					);
+					if ($existingRecord) {
+						// Update the existing record
+						$this->FacilityCode->id = $existingRecord['FacilityCode']['id'];
+					} else {
+						// Create a new record
+						$this->FacilityCode->create();
+					}
 					$this->FacilityCode->set($data);
 
-					if ($this->FacilityCode->validates()) {
-						$this->FacilityCode->create();
-						$this->FacilityCode->save($data);
+					if ($this->FacilityCode->save($data)) {
+						// Record saved successfully
 					} else {
 						$errors = $this->FacilityCode->validationErrors;
 						// Handle validation errors

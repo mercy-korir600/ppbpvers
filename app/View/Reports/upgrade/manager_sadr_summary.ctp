@@ -24,6 +24,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="geoTable" class="tabcontentgeo">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegeo">
                 <thead>
                     <tr>
@@ -34,6 +35,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($geo as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['County']['county_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -41,7 +43,16 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
-            </table>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table> 
         </div>
     </div>
     <div class="span6">
@@ -62,6 +73,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="sexTable" class="tabcontentsex">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablesex">
                 <thead>
                     <tr>
@@ -72,6 +84,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($sex as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['gender'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
@@ -79,7 +92,16 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
-            </table>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table> 
         </div>
     </div>
 </div>
@@ -104,6 +126,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="ageTable" class="tabcontentage">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableage">
                 <thead>
                     <tr>
@@ -114,12 +137,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($age as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value[0]['ager'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -142,6 +175,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="yearTable" class="tabcontentyear">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
@@ -152,12 +186,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($year as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value[0]['year'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -183,6 +227,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="suspectedTable" class="tabcontentsuspected">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablesuspected">
                 <thead>
                     <tr>
@@ -193,12 +238,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($suspected as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['SadrListOfDrug']['drug_name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -224,6 +279,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="monthTable" class="tabcontentmonth">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablemonth">
                 <thead>
                     <tr>
@@ -234,12 +290,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($monthly as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value[0]['month'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -266,6 +332,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="reactionTable" class="tabcontentreaction">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablereaction">
                 <thead>
                     <tr>
@@ -276,12 +343,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($reaction as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['reaction'] . "</th>";
                         echo "<td>" . $value[0]['rea'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -308,6 +385,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="titleTable" class="tabcontenttitle">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatabletitle">
                 <thead>
                     <tr>
@@ -318,12 +396,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($report_title as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['report_title'] . "</th>";
                         echo "<td>" . $value[0]['rep'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -350,6 +438,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="qualificationTable" class="tabcontentqualification">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablequalification">
                 <thead>
                     <tr>
@@ -360,12 +449,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($qualification as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Designation']['name'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -388,6 +487,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="seriousTable" class="tabcontentserious">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableserious">
                 <thead>
                     <tr>
@@ -398,12 +498,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($seriousness as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value[0]['serious'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -430,6 +540,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="reasonTable" class="tabcontentreason">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablereason">
                 <thead>
                     <tr>
@@ -440,12 +551,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($seriousness_reason as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['serious_reason'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -468,6 +589,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="outcomeTable" class="tabcontentoutcome">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableoutcome">
                 <thead>
                     <tr>
@@ -478,12 +600,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($outcome_data as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['outcome'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -510,6 +642,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="facilityTable" class="tabcontentfacility">
+        <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablefacility">
                 <thead>
                     <tr>
@@ -520,12 +653,22 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($facility_data as $key => $value) {
+                        $c += $value[0]['cnt'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['name_of_institution'] . "</th>";
                         echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
                 </tbody>
             </table>
         </div>

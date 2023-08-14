@@ -45,12 +45,15 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
-                <!-- <tfooter>
+            </table>
+            <table class="table table-condensed table-bordered">
+               
+                <tbody>
                     <tr>
                         <th>Total</th>
                         <th><?= $c; ?></th>
                     </tr>
-                </tfooter> -->
+                </tbody>
             </table>
         </div>
     </div>
@@ -92,12 +95,14 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
-                <!-- <tfooter>
+            </table>
+            <table class="table table-condensed table-bordered">
+                <thead>
                     <tr>
                         <th>Total</th>
                         <th><?= $c; ?></th>
                     </tr>
-                </tfooter> -->
+                </thead>
             </table>
         </div>
     </div>
@@ -141,6 +146,14 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
     <div class="span6">
@@ -179,6 +192,14 @@ $this->Html->css('summary', null, array('inline' => false));
                     ?>
                 </tbody>
             </table>
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </div>
@@ -202,6 +223,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="monthTable" class="tabcontentmonth">
+
             <table class="table table-condensed table-bordered" id="datatablemonth">
                 <thead>
                     <tr>
@@ -219,6 +241,14 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </thead>
             </table>
         </div>
     </div>
@@ -327,7 +357,7 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    
+
     Highcharts.chart('sadrs-sex', {
         data: {
             table: 'datatablesex'
