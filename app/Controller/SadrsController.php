@@ -87,7 +87,7 @@ class SadrsController extends AppController
                     array(
                         'Sadr.serious' => 'Yes',
                         'Sadr.submitted' => array(2, 3),
-                        'Sadr.county_id' => $this->Auth->user('county_id') // Change this to the appropriate field name for county ID
+                        'Sadr.county_id' => $this->Auth->user('county_id') 
                     )
                 );
             } else {
@@ -874,8 +874,7 @@ class SadrsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-        // debug($users);
-        // exit;
+      
         foreach ($users as $user) {
             $model =  'reporter';
             if ($user['User']['group_id'] == 2) {

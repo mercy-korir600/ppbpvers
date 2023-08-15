@@ -624,21 +624,15 @@ class AefisController extends AppController
         $criteria = $this->Aefi->parseCriteria($this->passedArgs);
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Aefi.submitted'] = array(2);
         if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
-            if ($user_type === 'County Pharmacist') {
-                // either this
-                // $criteria['Aefi.user_id'] = $this->Auth->User('id');
-                // // or this
-                // $criteria['Aefi.serious'] = "Yes";
-                // $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
-                $conditions = array(
-                    'OR' => array(
-                        array('Aefi.deleted' => false, 'Aefi.user_id' => $user_id),
-                        array(
-                            'Aefi.serious' => "Yes", 'Aefi.county_id' => $this->Auth->User('county_id')
-                        )
-                    ),
-                );
-                $criteria[] = $conditions;
+            if ($user_type === 'County Pharmacist') { 
+                $criteria['OR'] = array(
+                    'Aefi.user_id' => $this->Auth->user('id'), 
+                    array(
+                        'Aefi.serious' => 'Yes',
+                        'Aefi.submitted' => array(2, 3),
+                        'Aefi.county_id' => $this->Auth->user('county_id') 
+                    )
+                ); 
             } else {
                 $criteria['Aefi.user_id'] = $this->Auth->User('id');
             }
@@ -650,24 +644,7 @@ class AefisController extends AppController
             $criteria['Aefi.submitted'] = array(0, 1);
         } elseif (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 2) {
             $criteria['Aefi.submitted'] = array(2, 3);
-        }
-        // Add condition for County Pharmacist
-
-        // $conditions = array(
-        //     'Aefi.deleted' => false,
-        //     'Aefi.user_id' => $user_id
-        // );
-
-        // if ($user_type === 'County Pharmacist') {
-        //     $conditions = array(
-        //         'OR' => array(
-        //             array('Aefi.deleted' => false, 'Aefi.user_id' => $user_id),
-        //             array(
-        //                 'Aefi.serious' => "Yes", 'Aefi.county_id' => $this->Auth->User('county_id')
-        //             )
-        //         ),
-        //     );
-        // }
+        } 
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Aefi.created' => 'desc');

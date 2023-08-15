@@ -663,6 +663,11 @@ class PqmpsController extends AppController
                             $this->Session->setFlash(__($message5), 'alerts/flash_success');
                             $this->redirect(array('controller' => 'medications', 'action' => 'add', $this->Pqmp->id, 'reporter' => true));
                         }
+
+                        // Notify County Pharmacist
+
+
+
                         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
                         $this->redirect(array('action' => 'view', $this->Pqmp->id));
                     }

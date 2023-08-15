@@ -800,6 +800,14 @@ class UsersController extends AppController
             'Aefi.deleted' => false,
             'Aefi.user_id' => $user_id
         );
+        $conditionb = array(
+            'Sadr.deleted' => false,
+            'Sadr.user_id' => $user_id
+        );
+        $cmed = array(
+            'Sadr.deleted' => false,
+            'Sadr.user_id' => $user_id
+        );
 
 
 
@@ -827,6 +835,19 @@ class UsersController extends AppController
                 'Sadr.submitted' => 2,
                 'Sadr.county_id' => $this->Auth->User('county_id')
             );
+            $cmed = array(
+                'Medication.deleted' => false, 
+                'Medication.submitted' => 2,
+                'Medication.county_id' => $this->Auth->User('county_id'),
+                'Medication.outcome IN' => array(
+                    "Treatment /intervention required-caused temporary harm",
+                    "Initial/prolonged hospitalization-caused temporary harm",
+                    "Caused permanent harm",
+                    "Near death event",
+                    "Death"
+                )
+            );
+            
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
             'limit' => 2, 'contain' => array(),
@@ -841,14 +862,29 @@ class UsersController extends AppController
         // SADR Serious Reports
         $serious_sadr = $this->User->Sadr->find('all', array(
             'limit' => 2, 'contain' => array(),
-            'fields' => array('Sadr.id','Sadr.report_title', 'Sadr.user_id', 'Sadr.created', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.serious'), 
+            'fields' => array('Sadr.id', 'Sadr.report_title', 'Sadr.user_id', 'Sadr.created', 'Sadr.submitted', 'Sadr.reference_no', 'Sadr.serious'),
             'order' => array('Sadr.created' => 'desc'),
             'conditions' => $conditionb,
 
         ));
-        // debug($serious_sadr);
-        // exit;
+
         $this->set('serious_sadr', $serious_sadr);
+
+        /*$serious == "Treatment /intervention required-caused temporary harm" || $serious == "Initial/prolonged hospitalization-caused temporary harm" || $serious == "Caused permanent harm" || $serious == "Near death event" || $serious == "Death"    -> outcome*/
+
+        // Serious Medications 
+        $serious_med = $this->User->Medication->find('all', array(
+            'limit' => 2, 'contain' => array(),
+            'fields' => array('Medication.id','Medication.user_id', 'Medication.created', 'Medication.submitted', 'Medication.reference_no','Medication.outcome'),
+            'order' => array('Medication.created' => 'desc'),
+            'conditions' => $cmed,
+
+        ));
+
+        // debug($serious_med);
+        // exit;
+
+        $this->set('serious_med', $serious_med);
 
         // SAEFIs Reports
         $saefis = $this->User->Saefi->find('all', array(
@@ -1167,7 +1203,7 @@ class UsersController extends AppController
             $this->Session->setFlash(__('You do not have permission to edit this user!'), 'flash_info');
             $this->redirect('/', null, false);
         }
-        if ($this->request->is('post') || $this->request->is('put')) { 
+        if ($this->request->is('post') || $this->request->is('put')) {
             unset($this->User->validate['username']);
             unset($this->User->validate['password']);
             unset($this->User->validate['confirm_password']);
@@ -1177,8 +1213,7 @@ class UsersController extends AppController
             } else {
                 $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'flash_error');
             }
-        } 
-        else {
+        } else {
             $this->request->data = $this->User->read(null, $id);
         }
         $designations = $this->User->Designation->find('list', array(

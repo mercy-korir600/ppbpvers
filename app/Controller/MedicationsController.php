@@ -48,9 +48,29 @@ class MedicationsController extends AppController
         }
 
         $criteria = $this->Medication->parseCriteria($this->passedArgs);
-        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Medication.user_id'] = $this->Auth->User('id');
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+            //Add this to allow County Pharmacist to see the reports
+            if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
+                $criteria['OR'] = array(
+                    'Medication.user_id' => $this->Auth->user('id'),
+                    array(
+                        'Medication.outcome IN' => array(
+                            "Treatment /intervention required-caused temporary harm",
+                            "Initial/prolonged hospitalization-caused temporary harm",
+                            "Caused permanent harm",
+                            "Near death event",
+                            "Death"
+                        ),
+                        'Medication.submitted' => array(2, 3),
+                        'Medication.county_id' => $this->Auth->user('county_id')
+                    )
+                );
+            } else {
+                $criteria['Medication.user_id'] = $this->Auth->User('id');
+            }
+        }
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Medication.submitted'] = array(2);
-        // $criteria['Medication.user_id'] = $this->Auth->User('id');
+
         //add deleted=false to criteria
         $criteria['Medication.deleted'] = false;
 
@@ -377,8 +397,8 @@ class MedicationsController extends AppController
         $medication = $this->Medication->find('first', array(
             'conditions' => array('Medication.id' => $id),
             'contain' => array(
-                'MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment', 'ExternalComment.Attachment','ReviewComment.Attachment',
-                'MedicationOriginal.MedicationProduct', 'MedicationOriginal.County', 'MedicationOriginal.Attachment', 'MedicationOriginal.Designation', 'MedicationOriginal.ExternalComment','MedicationOriginal.ReviewComment'
+                'MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
+                'MedicationOriginal.MedicationProduct', 'MedicationOriginal.County', 'MedicationOriginal.Attachment', 'MedicationOriginal.Designation', 'MedicationOriginal.ExternalComment', 'MedicationOriginal.ReviewComment'
             )
         ));
         $managers = $this->Medication->User->find('list', array(
@@ -604,10 +624,10 @@ class MedicationsController extends AppController
             throw new NotFoundException(__('Invalid MEDICATION'));
         }
         $medication = $this->Medication->read(null, $id);
-        // if ($medication['Medication']['submitted'] > 1) {
-        //     $this->Session->setFlash(__('The medication has been submitted'), 'alerts/flash_info');
-        //     $this->redirect(array('action' => 'view', $this->Medication->id));
-        // }
+        if ($medication['Medication']['submitted'] > 1) {
+            $this->Session->setFlash(__('The medication has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Medication->id));
+        }
         if ($medication['Medication']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this MEDICATION!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -703,7 +723,7 @@ class MedicationsController extends AppController
                     $serious = $medication['Medication']['adverse_reaction'];
                     if ($serious == "Yes") {
                         $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB, please proceed to submit a SADR Form'), 'alerts/flash_success');
-                        $this->redirect(array('controller' => 'sadrs', 'action' => 'addme', $this->Medication->id, 'reporter' => true)); 
+                        $this->redirect(array('controller' => 'sadrs', 'action' => 'addme', $this->Medication->id, 'reporter' => true));
                     } else {
                         $this->Session->setFlash(__('The Medication Error Report has been submitted to PPB'), 'alerts/flash_success');
                         $this->redirect(array('action' => 'view', $this->Medication->id));
@@ -749,8 +769,10 @@ class MedicationsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-
+        // debug($users);
+        // exit;
         foreach ($users as $user) {
+            $model = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
             $variables = array(
                 'name' => $user['User']['name'],
                 'reference_no' => $medication['Medication']['reference_no'],
@@ -759,7 +781,7 @@ class MedicationsController extends AppController
                     array(
                         'controller' => 'medications',
                         'action' => 'view', $medication['Medication']['id'],
-                        'manager' => true,
+                        $model => true,
                         'full_base' => true
                     ),
                     array('escape' => false)
@@ -1163,7 +1185,8 @@ class MedicationsController extends AppController
         $designations = $this->Medication->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('counties', 'designations'));
     }
-    public function manager_archive($id=null) {
+    public function manager_archive($id = null)
+    {
 
         $this->Medication->id = $id;
         if (!$this->Medication->exists()) {
@@ -1178,5 +1201,5 @@ class MedicationsController extends AppController
         }
         $this->Session->setFlash(__('MEDICATION was not archied'), 'alerts/flash_error');
         $this->redirect($this->referer());
-	}
+    }
 }
