@@ -579,8 +579,15 @@ class PqmpsController extends AppController
                     //lucian
                     if (!empty($pqmp['Pqmp']['reference_no']) && $pqmp['Pqmp']['reference_no'] == 'new') {
 
-                        //call a function to generate the reference number
-                        $reference = $this->generateReferenceNumber();
+                        $count = $this->Pqmp->find('count',  array(
+                            'fields' => 'Pqmp.reference_no',
+                            'conditions' => array(
+                                'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $reference = 'PQHPT/' . date('Y') . '/' . $count;
                         $this->Pqmp->saveField('reference_no', $reference);
                     }
                     //bokelo

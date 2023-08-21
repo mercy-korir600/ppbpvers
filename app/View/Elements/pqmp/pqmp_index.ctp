@@ -1,7 +1,6 @@
 <?php
 
-use function PHPSTORM_META\type;
-
+ 
 $this->assign('Poor-Quality Health Products and Technologies', 'active');
 ?>
 

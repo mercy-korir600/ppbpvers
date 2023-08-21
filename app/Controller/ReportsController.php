@@ -100,15 +100,15 @@ class ReportsController extends AppController
             'fields' => 'Aefi.serious',
             'conditions' => $criteria
         ));
-        $criteriab['Saefi.submitted'] = array(1, 2);
-        $criteriab['Saefi.copied !='] = '1';
-        $investigation = $this->Saefi->find('count',  array(
-            'fields' => array('DISTINCT Saefi.initial_id'),
-            'conditions' => $criteriab
-        )); 
+        // $criteriab['Saefi.submitted'] = array(1, 2);
+        // $criteriab['Saefi.copied !='] = '1';
+        // $investigation = $this->Saefi->find('count',  array(
+        //     'fields' => array('DISTINCT Saefi.initial_id'),
+        //     'conditions' => $criteriab
+        // )); 
         $aefis = [
             ['aefis' => 'Serious received', 'cnt' => $serious],
-            ['aefis' => 'Investigation conducted', 'cnt' => $investigation]
+            ['aefis' => 'Investigation conducted', 'cnt' => 0]
         ];
         $sadr = [
             ['sadr' => 'Serious received', 'cnt' => 12],
