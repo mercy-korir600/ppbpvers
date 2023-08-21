@@ -12,7 +12,7 @@ $this->assign('SADR', 'active');
     if ($sadr['Sadr']['serious'] == "Yes") {
     ?>
       <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
-    <?php } ?>
+    <?php } ?> 
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">

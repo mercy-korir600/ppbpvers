@@ -297,7 +297,7 @@ class MedicationsController extends AppController
 
         $medication = $this->Medication->find('first', array(
             'conditions' => array('Medication.id' => $id),
-            'contain' => array('MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment')
+            'contain' => array('MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment')
         ));
         $this->set('medication', $medication);
         // $this->render('pdf/view');

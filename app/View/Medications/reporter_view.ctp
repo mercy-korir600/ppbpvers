@@ -8,6 +8,18 @@ $this->assign('MED', 'active');
   <ul id="reviewer_tab" class="nav nav-tabs">
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $medication['Medication']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($medication['ExternalComment']); ?>)</a></li>
+    <?php
+    $requiredOutcomes = [
+      "Treatment /intervention required-caused temporary harm",
+      "Initial/prolonged hospitalization-caused temporary harm",
+      "Caused permanent harm",
+      "Near death event",
+      "Death"
+    ];
+    if (in_array($medication['Medication']['outcome'], $requiredOutcomes)) {
+    ?>
+      <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php } ?>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">
@@ -74,6 +86,34 @@ $this->assign('MED', 'active');
                 'category' => 'external',
                 'url' => 'report_feedback',
                 'review' => false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => $medication['ReviewComment']]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid =  $medication['Medication']['id'];
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Medication',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true
               ]
             ])
             ?>

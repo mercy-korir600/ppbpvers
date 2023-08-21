@@ -10,7 +10,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Aefi','Saefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -89,15 +89,30 @@ class ReportsController extends AppController
     }
     public function s_summary()
     {
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+        $criteria['Aefi.serious'] = 'Yes'; 
+
+        $serious = $this->Aefi->find('count',  array(
+            'fields' => 'Aefi.serious',
+            'conditions' => $criteria
+        ));
+        $criteriab['Saefi.submitted'] = array(1, 2);
+        $criteriab['Saefi.copied !='] = '1';
+        $investigation = $this->Saefi->find('count',  array(
+            'fields' => array('DISTINCT Saefi.initial_id'),
+            'conditions' => $criteriab
+        )); 
         $aefis = [
-            ['aefis' => 'Serious received', 'cnt' => 10],
-            ['aefis' => 'Investigation conducted', 'cnt' => 8],
-            // Add more data entries as needed
+            ['aefis' => 'Serious received', 'cnt' => $serious],
+            ['aefis' => 'Investigation conducted', 'cnt' => $investigation]
         ];
         $sadr = [
             ['sadr' => 'Serious received', 'cnt' => 12],
-            ['sadr' => 'Investigation conducted', 'cnt' => 4],
-            // Add more data entries as needed
+            ['sadr' => 'Investigation conducted', 'cnt' => 4]
         ];
 
         $this->set(compact('sadr'));

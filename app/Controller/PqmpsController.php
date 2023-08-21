@@ -17,15 +17,16 @@ class PqmpsController extends AppController
     public $paginate = array();
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
- 
+
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('guest_add','guest_edit');
+        $this->Auth->allow('guest_add', 'guest_edit');
     }
 
-    public function blackhole($type) {
-        $this->Session->setFlash(__('Sorry! The page has expired due to a '.$type.' error. Please refresh the page.'), 'flash_error');
+    public function blackhole($type)
+    {
+        $this->Session->setFlash(__('Sorry! The page has expired due to a ' . $type . ' error. Please refresh the page.'), 'flash_error');
         $this->redirect($this->referer());
     }
     /**
@@ -178,7 +179,7 @@ class PqmpsController extends AppController
         // add deleted to criteria
         $criteria['Pqmp.deleted'] = false;
         $criteria['Pqmp.archived'] = false;
-        
+
         // if (!isset($this->passedArgs['submit'])) $criteria['Pqmp.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Pqmp.created' => 'desc');
@@ -191,6 +192,21 @@ class PqmpsController extends AppController
                 array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'])
             ));
         }
+        $data = Sanitize::clean($this->paginate(), array('encode' => false));
+
+        $phones = array();
+
+        foreach ($data as $dt) {
+
+            $email = $dt['Pqmp']['user_id'];
+            $this->loadModel('User'); 
+            $user = $this->User->findById($email);
+            $phone_no = $user['User']['phone_no'];
+            $phones[] = $phone_no;
+            // update the dt with the phone number
+        }
+        // debug($phones);
+        // exit;
         //end pdf export
         $this->set('page_options', $this->page_options);
         $counties = $this->Pqmp->County->find('list', array('order' => array('County.county_name' => 'ASC')));
@@ -384,14 +400,14 @@ class PqmpsController extends AppController
     {
         # code...
         if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'PQMP_' . $id . '.pdf',  'orientation' => 'portrait'); 
+            $this->pdfConfig = array('filename' => 'PQMP_' . $id . '.pdf',  'orientation' => 'portrait');
         }
 
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment','ReviewComment','ExternalComment.Attachment','ReviewComment.Attachment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment','PqmpOriginal.ReviewComment','PqmpOriginal.ReviewComment.Attachment'
+                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
+                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment', 'PqmpOriginal.ReviewComment', 'PqmpOriginal.ReviewComment.Attachment'
             )
         ));
         $managers = $this->Pqmp->User->find('list', array(
@@ -1086,11 +1102,11 @@ class PqmpsController extends AppController
     }
 
     public function guest_add()
-    { 
+    {
         $this->Pqmp->create();
         $this->Pqmp->save(['Pqmp' => [
             'reference_no' => 'new', //'PQHPT/'.date('Y').'/'.$count,
-            'report_type' => 'Initial', 
+            'report_type' => 'Initial',
         ]], false);
         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'guest_edit', $this->Pqmp->id));
@@ -1102,7 +1118,7 @@ class PqmpsController extends AppController
             throw new NotFoundException(__('Invalid Poor-Quality Health Products and Technologies'));
         }
         $pqmp = $this->Pqmp->read(null, $id);
-      
+
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
@@ -1134,7 +1150,7 @@ class PqmpsController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_pqmp_submit')));
                     $variables = array(
-                        'name' => 'Guest', 
+                        'name' => 'Guest',
                         'reference_no' => $pqmp['Pqmp']['reference_no'],
                         'reference_link' => $html->link(
                             $pqmp['Pqmp']['reference_no'],
@@ -1222,7 +1238,7 @@ class PqmpsController extends AppController
                             $this->redirect(array('controller' => 'medications', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
                         }
                         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
-                        $this->redirect(array('controller'=>'pages','action' => 'home'));
+                        $this->redirect(array('controller' => 'pages', 'action' => 'home'));
                     }
                 }
                 // debug($this->request->data);
@@ -1247,7 +1263,8 @@ class PqmpsController extends AppController
         $countries = $this->Pqmp->Country->find('list');
         $this->set('countries', $countries);
     }
-    public function manager_archive($id=null) {
+    public function manager_archive($id = null)
+    {
 
         $this->Pqmp->id = $id;
         if (!$this->Pqmp->exists()) {
@@ -1262,5 +1279,5 @@ class PqmpsController extends AppController
         }
         $this->Session->setFlash(__('PQHTP was not archied'), 'alerts/flash_error');
         $this->redirect($this->referer());
-	}
+    }
 }

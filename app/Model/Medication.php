@@ -171,7 +171,7 @@ class Medication extends AppModel
             'className' => 'Medication',
             'foreignKey' => 'medication_id',
             'dependent' => true,
-            'conditions' => array('MedicationOriginal.copied' => '1'),
+            'conditions' => array('MedicationOriginal.copied' => '1'), 
         )
     );
 

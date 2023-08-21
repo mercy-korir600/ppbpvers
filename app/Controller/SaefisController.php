@@ -246,7 +246,7 @@ class SaefisController extends AppController
                     //******************       Send Email and Notifications to Applicant and Managers          *****************************
                     $this->loadModel('Message');
                     $html = new HtmlHelper(new ThemeView());
-                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_saefi_submit')));
                     $variables = array(
                         'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Saefi']['reference_no'],
                         'reference_link' => $html->link(
@@ -258,7 +258,7 @@ class SaefisController extends AppController
                     );
                     $datum = array(
                         'email' => $aefi['Saefi']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_saefi_submit', 'model' => 'Saefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -293,7 +293,8 @@ class SaefisController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                            'id' => $id, 'user_id' => $user['User']['id'], 
+                            'type' => 'reporter_saefi_submit', 'model' => 'Saefi',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
