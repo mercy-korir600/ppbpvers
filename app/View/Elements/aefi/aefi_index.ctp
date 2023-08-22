@@ -25,15 +25,15 @@ $this->assign('Adverse Event Following Immunization', 'active');
     <div class="marketing">
       <div class="row-fluid">
         <div class="span12">
-          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>  <?php if ($redir == 'manager') {
-            // echo $this->Html->link(
-            //   '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
-            //   array('controller' => 'aefis', 'action' => 'dhis2'),
-            //   array('escape' => false, 'class' => 'btn btn-success')
-            // );
-          } ?></h3>
+          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small> <?php if ($redir == 'manager') {
+                                                                                                                                                                                            // echo $this->Html->link(
+                                                                                                                                                                                            //   '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
+                                                                                                                                                                                            //   array('controller' => 'aefis', 'action' => 'dhis2'),
+                                                                                                                                                                                            //   array('escape' => false, 'class' => 'btn btn-success')
+                                                                                                                                                                                            // );
+                                                                                                                                                                                          } ?></h3>
           <hr class="soften" style="margin: 7px 0px;">
-        
+
         </div>
       </div>
     </div>
@@ -357,7 +357,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
           <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
 
             <th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th>
-            <!-- <th><?php echo $this->Paginator->sort('webradr_ref'); ?></th> -->
+            <th><?php echo $this->Paginator->sort('webradr_ref'); ?></th>
 
           <?php } ?>
           <th><?php echo $this->Paginator->sort('reporter_date', 'Date reported'); ?></th>
@@ -394,8 +394,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
             <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
               <td><?php echo h($aefi['Aefi']['vigiflow_ref']);
                   echo "\n" . $aefi['Aefi']['vigiflow_date']; ?></td>
-              <!-- <td> <?php echo h($aefi['Aefi']['webradr_ref']);
-                        echo "\n" . $aefi['Aefi']['webradr_date']; ?></td> -->
+              <td><?php echo h($aefi['Aefi']['webradr_ref']);?></td>
             <?php } ?>
             <td><?php echo h($aefi['Aefi']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($aefi['Aefi']['created']); ?>&nbsp;</td>
@@ -414,6 +413,15 @@ $this->assign('Adverse Event Following Immunization', 'active');
                 if (($redir == 'manager' || $redir == 'reviewer') && empty($aefi['Aefi']['vigiflow_ref']) && $aefi['Aefi']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                   array('controller' => 'aefis', 'action' => 'vigiflow', $aefi['Aefi']['id'], 'manager' => false),
+                  array('escape' => false)
+                );
+                echo "&nbsp;";
+                if (
+                  $redir == 'manager' && empty($aefi['Aefi']['webradr_ref'])
+                  && $aefi['Aefi']['copied'] == 2
+                ) echo $this->Html->link(
+                  '<span class="label label-info tooltipper" title="Send to yello card"><i class="fa fa-upload" aria-hidden="true"></i> Yellow Card </span>',
+                  array('controller' => 'aefis', 'action' => 'yellowcard', $aefi['Aefi']['id'], 'manager' => false),
                   array('escape' => false)
                 );
 
