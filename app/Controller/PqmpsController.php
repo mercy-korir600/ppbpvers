@@ -689,7 +689,11 @@ class PqmpsController extends AppController
 
                         // Notify County Pharmacist
 
+                        if(in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
+                        || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']){
+                            $this->notifyCountyPharmacist($pqmp);
 
+                        }
 
                         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
                         $this->redirect(array('action' => 'view', $this->Pqmp->id));
@@ -718,7 +722,67 @@ class PqmpsController extends AppController
         $this->set('countries', $countries);
     }
 
+    public function notifyCountyPharmacist($pqmp = null)
+    {
+        # code...
 
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_pqmp')));
+
+        $county_id = $pqmp['Pqmp']['county_id'];
+
+        $users = $this->Pqmp->User->find('all', array(
+            'contain' => array(),
+            'conditions' => array(
+                'OR' => array(
+                    'User.group_id' => 2,
+                    array(
+                        'User.county_id' => $county_id,
+                        'User.user_type' => 'County Pharmacist'
+                    )
+                )
+            ),
+            'order' => array(
+                'User.id' => 'DESC'
+            )
+        ));
+      debug($users);
+      exit;
+        foreach ($users as $user) {
+            $model =  'reporter';
+            if ($user['User']['group_id'] == 2) {
+                $model =  'manager';
+            }
+
+            $variables = array(
+                'name' => $user['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                'reference_link' => $html->link(
+                    $pqmp['Pqmp']['reference_no'],
+                    array(
+                        'controller' => 'pqmps',
+                        'action' => 'view', $pqmp['Pqmp']['id'],
+                        $model => true,
+                        'full_base' => true
+                    ),
+                    array('escape' => false)
+                ),
+                'modified' => $pqmp['Pqmp']['modified']
+            );
+            $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $pqmp['Pqmp']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'serious_pqmp',
+                'model' => 'Pqmp',
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+            );
+            $this->loadModel('Queue.QueuedTask');
+            $this->QueuedTask->createJob('GenericEmail', $datum);
+            $this->QueuedTask->createJob('GenericNotification', $datum);
+        }
+    }
     public function api_add()
     {
 

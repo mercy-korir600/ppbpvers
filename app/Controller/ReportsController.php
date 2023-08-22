@@ -10,7 +10,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi','Saefi', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -87,32 +87,91 @@ class ReportsController extends AppController
         }
         $this->set('is_mobile', $this->is_mobile);
     }
+    public function serious_sadr_summary($criteria = array())
+    {
+        $criteria['Sadr.serious'] = 'Yes';
+        $count = $this->Sadr->find('count',  array(
+            'fields' => 'Sadr.serious',
+            'conditions' => $criteria
+        ));
+        return $count;
+    }
+    public function reviewed_comments($criteria = array())
+    {
+        $criteria['Comment.category'] = 'review';
+        $criteria['Comment.model'] = 'Aefi';
+        $count = $this->Comment->find('count',  array(
+            'fields' => array('DISTINCT Comment.model_id'),
+            'conditions' => $criteria,
+            'group' => 'Comment.model_id'
+        ));
+        return $count;
+    }
     public function s_summary()
     {
+        // Sadr
+        $criteria_sadr['Sadr.submitted'] = array(1, 2);
+        $criteria_sadr['Sadr.copied !='] = '1';
+
+        //Aefi
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+
+        // Comments
+        $criteria_comments_aefi['Comment.category'] = 'review';
+        $criteria_comments_aefi['Comment.model'] = 'Aefi';
+
+        $criteria_comments_sadr['Comment.category'] = 'review';
+        $criteria_comments_sadr['Comment.model'] = 'Sadr';
+
+
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
             $criteria['Aefi.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
-        $criteria['Aefi.serious'] = 'Yes'; 
+
+            //SADR
+            $criteria_sadr['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+
+            // Comments
+            $criteria_comments_aefi['Comment.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+            $criteria_comments_sadr['Comment.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        }
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+            $criteria_sadr['Sadr.county_id'] = $this->Auth->User('county_id');
+        }
+        $criteria['Aefi.serious'] = 'Yes';
 
         $serious = $this->Aefi->find('count',  array(
             'fields' => 'Aefi.serious',
             'conditions' => $criteria
         ));
-        // $criteriab['Saefi.submitted'] = array(1, 2);
-        // $criteriab['Saefi.copied !='] = '1';
-        // $investigation = $this->Saefi->find('count',  array(
-        //     'fields' => array('DISTINCT Saefi.initial_id'),
-        //     'conditions' => $criteriab
-        // )); 
+        $criteriab['Saefi.submitted'] = array(1, 2);
+        $criteriab['Saefi.copied !='] = '1';
+        $investigation = $this->Saefi->find('count',  array(
+            'fields' => array('DISTINCT Saefi.initial_id'),
+            'conditions' => $criteriab,
+            'group' => 'Saefi.initial_id'
+        ));
+        $reviewed_aefi = $this->Comment->find('count',  array(
+            'fields' => array('DISTINCT Comment.model_id'),
+            'conditions' => $criteria_comments_aefi,
+            'group' => 'Comment.model_id'
+        ));
+
         $aefis = [
             ['aefis' => 'Serious received', 'cnt' => $serious],
-            ['aefis' => 'Investigation conducted', 'cnt' => 0]
+            ['aefis' => 'Investigation conducted', 'cnt' => $investigation],
+            ['aefis' => 'Number assessed', 'cnt' => $reviewed_aefi]
         ];
+
+        $reviewed_sadr = $this->Comment->find('count',  array(
+            'fields' => array('DISTINCT Comment.model_id'),
+            'conditions' => $criteria_comments_sadr,
+            'group' => 'Comment.model_id'
+        ));
         $sadr = [
-            ['sadr' => 'Serious received', 'cnt' => 12],
-            ['sadr' => 'Investigation conducted', 'cnt' => 4]
+            ['sadr' => 'Serious received', 'cnt' => $this->serious_sadr_summary($criteria_sadr)],
+            ['sadr' => 'Number assessed', 'cnt' => $reviewed_sadr]
         ];
 
         $this->set(compact('sadr'));

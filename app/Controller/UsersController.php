@@ -787,9 +787,7 @@ class UsersController extends AppController
             'conditions' => array(
                 // only show SADRs that have been not been deleted 
                 'Sadr.deleted' => false,
-                'Sadr.user_id' => $this->Auth->User(
-                    'id'
-                )
+                'Sadr.user_id' => $this->Auth->User('id')
             ),
         ));
         $this->set('sadrs', $sadrs);
@@ -805,8 +803,8 @@ class UsersController extends AppController
             'Sadr.user_id' => $user_id
         );
         $cmed = array(
-            'Sadr.deleted' => false,
-            'Sadr.user_id' => $user_id
+            'Medication.deleted' => false,
+            'Medication.user_id' => $user_id
         );
 
 
@@ -836,7 +834,7 @@ class UsersController extends AppController
                 'Sadr.county_id' => $this->Auth->User('county_id')
             );
             $cmed = array(
-                'Medication.deleted' => false, 
+                'Medication.deleted' => false,
                 'Medication.submitted' => 2,
                 'Medication.county_id' => $this->Auth->User('county_id'),
                 'Medication.outcome IN' => array(
@@ -847,7 +845,6 @@ class UsersController extends AppController
                     "Death"
                 )
             );
-            
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
             'limit' => 2, 'contain' => array(),
@@ -875,7 +872,7 @@ class UsersController extends AppController
         // Serious Medications 
         $serious_med = $this->User->Medication->find('all', array(
             'limit' => 2, 'contain' => array(),
-            'fields' => array('Medication.id','Medication.user_id', 'Medication.created', 'Medication.submitted', 'Medication.reference_no','Medication.outcome'),
+            'fields' => array('Medication.id', 'Medication.user_id', 'Medication.created', 'Medication.submitted', 'Medication.reference_no', 'Medication.outcome'),
             'order' => array('Medication.created' => 'desc'),
             'conditions' => $cmed,
 
