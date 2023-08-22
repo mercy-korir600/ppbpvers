@@ -8,6 +8,12 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
   <ul id="reviewer_tab" class="nav nav-tabs">
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $pqmp['Pqmp']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($pqmp['ExternalComment']); ?>)</a></li>
+    <?php if (
+      in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
+      || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']
+    ) { ?>
+      <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php } ?>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">
@@ -68,6 +74,35 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
                 'model_id' => $pqmp['Pqmp']['id'], 'foreign_key' => $pqmp['Pqmp']['id'],
                 'model' => 'Pqmp', 'category' => 'external', 'url' => 'report_feedback',
                 'review' => false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($pqmp['PqmpOriginal']['id']) && !empty($pqmp['PqmpOriginal']['id'])) ? $pqmp['PqmpOriginal']['ReviewComment'] : $pqmp['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($pqmp['PqmpOriginal']['id']) && !empty($pqmp['PqmpOriginal']['id'])) ? $pqmp['PqmpOriginal']['id'] : $pqmp['Pqmp']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid,
+                'foreign_key' => $oid,
+                'model' => 'Pqmp',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true,
               ]
             ])
             ?>

@@ -10,7 +10,11 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($pqmp['Pqmp']['reference_no'])) ? $pqmp['Pqmp']['reference_no'] : $pqmp['Pqmp']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($pqmp['PqmpOriginal']['id']) && !empty($pqmp['PqmpOriginal']['id'])) ? $pqmp['PqmpOriginal']['ExternalComment'] : $pqmp['ExternalComment']); ?>)</a></li>
     <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
-    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php  if (in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
+                    || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter'])
+                    {?>
+    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li> 
+    <?php } ?>
   </ul>
 
   <div class="tab-content">

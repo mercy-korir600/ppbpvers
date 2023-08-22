@@ -50,29 +50,48 @@ class PqmpsController extends AppController
         }
 
         $criteria = $this->Pqmp->parseCriteria($this->passedArgs);
-        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') $criteria['Pqmp.user_id'] = $this->Auth->User('id');
-        if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') {
+        if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Pqmp.submitted'] = array(2);
 
-            $criteria['Pqmp.submitted'] = array(2);
-        } else {
-            if (isset($this->request->query['submitted'])) {
+        if (isset($this->request->query['submitted'])) {
 
-                if ($this->request->query['submitted'] == 1) {
-                    $criteria['Pqmp.submitted'] = array(0, 1);
-                } else {
-                    $criteria['Pqmp.submitted'] = array(2, 3);
-                }
+            if ($this->request->query['submitted'] == 1) {
+                $criteria['Pqmp.submitted'] = array(0, 1);
             } else {
-                $criteria['Pqmp.submitted'] = array(0, 1, 2, 3);
+                $criteria['Pqmp.submitted'] = array(2, 3);
+            }
+        } else {
+            $criteria['Pqmp.submitted'] = array(0, 1, 2, 3);
+        }
+        // Serious Reports
+        $user_type = $this->Auth->User('user_type');
+       
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+            if ($user_type === 'County Pharmacist') {
+                $criteria['OR'] = array(
+                    'Pqmp.user_id' => $this->Auth->user('id'),
+                    array(
+                        'OR' => array(
+                            'Pqmp.product_formulation IN' => array(
+                                "Injection",
+                                "Powder for Reconstitution of Injection",
+                                "Eye drops",
+                                "Nebuliser solution",
+                            ),
+                            'Pqmp.therapeutic_ineffectiveness' => '1',
+                            'Pqmp.particulate_matter' => '1'
+                        ),
+                        'Pqmp.submitted' => array(2, 3),
+                        'Pqmp.county_id' => $this->Auth->user('county_id')
+                    )
+                );
+                // debug($criteria);
+                // exit;
+            } else {
+                $criteria['Pqmp.user_id'] = $this->Auth->User('id');
             }
         }
-
         $criteria['Pqmp.deleted'] = false;
-        // if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
-        //     $criteria['Pqmp.submitted'] = array(0, 1);
-        // } else {
-        //     $criteria['Pqmp.submitted'] = array(2, 3);
-        // }
+
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Pqmp.created' => 'desc');
         $this->paginate['contain'] = array('County', 'Country', 'Designation');
@@ -199,7 +218,7 @@ class PqmpsController extends AppController
         foreach ($data as $dt) {
 
             $email = $dt['Pqmp']['user_id'];
-            $this->loadModel('User'); 
+            $this->loadModel('User');
             $user = $this->User->findById($email);
             $phone_no = $user['User']['phone_no'];
             $phones[] = $phone_no;
@@ -302,7 +321,7 @@ class PqmpsController extends AppController
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
                 'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment'
+                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment','ReviewComment','PqmpOriginal.ReviewComment'
             )
         ));
         $this->set('pqmp', $pqmp);
@@ -552,10 +571,10 @@ class PqmpsController extends AppController
             throw new NotFoundException(__('Invalid Poor-Quality Health Products and Technologies'));
         }
         $pqmp = $this->Pqmp->read(null, $id);
-        if ($pqmp['Pqmp']['submitted'] > 1) {
-            $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
-            $this->redirect(array('action' => 'view', $this->Pqmp->id));
-        }
+        // if ($pqmp['Pqmp']['submitted'] > 1) {
+        //     $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
+        //     $this->redirect(array('action' => 'view', $this->Pqmp->id));
+        // }
         if ($pqmp['Pqmp']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this Poor-Quality Health Products and Technologies!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -689,10 +708,11 @@ class PqmpsController extends AppController
 
                         // Notify County Pharmacist
 
-                        if(in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
-                        || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']){
+                        if (
+                            in_array($pqmp['Pqmp']['product_formulation'], ['Injection', 'Powder for Reconstitution of Injection', 'Eye drops', 'Nebuliser solution'])
+                            || $pqmp['Pqmp']['therapeutic_ineffectiveness'] || $pqmp['Pqmp']['particulate_matter']
+                        ) {
                             $this->notifyCountyPharmacist($pqmp);
-
                         }
 
                         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
@@ -747,8 +767,8 @@ class PqmpsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-      debug($users);
-      exit;
+        //   debug($users);
+        //   exit;
         foreach ($users as $user) {
             $model =  'reporter';
             if ($user['User']['group_id'] == 2) {

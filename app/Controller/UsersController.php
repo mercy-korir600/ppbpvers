@@ -806,8 +806,10 @@ class UsersController extends AppController
             'Medication.deleted' => false,
             'Medication.user_id' => $user_id
         );
-
-
+        $cpq = array(
+            'Pqmp.deleted' => false,
+            'Pqmp.user_id' => $user_id
+        );
 
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
@@ -845,6 +847,21 @@ class UsersController extends AppController
                     "Death"
                 )
             );
+            $cpq = array(
+                'Pqmp.deleted' => false,
+                'Pqmp.submitted' => 2,
+                'Pqmp.county_id' => $this->Auth->User('county_id'),
+                'OR' => array(
+                    'Pqmp.product_formulation IN' => array(
+                        "Injection",
+                        "Powder for Reconstitution of Injection",
+                        "Eye drops",
+                        "Nebuliser solution",
+                    ),
+                    'Pqmp.therapeutic_ineffectiveness' => true,
+                    'Pqmp.particulate_matter' => true
+                )
+            );
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
             'limit' => 2, 'contain' => array(),
@@ -877,11 +894,16 @@ class UsersController extends AppController
             'conditions' => $cmed,
 
         ));
-
-        // debug($serious_med);
-        // exit;
-
         $this->set('serious_med', $serious_med);
+        // Serious PQHPTS 
+        $serious_pqmp= $this->User->Pqmp->find('all', array(
+            'limit' => 2, 'contain' => array(),
+            'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.reference_no'),
+            'order' => array('Pqmp.created' => 'desc'),
+            'conditions' => $cpq,
+
+        ));
+        $this->set('serious_pqmp', $serious_pqmp);
 
         // SAEFIs Reports
         $saefis = $this->User->Saefi->find('all', array(
@@ -973,7 +995,7 @@ class UsersController extends AppController
         $this->set('ce2bs', $ce2bs);
 
         $this->set('notifications', $this->User->Notification->find('all', array(
-            'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 12
+            'conditions' => array('Notification.user_id' => $this->Auth->User('id')), 'order' => 'Notification.created DESC', 'limit' => 6
         )));
         $this->set('messages', $this->Message->find('list', array('fields' => array('name', 'style'))));
     }
