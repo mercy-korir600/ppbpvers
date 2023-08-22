@@ -810,7 +810,14 @@ class UsersController extends AppController
             'Pqmp.deleted' => false,
             'Pqmp.user_id' => $user_id
         );
-
+        $cdev = array(
+            'Device.deleted' => false,
+            'Device.user_id' => $user_id
+        );
+        $cblood = array(
+            'Transfusion.deleted' => false,
+            'Transfusion.user_id' => $user_id
+        );
         $aefis = $this->User->Aefi->find('all', array(
             'limit' => 7, 'contain' => array(),
             'fields' => array('Aefi.id', 'Aefi.user_id', 'Aefi.created', 'Aefi.submitted', 'Aefi.reference_no', 'Aefi.created', 'Aefi.serious'),
@@ -862,6 +869,21 @@ class UsersController extends AppController
                     'Pqmp.particulate_matter' => true
                 )
             );
+            $cdev = array(
+                'Device.deleted' => false,
+                'Device.submitted' => 2,
+                'Device.county_id' => $this->Auth->User('county_id'),
+                'Device.serious IN' => array(
+                    "Fatal",
+                    "Serious",
+                )
+            );
+            $cblood = array(
+                'Transfusion.deleted' => false,
+                'Transfusion.submitted' => 2,
+                'Transfusion.county_id' => $this->Auth->User('county_id'),
+
+            );
         }
         $serious_aefis = $this->User->Aefi->find('all', array(
             'limit' => 2, 'contain' => array(),
@@ -872,7 +894,16 @@ class UsersController extends AppController
 
         ));
         $this->set('serious_aefis', $serious_aefis);
+        // Transfusion Serious Reports
+        $serious_trans = $this->User->Transfusion->find('all', array(
+            'limit' => 2, 'contain' => array(),
+            'fields' => array('Transfusion.id', 'Transfusion.user_id', 'Transfusion.created', 'Transfusion.submitted', 'Transfusion.reference_no', 'Transfusion.faint'),
+            'order' => array('Transfusion.created' => 'desc'),
+            'conditions' => $cblood,
 
+        ));
+
+        $this->set('serious_trans', $serious_trans);
         // SADR Serious Reports
         $serious_sadr = $this->User->Sadr->find('all', array(
             'limit' => 2, 'contain' => array(),
@@ -896,7 +927,7 @@ class UsersController extends AppController
         ));
         $this->set('serious_med', $serious_med);
         // Serious PQHPTS 
-        $serious_pqmp= $this->User->Pqmp->find('all', array(
+        $serious_pqmp = $this->User->Pqmp->find('all', array(
             'limit' => 2, 'contain' => array(),
             'fields' => array('Pqmp.id', 'Pqmp.user_id', 'Pqmp.created', 'Pqmp.submitted', 'Pqmp.reference_no'),
             'order' => array('Pqmp.created' => 'desc'),
@@ -904,6 +935,15 @@ class UsersController extends AppController
 
         ));
         $this->set('serious_pqmp', $serious_pqmp);
+        // Serious PQHPTS 
+        $serious_dev = $this->User->Device->find('all', array(
+            'limit' => 2, 'contain' => array(),
+            'fields' => array('Device.id', 'Device.user_id', 'Device.created', 'Device.submitted', 'Device.reference_no', 'Device.serious'),
+            'order' => array('Device.created' => 'desc'),
+            'conditions' => $cdev,
+
+        ));
+        $this->set('serious_dev', $serious_dev);
 
         // SAEFIs Reports
         $saefis = $this->User->Saefi->find('all', array(

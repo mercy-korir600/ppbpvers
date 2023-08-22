@@ -8,6 +8,10 @@ $this->assign('TRN', 'active');
   <ul id="reviewer_tab" class="nav nav-tabs">
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $transfusion['Transfusion']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($transfusion['ExternalComment']); ?>)</a></li>
+    <?php
+    if ($this->Session->read('Auth.User.user_type') === "County Pharmacist") {          ?>
+      <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php } ?>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">
@@ -71,6 +75,33 @@ $this->assign('TRN', 'active');
                 'model_id' => $transfusion['Transfusion']['id'], 'foreign_key' => $transfusion['Transfusion']['id'],
                 'model' => 'Transfusion', 'category' => 'external', 'url' => 'report_feedback',
                 'review' => false
+              ]
+            ])
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="committee-review">
+      <!-- 12600 Letters debat -->
+      <div class="amend-form">
+        <h5 class="text-info"><u>COMMITTEE REVIEW</u></h5>
+        <div class="row-fluid">
+          <div class="span8">
+            <?php
+            echo $this->element('comments/index', ['comments' => ((isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) ? $transfusion['TransfusionOriginal']['ReviewComment'] : $transfusion['ReviewComment'])]);
+            ?>
+          </div>
+          <div class="span4 lefty">
+            <?php
+            $oid = ((isset($transfusion['TransfusionOriginal']['id']) && !empty($transfusion['TransfusionOriginal']['id'])) ? $transfusion['TransfusionOriginal']['id'] : $transfusion['Transfusion']['id']);
+            echo $this->element('comments/add', [
+              'model' => [
+                'model_id' => $oid, 'foreign_key' => $oid,
+                'model' => 'Transfusion',
+                'category' => 'review',
+                'url' => 'report_feedback',
+                'review' => true
               ]
             ])
             ?>

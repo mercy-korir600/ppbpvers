@@ -427,7 +427,8 @@ $this->assign('Adverse Event Following Immunization', 'active');
 
                 echo "&nbsp;";
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
-                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
+                  // if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
+                    if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
                     echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i> Investigation</span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
                   } else {
                     echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));

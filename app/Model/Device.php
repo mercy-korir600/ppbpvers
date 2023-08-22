@@ -332,12 +332,35 @@ class Device extends AppModel
                 'message' => 'Please provide a valid phone number',
             ),
             'maxLength' => array(
-                'rule' => array('maxLength', 10),
+                'rule' => array('maxLength', 12),
                 'message' => 'Please provide a valid phone number',
             ),
         ),
+        // 'reporter_phone' => array(
+        //     'numeric' => array(
+        //         'rule' => array('numeric'),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        //     'phoneLength' => array(
+        //         'rule' => array('validatePhoneLength'),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        // ),
+       
     );
-
+    public function phoneLengthRule($check) {
+        $value = array_values($check)[0]; // Get the value of the field
+    
+        // Remove any non-numeric characters
+        $numericValue = preg_replace('/\D/', '', $value);
+    
+        // Check the length based on conditions
+        if ((strlen($numericValue) === 10 && (strpos($numericValue, '07') === 0 || strpos($numericValue, '01') === 0)) ||
+            (strlen($numericValue) === 12 && strpos($numericValue, '254') === 0)) {
+            return true;
+        }
+        return false;
+    }
     public function ageOrDate($field = null)
     {
         return !empty($field['date_of_birth']) || !empty($this->data['Device']['age_years']);

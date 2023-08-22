@@ -21,7 +21,7 @@ class DevicesController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('guest_add','guest_edit');
+        $this->Auth->allow('guest_add', 'guest_edit');
     }
     /**
      * index method
@@ -34,10 +34,28 @@ class DevicesController extends AppController
         else $this->paginate['limit'] = reset($this->page_options);
 
         $criteria = $this->Device->parseCriteria($this->passedArgs);
-        $criteria['Device.user_id'] = $this->Auth->User('id');
-        //add deleted = 0 to criteria
+        // Serious Reports
+        $user_type = $this->Auth->User('user_type');
+
+        if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+            if ($user_type === 'County Pharmacist') {
+                $criteria['OR'] = array(
+                    'Device.user_id' => $this->Auth->user('id'),
+                    array(
+                        'Device.serious IN' => array(
+                            "Fatal",
+                            "Serious",
+                        ),
+                        'Device.submitted' => array(2, 3),
+                        'Device.county_id' => $this->Auth->user('county_id')
+                    )
+                ); 
+            } else {
+                $criteria['Device.user_id'] = $this->Auth->User('id');
+            }
+        }
         $criteria['Device.deleted'] = false;
-        
+
         if (isset($this->request->query['submitted'])) {
 
             if ($this->request->query['submitted'] == 1) {
@@ -150,7 +168,7 @@ class DevicesController extends AppController
         //add deleted = 0 to criteria
         $criteria['Device.deleted'] = false;
         $criteria['Device.archived'] = false;
-        
+
         // if (!isset($this->passedArgs['submit'])) $criteria['Device.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.created' => 'desc');
@@ -308,14 +326,14 @@ class DevicesController extends AppController
     {
         # code...
         if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'DEVICE_' . $id . '.pdf',  'orientation' => 'portrait'); 
+            $this->pdfConfig = array('filename' => 'DEVICE_' . $id . '.pdf',  'orientation' => 'portrait');
         }
 
         $device = $this->Device->find('first', array(
             'conditions' => array('Device.id' => $id),
             'contain' => array(
                 'ListOfDevice', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
-                'DeviceOriginal', 'DeviceOriginal.ListOfDevice', 'DeviceOriginal.County',  'DeviceOriginal.Attachment', 'DeviceOriginal.Designation', 'DeviceOriginal.ExternalComment','DeviceOriginal.ReviewComment','DeviceOriginal.ExternalComment.Attachment','DeviceOriginal.ReviewComment.Attachment'
+                'DeviceOriginal', 'DeviceOriginal.ListOfDevice', 'DeviceOriginal.County',  'DeviceOriginal.Attachment', 'DeviceOriginal.Designation', 'DeviceOriginal.ExternalComment', 'DeviceOriginal.ReviewComment', 'DeviceOriginal.ExternalComment.Attachment', 'DeviceOriginal.ReviewComment.Attachment'
             )
         ));
         $managers = $this->Device->User->find('list', array(
@@ -619,9 +637,7 @@ class DevicesController extends AppController
                     }
                     //**********************************    END   *********************************
 
-
-                    $serious = $device['Device']['serious'];
-                    if ($serious == "Serious") {
+                    if (isset($device['Device']['serious']) && in_array($device['Device']['serious'], ['Fatal', 'Serious'])) {
                         $this->notifyCountyPharmacist($device);
                     }
                     $this->Session->setFlash(__('The DEVICE has been submitted to PPB'), 'alerts/flash_success');
@@ -646,11 +662,11 @@ class DevicesController extends AppController
     public function notifyCountyPharmacist($device = null)
     {
         # code...
-        
+
         $this->loadModel('Message');
         $html = new HtmlHelper(new ThemeView());
         $message = $this->Message->find('first', array('conditions' => array('name' => 'serious_device')));
-                    
+
         $county_id = $device['Device']['county_id'];
         $users = $this->Device->User->find('all', array(
             'contain' => array(),
@@ -667,27 +683,30 @@ class DevicesController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-       
+
         foreach ($users as $user) {
+
+            $model = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
             $variables = array(
-                'name' => $user['User']['name'], 
+                'name' => $user['User']['name'],
                 'reference_no' => $device['Device']['reference_no'],
                 'reference_link' => $html->link(
                     $device['Device']['reference_no'],
                     array(
                         'controller' => 'devices',
-                        'action' => 'view', $device['Device']['id'], 
-                        'manager' => true, 
-                        'full_base' => true),
+                        'action' => 'view', $device['Device']['id'],
+                        $model => true,
+                        'full_base' => true
+                    ),
                     array('escape' => false)
                 ),
                 'modified' => $device['Device']['modified']
             );
             $datum = array(
                 'email' => $user['User']['email'],
-                'id' => $device['Device']['id'], 
-                'user_id' => $user['User']['id'], 
-                'type' => 'serious_device', 
+                'id' => $device['Device']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'serious_device',
                 'model' => 'Device',
                 'subject' => CakeText::insert($message['Message']['subject'], $variables),
                 'message' => CakeText::insert($message['Message']['content'], $variables)
@@ -696,7 +715,6 @@ class DevicesController extends AppController
             $this->QueuedTask->createJob('GenericEmail', $datum);
             $this->QueuedTask->createJob('GenericNotification', $datum);
         }
-        
     }
     public function api_add()
     {
@@ -1044,9 +1062,9 @@ class DevicesController extends AppController
     public function guest_add($id = null)
     {
         $this->Device->create();
-        $this->Device->save(['Device' => [ 
-            'reference_no' => 'new',  
-            'report_type' => 'Initial', 
+        $this->Device->save(['Device' => [
+            'reference_no' => 'new',
+            'report_type' => 'Initial',
         ]], false);
         $this->Session->setFlash(__('The Medical Device Incident has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'guest_edit', $this->Device->id));
@@ -1058,7 +1076,7 @@ class DevicesController extends AppController
             throw new NotFoundException(__('Invalid DEVICE'));
         }
         $device = $this->Device->read(null, $id);
-       
+
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
@@ -1070,7 +1088,7 @@ class DevicesController extends AppController
                 if (isset($this->request->data['submitReport'])) {
                     $this->Device->saveField('submitted', 2);
                     $this->Device->saveField('submitted_date', date("Y-m-d H:i:s"));
-                     
+
                     if (!empty($device['Device']['reference_no']) && $device['Device']['reference_no'] == 'new') {
                         $reference = $this->generateReferenceNumber();
 
@@ -1084,7 +1102,7 @@ class DevicesController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_device_submit')));
                     $variables = array(
-                        'name' =>'Guest', 
+                        'name' => 'Guest',
                         'reference_no' => $device['Device']['reference_no'],
                         'reference_link' => $html->link(
                             $device['Device']['reference_no'],
@@ -1135,12 +1153,12 @@ class DevicesController extends AppController
                         );
 
                         $this->QueuedTask->createJob('GenericEmail', $datum);
-                        $this->QueuedTask->createJob('GenericNotification', $datum); 
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
                     }
                     //**********************************    END   *********************************
 
                     $this->Session->setFlash(__('The DEVICE has been submitted to PPB'), 'alerts/flash_success');
-                    $this->redirect(array('controller'=>'pages','action' => 'home'));
+                    $this->redirect(array('controller' => 'pages', 'action' => 'home'));
                 }
                 // debug($this->request->data);
                 $this->Session->setFlash(__('The DEVICE has been saved'), 'alerts/flash_success');
@@ -1151,13 +1169,14 @@ class DevicesController extends AppController
         } else {
             $this->request->data = $this->Device->read(null, $id);
         }
- 
+
         $counties = $this->Device->County->find('list', array('order' => array('County.county_name' => 'ASC')));
         $this->set(compact('counties'));
         $designations = $this->Device->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
     }
-    public function manager_archive($id=null) {
+    public function manager_archive($id = null)
+    {
         $this->Device->id = $id;
         if (!$this->Device->exists()) {
             throw new NotFoundException(__('Invalid DEVICE'));
@@ -1171,5 +1190,5 @@ class DevicesController extends AppController
         }
         $this->Session->setFlash(__('DEVICE was not archied'), 'alerts/flash_error');
         $this->redirect($this->referer());
-	}
+    }
 }

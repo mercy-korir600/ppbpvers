@@ -10,7 +10,9 @@ $this->assign('DEV', 'active');
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($device['Device']['reference_no'])) ? $device['Device']['reference_no'] : $device['Device']['id']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count((isset($device['DeviceOriginal']['id']) && !empty($device['DeviceOriginal']['id'])) ? $device['DeviceOriginal']['ExternalComment'] : $device['ExternalComment']); ?>)</a></li>
     <!-- <li><a href="#assign_manager" data-toggle="tab">Assign Manager </a></li> -->
-    <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php if (isset($device['Device']['serious']) && in_array($device['Device']['serious'], ['Fatal', 'Serious'])) { ?>
+      <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
+    <?php } ?>
   </ul>
 
   <div class="tab-content">

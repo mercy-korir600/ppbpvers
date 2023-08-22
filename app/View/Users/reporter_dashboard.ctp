@@ -394,14 +394,14 @@ $this->Html->script('dashboard', array('inline' => false));
               <h6>Medical Devices </h6>
               <?php
               echo ' <ol>';
-              foreach ($serious_sadr as $adr) {
-                if ($adr['Sadr']['submitted'] > 1) {
+              foreach ($serious_dev as $adr) {
+                if ($adr['Device']['submitted'] > 1) {
                   echo "<li>";
-                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  $vname = (!empty($adr['Device']['serious'])) ? $adr['Device']['serious'] : $adr['Device']['reference_no'];
                   echo $this->Html->link(
-                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
-                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
-                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                    $vname . ' <small class="muted">(' . $adr['Device']['reference_no'] . ')</small>',
+                    array('controller' => 'devices', 'action' => 'view', $adr['Device']['id']),
+                    array('escape' => false, 'class' => 'text-error')
                   );
                   echo "</li>";
                 }
@@ -432,14 +432,14 @@ $this->Html->script('dashboard', array('inline' => false));
               <h6>Transfusions Reactions </h6>
               <?php
               echo ' <ol>';
-              foreach ($serious_sadr as $adr) {
-                if ($adr['Sadr']['submitted'] > 1) {
+              foreach ($serious_trans as $adr) {
+                if ($adr['Transfusion']['submitted'] > 1) {
                   echo "<li>";
-                  $vname = (!empty($adr['Sadr']['report_title'])) ? $adr['Sadr']['report_title'] : $adr['Sadr']['reference_no'];
+                  $vname = (!empty($adr['Transfusion']['faint'])) ? $adr['Transfusion']['faint'] : $adr['Transfusion']['reference_no'];
                   echo $this->Html->link(
-                    $vname . ' <small class="muted">(' . $adr['Sadr']['reference_no'] . ')</small>',
-                    array('controller' => 'sadrs', 'action' => 'view', $adr['Sadr']['id']),
-                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Sadr']['serious']) && $adr['Sadr']['serious'] == 'Yes') ? 'error' : 'success'))
+                    $vname . ' <small class="muted">(' . $adr['Transfusion']['reference_no'] . ')</small>',
+                    array('controller' => 'sadrs', 'action' => 'view', $adr['Transfusion']['id']),
+                    array('escape' => false, 'class' => 'text-' . ((isset($adr['Transfusion']['faint']) && $adr['Transfusion']['faint'] == 'Severe') ? 'error' : 'success'))
                   );
                   echo "</li>";
                 }

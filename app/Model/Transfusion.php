@@ -255,7 +255,7 @@ class Transfusion extends AppModel
                 'message' => 'Please provide a valid phone number',
             ),
             'maxLength' => array(
-                'rule' => array('maxLength', 10),
+                'rule' => array('maxLength', 12),
                 'message' => 'Please provide a valid phone number',
             ),
         ),

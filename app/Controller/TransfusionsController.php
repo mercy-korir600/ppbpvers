@@ -48,7 +48,20 @@ class TransfusionsController extends AppController
         else $this->paginate['limit'] = reset($page_options);
 
         $criteria = $this->Transfusion->parseCriteria($this->passedArgs);
-        $criteria['Transfusion.user_id'] = $this->Auth->User('id');
+
+        //check county pharmacist
+        $user_type = $this->Auth->User('user_type');
+        if ($user_type === 'County Pharmacist') {
+            $criteria['OR'] = array(
+                'Transfusion.user_id' => $this->Auth->user('id'),
+                array(
+                    'Transfusion.submitted' => array(2, 3),
+                    'Transfusion.county_id' => $this->Auth->user('county_id')
+                )
+            );
+        } else {
+            $criteria['Transfusion.user_id'] = $this->Auth->User('id');
+        }
 
         // add deleted=false to criteria
         $criteria['Transfusion.deleted'] = false;
@@ -157,7 +170,7 @@ class TransfusionsController extends AppController
         // add deleted=false to criteria
         $criteria['Transfusion.deleted'] = false;
         $criteria['Transfusion.archived'] = false;
-        
+
         $criteria['Transfusion.copied !='] = '1';
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
             $criteria['Transfusion.submitted'] = array(0, 1);
@@ -263,7 +276,7 @@ class TransfusionsController extends AppController
 
         $transfusion = $this->Transfusion->find('first', array(
             'conditions' => array('Transfusion.id' => $id),
-            'contain' => array('Pint', 'County', 'Attachment', 'Designation', 'ExternalComment')
+            'contain' => array('Pint', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',)
         ));
         $this->set('transfusion', $transfusion);
         // $this->render('pdf/view');
@@ -363,7 +376,7 @@ class TransfusionsController extends AppController
         $transfusion = $this->Transfusion->find('first', array(
             'conditions' => array('Transfusion.id' => $id),
             'contain' => array(
-                'Pint', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment','ExternalComment.Attachment','ReviewComment.Attachment',
+                'Pint', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
                 'TransfusionOriginal.Pint', 'TransfusionOriginal.County', 'TransfusionOriginal.Attachment', 'TransfusionOriginal.Designation', 'TransfusionOriginal.ExternalComment', 'TransfusionOriginal.ReviewComment'
             )
         ));
@@ -523,10 +536,10 @@ class TransfusionsController extends AppController
             throw new NotFoundException(__('Invalid TRANSFUSION'));
         }
         $transfusion = $this->Transfusion->read(null, $id);
-        // if ($transfusion['Transfusion']['submitted'] > 1) {
-        //     $this->Session->setFlash(__('The blood transfusion incident has been submitted'), 'alerts/flash_info');
-        //     $this->redirect(array('action' => 'view', $this->Transfusion->id));
-        // }
+        if ($transfusion['Transfusion']['submitted'] > 1) {
+            $this->Session->setFlash(__('The blood transfusion incident has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Transfusion->id));
+        }
         if ($transfusion['Transfusion']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this TRANSFUSION!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -614,10 +627,10 @@ class TransfusionsController extends AppController
                     }
                     //**********************************    END   *********************************
 
-                    $serious = $transfusion['Transfusion']['faint'];
-                    if ($serious == "Severe") {
-                        $this->notifyCountyPharmacist($transfusion);
-                    }
+                    // $serious = $transfusion['Transfusion']['faint'];
+                    // if ($serious == "Severe") {
+                    $this->notifyCountyPharmacist($transfusion);
+                    // }
                     $this->Session->setFlash(__('The blood transfusion reaction report has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Transfusion->id));
                 }
@@ -665,6 +678,7 @@ class TransfusionsController extends AppController
         ));
 
         foreach ($users as $user) {
+            $model = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
             $variables = array(
                 'name' => $user['User']['name'],
                 'reference_no' => $transfusion['Transfusion']['reference_no'],
@@ -673,7 +687,7 @@ class TransfusionsController extends AppController
                     array(
                         'controller' => 'transfusions',
                         'action' => 'view', $transfusion['Transfusion']['id'],
-                        'manager' => true,
+                        $model => true,
                         'full_base' => true
                     ),
                     array('escape' => false)
