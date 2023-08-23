@@ -23,6 +23,7 @@ class Pqmp extends AppModel
         'country_id' => array('type' => 'value'),
         'generic_name' => array('type' => 'like', 'encode' => true),
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
+        'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'name_of_manufacturer' => array('type' => 'like', 'encode' => true),
         'medicinal_product' => array('type' => 'value'),
         'blood_products' => array('type' => 'value'),
@@ -59,7 +60,35 @@ class Pqmp extends AppModel
         'submitted' => array('type' => 'value'),
         'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true),
     );
+    public function findByMarketAuthority($data = array())
+    {
+        $conditions = array();
+        $filter = $data['mah'];
+        if ($filter == '0') {
+            $conditions = array(
+                'user_type' => 'Market Authority'
+            );
+        } else {
+            $conditions = array(
+                'OR' => array(
+                    'NOT' => array('user_type' => 'Market Authority'),
+                    'user_type IS NULL',
+                    'user_type' => ''
+                )
+            );
+        }
 
+        $user = ClassRegistry::init('User')->find(
+            'list',
+            array(
+                'conditions' => $conditions,
+                'fields' => array('id', 'id')
+            )
+        );
+
+        $cond = array($this->alias . '.user_id' => $user);
+        return $cond;
+    }
     public function dummy($data = array())
     {
         return array('1' => '1');

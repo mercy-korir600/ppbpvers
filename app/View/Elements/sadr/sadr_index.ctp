@@ -133,11 +133,11 @@ echo $this->Session->flash();
           <td colspan="2">
             <h5>Report on:</h5>
             <?php
-            echo $this->Form->input('report_sadr', array('label' => 'Suspected adverse drug reaction', 'hiddenField' => false)); 
+            echo $this->Form->input('report_sadr', array('label' => 'Suspected adverse drug reaction', 'hiddenField' => false));
             echo $this->Form->input('report_therapeutic', array('label' => 'Therapeutic Ineffectiveness', 'hiddenField' => false));
-            echo $this->Form->input('report_misuse', array('label' => 'Suspected misuse, abuse and / or dependence on medicines', 'hiddenField' => false,'type' => 'checkbox',));
-            echo $this->Form->input('report_off_label', array('label' => 'Off-label Use', 'hiddenField' => false,'type' => 'checkbox',));
-            
+            echo $this->Form->input('report_misuse', array('label' => 'Suspected misuse, abuse and / or dependence on medicines', 'hiddenField' => false, 'type' => 'checkbox',));
+            echo $this->Form->input('report_off_label', array('label' => 'Off-label Use', 'hiddenField' => false, 'type' => 'checkbox',));
+
 
             ?>
           </td>
@@ -278,7 +278,16 @@ echo $this->Session->flash();
                 'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
                 'class' => 'input-xlarge'
               ));  ?></td>
-          <td></td>
+          <td><?php
+              echo $this->Form->input('mah', array(
+                'type' => 'select', 'options' => [
+                  '0' => 'MAH',
+                  '1' => 'Non MAH',
+                ],
+                'empty' => true,
+                'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
+                'class' => 'input-xlarge'
+              ));  ?></td>
           <td></td>
           <td></td>
           <td></td>

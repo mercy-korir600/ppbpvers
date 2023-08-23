@@ -223,7 +223,7 @@ $this->assign('DEV', 'active');
                 '1' => 'Unsubmitted'
               )
             ));
-            
+
             ?>
           </td>
           <td>
@@ -241,7 +241,7 @@ $this->assign('DEV', 'active');
               ], 'empty' => true,
               'label' => array('class' => 'control-label', 'text' => 'Public Health Program'),
               'class' => 'input-xlarge'
-            ));  
+            ));
             ?>
           </td>
           <td>
@@ -258,7 +258,7 @@ $this->assign('DEV', 'active');
               'label' => array('class' => 'required', 'text' => 'Operator')
             ));
             ?>
-            
+
           </td>
           <td>
             <?php
@@ -281,16 +281,15 @@ $this->assign('DEV', 'active');
               'reporter',
               array('div' => false, 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Reporter'), 'placeholder' => 'Name/Email')
             );
-            ?>
-             <?php
-              echo $this->Form->input('sending_device', array(
-                'type' => 'select', 'options' => [
-                  '1' => 'Web',
-                  '2' => 'Mobile', 
-                ], 'empty' => true,
-                'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
-                'class' => 'input-xlarge'
-              ));  ?>
+
+            echo $this->Form->input('sending_device', array(
+              'type' => 'select', 'options' => [
+                '1' => 'Web',
+                '2' => 'Mobile',
+              ], 'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => 'Sending Device'),
+              'class' => 'input-xlarge'
+            ));  ?>
           </td>
           <td>
             <?php
@@ -301,6 +300,16 @@ $this->assign('DEV', 'active');
                 'class' => 'input-small', 'label' => array('class' => 'required', 'text' => 'Designation')
               )
             );
+            echo $this->Form->input('mah', array(
+              'type' => 'select',
+              'options' => [
+                '0' => 'MAH',
+                '1' => 'Non MAH',
+              ],
+              'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
+              'class' => 'input-xlarge'
+            ));
             ?>
           </td>
           <td>
@@ -443,7 +452,8 @@ $this->assign('DEV', 'active');
                 if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                   array('controller' => 'devices', 'action' => 'archive', $device['Device']['id']),
-                  array('escape' => false), __('Are you sure you want to archive the report?')
+                  array('escape' => false),
+                  __('Are you sure you want to archive the report?')
                 );
               } else {
                 echo $this->Html->link(
@@ -454,7 +464,7 @@ $this->assign('DEV', 'active');
               }
               echo "&nbsp;";
               // Check if the user is a reporter and report not submitted and not a health program
-              if (($redir == 'reporter'|| $redir == 'manager') && $device['Device']['submitted'] == 0 && $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+              if (($redir == 'reporter' || $redir == 'manager') && $device['Device']['submitted'] == 0 && $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
                 echo $this->Form->postLink('<span class="label label-warning tooltipper" data-toggle="tooltip" title="Delete"> <i class="fa fa-trash" aria-hidden="true"></i> Delete </span>', array('controller' => 'devices', 'action' => 'delete', $device['Device']['id']), array('escape' => false), __('Are you sure you want to delete # %s?', $device['Device']['id'] . '?
                 Note: This action cannot be undone.'));
               }

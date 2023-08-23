@@ -24,6 +24,7 @@ class Sadr extends AppModel
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'county_id' => array('type' => 'value'),
+        'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'drug_name' => array('type' => 'query', 'method' => 'findByDrugName', 'encode' => true),
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
         'medicine_name' => array('type' => 'query', 'method' => 'findByMedicineName', 'encode' => true),
@@ -94,6 +95,35 @@ class Sadr extends AppModel
             ),
             'fields' => array('sadr_id', 'sadr_id')
         )));
+        return $cond;
+    }
+    public function findByMarketAuthority($data = array())
+    {
+        $conditions = array();
+        $filter = $data['mah'];
+        if ($filter == '0') {
+            $conditions = array(
+                'user_type' => 'Market Authority'
+            );
+        } else {
+            $conditions = array(
+                'OR' => array(
+                    'NOT' => array('user_type' => 'Market Authority'),
+                    'user_type IS NULL',
+                    'user_type' => ''
+                )
+            );
+        }
+
+        $user = ClassRegistry::init('User')->find(
+            'list',
+            array(
+                'conditions' => $conditions,
+                'fields' => array('id', 'id')
+            )
+        );
+
+        $cond = array($this->alias . '.user_id' => $user);
         return $cond;
     }
 
@@ -591,27 +621,26 @@ class Sadr extends AppModel
         }
         if (!empty($this->data['Sadr']['product_category'])) {
             $data = $this->data['Sadr']['product_category'];
-            if($data=="Medicinal product"){
-            $this->data['Sadr']['medicinal_product'] = '1';
-            }else{
-                $this->data['Sadr']['medicinal_product'] = '0';  
+            if ($data == "Medicinal product") {
+                $this->data['Sadr']['medicinal_product'] = '1';
+            } else {
+                $this->data['Sadr']['medicinal_product'] = '0';
             }
-            if($data=="Herbal product"){
-            $this->data['Sadr']['herbal_product'] = '1';
-            }else{
-                $this->data['Sadr']['herbal_product'] = '0'; 
+            if ($data == "Herbal product") {
+                $this->data['Sadr']['herbal_product'] = '1';
+            } else {
+                $this->data['Sadr']['herbal_product'] = '0';
             }
-            if($data=="Cosmeceuticals"){
-            $this->data['Sadr']['cosmeceuticals'] = '1';
-            }else{
-                $this->data['Sadr']['cosmeceuticals'] = '0'; 
+            if ($data == "Cosmeceuticals") {
+                $this->data['Sadr']['cosmeceuticals'] = '1';
+            } else {
+                $this->data['Sadr']['cosmeceuticals'] = '0';
             }
-            if($data=="Others"){
-            $this->data['Sadr']['product_other'] = '1'; 
-            }else{
-                $this->data['Sadr']['product_other'] = '0'; 
+            if ($data == "Others") {
+                $this->data['Sadr']['product_other'] = '1';
+            } else {
+                $this->data['Sadr']['product_other'] = '0';
             }
-
         }
         return true;
     }

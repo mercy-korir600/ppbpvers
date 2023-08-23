@@ -323,7 +323,18 @@ $this->assign('TRN', 'active');
               'class' => 'input-xlarge'
             ));  ?>
           </td>
-          <td></td>
+          <td><?php
+            echo $this->Form->input('mah', array(
+              'type' => 'select',
+              'options' => [
+                '0' => 'MAH',
+                '1' => 'Non MAH',
+              ],
+              'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
+              'class' => 'input-xlarge'
+            ));
+          ?></td>
           <td></td>
           <td></td>
           <td></td>

@@ -1,6 +1,6 @@
 <?php
 
- 
+
 $this->assign('Poor-Quality Health Products and Technologies', 'active');
 ?>
 
@@ -240,6 +240,7 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
               'class' => 'input-xlarge'
             ));  ?>
           </td>
+
           <td>
             <?php
             echo $this->Form->input('odour_change', array('label' => 'Change of odour', 'hiddenField' => false));
@@ -258,6 +259,17 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
             echo $this->Form->input('sampling', array('label' => 'Sampling', 'hiddenField' => false));
             echo $this->Form->input('mechanism', array('label' => 'Mechanism', 'hiddenField' => false));
             echo $this->Form->input('electrical', array('label' => 'Electrical', 'hiddenField' => false));
+
+            echo $this->Form->input('mah', array(
+              'type' => 'select',
+              'options' => [
+                '0' => 'MAH',
+                '1' => 'Non MAH',
+              ],
+              'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
+              'class' => 'input-xlarge'
+            ));
             ?>
           </td>
           <td>

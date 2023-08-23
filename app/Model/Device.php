@@ -16,6 +16,7 @@ class Device extends AppModel
         'reference_no' => array('type' => 'like', 'encode' => true),
         'brand_name' => array('type' => 'query', 'method' => 'findByBrandName', 'encode' => true),
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Device.reporter_date BETWEEN ? AND ?'),
+        'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'name_of_institution' => array('type' => 'like', 'encode' => true),
@@ -37,7 +38,35 @@ class Device extends AppModel
         'submitted' => array('type' => 'value'),
         'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true),
     );
+    public function findByMarketAuthority($data = array())
+    {
+        $conditions = array();
+        $filter = $data['mah'];
+        if ($filter == '0') {
+            $conditions = array(
+                'user_type' => 'Market Authority'
+            );
+        } else {
+            $conditions = array(
+                'OR' => array(
+                    'NOT' => array('user_type' => 'Market Authority'),
+                    'user_type IS NULL',
+                    'user_type' => ''
+                )
+            );
+        }
 
+        $user = ClassRegistry::init('User')->find(
+            'list',
+            array(
+                'conditions' => $conditions,
+                'fields' => array('id', 'id')
+            )
+        );
+
+        $cond = array($this->alias . '.user_id' => $user);
+        return $cond;
+    }
     public function dummy($data = array())
     {
         return array('1' => '1');

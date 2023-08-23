@@ -131,6 +131,15 @@ $this->assign('MED', 'active');
               ),
               'label' => array('class' => 'required', 'text' => 'In which process did the error occur?')
             ));
+ 
+            if (($this->Session->read('Auth.User.user_type') != 'Public Health Program'))  echo $this->Form->input(
+              'patient_name',
+              array(
+                'div' => false, 'placeholder' => 'Patient name',
+                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Patient Name')
+              )
+            );
+             
             ?>
           </td>
           <td>
@@ -148,6 +157,16 @@ $this->assign('MED', 'active');
                 'Death' => 'Death',
               ),
               'label' => array('class' => 'required', 'text' => 'Error Outcome')
+            ));
+
+            echo $this->Form->input('submitted', array(
+              'label' => array('class' => 'required', 'text' => 'Report Status'),
+              'empty' => true,
+              'hiddenField' => false,
+              'options' => array(
+                '0' => 'Submitted',
+                '1' => 'Unsubmitted'
+              )
             ));
             ?>
           </td>
@@ -194,30 +213,7 @@ $this->assign('MED', 'active');
           </td>
         </tr>
         <tr>
-          <td>
-            <?php
-            if (($this->Session->read('Auth.User.user_type') != 'Public Health Program'))  echo $this->Form->input(
-              'patient_name',
-              array(
-                'div' => false, 'placeholder' => 'Patient name',
-                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Patient Name')
-              )
-            );
-            ?>
-          </td>
-          <td>
-            <?php
-            echo $this->Form->input('submitted', array(
-              'label' => array('class' => 'required', 'text' => 'Report Status'),
-              'empty' => true,
-              'hiddenField' => false,
-              'options' => array(
-                '0' => 'Submitted',
-                '1' => 'Unsubmitted'
-              )
-            ));
-            ?>
-          </td>
+          
           <td>
             <?php
             echo $this->Form->input('health_program', array(
@@ -261,6 +257,18 @@ $this->assign('MED', 'active');
             );
             ?>
           </td>
+          <td><?php
+           echo $this->Form->input('mah', array(
+            'type' => 'select',
+            'options' => [
+              '0' => 'MAH',
+              '1' => 'Non MAH',
+            ],
+            'empty' => true,
+            'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
+            'class' => 'input-xlarge'
+          ));
+          ?></td>
           <td>
             <h5>Gender</h5>
             <?php

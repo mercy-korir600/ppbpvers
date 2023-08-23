@@ -30,6 +30,7 @@ class Aefi extends AppModel
         'county_id' => array('type' => 'value'), 
         'vaccine_name' => array('type' => 'query', 'method' => 'findByVaccineName', 'encode' => true), 
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
+        'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'bcg' => array('type' => 'value'),
         'device' => array('type' => 'value'),
         'convulsion' => array('type' => 'value'),
@@ -450,7 +451,35 @@ class Aefi extends AppModel
             ),
         ),
     );
+    public function findByMarketAuthority($data = array())
+    {
+        $conditions = array();
+        $filter = $data['mah'];
+        if ($filter == '0') {
+            $conditions = array(
+                'user_type' => 'Market Authority'
+            );
+        } else {
+            $conditions = array(
+                'OR' => array(
+                    'NOT' => array('user_type' => 'Market Authority'),
+                    'user_type IS NULL',
+                    'user_type' => ''
+                )
+            );
+        }
 
+        $user = ClassRegistry::init('User')->find(
+            'list',
+            array(
+                'conditions' => $conditions,
+                'fields' => array('id', 'id')
+            )
+        );
+
+        $cond = array($this->alias . '.user_id' => $user);
+        return $cond;
+    }
     public function atLeastOne($field = null)
     {
         return $this->data['Aefi']['bcg'] + $this->data['Aefi']['convulsion'] + $this->data['Aefi']['urticaria'] + $this->data['Aefi']['high_fever'] +
