@@ -603,7 +603,7 @@ class TransfusionsController extends AppController
                     //Notify managers
                     $users = $this->Transfusion->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2)
+                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                     ));
                     foreach ($users as $user) {
                         $variables = array(
@@ -775,7 +775,7 @@ class TransfusionsController extends AppController
                 //Notify managers
                 $users = $this->Transfusion->User->find('all', array(
                     'contain' => array(),
-                    'conditions' => array('User.group_id' => 2)
+                    'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                 ));
                 foreach ($users as $user) {
                     $variables = array(
@@ -1052,7 +1052,7 @@ class TransfusionsController extends AppController
                     //Notify managers
                     $users = $this->Transfusion->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2)
+                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                     ));
                     foreach ($users as $user) {
                         $variables = array(

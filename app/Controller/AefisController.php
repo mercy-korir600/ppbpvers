@@ -50,7 +50,7 @@ class AefisController extends AppController
             $criteria['Aefi.submitted'] = array(2, 3);
             // $criteria['Aefi.submitted_date BETWEEN ? AND ?'] = array($startDate, $endDate);
 
-         
+
 
             if ($this->passedArgs['category'] === "country") {
 
@@ -93,13 +93,13 @@ class AefisController extends AppController
     }
     public function generate_sub_county_data($criteria)
     {
-      
+
         $data = array();
         $facilities = $this->Aefi->find('all', array(
-            'fields' => array('name_of_institution','sub_county_id', 'COUNT(*) as cnt'),
+            'fields' => array('name_of_institution', 'sub_county_id', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('name_of_institution','sub_county_id'),
+            'group' => array('name_of_institution', 'sub_county_id'),
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -135,7 +135,6 @@ class AefisController extends AppController
             $data[] = $dt;
         }
         return $data;
-
     }
     public function generate_county_data($criteria)
     {
@@ -272,8 +271,8 @@ class AefisController extends AppController
         ]);
     }
 
-    
-  
+
+
     public function yellowcard($id = null)
     {
         $this->autoRender = false;
@@ -624,15 +623,15 @@ class AefisController extends AppController
         $criteria = $this->Aefi->parseCriteria($this->passedArgs);
         if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') $criteria['Aefi.submitted'] = array(2);
         if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
-            if ($user_type === 'County Pharmacist') { 
+            if ($user_type === 'County Pharmacist') {
                 $criteria['OR'] = array(
-                    'Aefi.user_id' => $this->Auth->user('id'), 
+                    'Aefi.user_id' => $this->Auth->user('id'),
                     array(
                         'Aefi.serious' => 'Yes',
                         'Aefi.submitted' => array(2, 3),
-                        'Aefi.county_id' => $this->Auth->user('county_id') 
+                        'Aefi.county_id' => $this->Auth->user('county_id')
                     )
-                ); 
+                );
             } else {
                 $criteria['Aefi.user_id'] = $this->Auth->User('id');
             }
@@ -644,7 +643,7 @@ class AefisController extends AppController
             $criteria['Aefi.submitted'] = array(0, 1);
         } elseif (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 2) {
             $criteria['Aefi.submitted'] = array(2, 3);
-        } 
+        }
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Aefi.created' => 'desc');
@@ -1399,7 +1398,7 @@ class AefisController extends AppController
                     //Notify managers
                     $users = $this->Aefi->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2)
+                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                     ));
                     foreach ($users as $user) {
                         $variables = array(
@@ -1431,7 +1430,7 @@ class AefisController extends AppController
                             'contain' => array(),
                             'conditions' => array(
                                 'OR' => array(
-                                    'User.group_id' => 2,
+                                    'User.group_id' => 2, 'User.is_active' => '1',
                                     array(
                                         'User.county_id' => $county_id,
                                         'User.user_type' => 'County Pharmacist'
@@ -1604,41 +1603,41 @@ class AefisController extends AppController
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
 
-                $aefi = $this->Aefi->read(null, $this->Aefi->id);
-                $id = $this->Aefi->id;
+                    $aefi = $this->Aefi->read(null, $this->Aefi->id);
+                    $id = $this->Aefi->id;
 
-                //******************       Send Email and Notifications to Applicant and Managers          *****************************
-                $this->loadModel('Message');
-                $html = new HtmlHelper(new ThemeView());
-                $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
-                $variables = array(
-                    'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
-                    'reference_link' => $html->link(
-                        $aefi['Aefi']['reference_no'],
-                        array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
-                        array('escape' => false)
-                    ),
-                    'modified' => $aefi['Aefi']['modified']
-                );
-                $datum = array(
-                    'email' => $aefi['Aefi']['reporter_email'],
-                    'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
-                    'subject' => CakeText::insert($message['Message']['subject'], $variables),
-                    'message' => CakeText::insert($message['Message']['content'], $variables)
-                );
+                    //******************       Send Email and Notifications to Applicant and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
+                    $variables = array(
+                        'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
+                        'reference_link' => $html->link(
+                            $aefi['Aefi']['reference_no'],
+                            array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $aefi['Aefi']['modified']
+                    );
+                    $datum = array(
+                        'email' => $aefi['Aefi']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
 
-                $this->loadModel('Queue.QueuedTask');
-                $this->QueuedTask->createJob('GenericEmail', $datum);
-                $this->QueuedTask->createJob('GenericNotification', $datum);
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
 
 
-                //Send SMS
-                if (!empty($aefi['Aefi']['reporter_phone']) && strlen(substr($aefi['Aefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Aefi']['reporter_phone'], -9))) {
-                    $datum['phone'] = '254' . substr($aefi['Aefi']['reporter_phone'], -9);
-                    $variables['reference_url'] = Router::url(['controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true]);
-                    $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
-                    $this->QueuedTask->createJob('GenericSms', $datum);
-                }
+                    //Send SMS
+                    if (!empty($aefi['Aefi']['reporter_phone']) && strlen(substr($aefi['Aefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Aefi']['reporter_phone'], -9))) {
+                        $datum['phone'] = '254' . substr($aefi['Aefi']['reporter_phone'], -9);
+                        $variables['reference_url'] = Router::url(['controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true]);
+                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                        $this->QueuedTask->createJob('GenericSms', $datum);
+                    }
 
                     //Send SMS
                     if (!empty($aefi['Saefi']['reporter_phone']) && strlen(substr($aefi['Saefi']['reporter_phone'], -9)) == 9 && is_numeric(substr($aefi['Saefi']['reporter_phone'], -9))) {
@@ -1652,7 +1651,7 @@ class AefisController extends AppController
                     //Notify managers
                     $users = $this->Saefi->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2)
+                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                     ));
                     foreach ($users as $user) {
                         $variables = array(
@@ -1766,7 +1765,7 @@ class AefisController extends AppController
                 //Notify managers
                 $users = $this->Aefi->User->find('all', array(
                     'contain' => array(),
-                    'conditions' => array('User.group_id' => 2)
+                    'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                 ));
                 foreach ($users as $user) {
                     $variables = array(
@@ -1989,7 +1988,7 @@ class AefisController extends AppController
                     //Notify managers
                     $users = $this->Aefi->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2)
+                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
                     ));
                     foreach ($users as $user) {
                         $variables = array(
@@ -2021,7 +2020,7 @@ class AefisController extends AppController
                             'contain' => array(),
                             'conditions' => array(
                                 'OR' => array(
-                                    'User.group_id' => 2,
+                                    'User.group_id' => 2, 'User.is_active' => '1',
                                     array(
                                         'User.county_id' => $county_id,
                                         'User.user_type' => 'County Pharmacist'
