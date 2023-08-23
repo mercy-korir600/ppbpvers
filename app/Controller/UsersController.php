@@ -702,12 +702,11 @@ class UsersController extends AppController
                 $this->loadModel('Queue.QueuedTask');
                 $this->QueuedTask->createJob('GenericEmail', $datum);
                 $this->QueuedTask->createJob('GenericNotification', $datum);
-                // CakeResque::enqueue('default', 'GenericEmailShell', array('sendEmail', $datum));
-                // CakeResque::enqueue('default', 'GenericNotificationShell', array('sendNotification', $datum));
+                
                 //Notify Managers
                 $managers = $this->User->find('all', array(
                     'contain' => array(),
-                    'conditions' => array('group_id' => 2)
+                    'conditions' => array('group_id' => 2,'User.is_active' => '1')
                 ));
                 foreach ($managers as $manager) {
                     $variables = array(
