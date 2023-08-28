@@ -854,45 +854,72 @@ class ReportsController extends AppController
 
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
-        if ($this->Auth->User('user_type') == 'County Pharmacist') {
-            $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
-        } else {
-            $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find(
-                'list',
-                array(
-                    'conditions' => array(
-                        'Aefi.submitted' => '2',
-                        'Aefi.copied !=' => '1',
-                        'Aefi.report_type !=' => 'Followup'
-                    ),
-                    'fields' => array('id', 'id')
-                )
-            );
-        }
+        // if ($this->Auth->User('user_type') == 'County Pharmacist') {
+        //     $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        // } else {
+        //     $criteria['AefiListOfVaccine.aefi_id'] = $this->Aefi->find(
+        //         'list',
+        //         array(
+        //             'conditions' => array(
+        //                 'Aefi.submitted' => '2',
+        //                 'Aefi.copied !=' => '1',
+        //                 'Aefi.report_type !=' => 'Followup'
+        //             ),
+        //             'fields' => array('id', 'id')
+        //         )
+        //     );
+        // }
 
-        $criteriav = array(0);
-        $criteriav['Vaccine.id >'] = 0;
+        // $criteriav = array(0);
+        // $criteriav['Vaccine.id >'] = 0;
 
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteriav['AefiListOfVaccine.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        else
-            $criteriav['AefiListOfVaccine.created >'] = '2020-04-01 08:00:00';
+        // if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+        //     $criteriav['AefiListOfVaccine.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        // else
+        //     $criteriav['AefiListOfVaccine.created >'] = '2020-04-01 08:00:00';
 
-        if ($this->Auth->User('user_type') == 'County Pharmacist') {
-            $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array('conditions' => array('Aefi.submitted' => '2', 'Aefi.copied !=' => '1', 'Aefi.report_type !=' => 'Followup', 'Aefi.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
-        } else {
-            $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array(
-                'conditions' => $conditions,
-                'fields' => array('id', 'id')
-            ));
-        }
+        // if ($this->Auth->User('user_type') == 'County Pharmacist') {
+        //     $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find(
+        //         'list',
+        //         array(
+        //             'conditions' => array(
+        //                 'Aefi.submitted' => '2',
+        //                 'Aefi.copied !=' => '1',
+        //                 'Aefi.report_type !=' => 'Followup',
+        //                 'Aefi.county_id' => $this->Auth->User('county_id')
+        //             ),
+        //             'fields' => array('id', 'id')
+        //         )
+        //     );
+        // } else {
+        //     $criteriav['AefiListOfVaccine.aefi_id'] = $this->Aefi->find('list', array(
+        //         'conditions' => $conditions,
+        //         'fields' => array('id', 'id')
+        //     ));
+        // }
 
+
+        // get me an array of all the aefi ids based on the criteria with model class  $this->Aefi
+        $aefiIds = $this->Aefi->find('list', array(
+            'fields' => array('Aefi.id'),
+            'conditions' => $criteria
+        ));
+        $aefiIds = array_keys($aefiIds);
+        // debug($aefiIds);
+        // exit;
+
+        // debug(count($aefiIds));
+        // exit;
+        
 
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
             'contain' => array('Vaccine'),
             'recursive' => -1,
-            'conditions' => $criteriav,
+            // 'conditions' => $criteriav,
+            'conditions' => array(
+                'AefiListOfVaccine.aefi_id' => $aefiIds, 
+            ),
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
