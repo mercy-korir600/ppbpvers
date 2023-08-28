@@ -38,7 +38,18 @@ class CommentsController extends AppController
 
           $users = ClassRegistry::init($model)->User->find('all', array(
             'contain' => array(),
-            'conditions' => array('OR' => array('User.id' => $entity[$model]['user_id'], 'User.group_id' => 2))
+            'conditions' => array(
+              'OR' => array(
+                array(
+                  'User.id' => $entity[$model]['user_id'],
+                  'User.is_active' => '1'
+                ),
+                array(
+                  'User.group_id' => 2,
+                  'User.is_active' => '1'
+                )
+              )
+            )
           ));
           foreach ($users as $user) {
 
@@ -119,7 +130,18 @@ class CommentsController extends AppController
 
           $users = ClassRegistry::init($model)->User->find('all', array(
             'contain' => array(),
-            'conditions' => array('OR' => array('User.id' => $entity[$model]['user_id'], 'User.group_id' => 2))
+            'conditions' => array(
+              'OR' => array(
+                array(
+                  'User.id' => $entity[$model]['user_id'],
+                  'User.is_active' => '1'
+                ),
+                array(
+                  'User.group_id' => 2,
+                  'User.is_active' => '1'
+                )
+              )
+            )
           ));
           foreach ($users as $user) {
             $actioner = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';

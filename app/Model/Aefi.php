@@ -27,6 +27,7 @@ class Aefi extends AppModel
         'category' => array('type' => 'query', 'method' => 'dummy'),
         'county' => array('type' => 'query', 'method' => 'dummy'),
         'sub_county' => array('type' => 'query', 'method' => 'dummy'),
+        'ward' => array('type' => 'query', 'method' => 'dummy'),
         'county_id' => array('type' => 'value'), 
         'vaccine_name' => array('type' => 'query', 'method' => 'findByVaccineName', 'encode' => true), 
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),

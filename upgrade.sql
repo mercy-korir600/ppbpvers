@@ -59,3 +59,9 @@ ALTER TABLE `pqmps` ADD `reaction_comments` TEXT NULL DEFAULT NULL AFTER `advers
 
 
 
+-- KHIS
+ALTER TABLE `facility_codes` ADD `sub_county` VARCHAR(255) NULL DEFAULT NULL AFTER `county`;
+ALTER TABLE `facility_codes` ADD `ward` VARCHAR(255) NULL DEFAULT NULL AFTER `division`;
+
+
+

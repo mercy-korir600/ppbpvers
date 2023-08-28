@@ -72,6 +72,15 @@ class AefisController extends AppController
                 $criteria['Aefi.sub_county_id'] = $this->passedArgs['sub_county'];
                 $data = $this->generate_sub_county_data($criteria);
             }
+            if ($this->passedArgs['category'] === "facility") {
+                if (empty($this->passedArgs['ward'])) {
+                    $this->Session->setFlash(__('Please specify the ward'), 'alerts/flash_error');
+                    $this->redirect($this->referer());
+                }
+                $criteria['Aefi.sub_county_id'] = $this->passedArgs['sub_county'];
+                $criteria['Aefi.patient_ward'] = $this->passedArgs['ward'];
+                $data = $this->generate_facility_data($criteria,$this->passedArgs['sub_county']);
+            }
         }
         $months = [
             'January', 'February', 'March', 'April', 'May', 'June',
@@ -91,15 +100,61 @@ class AefisController extends AppController
         $this->set('page_options', $this->page_options);
         $this->set('data', Sanitize::clean($data, array('encode' => false)));
     }
+    public function generate_facility_data($criteria,$sub_county)
+    {
+
+        $data = array();
+        $facilities = $this->Aefi->find('all', array(
+            'fields' => array('name_of_institution','COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('name_of_institution'),
+            'order' => array('COUNT(*) DESC'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        
+        $c=0;
+        foreach ($facilities as $ct) {
+            $c++;
+            $dt['county_id'] = $c;
+            $dt['county'] = $ct['Aefi']['name_of_institution'];
+            $bcg = $this->extract_reports_per_reaction('bcg', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $convulsion = $this->extract_reports_per_reaction('convulsion', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $urticaria = $this->extract_reports_per_reaction('urticaria', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $fever = $this->extract_reports_per_reaction('high_fever', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $abscess = $this->extract_reports_per_reaction('abscess', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $reaction = $this->extract_reports_per_reaction('local_reaction', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $anaphylaxis = $this->extract_reports_per_reaction('anaphylaxis', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $encephalopathy = $this->extract_reports_per_reaction('meningitis', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $paralysis = $this->extract_reports_per_reaction('paralysis', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $shock = $this->extract_reports_per_reaction('toxic_shock', 'name_of_institution', $ct['Aefi']['name_of_institution']);
+            $total = $bcg + $convulsion + $urticaria + $fever + $abscess + $reaction + $anaphylaxis + $encephalopathy + $paralysis + $shock;
+
+            $dt['bcg'] = $bcg;
+            $dt['convulsion'] = $convulsion;
+            $dt['urticaria'] = $urticaria;
+            $dt['fever'] = $fever;
+            $dt['abscess'] = $abscess;
+            $dt['reaction'] = $reaction;
+            $dt['anaphylaxis'] = $anaphylaxis;
+            $dt['encephalopathy'] = $encephalopathy;
+            $dt['paralysis'] = $paralysis;
+            $dt['shock'] = $shock;
+            $dt['total'] = $total;
+
+            $data[] = $dt;
+        }
+        return $data;
+    }
     public function generate_sub_county_data($criteria)
     {
 
         $data = array();
         $facilities = $this->Aefi->find('all', array(
-            'fields' => array('name_of_institution', 'sub_county_id', 'COUNT(*) as cnt'),
+            'fields' => array('patient_ward', 'sub_county_id', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('name_of_institution', 'sub_county_id'),
+            'group' => array('patient_ward', 'sub_county_id'),
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -107,7 +162,7 @@ class AefisController extends AppController
         // exit;
         foreach ($facilities as $ct) {
             $dt['county_id'] = $ct['Aefi']['sub_county_id'];
-            $dt['county'] = $ct['Aefi']['name_of_institution'];
+            $dt['county'] = $ct['Aefi']['patient_ward'];
             $bcg = $this->extract_reports_per_reaction('bcg', 'sub_county_id', $ct['Aefi']['sub_county_id']);
             $convulsion = $this->extract_reports_per_reaction('convulsion', 'sub_county_id', $ct['Aefi']['sub_county_id']);
             $urticaria = $this->extract_reports_per_reaction('urticaria', 'sub_county_id', $ct['Aefi']['sub_county_id']);

@@ -19,6 +19,7 @@ class SubCountiesController extends AppController {
 		parent::beforeFilter();
 		$this->Auth->allow('api_index','autocomplete','constituency');
 	}
+ 
 	public function constituency($county = null)
 	{
 

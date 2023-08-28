@@ -112,7 +112,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
                     <td><?php
                         echo $this->Form->input('ward', array(
                             'type' => 'select', 
-                            'empty' => true,
+                            'empty' => true, 
                             'label' => array(
                                 'class' => 'control-label',
                                 'text' => 'Ward'

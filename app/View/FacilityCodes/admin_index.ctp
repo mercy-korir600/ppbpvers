@@ -89,6 +89,9 @@
 								<th><?php echo $this->Paginator->sort('id');?></th>
 								<th><?php echo $this->Paginator->sort('facility_code');?></th>
 								<th><?php echo $this->Paginator->sort('facility_name');?></th>
+								<th><?php echo $this->Paginator->sort('county');?></th>
+								<th><?php echo $this->Paginator->sort('sub_county');?></th>
+								<th><?php echo $this->Paginator->sort('ward');?></th>
 								<th><?php echo __('Actions');?></th>
 							</tr>
 						</thead>
@@ -99,6 +102,9 @@
 								<td><?php echo h($facilityCode['FacilityCode']['id']); ?>&nbsp;</td>
 								<td><?php echo h($facilityCode['FacilityCode']['facility_code']); ?>&nbsp;</td>
 								<td><?php echo h($facilityCode['FacilityCode']['facility_name']); ?>&nbsp;</td>
+								<td><?php echo h($facilityCode['FacilityCode']['county']); ?>&nbsp;</td>
+								<td><?php echo h($facilityCode['FacilityCode']['sub_county']); ?>&nbsp;</td>
+								<td><?php echo h($facilityCode['FacilityCode']['ward']); ?>&nbsp;</td>
 								<td>
 									<?php echo $this->Html->link('<span class="label label-info"><i class="icon-pencil icon-white"></i> Edit</span>' , 
 											array('controller' => 'facility_codes', 'action' => 'edit', $facilityCode['FacilityCode']['id']), array('escape' => false)); ?>&nbsp;

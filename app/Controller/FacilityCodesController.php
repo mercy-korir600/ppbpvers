@@ -19,7 +19,7 @@ class FacilityCodesController extends AppController
 	public function beforeFilter()
 	{
 		parent::beforeFilter();
-		$this->Auth->allow('index', 'autocomplete', 'api_autocomplete', 'api_index');
+		$this->Auth->allow('index', 'autocomplete', 'api_autocomplete', 'api_index', 'wards');
 	}
 
 	public function autocomplete($query = null)
@@ -35,6 +35,26 @@ class FacilityCodesController extends AppController
 			$codes[] = array(
 				'value' => $value['FacilityCode']['facility_code'], 'label' => $value['FacilityCode']['facility_name'],  'sub_county' => $value['FacilityCode']['district'],
 				'desc' => $value['FacilityCode']['county'], 'addr' => $value['FacilityCode']['official_address'], 'phone' => $value['FacilityCode']['official_mobile']
+			);
+		}
+		$this->set('codes', $codes);
+		$this->set('_serialize', 'codes');
+	}
+	public function wards($query = null)
+	{
+		$this->RequestHandler->setContent('json', 'application/json'); 
+		$suggestions = $this->FacilityCode->find('all', array(
+			'fields' => array('DISTINCT FacilityCode.ward'), // Use DISTINCT to get unique ward values
+			'conditions' => array('FacilityCode.sub_county LIKE' => '%' . $query . '%'),
+			'limit' => 10,
+			'recursive' => -1
+		)); 
+		// Now $uniqueWards contains the unique ward values based on the sub_county condition
+		
+		$codes = array();
+		foreach ($suggestions as $key => $value) {
+			$codes[] = array( 
+				'ward' => $value['FacilityCode']['ward']
 			);
 		}
 		$this->set('codes', $codes);
@@ -238,7 +258,6 @@ class FacilityCodesController extends AppController
 				$csvData = array_map('str_getcsv', file($file['tmp_name']));
 				$header = array_shift($csvData);
 				set_time_limit(600);
-				// $this->FacilityCode->deleteAll(array('1' => '1'), false);
 
 				// Validate and save each row
 				foreach ($csvData as $row) {
@@ -252,10 +271,12 @@ class FacilityCodesController extends AppController
 						'type' => $row[5],
 						'owner' => $row[7],
 						'beds' => $row[10],
-						'cots' => $row[11],						
-						'province'=>$this->get_province_by_county($row[12]),
+						'cots' => $row[11],
+						'province' => $this->get_province_by_county($row[12]),
 						'county' => $row[12],
 						'constituency' => $row[13],
+						'sub_county' => $row[14],
+						'ward' => $row[15],
 						'operational_status' => $row[16],
 						'open_weekends' => $row[20],
 						'open_24hrs' => $this->determine_24_hour($row[18], $row[21]),
@@ -308,63 +329,64 @@ class FacilityCodesController extends AppController
 		}
 		return $fal;
 	}
-	public function get_province_by_county($countyName) {
-        $countyName = strtolower($countyName);
-        
-        $provinceMapping = array(
-            'nairobi' => 'Nairobi',
-            'mombasa' => 'Coast',
-            'kwale' => 'Coast',
-            'kilifi' => 'Coast',
-            'tana river' => 'Coast',
-            'lamu' => 'Coast',
-            'taita-taveta' => 'Coast',
-            'garissa' => 'North Eastern',
-            'wajir' => 'North Eastern',
-            'mandera' => 'North Eastern',
-            'marsabit' => 'Eastern',
-            'isiolo' => 'Eastern',
-            'meru' => 'Eastern',
-            'tharaka-nithi' => 'Eastern',
-            'embu' => 'Eastern',
-            'kitui' => 'Eastern',
-            'machakos' => 'Eastern',
-            'makueni' => 'Eastern',
-            'nyandarua' => 'Central',
-            'nyeri' => 'Central',
-            'kirinyaga' => 'Central',
-            'murang\'a' => 'Central',
-            'kiambu' => 'Central',
-            'turkana' => 'Rift Valley',
-            'west pokot' => 'Rift Valley',
-            'samburu' => 'Rift Valley',
-            'trans nzoia' => 'Rift Valley',
-            'uasin gishu' => 'Rift Valley',
-            'elgeyo-marakwet' => 'Rift Valley',
-            'nandi' => 'Rift Valley',
-            'baringo' => 'Rift Valley',
-            'laikipia' => 'Rift Valley',
-            'nakuru' => 'Rift Valley',
-            'narok' => 'Rift Valley',
-            'kajiado' => 'Rift Valley',
-            'kericho' => 'Rift Valley',
-            'bomet' => 'Rift Valley',
-            'kakamega' => 'Western',
-            'vihiga' => 'Western',
-            'bungoma' => 'Western',
-            'busia' => 'Western',
-            'siaya' => 'Nyanza',
-            'kisumu' => 'Nyanza',
-            'homa bay' => 'Nyanza',
-            'migori' => 'Nyanza',
-            'kisii' => 'Nyanza',
-            'nyamira' => 'Nyanza'
-        );
+	public function get_province_by_county($countyName)
+	{
+		$countyName = strtolower($countyName);
 
-        if (isset($provinceMapping[$countyName])) {
-            return $provinceMapping[$countyName];
-        }
+		$provinceMapping = array(
+			'nairobi' => 'Nairobi',
+			'mombasa' => 'Coast',
+			'kwale' => 'Coast',
+			'kilifi' => 'Coast',
+			'tana river' => 'Coast',
+			'lamu' => 'Coast',
+			'taita-taveta' => 'Coast',
+			'garissa' => 'North Eastern',
+			'wajir' => 'North Eastern',
+			'mandera' => 'North Eastern',
+			'marsabit' => 'Eastern',
+			'isiolo' => 'Eastern',
+			'meru' => 'Eastern',
+			'tharaka-nithi' => 'Eastern',
+			'embu' => 'Eastern',
+			'kitui' => 'Eastern',
+			'machakos' => 'Eastern',
+			'makueni' => 'Eastern',
+			'nyandarua' => 'Central',
+			'nyeri' => 'Central',
+			'kirinyaga' => 'Central',
+			'murang\'a' => 'Central',
+			'kiambu' => 'Central',
+			'turkana' => 'Rift Valley',
+			'west pokot' => 'Rift Valley',
+			'samburu' => 'Rift Valley',
+			'trans nzoia' => 'Rift Valley',
+			'uasin gishu' => 'Rift Valley',
+			'elgeyo-marakwet' => 'Rift Valley',
+			'nandi' => 'Rift Valley',
+			'baringo' => 'Rift Valley',
+			'laikipia' => 'Rift Valley',
+			'nakuru' => 'Rift Valley',
+			'narok' => 'Rift Valley',
+			'kajiado' => 'Rift Valley',
+			'kericho' => 'Rift Valley',
+			'bomet' => 'Rift Valley',
+			'kakamega' => 'Western',
+			'vihiga' => 'Western',
+			'bungoma' => 'Western',
+			'busia' => 'Western',
+			'siaya' => 'Nyanza',
+			'kisumu' => 'Nyanza',
+			'homa bay' => 'Nyanza',
+			'migori' => 'Nyanza',
+			'kisii' => 'Nyanza',
+			'nyamira' => 'Nyanza'
+		);
 
-        return null;
-    }
+		if (isset($provinceMapping[$countyName])) {
+			return $provinceMapping[$countyName];
+		}
+
+		return null;
+	}
 }

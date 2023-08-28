@@ -8,8 +8,7 @@ $(function () {
     } else if ($('#AefiCategory').val() == 'ward') {
         $('.diff:input, .sub:input, .ward:input').prop('disabled', true);
         $('.diff:input, .sub:input').prop('disabled', false);
-    } else if ($('#AefiCategory').val() == 'facility') {
-        $('.diff:input, .sub:input, .ward:input').prop('disabled', true);
+    } else if ($('#AefiCategory').val() == 'facility') { 
         $('.diff:input, .sub:input, .ward:input').prop('disabled', false);
     } else {
 
@@ -53,6 +52,31 @@ $(function () {
                     select.append('<option value=' + key + '>' + value + '</option>');
                 }
                 );
+            }
+        });
+    });
+
+    // Load Wards
+
+    $('#AefiSubCounty').change(function () {
+        var county_id = $(this).val();
+        var selectedOption = $(this).find("option:selected");
+        var county_id = selectedOption.val();
+        var county_label = selectedOption.text();
+
+        $.ajax({
+            url: '/facility_codes/wards/' + county_label + '.json',
+            success: function (data) {
+                console.log(data);
+                // get the select element
+                var select = $('#AefiWard');
+                // clear the select
+                select.empty();
+                // add the options
+                $.each(data, function (index, item) {
+                    select.append('<option value="' + item['ward'] + '">' + item['ward'] + '</option>');
+                });
+ 
             }
         });
     });

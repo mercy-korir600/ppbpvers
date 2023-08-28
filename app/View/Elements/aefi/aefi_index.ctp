@@ -25,13 +25,14 @@ $this->assign('Adverse Event Following Immunization', 'active');
     <div class="marketing">
       <div class="row-fluid">
         <div class="span12">
-          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small> <?php if ($redir == 'manager') {
-                                                                                                                                                                                            // echo $this->Html->link(
-                                                                                                                                                                                            //   '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
-                                                                                                                                                                                            //   array('controller' => 'aefis', 'action' => 'dhis2'),
-                                                                                                                                                                                            //   array('escape' => false, 'class' => 'btn btn-success')
-                                                                                                                                                                                            // );
-                                                                                                                                                                                          } ?></h3>
+          <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
+            <?php if ($redir == 'manager') {
+              // echo $this->Html->link(
+              //   '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
+              //   array('controller' => 'aefis', 'action' => 'dhis2'),
+              //   array('escape' => false, 'class' => 'btn btn-success')
+              // );
+            } ?></h3>
           <hr class="soften" style="margin: 7px 0px;">
 
         </div>
@@ -403,7 +404,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
             <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
               <td><?php echo h($aefi['Aefi']['vigiflow_ref']);
                   echo "\n" . $aefi['Aefi']['vigiflow_date']; ?></td>
-              <td><?php echo h($aefi['Aefi']['webradr_ref']);?></td>
+              <td><?php echo h($aefi['Aefi']['webradr_ref']); ?></td>
             <?php } ?>
             <td><?php echo h($aefi['Aefi']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($aefi['Aefi']['created']); ?>&nbsp;</td>
@@ -437,7 +438,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
                 echo "&nbsp;";
                 if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') {
                   // if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist' && $aefi['Aefi']['user_id'] != $this->Session->read('Auth.User.id')) {
-                    if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
+                  if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
                     echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add Investigation up report"> <i class="fa fa-eye" aria-hidden="true"></i> Investigation</span>', array('controller' => 'aefis', 'action' => 'investigation', $aefi['Aefi']['id']), array('escape' => false), __('Add a Investigation report?'));
                   } else {
                     echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup</span>', array('controller' => 'aefis', 'action' => 'followup', $aefi['Aefi']['id']), array('escape' => false), __('Add a followup report?'));
