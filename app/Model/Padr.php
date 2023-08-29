@@ -309,11 +309,11 @@ class Padr extends AppModel {
 			$this->data['Padr']['date_of_onset_of_reaction'] = '';
 		}
 
-		if (!empty($this->data['Padr']['date_of_end_of_reaction'])) {
-			$this->data['Padr']['date_of_end_of_reaction'] = implode('-', $this->data['Padr']['date_of_end_of_reaction']);
-		} else {
-			$this->data['Padr']['date_of_end_of_reaction'] = '';
-		}
+		// if (!empty($this->data['Padr']['date_of_end_of_reaction'])) {
+		// 	$this->data['Padr']['date_of_end_of_reaction'] = implode('-', $this->data['Padr']['date_of_end_of_reaction']);
+		// } else {
+		// 	$this->data['Padr']['date_of_end_of_reaction'] = '';
+		// }
 
 		return true;
 	}

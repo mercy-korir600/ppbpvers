@@ -562,6 +562,7 @@ class PadrsController extends AppController
 
             //add the sender flag
             $this->request->data['Padr']['device'] = "3";
+            $this->request->data['Padr']['consent'] = "Yes";
 
             if ($this->Padr->saveAssociated($this->request->data)) {
                 $count = $this->Padr->find('count',  array('conditions' => array(
