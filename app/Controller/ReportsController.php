@@ -848,7 +848,7 @@ class ReportsController extends AppController
             'contain' => array('Vaccine'),
             'recursive' => -1,
             'conditions' => array(
-                'AefiListOfVaccine.aefi_id' => $aefiIds,
+                'AefiListOfVaccine.aefi_id IN' => $aefiIds,
             ),
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
