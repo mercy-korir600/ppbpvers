@@ -434,7 +434,7 @@ class ReportsController extends AppController
             ),
             'fields' => array('aefi_id', 'aefi_id')
         ));
-        return $cond; 
+        return $cond;
     }
     public function generate_reports_per_reaction($drug_name = null)
     {
@@ -689,7 +689,7 @@ class ReportsController extends AppController
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
-        $criteria['Aefi.archived'] = false; 
+        $criteria['Aefi.archived'] = false;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
@@ -841,19 +841,71 @@ class ReportsController extends AppController
 
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
-
-
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-            'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-            'contain' => array('Vaccine'),
-            'recursive' => -1,
+            'fields' => array(
+                'Vaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ),
+            'contain' => array('Vaccine'), // Include the Vaccine model to access vaccine_name
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id IN' => $aefiIds,
             ),
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
+        $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
+            'fields' => array(
+                'AefiListOfVaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ), // Include the Vaccine model to access vaccine_name
+            'conditions' => array(
+                'AefiListOfVaccine.aefi_id IN' => $aefiIds,
+                'AefiListOfVaccine.vaccine_name IS NOT NULL',
+                'AefiListOfVaccine.vaccine_id IS NULL'
+            ),
+            'group' => array('AefiListOfVaccine.vaccine_name'),
+            'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        ));
+        // Create a combined result array
+        $combinedResults = [];
+        // debug($vaccine);
+        // exit;
 
+        // Merge the results from both queries into the combined result array
+        foreach ($vaccine as $result) {
+            $vaccineName = $result['Vaccine']['vaccine_name'];
+            $count = $result['0']['cnt'];
+
+            if (!isset($combinedResults[$vaccineName])) {
+                $combinedResults[$vaccineName] = 0;
+            }
+
+            $combinedResults[$vaccineName] += $count;
+        }
+        // debug($combinedResults);
+        // exit;
+        // debug($vaccinealt);
+        // exit;
+        foreach ($vaccinealt as $result) {
+            $vaccineName = $result['AefiListOfVaccine']['vaccine_name'];
+            $count = $result['0']['cnt'];
+
+            if (!isset($combinedResults[$vaccineName])) {
+                $combinedResults[$vaccineName] = 0;
+            }
+
+            $combinedResults[$vaccineName] += $count;
+        }
+        $vaccine=[];
+        foreach ($combinedResults as $key => $value) {
+            $name['Vaccine']['vaccine_name'] = $key;
+            $name['0']['cnt'] = $value;
+            $vaccine[]=$name;
+        }
+        // $vaccine=$combinedResults;
+
+        // debug($vaccine);
+        // exit;
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
