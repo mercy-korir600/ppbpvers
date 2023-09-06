@@ -882,10 +882,6 @@ class ReportsController extends AppController
 
             $combinedResults[$vaccineName] += $count;
         }
-        // debug($combinedResults);
-        // exit;
-        // debug($vaccinealt);
-        // exit;
         foreach ($vaccinealt as $result) {
             $vaccineName = $result['AefiListOfVaccine']['vaccine_name'];
             $count = $result['0']['cnt'];
@@ -901,11 +897,7 @@ class ReportsController extends AppController
             $name['Vaccine']['vaccine_name'] = $key;
             $name['0']['cnt'] = $value;
             $vaccine[]=$name;
-        }
-        // $vaccine=$combinedResults;
-
-        // debug($vaccine);
-        // exit;
+        } 
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
