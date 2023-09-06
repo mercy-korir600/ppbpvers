@@ -434,7 +434,7 @@ class ReportsController extends AppController
             ),
             'fields' => array('aefi_id', 'aefi_id')
         ));
-        return $cond; 
+        return $cond;
     }
     public function generate_reports_per_reaction($drug_name = null)
     {
@@ -689,7 +689,7 @@ class ReportsController extends AppController
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
-        $criteria['Aefi.archived'] = false; 
+        $criteria['Aefi.archived'] = false;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
@@ -823,18 +823,23 @@ class ReportsController extends AppController
 
 
         $months = $this->Aefi->find('all', array(
-            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $conditions = array_merge($criteria, array('serious_yes IS NOT NULL'));
+
         $reason = $this->Aefi->find('all', array(
             'fields' => array('serious_yes', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
-            'conditions' => $conditions,
+            'conditions' =>  array(
+                'Aefi.id IN' => $aefiIds,
+                // 'Aefi.serious_yes IS NOT NULL',
+                'Aefi.serious' => 'Yes'
+            ),
             'group' => array('serious_yes'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -844,15 +849,58 @@ class ReportsController extends AppController
 
 
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-            'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
+            'fields' => array('Vaccine.vaccine_name as vaccine_name' ,'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
             'contain' => array('Vaccine'),
             'recursive' => -1,
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
-            ),
-            'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
+            ), 
+            'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
+        // $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
+        //     'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
+        //     'contain' => array('Vaccine'),
+        //     'recursive' => -1,
+        //     'conditions' => array(
+        //         'OR' => array(
+        //             'AefiListOfVaccine.aefi_id IN' => $aefiIds ,
+        //             'AND' => array(
+        //                 'AefiListOfVaccine.aefi_id IN' => $aefiIds,
+        //                 'AefiListOfVaccine.vaccine_id IS NULL',
+        //                 'AefiListOfVaccine.vaccine_name IS NOT NULL'
+        //             ),
+        //           // This condition is always applied
+        //         )
+        //     ),
+        //     'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
+        //     'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        // ));
+
+        // $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
+        //     'fields' => array(
+        //         'Vaccine.vaccine_name as vaccine_name',
+        //         'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+        //     ),
+        //     'contain' => array('Vaccine'), // Include the Vaccine model
+        //     // 'conditions' => array(
+        //     //     'AefiListOfVaccine.aefi_id IN' => $aefiIds,
+        //     // ),
+        //     'conditions' => array(
+        //         'OR' => array(
+        //             'AefiListOfVaccine.aefi_id IN' => $aefiIds,
+        //             'AND' => array(
+        //                 'AefiListOfVaccine.vaccine_id IS NULL',
+        //                 'AefiListOfVaccine.vaccine_name IS NOT NULL'
+        //             )
+        //         )
+        //     ),
+        //     'group' => array('Vaccine.vaccine_name'),
+        //     'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        // ));
+
+
+
 
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
