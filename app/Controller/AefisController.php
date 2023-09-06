@@ -79,7 +79,7 @@ class AefisController extends AppController
                 }
                 $criteria['Aefi.sub_county_id'] = $this->passedArgs['sub_county'];
                 $criteria['Aefi.patient_ward'] = $this->passedArgs['ward'];
-                $data = $this->generate_facility_data($criteria,$this->passedArgs['sub_county']);
+                $data = $this->generate_facility_data($criteria, $this->passedArgs['sub_county']);
             }
         }
         $months = [
@@ -100,20 +100,20 @@ class AefisController extends AppController
         $this->set('page_options', $this->page_options);
         $this->set('data', Sanitize::clean($data, array('encode' => false)));
     }
-    public function generate_facility_data($criteria,$sub_county)
+    public function generate_facility_data($criteria, $sub_county)
     {
 
         $data = array();
         $facilities = $this->Aefi->find('all', array(
-            'fields' => array('name_of_institution','COUNT(*) as cnt'),
+            'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
-        
-        $c=0;
+
+        $c = 0;
         foreach ($facilities as $ct) {
             $c++;
             $dt['county_id'] = $c;
@@ -1479,73 +1479,9 @@ class AefisController extends AppController
 
                     $serious = $aefi['Aefi']['serious'];
                     if ($serious == "Yes") {
-                        //    Notify County Pharmacist & Managers
-                        $county_id = $aefi['Aefi']['county_id'];
-                        $users1 = $this->Aefi->User->find('all', array(
-                            'contain' => array(),
-                            'conditions' => array(
-                                'OR' => array(
-                                    'User.group_id' => 2, 'User.is_active' => '1',
-                                    array(
-                                        'User.county_id' => $county_id,
-                                        'User.user_type' => 'County Pharmacist'
-                                    )
-                                )
-                            ),
-                            'order' => array(
-                                'User.id' => 'DESC'
-                            )
-                        ));
-
-                        //******************       Send Email and Notifications to County Pharmacist and Managers          *****************************
-                        $this->loadModel('Message');
-                        $html = new HtmlHelper(new ThemeView());
-                        $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_serious_aefi')));
-                        $this->loadModel('Queue.QueuedTask');
-
-                        //Notify managers
-
-                        foreach ($users1 as $user) {
-                            $user_phone = $user['User']['phone_no'];
-                            $variables = array(
-                                'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
-                                'reference_link' => $html->link(
-                                    $aefi['Aefi']['reference_no'],
-                                    array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),
-                                    array('escape' => false)
-                                ),
-                                'modified' => $aefi['Aefi']['modified']
-                            );
-                            $datum = array(
-                                'email' => $user['User']['email'],
-                                'id' => $id,
-                                'user_id' => $user['User']['id'],
-                                'type' => 'reporter_serious_aefi',
-                                'model' => 'Aefi',
-                                'subject' => CakeText::insert($message['Message']['subject'], $variables),
-                                'message' => CakeText::insert($message['Message']['content'], $variables)
-                            );
-
-                            $this->QueuedTask->createJob('GenericEmail', $datum);
-                            $this->QueuedTask->createJob('GenericNotification', $datum);
-
-                            $reporter = ($user['User']['group_id'] == 2) ? 'manager' : 'reporter';
-
-                            //Send SMS
-                            if (!empty($user_phone) && strlen(substr($user_phone, -9)) == 9 && is_numeric(substr($user_phone, -9))) {
-                                $datum['phone'] = '254' . substr($user_phone, -9);
-                                $variables['reference_url'] = Router::url(['controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], $reporter => true, 'full_base' => true]);
-                                $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
-                                $this->QueuedTask->createJob('GenericSms', $datum);
-                            }
-                        }
-                        //**********************************    END   *********************************
-
-
-                        // debug($message);
-                        // debug($users1);
-                        // exit;
+                        $this->notifyCountyPharmacist($aefi);
                     }
+
                     $this->Session->setFlash(__('The Adverse Event Following Immunization has been submitted to PPB'), 'alerts/flash_success');
                     $this->redirect(array('action' => 'view', $this->Aefi->id));
                 }
@@ -1600,6 +1536,71 @@ class AefisController extends AppController
         return $reference;
     }
 
+    public function notifyCountyPharmacist($aefi = null)
+    {
+        # code...
+
+        $this->loadModel('Message');
+        $html = new HtmlHelper(new ThemeView());
+        $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_serious_aefi')));
+
+        $county_id = $aefi['Aefi']['county_id'];
+
+        $users = $this->Aefi->User->find('all', array(
+            'contain' => array(),
+            'conditions' => array(
+                'OR' => array(
+                    array(
+                        'User.group_id' => 2,
+                        'User.is_active' => '1'
+                    ),
+                    array(
+                        'User.county_id' => $county_id,
+                        'User.user_type' => 'County Pharmacist',
+                        'User.is_active' => '1'
+                    )
+                )
+            ),
+            'order' => array(
+                'User.id' => 'DESC'
+            )
+        ));
+
+        foreach ($users as $user) {
+            $model =  'reporter';
+            if ($user['User']['group_id'] == 2) {
+                $model =  'manager';
+            }
+
+            $variables = array(
+                'name' => $user['User']['name'], 
+                'reference_no' => $aefi['Aefi']['reference_no'],
+                'reference_link' => $html->link(
+                    $aefi['Aefi']['reference_no'],
+                    array(
+                        'controller' => 'aefis',
+                        'action' => 'view', $aefi['Aefi']['id'],
+                        $model => true,
+                        'full_base' => true
+                    ),
+                    array('escape' => false)
+                ),
+                'modified' => $aefi['Aefi']['modified']
+            );
+            $datum = array(
+                'email' => $user['User']['email'],
+                'id' => $aefi['Aefi']['id'],
+                'user_id' => $user['User']['id'],
+                'type' => 'reporter_serious_aefi',
+                'model' => 'Aefi',
+                'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                'message' => CakeText::insert($message['Message']['content'], $variables)
+            );
+            $this->loadModel('Queue.QueuedTask');
+            $this->QueuedTask->createJob('GenericEmail', $datum);
+            $this->QueuedTask->createJob('GenericNotification', $datum);
+        }
+    }
     public function reporter_sedit($id = null)
     {
 

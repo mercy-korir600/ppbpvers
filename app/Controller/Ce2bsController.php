@@ -331,7 +331,10 @@ class Ce2bsController extends AppController
                     //Notify managers
                     $users = $this->Ce2b->User->find('all', array(
                         'contain' => array(),
-                        'conditions' => array('User.group_id' => 2, 'User.is_active' => '1')
+                        'conditions' => array(
+                            'User.group_id' => 2,
+                            'User.is_active' => '1'
+                        )
                     ));
                     foreach ($users as $user) {
                         $variables = array(
@@ -376,12 +379,11 @@ class Ce2bsController extends AppController
         $this->set(compact('sub_counties'));
         $designations = $this->Ce2b->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
- 
     }
     public function reporter_add()
     {
         # code...
-        $user=$this->Auth->User();
+        $user = $this->Auth->User();
         // debug($user);
         // exit;
         $this->Ce2b->create();
@@ -395,15 +397,14 @@ class Ce2bsController extends AppController
             'reporter_name' => $this->Auth->User('name'),
             'reporter_email' => $this->Auth->User('email'),
             'reporter_phone' => $this->Auth->User('phone_no'),
-            'company_name' =>$user['name_of_institution'],
-            'company_code' =>$this->Auth->User('institution_code'),
+            'company_name' => $user['name_of_institution'],
+            'company_code' => $this->Auth->User('institution_code'),
 
             // 
         ]], false);
         $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-
-        }
+    }
     public function generateReferenceNumber()
     {
         $count = $this->Ce2b->find('count',  array(
@@ -464,7 +465,7 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-            'contain' => array('Designation', 'Attachment', 'ExternalComment','ExternalComment.Attachment','ReviewComment','ReviewComment.Attachment')
+            'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
         $data = [];
@@ -535,7 +536,8 @@ class Ce2bsController extends AppController
         $this->Session->setFlash(__('E2b was not deleted'), 'alerts/flash_error');
         $this->redirect($this->referer());
     }
-    public function manager_archive($id=null) {
+    public function manager_archive($id = null)
+    {
 
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
@@ -550,5 +552,5 @@ class Ce2bsController extends AppController
         }
         $this->Session->setFlash(__('E2B was not archied'), 'alerts/flash_error');
         $this->redirect($this->referer());
-	}
+    }
 }

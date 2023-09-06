@@ -297,7 +297,7 @@ class MedicationsController extends AppController
 
         $medication = $this->Medication->find('first', array(
             'conditions' => array('Medication.id' => $id),
-            'contain' => array('MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment')
+            'contain' => array('MedicationProduct', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment')
         ));
         $this->set('medication', $medication);
         // $this->render('pdf/view');
@@ -758,10 +758,14 @@ class MedicationsController extends AppController
             'contain' => array(),
             'conditions' => array(
                 'OR' => array(
-                    'User.group_id' => 2,
+                    array(
+                        'User.group_id' => 2,
+                        'User.is_active' => '1'
+                    ),
                     array(
                         'User.county_id' => $county_id,
-                        'User.user_type' => 'County Pharmacist'
+                        'User.user_type' => 'County Pharmacist',
+                        'User.is_active' => '1'
                     )
                 )
             ),

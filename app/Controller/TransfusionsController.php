@@ -276,7 +276,7 @@ class TransfusionsController extends AppController
 
         $transfusion = $this->Transfusion->find('first', array(
             'conditions' => array('Transfusion.id' => $id),
-            'contain' => array('Pint', 'County', 'Attachment', 'Designation', 'ExternalComment','ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',)
+            'contain' => array('Pint', 'County', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',)
         ));
         $this->set('transfusion', $transfusion);
         // $this->render('pdf/view');
@@ -665,10 +665,14 @@ class TransfusionsController extends AppController
             'contain' => array(),
             'conditions' => array(
                 'OR' => array(
-                    'User.group_id' => 2,
+                    array(
+                        'User.group_id' => 2,
+                        'User.is_active' => '1'
+                    ),
                     array(
                         'User.county_id' => $county_id,
-                        'User.user_type' => 'County Pharmacist'
+                        'User.user_type' => 'County Pharmacist',
+                        'User.is_active' => '1'
                     )
                 )
             ),
