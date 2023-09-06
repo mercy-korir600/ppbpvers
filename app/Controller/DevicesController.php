@@ -49,7 +49,7 @@ class DevicesController extends AppController
                         'Device.submitted' => array(2, 3),
                         'Device.county_id' => $this->Auth->user('county_id')
                     )
-                ); 
+                );
             } else {
                 $criteria['Device.user_id'] = $this->Auth->User('id');
             }
@@ -672,10 +672,14 @@ class DevicesController extends AppController
             'contain' => array(),
             'conditions' => array(
                 'OR' => array(
-                    'User.group_id' => 2,
+                    array(
+                        'User.group_id' => 2,
+                        'User.is_active' => '1'
+                    ),
                     array(
                         'User.county_id' => $county_id,
-                        'User.user_type' => 'County Pharmacist'
+                        'User.user_type' => 'County Pharmacist',
+                        'User.is_active' => '1'
                     )
                 )
             ),

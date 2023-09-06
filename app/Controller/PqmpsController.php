@@ -64,7 +64,7 @@ class PqmpsController extends AppController
         }
         // Serious Reports
         $user_type = $this->Auth->User('user_type');
-       
+
         if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
             if ($user_type === 'County Pharmacist') {
                 $criteria['OR'] = array(
@@ -321,7 +321,7 @@ class PqmpsController extends AppController
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
                 'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment','ReviewComment','PqmpOriginal.ReviewComment'
+                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment', 'ReviewComment', 'PqmpOriginal.ReviewComment'
             )
         ));
         $this->set('pqmp', $pqmp);
@@ -756,10 +756,14 @@ class PqmpsController extends AppController
             'contain' => array(),
             'conditions' => array(
                 'OR' => array(
-                    'User.group_id' => 2,
+                    array(
+                        'User.group_id' => 2,
+                        'User.is_active' => '1'
+                    ),
                     array(
                         'User.county_id' => $county_id,
-                        'User.user_type' => 'County Pharmacist'
+                        'User.user_type' => 'County Pharmacist',
+                        'User.is_active' => '1'
                     )
                 )
             ),
