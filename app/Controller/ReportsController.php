@@ -847,18 +847,62 @@ class ReportsController extends AppController
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-            'fields' => array('Vaccine.vaccine_name as vaccine_name' ,'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-            'contain' => array('Vaccine'),
-            'recursive' => -1,
+            'fields' => array(
+                'Vaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ),
+            'contain' => array('Vaccine'), // Include the Vaccine model to access vaccine_name
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
             ), 
             'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
+        $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
+            'fields' => array(
+                'AefiListOfVaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ), // Include the Vaccine model to access vaccine_name
+            'conditions' => array(
+                'AefiListOfVaccine.aefi_id IN' => $aefiIds,
+                'AefiListOfVaccine.vaccine_name IS NOT NULL',
+                'AefiListOfVaccine.vaccine_id IS NULL'
+            ),
+            'group' => array('AefiListOfVaccine.vaccine_name'),
+            'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        ));
+        // Create a combined result array
+        $combinedResults = [];
+        // debug($vaccine);
+        // exit;
 
+        // Merge the results from both queries into the combined result array
+        foreach ($vaccine as $result) {
+            $vaccineName = $result['Vaccine']['vaccine_name'];
+            $count = $result['0']['cnt'];
 
+            if (!isset($combinedResults[$vaccineName])) {
+                $combinedResults[$vaccineName] = 0;
+            }
 
+            $combinedResults[$vaccineName] += $count;
+        }
+        foreach ($vaccinealt as $result) {
+            $vaccineName = $result['AefiListOfVaccine']['vaccine_name'];
+            $count = $result['0']['cnt'];
+
+            if (!isset($combinedResults[$vaccineName])) {
+                $combinedResults[$vaccineName] = 0;
+            }
+
+            $combinedResults[$vaccineName] += $count;
+        }
+        $vaccine=[];
+        foreach ($combinedResults as $key => $value) {
+            $name['Vaccine']['vaccine_name'] = $key;
+            $name['0']['cnt'] = $value;
+            $vaccine[]=$name;
+        } 
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
