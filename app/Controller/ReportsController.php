@@ -846,8 +846,6 @@ class ReportsController extends AppController
 
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
-
-
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array('Vaccine.vaccine_name as vaccine_name' ,'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
             'contain' => array('Vaccine'),
@@ -858,47 +856,6 @@ class ReportsController extends AppController
             'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
-        // $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-        //     'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-        //     'contain' => array('Vaccine'),
-        //     'recursive' => -1,
-        //     'conditions' => array(
-        //         'OR' => array(
-        //             'AefiListOfVaccine.aefi_id IN' => $aefiIds ,
-        //             'AND' => array(
-        //                 'AefiListOfVaccine.aefi_id IN' => $aefiIds,
-        //                 'AefiListOfVaccine.vaccine_id IS NULL',
-        //                 'AefiListOfVaccine.vaccine_name IS NOT NULL'
-        //             ),
-        //           // This condition is always applied
-        //         )
-        //     ),
-        //     'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
-        //     'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
-        // ));
-
-        // $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-        //     'fields' => array(
-        //         'Vaccine.vaccine_name as vaccine_name',
-        //         'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
-        //     ),
-        //     'contain' => array('Vaccine'), // Include the Vaccine model
-        //     // 'conditions' => array(
-        //     //     'AefiListOfVaccine.aefi_id IN' => $aefiIds,
-        //     // ),
-        //     'conditions' => array(
-        //         'OR' => array(
-        //             'AefiListOfVaccine.aefi_id IN' => $aefiIds,
-        //             'AND' => array(
-        //                 'AefiListOfVaccine.vaccine_id IS NULL',
-        //                 'AefiListOfVaccine.vaccine_name IS NOT NULL'
-        //             )
-        //         )
-        //     ),
-        //     'group' => array('Vaccine.vaccine_name'),
-        //     'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
-        // ));
-
 
 
 
