@@ -729,10 +729,10 @@ class SadrsController extends AppController
             throw new NotFoundException(__('Invalid SADR'));
         }
         $sadr = $this->Sadr->read(null, $id);
-        if ($sadr['Sadr']['submitted'] > 1) {
-            $this->Session->setFlash(__('The sadr has been submitted'), 'alerts/flash_info');
-            $this->redirect(array('action' => 'view', $this->Sadr->id));
-        }
+        // if ($sadr['Sadr']['submitted'] > 1) {
+        //     $this->Session->setFlash(__('The sadr has been submitted'), 'alerts/flash_info');
+        //     $this->redirect(array('action' => 'view', $this->Sadr->id));
+        // }
         if ($sadr['Sadr']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this SADR!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
