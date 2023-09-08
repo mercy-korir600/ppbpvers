@@ -445,6 +445,12 @@ class Sadr extends AppModel
             ),
 
         ),
+        'serious_reason' => array(
+            'custom' => array(
+                'rule' => array('validateSeriousReason'),
+                'message' => 'Please specify reason for seriousness'
+            ),
+        ),
         'outcome' => array(
             'notBlank' => array(
                 'rule'     => 'notBlank',
@@ -491,7 +497,7 @@ class Sadr extends AppModel
                 'message' => 'Please provide a valid phone number',
             ),
             'maxLength' => array(
-                'rule' => array('maxLength', 10),
+                'rule' => array('maxLength', 12),
                 'message' => 'Please provide a valid phone number',
             ),
         ),
@@ -506,7 +512,16 @@ class Sadr extends AppModel
             'message' => 'Please specify the height in Centimeters.'
         )
     );
-
+    public function validateSeriousReason($check) {
+        $seriousValue = $this->data[$this->alias]['serious'];
+        $reasonValue = current($check);
+    
+        if ($seriousValue === 'Yes' && empty($reasonValue)) {
+            return false;
+        }
+    
+        return true;
+    }
     public function atleastOneSuspect($field = null)
     {
         if (!empty($this->data['SadrListOfDrug'])) {
