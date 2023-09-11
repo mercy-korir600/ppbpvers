@@ -180,7 +180,7 @@ $this->Html->css('upgrade', false, array('inline' => false));
                     <div id="collapseFive" class="collapse" data-parent="#accordion">
                         <div class="card-body">
                             <br>
-                            <p style="text-align: left;"> Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event. Patient’s identity is held in strict confidence and program staff is not is not expected to and will not disclose reporter’s identity in response to any public request.</p> 
+                            <p style="text-align: left;"> Submission of a report does not constitute an admission that medical personnel or manufacturer or the product caused or contributed to the event. Patient’s identity is held in strict confidence and the designated PPB staff shall not disclose the reporter's identity in response to any public request</p> 
                         </div>
                     </div>
                 </div>

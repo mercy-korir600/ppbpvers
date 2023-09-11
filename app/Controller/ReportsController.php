@@ -455,9 +455,11 @@ class ReportsController extends AppController
 
         // Load Data for Counties
         $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1';
+        $criteria['Sadr.copied !='] = '1'; 
+        $criteria['Sadr.deleted'] = false;
+        $criteria['Sadr.archived'] = false;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Sadr.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
@@ -488,8 +490,6 @@ class ReportsController extends AppController
             'group' => array('County.county_name', 'County.id'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
-
 
 
         $monthly = $this->Sadr->find('all', array(
