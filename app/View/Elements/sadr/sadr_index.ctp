@@ -375,7 +375,7 @@ echo $this->Session->flash();
             <td>
               <?php
               // echo h($sadr['Sadr']['reference_no']);             
-              if ($sadr['Sadr']['submitted'] > 1) {
+              if ($sadr['Sadr']['submitted'] > 1) { 
                 echo $this->Html->link($sadr['Sadr']['reference_no'], array('action' => 'view', $sadr['Sadr']['id']), array('escape' => false, 'class' => 'text-' . ((isset($sadr['Sadr']['serious']) && $sadr['Sadr']['serious'] == 'Yes') ? 'error' : 'success')));
               } else {
                 echo $this->Html->link($sadr['Sadr']['reference_no'], array('action' => (($redir == 'reporter') ? 'edit' : 'view'), $sadr['Sadr']['id']), array('escape' => false, 'class' => 'text-' . ((isset($sadr['Sadr']['serious']) && $sadr['Sadr']['serious'] == 'Yes') ? 'error' : 'success')));
