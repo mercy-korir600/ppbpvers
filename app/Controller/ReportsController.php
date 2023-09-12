@@ -1166,7 +1166,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_pqmps_summary');
         } else {
-            $this->render('upgrade/pqmps_summary');
+            if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
+                $this->render('upgrade/sadrs/county');
+            } else {
+                $this->render('upgrade/sadr_summary');
+            }
         }
     }
 
