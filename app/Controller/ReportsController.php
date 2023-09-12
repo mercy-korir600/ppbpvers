@@ -455,7 +455,7 @@ class ReportsController extends AppController
 
         // Load Data for Counties
         $criteria['Sadr.submitted'] = array(1, 2);
-        $criteria['Sadr.copied !='] = '1'; 
+        $criteria['Sadr.copied !='] = '1';
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
@@ -678,7 +678,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_sadr_summary');
         } else {
-            $this->render('upgrade/sadr_summary');
+            if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
+                $this->render('upgrade/sadrs/county');
+            } else {
+                $this->render('upgrade/sadr_summary');
+            }
         }
     }
     public function aefi_summary()
@@ -897,12 +901,12 @@ class ReportsController extends AppController
 
             $combinedResults[$vaccineName] += $count;
         }
-        $vaccine=[];
+        $vaccine = [];
         foreach ($combinedResults as $key => $value) {
             $name['Vaccine']['vaccine_name'] = $key;
             $name['0']['cnt'] = $value;
-            $vaccine[]=$name;
-        } 
+            $vaccine[] = $name;
+        }
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
