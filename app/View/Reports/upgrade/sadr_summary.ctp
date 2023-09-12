@@ -47,7 +47,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 </tbody>
             </table>
             <table class="table table-condensed table-bordered">
-               
+
                 <tbody>
                     <tr>
                         <th>Total</th>
@@ -253,8 +253,10 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
+<hr> 
 <script type="text/javascript">
+   
+
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentgeo");
@@ -325,14 +327,14 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
+
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
     document.getElementById("monthOpen").click();
-    document.getElementById("yearOpen").click();
-
-
+    document.getElementById("yearOpen").click(); 
+ 
     Highcharts.chart('sadrs-geo', {
         data: {
             table: 'datatablegeo'
