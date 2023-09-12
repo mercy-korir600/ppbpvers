@@ -343,7 +343,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($reaction as $key => $value) {
-                        $c += $value[0]['cnt'];
+                        $c += $value[0]['rea'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['reaction'] . "</th>";
                         echo "<td>" . $value[0]['rea'] . "</td>";

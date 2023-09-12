@@ -253,9 +253,214 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr> 
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>SADRs per Suspected Drug</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="suspectedTab(event, 'suspectedChart')" id="suspectedOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinkssuspected" onclick="suspectedTab(event, 'suspectedTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="suspectedChart" class="tabcontentsuspected">
+            <div id="sadrs-suspected"></div>
+
+        </div>
+
+        <div id="suspectedTable" class="tabcontentsuspected">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablesuspected">
+                <thead>
+                    <tr>
+                        <th>Drug</th>
+                        <th>SADRs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($suspected as $key => $value) {
+                        $c += $value[0]['cnt'];
+                        echo "<tr>";
+                        echo "<th>" . $value['SadrListOfDrug']['drug_name'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>SADRs per Reaction</h4>
+
+        <div class="tab">
+            <button class="tablinks" onclick="reactionTab(event, 'reactionChart')" id="reactionOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksreaction" onclick="reactionTab(event, 'reactionTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="reactionChart" class="tabcontentreaction">
+            <div id="sadrs-reaction"></div>
+
+        </div>
+
+        <div id="reactionTable" class="tabcontentreaction">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablereaction">
+                <thead>
+                    <tr>
+                        <th>Reaction</th>
+                        <th>SADRs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($reaction as $key => $value) {
+                        $c += $value[0]['rea'];
+                        echo "<tr>";
+                        echo "<th>" . $value['Sadr']['reaction'] . "</th>";
+                        echo "<td>" . $value[0]['rea'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div class="row-fluid">
+    <div class="span12">
+        <h4>SADRs per Facility</h4>
+
+        <div class="tab">
+            <button class="tablinks" onclick="facilityTab(event, 'facilityChart')" id="facilityOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksfacility" onclick="facilityTab(event, 'facilityTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="facilityChart" class="tabcontentfacility">
+            <div id="sadrs-facility"></div>
+
+        </div>
+
+        <div id="facilityTable" class="tabcontentfacility">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablefacility">
+                <thead>
+                    <tr>
+                        <th>Facility</th>
+                        <th>SADRs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($facility_data as $key => $value) {
+                        $c += $value[0]['cnt'];
+                        echo "<tr>";
+                        echo "<th>" . $value['Sadr']['name_of_institution'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr>
+
+
+<!-- End of County Pharmacist -->
 <script type="text/javascript">
-   
+    // Facility
+    function facilityTab(evt, facilitytabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentfacility");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksfacility");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(facilitytabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    // Suspected
+    function suspectedTab(evt, suspectedtabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentsuspected");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinkssuspected");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(suspectedtabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Reaction
+
+    function reactionTab(evt, reactiontabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentreaction");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksreaction");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(reactiontabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
 
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
@@ -333,8 +538,84 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
     document.getElementById("monthOpen").click();
-    document.getElementById("yearOpen").click(); 
- 
+    document.getElementById("yearOpen").click();
+    document.getElementById("reactionOpen").click();
+    document.getElementById("facilityOpen").click();
+    document.getElementById("suspectedOpen").click();
+
+    Highcharts.chart('sadrs-facility', {
+        data: {
+            table: 'datatablefacility'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+
+    Highcharts.chart('sadrs-reaction', {
+        data: {
+            table: 'datatablereaction'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
+    Highcharts.chart('sadrs-suspected', {
+        data: {
+            table: 'datatablesuspected'
+        },
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '',
+
+        },
+        yAxis: {
+            allowDecimals: false,
+            title: {
+                text: 'Units'
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.point.y + ' ' + this.point.name.toLowerCase();
+            }
+        }
+    });
     Highcharts.chart('sadrs-geo', {
         data: {
             table: 'datatablegeo'
