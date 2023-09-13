@@ -15,8 +15,17 @@ $header = array(
 	'age_group' => 'Age Group', 'pregnancy_status' => 'Pregnancy Status',
 	'known_allergy' => 'Known allergy', 'known_allergy_specify' => 'Allergy',
 	'onset_date' => 'Date of onset', 'drugs' => 'Generic names',
-	'brands' => 'Brand names', 'batch_no' => 'Batch Number', 'manufacturers' => 'Manufacturers', 'start_date' => 'Start Date', 'end_date' => 'End Date','drug_indication'=>'Indication','suspected_drug'=>'Suspected Drug',
-	'med_drug_name' => 'Medicine Drug Name', 'med_brand_name' => 'Medicine Brand Name', 'med_batch_no' => 'Medicine Batch Number', 'med_manufacturer' => 'Medicine Manufacturer', 'med_dose' => 'Medicine Dose', 'med_start_date' => 'Medicine Start Date', 'med_stop_date' => 'Medicine Stop Date', 'med_indication' => 'Medicine Indication', 
+	'brands' => 'Brand names',
+	'batch_no' => 'Batch Number',
+	'manufacturers' => 'Manufacturers',
+	'start_date' => 'Start Date',
+	'end_date' => 'End Date',
+	'drug_indication' => 'Indication',
+	'suspected_drug' => 'Suspected Drug',
+	'suspected_drug_name' => 'Suspected Drug Name',
+	'suspected_drug_brand' => 'Suspected Drug Brand',
+	'suspected_drug_manufacturer' => 'Suspected Drug Manufacturer',
+	'med_drug_name' => 'Medicine Drug Name', 'med_brand_name' => 'Medicine Brand Name', 'med_batch_no' => 'Medicine Batch Number', 'med_manufacturer' => 'Medicine Manufacturer', 'med_dose' => 'Medicine Dose', 'med_start_date' => 'Medicine Start Date', 'med_stop_date' => 'Medicine Stop Date', 'med_indication' => 'Medicine Indication',
 	'reaction_resolve' => 'Rechallenge',
 	'reaction_reappear' => 'Reaction reappear', 'severity' => 'Severity',
 	'serious' => 'Reaction serious', 'serious_reason' => 'Reason for seriousness',
@@ -106,15 +115,67 @@ foreach ($csadrs as $csadr) :
 				(isset($row[$key])) ? $row[$key] .= '; ' . $sadrListOfDrug['indication'] : $row[$key] = $sadrListOfDrug['indication'];
 			}
 			(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
-		}
-		elseif ($key == 'suspected_drug') {
+		} elseif ($key == 'suspected_drug') {
 			foreach ($csadr['SadrListOfDrug'] as $sadrListOfDrug) {
 				(isset($row[$key])) ? $row[$key] .= '; ' . $sadrListOfDrug['suspected_drug'] : $row[$key] = $sadrListOfDrug['suspected_drug'];
 			}
 			(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
 		}
+		// Start of Extra Section
+
+		elseif ($key == 'suspected_drug_name') {
+			$suspectedDrugs = array(); // Create an array to store suspected drugs
+
+			foreach ($csadr['SadrListOfDrug'] as $sadrListOfDrug) {
+				if ($sadrListOfDrug['suspected_drug'] == 1) {
+					$suspectedDrugs[] = $sadrListOfDrug['drug_name']; // Add drug_name to the array
+				}
+			}
+
+			// Check if there are any suspected drugs
+			if (!empty($suspectedDrugs)) {
+				// Format the collected data for CSV (enclose in double quotes and escape double quotes)
+				$row[$key] = '"' . implode('; ', $suspectedDrugs) . '"';
+			} else {
+				$row[$key] = '""'; // No suspected drugs found, assign an empty value
+			}
+		} elseif ($key == 'suspected_drug_brand') {
+			$suspectedDrugs = array(); // Create an array to store suspected drugs
+
+			foreach ($csadr['SadrListOfDrug'] as $sadrListOfDrug) {
+				if ($sadrListOfDrug['suspected_drug'] == 1) {
+					$suspectedDrugs[] = $sadrListOfDrug['brand_name']; // Add drug_name to the array
+				}
+			}
+
+			// Check if there are any suspected drugs
+			if (!empty($suspectedDrugs)) {
+				// Format the collected data for CSV (enclose in double quotes and escape double quotes)
+				$row[$key] = '"' . implode('; ', $suspectedDrugs) . '"';
+			} else {
+				$row[$key] = '""'; // No suspected drugs found, assign an empty value
+			}
+		} elseif ($key == 'suspected_drug_manufacturer') {
+			$suspectedDrugs = array(); // Create an array to store suspected drugs
+
+			foreach ($csadr['SadrListOfDrug'] as $sadrListOfDrug) {
+				if ($sadrListOfDrug['suspected_drug'] == 1) {
+					$suspectedDrugs[] = $sadrListOfDrug['manufacturer']; // Add drug_name to the array
+				}
+			}
+
+			// Check if there are any suspected drugs
+			if (!empty($suspectedDrugs)) {
+				// Format the collected data for CSV (enclose in double quotes and escape double quotes)
+				$row[$key] = '"' . implode('; ', $suspectedDrugs) . '"';
+			} else {
+				$row[$key] = '""'; // No suspected drugs found, assign an empty value
+			}
+		}
+
+		// End of Extra Section
+
 		// Start of Medicines
-		//  `med_drug_name`, `med_brand_name`, `med_batch_no`, `med_manufacturer`, `med_dose`, `med_start_date`, `med_stop_date`, `med_indication`
 		elseif ($key == 'med_drug_name') {
 			foreach ($csadr['SadrListOfMedicine'] as $med) {
 				(isset($row[$key])) ? $row[$key] .= '; ' . $med['drug_name'] : $row[$key] = $med['drug_name'];
