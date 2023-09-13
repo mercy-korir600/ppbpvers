@@ -436,15 +436,19 @@ class ReportsController extends AppController
         ));
         return $cond;
     }
-    public function generate_reports_per_reaction($drug_name = null)
+    public function generate_reports_per_reaction($drug_name = null, $ids = array())
     {
         # code...
         $cond = $this->Sadr->SadrListOfDrug->find('list', array(
+            // 'conditions' => array(
+            //     'OR' => array(
+            //         'SadrListOfDrug.drug_name LIKE' => '%' . $drug_name . '%',
+            //         'SadrListOfDrug.brand_name LIKE' => '%' . $drug_name . '%',
+            //     )
+            // ),
             'conditions' => array(
-                'OR' => array(
-                    'SadrListOfDrug.drug_name LIKE' => '%' . $drug_name . '%',
-                    'SadrListOfDrug.brand_name LIKE' => '%' . $drug_name . '%',
-                )
+                'SadrListOfDrug.drug_name' => $drug_name,
+                'SadrListOfDrug.sadr_id IN' => $ids
             ),
             'fields' => array('sadr_id', 'sadr_id')
         ));
@@ -473,9 +477,18 @@ class ReportsController extends AppController
         if (!empty($this->request->data['Report']['report_title'])) {
             $criteria['Sadr.report_title'] = $this->request->data['Report']['report_title'];
         }
+
+        $sadrsIds = $this->Sadr->find('list', array(
+            'fields' => array('Sadr.id'),
+            'conditions' => $criteria
+        ));
+        $sadrsIds = array_keys($sadrsIds);
+        $id_arrays = array();
+        // debug($sadrsIds);
+        // exit;
         if (!empty($this->request->data['Report']['suspected_drug'])) {
-            $id_arrays = array();
-            $ids = $this->generate_reports_per_reaction($this->request->data['Report']['suspected_drug']);
+
+            $ids = $this->generate_reports_per_reaction($this->request->data['Report']['suspected_drug'], $sadrsIds);
             if (!empty($ids)) {
                 foreach ($ids as $key => $value) {
                     $id_arrays[] = $key;
@@ -483,6 +496,9 @@ class ReportsController extends AppController
             }
             $criteria['Sadr.id'] = $id_arrays;
         }
+        // debug($id_arrays);
+        // exit;
+
         $geo = $this->Sadr->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
             'contain' => array('County'),
@@ -611,54 +627,33 @@ class ReportsController extends AppController
             'conditions' => $criteria,
             'group' => array('serious_reason'),
             'having' => array('COUNT(*) >' => 0),
-        ));
-
-        // Suspected Drug
-        $criterias['SadrListOfDrug.created >'] = '2020-04-01 08:08:08';
-        $criterias['SadrListOfDrug.drug_name >'] = '';
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criterias['SadrListOfDrug.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
-        if ($this->Auth->User('user_type') == 'County Pharmacist') {
-            $criterias['SadrListOfDrug.sadr_id'] = $this->Sadr->find('list', array('conditions' => array('Sadr.submitted' => '2', 'Sadr.copied !=' => '1', 'Sadr.report_type !=' => 'Followup', 'Sadr.county_id' => $this->Auth->User('county_id')), 'fields' => array('id', 'id')));
+        )); 
+        if (!empty($this->request->data['Report']['suspected_drug'])) {
+            $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
+                'fields' => array(
+                    'SadrListOfDrug.drug_name as drug_name',
+                    'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'
+                ),
+                'conditions' => array(
+                    'SadrListOfDrug.sadr_id' => $id_arrays,
+                    'SadrListOfDrug.drug_name' => $this->request->data['Report']['suspected_drug']
+                ),
+                'group' => array('SadrListOfDrug.drug_name'),
+                'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
+            ));
         } else {
-            $criteria['Sadr.submitted'] = '2';
-            $criteria['Sadr.report_type !='] = 'Followup';
-            $criterias['SadrListOfDrug.sadr_id'] = $this->Sadr->find('list', array(
-                'conditions' => $criteria,
-                'fields' => array('id', 'id')
+            $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
+                'fields' => array(
+                    'SadrListOfDrug.drug_name as drug_name',
+                    'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'
+                ),
+                'conditions' => array(
+                    'SadrListOfDrug.sadr_id' => $sadrsIds,
+                ),
+                'group' => array('SadrListOfDrug.drug_name'),
+                'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
             ));
         }
-
-        if ($this->Auth->User('user_type') == 'Public Health Program') {
-            $conditionsSubQuery['DrugDictionary.health_program'] = $this->Auth->User('health_program');
-
-            $db = $this->DrugDictionary->getDataSource();
-            $subQuery = $db->buildStatement(
-                array(
-                    'fields'     => array('DrugDictionary.drug_name'),
-                    'table'      => $db->fullTableName($this->DrugDictionary),
-                    'alias'      => 'DrugDictionary',
-                    'limit'      => null,
-                    'offset'     => null,
-                    'joins'      => array(),
-                    'conditions' => $conditionsSubQuery,
-                    'order'      => null,
-                    'group'      => null
-                ),
-                $this->DrugDictionary
-            );
-            $subQuery = 'SadrListOfDrug.drug_name IN (' . $subQuery . ') ';
-            $subQueryExpression = $db->expression($subQuery);
-
-            $criterias[] = $subQueryExpression;
-        }
-        $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
-            'fields' => array('SadrListOfDrug.drug_name as drug_name', 'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
-            'conditions' => $criterias,
-            'group' => array('SadrListOfDrug.drug_name'),
-            'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
-        ));
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
@@ -858,7 +853,7 @@ class ReportsController extends AppController
             'contain' => array('Vaccine'), // Include the Vaccine model to access vaccine_name
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
-            ), 
+            ),
             'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));

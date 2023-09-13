@@ -396,7 +396,7 @@ $this->Html->css('summary', null, array('inline' => false));
                 <tbody>
                     <?php
                     foreach ($report_title as $key => $value) {
-                        $c += $value[0]['cnt'];
+                        $c += $value[0]['rep'];
                         echo "<tr>";
                         echo "<th>" . $value['Sadr']['report_title'] . "</th>";
                         echo "<td>" . $value[0]['rep'] . "</td>";
