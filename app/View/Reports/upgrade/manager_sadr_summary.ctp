@@ -262,58 +262,6 @@ $this->Html->css('summary', null, array('inline' => false));
 <hr>
 <div class="row-fluid">
     <div class="span12">
-        <h4>SADRs per Month</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="monthTab(event, 'monthChart')" id="monthOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinksmonth" onclick="monthTab(event, 'monthTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="monthChart" class="tabcontentmonth">
-            <div id="sadrs-month"></div>
-
-        </div>
-
-        <div id="monthTable" class="tabcontentmonth">
-        <?php $c = 0; ?>
-            <table class="table table-condensed table-bordered" id="datatablemonth">
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>SADRs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($monthly as $key => $value) {
-                        $c += $value[0]['cnt'];
-                        echo "<tr>";
-                        echo "<th>" . $value[0]['month'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-           </table>
-            <table class="table table-condensed table-bordered">
-
-                <tbody>
-                    <tr>
-                        <th>Total</th>
-                        <th><?= $c; ?></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<hr>
-<div class="row-fluid">
-    <div class="span12">
         <h4>SADRs per Reaction</h4>
 
         <div class="tab">
@@ -365,6 +313,59 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>SADRs per Month</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="monthTab(event, 'monthChart')" id="monthOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksmonth" onclick="monthTab(event, 'monthTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="monthChart" class="tabcontentmonth">
+            <div id="sadrs-month"></div>
+
+        </div>
+
+        <div id="monthTable" class="tabcontentmonth">
+        <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablemonth">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>SADRs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($monthly as $key => $value) {
+                        $c += $value[0]['cnt'];
+                        echo "<tr>";
+                        echo "<th>" . $value[0]['month'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+           </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <hr>
 <div class="row-fluid">
     <div class="span12">
