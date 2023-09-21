@@ -439,15 +439,10 @@ class ReportsController extends AppController
     public function generate_reports_per_reaction($drug_name = null, $ids = array())
     {
         # code...
-        $cond = $this->Sadr->SadrListOfDrug->find('list', array(
-            // 'conditions' => array(
-            //     'OR' => array(
-            //         'SadrListOfDrug.drug_name LIKE' => '%' . $drug_name . '%',
-            //         'SadrListOfDrug.brand_name LIKE' => '%' . $drug_name . '%',
-            //     )
-            // ),
+        $cond = $this->Sadr->SadrListOfDrug->find('list', array( 
             'conditions' => array(
-                'SadrListOfDrug.drug_name' => $drug_name,
+                // 'SadrListOfDrug.drug_name' => $drug_name,
+                'LOWER(SadrListOfDrug.drug_name) LIKE' => '%' . strtolower($drug_name) . '%',
                 'SadrListOfDrug.sadr_id IN' => $ids
             ),
             'fields' => array('sadr_id', 'sadr_id')
@@ -572,30 +567,13 @@ class ReportsController extends AppController
 
         // Get All SADRs by Reaction
         $reaction = $this->Sadr->find('all', array(
-            'fields' => array('reaction', 'COUNT(*) as rea'),
+            'fields' => array('report_title', 'COUNT(*) as rea'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('reaction'),
+            'group' => array('report_title'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
-        $case2 = "(
-            CASE 
-            WHEN reaction IS NULL AND report_title IS NULL THEN 'unspecified'
-            WHEN reaction IS NULL THEN report_title
-            ELSE reaction
-            END
-        )";
-
-        // $reaction = $this->Sadr->find('all', array(
-        //     'fields' => array($case2 . ' as reaction', 'COUNT(*) as rea'),
-        //     'contain' => array(),
-        //     'conditions' => $criteria,
-        //     'group' => array($case2),
-        //     'having' => array('COUNT(*) >' => 0),
-        // ));
-        // debug($reaction);
-        // exit;
+ 
 
         // Reporter Qualification
         $qualification = $this->Sadr->find('all', array(
