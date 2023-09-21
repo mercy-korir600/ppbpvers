@@ -580,10 +580,12 @@ class ReportsController extends AppController
         ));
 
         $case2 = "(
-            case 
-            when reaction IS NULL THEN report_title
-            else reaction
-            end)";
+            CASE 
+            WHEN reaction IS NULL AND report_title IS NULL THEN 'unspecified'
+            WHEN reaction IS NULL THEN report_title
+            ELSE reaction
+            END
+        )";
 
         $reaction = $this->Sadr->find('all', array(
             'fields' => array($case2 . ' as reaction', 'COUNT(*) as rea'),
