@@ -5,17 +5,18 @@ App::uses('AppModel', 'Model');
  *
  * @property Aefi $Aefi
  */
-class AefiListOfVaccine extends AppModel {
+class AefiListOfVaccine extends AppModel
+{
 
 	public $actsAs = array('Containable');
 
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'Aefi' => array(
 			'className' => 'Aefi',
@@ -34,13 +35,14 @@ class AefiListOfVaccine extends AppModel {
 	);
 
 	public $validate = array(
-		/*'vaccine_name' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
+		'dosage' => array(
+			'numeric' => array(
+				'rule' => 'numeric',
 				'required' => true,
-				'message'  => 'Please specify the name of the vaccine'
-			),
-		),*/
+				'message' => 'Please specify a valid numeric dosage'
+			)
+		)
+,		
 		'vaccination_date' => array(
 			'notBlank' => array(
 				'rule'     => 'notBlank',
@@ -84,10 +86,11 @@ class AefiListOfVaccine extends AppModel {
 				'message'  => 'Please specify the name of the diluent\'s manufacturer'
 			),
 		),
-		
+
 	);
 
-	public function beforeSave($options = array()) {
+	public function beforeSave($options = array())
+	{
 		if (!empty($this->data['AefiListOfVaccine']['vaccination_date'])) {
 			$this->data['AefiListOfVaccine']['vaccination_date'] = $this->dateTimeFormatBeforeSave($this->data['AefiListOfVaccine']['vaccination_date']);
 		}
@@ -105,16 +108,17 @@ class AefiListOfVaccine extends AppModel {
 		return true;
 	}
 
-	function afterFind($results, $primary = false) {
+	function afterFind($results, $primary = false)
+	{
 		foreach ($results as $key => $val) {
 			if (isset($val['AefiListOfVaccine']['vaccination_date'])) {
 				$results[$key]['AefiListOfVaccine']['vaccination_date'] = $this->dateFormatAfterFind($val['AefiListOfVaccine']['vaccination_date']);
 			}
 			if (!empty($val['AefiListOfVaccine']['vaccination_time'])) {
-				if(empty($val['AefiListOfVaccine']['vaccination_time'])) $val['AefiListOfVaccine']['vaccination_time'] = ':';
+				if (empty($val['AefiListOfVaccine']['vaccination_time'])) $val['AefiListOfVaccine']['vaccination_time'] = ':';
 				$a = explode(':', $val['AefiListOfVaccine']['vaccination_time']);
 				$a[1] = (isset($a[1])) ? $a[1] : '00';
-				$results[$key]['AefiListOfVaccine']['vaccination_time'] = array('hour'=> $a[0],'min'=> $a[1]);
+				$results[$key]['AefiListOfVaccine']['vaccination_time'] = array('hour' => $a[0], 'min' => $a[1]);
 			}
 			if (isset($val['AefiListOfVaccine']['expiry_date'])) {
 				$results[$key]['AefiListOfVaccine']['expiry_date'] = $this->dateFormatAfterFind($val['AefiListOfVaccine']['expiry_date']);
