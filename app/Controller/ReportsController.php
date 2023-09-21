@@ -567,7 +567,7 @@ class ReportsController extends AppController
 
         // Get All SADRs by Reaction
         $reaction = $this->Sadr->find('all', array(
-            'fields' => array('report_title', 'COUNT(*) as rea'),
+            'fields' => array('report_title as reaction', 'COUNT(*) as rea'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('report_title'),
