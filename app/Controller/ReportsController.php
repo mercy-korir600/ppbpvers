@@ -571,13 +571,29 @@ class ReportsController extends AppController
         ));
 
         // Get All SADRs by Reaction
+        // $reaction = $this->Sadr->find('all', array(
+        //     'fields' => array('reaction', 'COUNT(*) as rea'),
+        //     'contain' => array(), 'recursive' => -1,
+        //     'conditions' => $criteria,
+        //     'group' => array('reaction'),
+        //     'having' => array('COUNT(*) >' => 0),
+        // ));
+
+        $case2 = "(
+            case 
+            when reaction IS NULL THEN report_title
+            else reaction
+            end)";
+
         $reaction = $this->Sadr->find('all', array(
-            'fields' => array('reaction', 'COUNT(*) as rea'),
-            'contain' => array(), 'recursive' => -1,
+            'fields' => array($case2 . ' as reaction', 'COUNT(*) as rea'),
+            'contain' => array(),
             'conditions' => $criteria,
-            'group' => array('reaction'),
+            'group' => array($case2),
             'having' => array('COUNT(*) >' => 0),
         ));
+        // debug($reaction);
+        // exit;
 
         // Reporter Qualification
         $qualification = $this->Sadr->find('all', array(
@@ -627,7 +643,7 @@ class ReportsController extends AppController
             'conditions' => $criteria,
             'group' => array('serious_reason'),
             'having' => array('COUNT(*) >' => 0),
-        )); 
+        ));
         if (!empty($this->request->data['Report']['suspected_drug'])) {
             $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
                 'fields' => array(

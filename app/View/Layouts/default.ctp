@@ -73,10 +73,13 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
             } else {
               echo '<li class="' . $this->fetch('Login') . '">' . $this->Html->link('<i class="fa fa-sign-in"></i> Login', array('controller' => 'users', 'action' => 'login'), array('escape' => false)) . '</li>';
               echo '<li class="' . $this->fetch('Register') . '">' . $this->Html->link('<i class="fa fa-edit"></i> Register', array('controller' => 'users', 'action' => 'register'), array('escape' => false)) . '</li>';
+              echo '<li class="' . $this->fetch('Guest') . '">' . $this->Html->link('<i class="fa fa-user"></i> Guest', array('controller' => 'users', 'action' => 'guest'), array('escape' => false)) . '</li>';
             ?>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+
+            
+              <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                 <i class="fa fa-question-circle"></i> Guest
-              </button>
+              </button> -->
             <?php }
             ?>
 
@@ -117,66 +120,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
       ?>
       <?php echo $this->fetch('content'); ?>
 
-      <?php
-      if (!$this->Session->read('Auth.User')) { ?>
-        <!-- Modal comes here -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Guest Reporting</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <!-- Divide into equal 4 sections -->
-
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Adverse Events Following Immunization Reporting Form',
-                  array('controller' => 'aefis', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-                <hr>
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Poor Quality Health Products and Technologies Reporting Form',
-                  array('controller' => 'pqmps', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-
-                <hr>
-
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Suspected Adverse Drug Reaction Reporting Form',
-                  array('controller' => 'sadrs', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-                <hr>
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Medical Devices Reporting Form',
-                  array('controller' => 'devices', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-                <hr>
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Medication Errors Reporting Form',
-                  array('controller' => 'medications', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-                <hr>
-                <?php echo $this->Html->link(
-                  '<i class="fa fa-file-o" aria-hidden="true"></i> Bloos Transfusion Reaction Reporting Form',
-                  array('controller' => 'transfusions', 'action' => 'guest_add'),
-                  array('escape' => false, 'class' => 'btn btn-success')
-                ); ?>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      <?php } ?>
+       
     </div>
   </div>
   <hr>
