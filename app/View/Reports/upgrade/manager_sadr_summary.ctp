@@ -345,7 +345,8 @@ $this->Html->css('summary', null, array('inline' => false));
                     foreach ($reaction as $key => $value) {
                         $c += $value[0]['rea'];
                         echo "<tr>";
-                        echo "<th>" . $value['0']['reaction'] . "</th>";
+                        // echo "<th>" . $value['0']['reaction'] . "</th>";
+                        echo "<th>" . $value['Sadr']['reaction'] . "</th>";
                         echo "<td>" . $value[0]['rea'] . "</td>";
                         echo "</tr>";
                     }
