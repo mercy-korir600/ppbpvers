@@ -585,13 +585,13 @@ class ReportsController extends AppController
             else reaction
             end)";
 
-        // $reaction = $this->Sadr->find('all', array(
-        //     'fields' => array($case2 . ' as reaction', 'COUNT(*) as rea'),
-        //     'contain' => array(),
-        //     'conditions' => $criteria,
-        //     'group' => array($case2),
-        //     'having' => array('COUNT(*) >' => 0),
-        // ));
+        $reaction = $this->Sadr->find('all', array(
+            'fields' => array($case2 . ' as reaction', 'COUNT(*) as rea'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case2),
+            'having' => array('COUNT(*) >' => 0),
+        ));
         // debug($reaction);
         // exit;
 
