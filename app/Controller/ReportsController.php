@@ -927,7 +927,7 @@ class ReportsController extends AppController
         $criteria['Pqmp.submitted'] = array(1, 2);
         $criteria['Pqmp.copied !='] = '1';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Pqmp.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+            $criteria['Pqmp.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Pqmp.county_id'] = $this->request->data['Report']['county_id'];
@@ -1158,9 +1158,9 @@ class ReportsController extends AppController
             $this->render('upgrade/manager_pqmps_summary');
         } else {
             if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
-                $this->render('upgrade/sadrs/county');
+                $this->render('upgrade/pqmps/summary');
             } else {
-                $this->render('upgrade/sadr_summary');
+                $this->render('upgrade/pqmps_summary');
             }
         }
     }
