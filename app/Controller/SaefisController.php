@@ -65,7 +65,7 @@ class SaefisController extends AppController
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Saefi.created' => 'desc');
-        $this->paginate['contain'] = array('County', 'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'Designation');
+        $this->paginate['contain'] = array('County','AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'Designation');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -357,7 +357,8 @@ class SaefisController extends AppController
         $aefi = $this->Saefi->find('first', array(
             'conditions' => array('Saefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'County', 'Review', 'Review.User', 'Review.Attachment',  'Attachment', 'Designation', 'ExternalComment',
+                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine',
+                 'County', 'Review', 'Review.User', 'Review.Attachment',  'Attachment', 'Designation', 'ExternalComment',
 
             )
         ));

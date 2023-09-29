@@ -33,7 +33,7 @@ class UsersController extends AppController
         parent::beforeFilter();
         // remove initDb
         // $this->initDB();
-        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder','guest');
+        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder', 'guest');
     }
 
     public function guest()
@@ -635,7 +635,7 @@ class UsersController extends AppController
                 //Notify Managers
                 $managers = $this->User->find('all', array(
                     'contain' => array(),
-                    'conditions' => array('group_id' => 2,'User.is_active' => '1')
+                    'conditions' => array('group_id' => 2, 'User.is_active' => '1')
                 ));
                 foreach ($managers as $manager) {
                     $variables = array(
@@ -707,11 +707,11 @@ class UsersController extends AppController
                 $this->loadModel('Queue.QueuedTask');
                 $this->QueuedTask->createJob('GenericEmail', $datum);
                 $this->QueuedTask->createJob('GenericNotification', $datum);
-                
+
                 //Notify Managers
                 $managers = $this->User->find('all', array(
                     'contain' => array(),
-                    'conditions' => array('group_id' => 2,'User.is_active' => '1')
+                    'conditions' => array('group_id' => 2, 'User.is_active' => '1')
                 ));
                 foreach ($managers as $manager) {
                     $variables = array(
