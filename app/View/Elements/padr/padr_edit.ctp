@@ -423,7 +423,8 @@ $this->Html->css('padr', false, array('inline' => false));
                 <!--/row-->
             </div>
 
-            <?php echo $this->element('multi/padr_list_of_medicines'); ?>
+                <?php echo $this->element('multi/padr_list_of_medicines'); ?>
+
             <!-- Section to show the outcome -->
             <div style="background-color: lightblue;">
                 <h5 style="text-align: center; text-decoration: underline;">OUTCOME DETAILS</h5>

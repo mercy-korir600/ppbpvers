@@ -26,6 +26,33 @@
     margin-right: 20px;
 }
 
+/* Make the medicine div scrollable */
+.srollable {
+    overflow-x: auto;
+    white-space: nowrap;
+    position: relative;
+  }
+  
+  .srollable {
+    max-width: 100%;
+  }
+
+  .srollable::after {
+    content: '';
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 80%;
+    height: 20px;
+    background-color: rgb(252, 252, 252);
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  .padr_input-item{
+    width: 200px;
+  }
+
 /* Media Queries for responsiveness */
 
 @media only screen and (min-width: 979px) {
@@ -39,6 +66,7 @@
     .padr-med{
         width: 4px;
     }
+    
  }
 
  @media only screen and (max-width: 979px) {
@@ -51,6 +79,10 @@
     .phone{
         margin: 0px 50px 0px 10px;
     }
+    .med_list{
+        width: 20px;
+    }
+    
  }
  
  @media only screen and (max-width: 767px) {
@@ -76,3 +108,12 @@
         width: 50px;
     }
  }
+
+  
+ @media only screen and (max-width: 397px) {
+    .set-input{
+        width: 220px;
+    }
+ }
+
+ 
