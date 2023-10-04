@@ -1,4 +1,4 @@
-<?php
+'<?php
 App::uses('AppController', 'Controller');
 App::uses('Sanitize', 'Utility');
 App::uses('CakeText', 'Utility');
@@ -30,7 +30,7 @@ class AefisController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard', 'guest_add', 'guest_edit', 'dhis2');
+        $this->Auth->allow('yellowcard','manager_reset_reference', 'guest_add', 'guest_edit', 'dhis2');
     }
     public function manager_dhis2()
     {
@@ -1378,6 +1378,25 @@ class AefisController extends AppController
         }
 
         return $reference;
+    }
+
+    public function manager_reset_reference($id=null)
+    {
+        $this->Aefi->id = $id;
+        if (!$this->Aefi->exists()) {
+            throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
+        }
+        $aefi = $this->Aefi->read(null, $id);
+        if ($aefi['Aefi']['submitted'] >1) {
+            if (!empty($aefi['Aefi']['reference_no']) && $aefi['Aefi']['reference_no'] == 'new') {
+                $reference = $this->generateReferenceNumber();
+                $this->Aefi->saveField('reference_no', $reference);
+            }
+            $aefi = $this->Aefi->read(null, $id);
+            return $aefi;
+
+        }
+        return "Not Done";
     }
 
     public function reporter_edit($id = null)
