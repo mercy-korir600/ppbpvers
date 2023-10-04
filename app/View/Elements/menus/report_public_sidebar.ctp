@@ -87,7 +87,7 @@
                       array('escape' => false));
         ?>
       </li> -->
-      <li class="nav-header"><i class="fa fa-medkit" aria-hidden="true"></i> POOR QUALITY MEDICINAL PRODUCTS</li>
+      <li class="nav-header"><i class="fa fa-medkit" aria-hidden="true"></i>  POOR QUALITY HEALTH PRODUCTS AND TECHNOLOGIES</li>
     
       <li class="<?php echo $this->fetch('pqmps-summary'); ?>">
         <?php

@@ -87,14 +87,14 @@
                       array('escape' => false));
         ?>
       </li> -->
-      <li class="nav-header"><i class="fa fa-medkit" aria-hidden="true"></i> POOR QUALITY MEDICINAL PRODUCTS</li>
+      <!-- <li class="nav-header"><i class="fa fa-medkit" aria-hidden="true"></i> POOR QUALITY MEDICINAL PRODUCTS</li>
     
       <li class="<?php echo $this->fetch('pqmps-summary'); ?>">
         <?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> PQHPTs',  array('controller' => 'reports', 'action'=>'pqmps_summary', 'admin' => false ),
                       array('escape' => false));
         ?>
-      </li>
+      </li> -->
       <!-- <li class="<?php echo $this->fetch('pqmps-by-brand'); ?>">
         <?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Brand Name',  array('controller' => 'reports', 'action'=>'pqmps_by_brand', 'admin' => false ),
