@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  */
 $this->Html->script('list_of_drugs', array('inline' => false));
+$this->Html->css('sadr', false, array('inline' => false));
 ?>
 <style>
   .small-label {
@@ -18,7 +19,8 @@ $this->Html->script('list_of_drugs', array('inline' => false));
 	</div>
 </div>
 
-<div class="row-fluid">
+
+<div class="row-fluid srollable">
 	<div class="span12">
 		<table id="buildyourform" class="table table-bordered  table-condensed table-pvborder">
 			<thead>
