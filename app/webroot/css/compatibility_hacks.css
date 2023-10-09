@@ -443,3 +443,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#87e0fd', end
 #tabs { margin-top: 1em; }
 #tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }
 #add_tab { cursor: pointer; }
+
+@media only screen and (max-width: 593px) {
+    .whmcscontainer .contentpadded {
+        margin-right: 270px;
+    }
+
+    .input{
+        width: 250px;
+    }
+ }
