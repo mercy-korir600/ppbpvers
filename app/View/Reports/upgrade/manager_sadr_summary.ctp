@@ -366,59 +366,7 @@ $this->Html->css('summary', null, array('inline' => false));
     </div>
 </div>
 
-<hr>
-<div class="row-fluid">
-    <div class="span12">
-        <h4>SADRs per Title</h4>
-
-        <div class="tab">
-            <button class="tablinks" onclick="titleTab(event, 'titleChart')" id="titleOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
-
-            <button class="tablinkstitle" onclick="titleTab(event, 'titleTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="titleChart" class="tabcontenttitle">
-            <div id="sadrs-title"></div>
-
-        </div>
-
-        <div id="titleTable" class="tabcontenttitle">
-        <?php $c = 0; ?>
-            <table class="table table-condensed table-bordered" id="datatabletitle">
-                <thead>
-                    <tr>
-                        <th>Report Title</th>
-                        <th>SADRs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($report_title as $key => $value) {
-                        $c += $value[0]['rep'];
-                        echo "<tr>";
-                        echo "<th>" . $value['Sadr']['report_title'] . "</th>";
-                        echo "<td>" . $value[0]['rep'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-           </table>
-            <table class="table table-condensed table-bordered">
-
-                <tbody>
-                    <tr>
-                        <th>Total</th>
-                        <th><?= $c; ?></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+ 
 <hr>
 <div class="row-fluid">
     <div class="span6">
@@ -762,19 +710,7 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
-    function titleTab(evt, titletabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontenttitle");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinkstitle");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(titletabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
+    
 
     function qualificationTab(evt, qualificationtabName) {
         var i, tabcontent, tablinks;
@@ -868,8 +804,7 @@ $this->Html->css('summary', null, array('inline' => false));
     document.getElementById("ageOpen").click();
     document.getElementById("monthOpen").click();
     document.getElementById("yearOpen").click();
-    document.getElementById("reactionOpen").click();
-    document.getElementById("titleOpen").click();
+    document.getElementById("reactionOpen").click(); 
     document.getElementById("qualificationOpen").click();
     document.getElementById("reasonOpen").click();
     document.getElementById("outcomeOpen").click();
@@ -1049,30 +984,7 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    Highcharts.chart('sadrs-title', {
-        data: {
-            table: 'datatabletitle'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
+ 
     Highcharts.chart('sadrs-qualification', {
         data: {
             table: 'datatablequalification'

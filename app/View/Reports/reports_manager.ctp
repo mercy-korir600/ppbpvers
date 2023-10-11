@@ -62,20 +62,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
             );
 
             ?>
-          </td>
-
-          <td>
-            <?php
-            echo $this->Form->input(
-              'report_title',
-              array(
-                'div' => false, 'type' => 'text', 'class' => 'span11 unauthorized_index',
-                'label' => array('class' => 'required', 'text' => 'Report Title'), 'placeHolder' => 'Report Title'
-
-              )
-
-            );
-            ?></td>
+          </td> 
           <td><?php
               echo $this->Form->input(
                 'county_id',
@@ -92,6 +79,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 
               ?>
           </td>
+          <td></td>
         </tr>
         <tr>
           <td>
