@@ -51,70 +51,69 @@ echo $this->Form->create('Aefi', array(
                 ?>
             </div>
         </div><br>
-        <div class="row-fluid">
-            <div class="span8">
-                <p class="controls" id="aefi_edit_tip"> <span class="label label-important">Tip:</span> Fields marked with <span style="color:red;">*</span> are mandatory</p>
-                <?php
-                echo $this->Form->input('name_of_institution', array(
-                    'label' => array('class' => 'control-label required', 'text' => 'INSTITUTION NAME <span style="color:red;">*</span>'),
-                    'placeholder' => 'Reporting Institution',
-                    // 'after'=>'<p class="help-block" </p></div>',
-                    'class' => 'span9',
-                ));
-                ?>
-            </div>
-            <div class="span4" id="aefi_edit_form_id">
-                <h5> <?php echo  'Form ID: ' . $this->data['Aefi']['reference_no']; ?></h5>
-                <h6><span class="label label-important">Important</span> Unique Form ID</h6>
-            </div>
-        </div>
-        <!--/row-->
-
-        <div class="row-fluid">
-            <div class="span6">
-                <div class="control-group">
-                    <label class="control-label required">REPORT TYPE: </label>
-                    <div class="controls">
-                        <span class="input-xlarge uneditable-input">
-                            <?php
-                            echo $this->request->data['Aefi']['report_type'];
-                            if ($this->request->data['Aefi']['report_type'] = 'Follow-up Report') echo " (Initial Report: " . $this->request->data['Aefi']['reference_no'] . ")";
-                            ?>
-                        </span>
-                    </div>
+        <div class="form-container">
+            <div class="row-fluid">
+                <div class="span8">
+                    <p class="controls" id="aefi_edit_tip"> <span class="label label-important">Tip:</span> Fields marked with <span style="color:red;">*</span> are mandatory</p>
+                    <?php
+                    echo $this->Form->input('name_of_institution', array(
+                        'label' => array('class' => 'control-label required', 'text' => 'INSTITUTION NAME <span style="color:red;">*</span>'),
+                        'placeholder' => 'Reporting Institution',
+                        // 'after'=>'<p class="help-block" </p></div>',
+                        'class' => 'span9',
+                    ));
+                    ?>
                 </div>
-                <?php
-                echo $this->Form->input('institution_code', array(
-                    'label' => array('class' => 'control-label required', 'text' => 'INSTITUTION CODE'),
-                    'placeholder' => 'MFL CODE',
-                ));
-
-                ?>
+                <div class="span4" id="aefi_edit_form_id">
+                    <h5> <?php echo  'Form ID: ' . $this->data['Aefi']['reference_no']; ?></h5>
+                    <h6><span class="label label-important">Important</span> Unique Form ID</h6>
+                </div>
             </div>
-            <!--/span-->
-            <div class="span6">
-                <?php
-                echo $this->Form->input('county_id', array(
-                    'label' => array(
-                        'class' => 'control-label required',
-                        'text' => 'COUNTY <span style="color:red;">*</span>'
-                    ),
-                    'empty' => true, 'between' => '<div class="controls ui-widget">',
-                ));
-                echo $this->Form->input('sub_county_id', array(
-                    'options' => $sub_counties,
-                    'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY'),
-                    'empty' => true, 'between' => '<div class="controls ui-widget">',
-                ));
-                ?>
-            </div>
-            <!--/span-->
-        </div>
-        <!--/row-->
-        <hr class="darker">
+            <!--/row-->
+            <div class="row-fluid">
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label required">REPORT TYPE: </label>
+                        <div class="controls">
+                            <span class="input-xlarge uneditable-input">
+                                <?php
+                                echo $this->request->data['Aefi']['report_type'];
+                                if ($this->request->data['Aefi']['report_type'] = 'Follow-up Report') echo " (Initial Report: " . $this->request->data['Aefi']['reference_no'] . ")";
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                    <?php
+                    echo $this->Form->input('institution_code', array(
+                        'label' => array('class' => 'control-label required', 'text' => 'INSTITUTION CODE'),
+                        'placeholder' => 'MFL CODE',
+                    ));
 
-        <h4 style="text-align: center;">PATIENT DETAILS</h4>
-        <div class="row-fluid">
+                    ?>
+                </div>
+                <!--/span-->
+                <div class="span6">
+                    <?php
+                    echo $this->Form->input('county_id', array(
+                        'label' => array(
+                            'class' => 'control-label required',
+                            'text' => 'COUNTY <span style="color:red;">*</span>'
+                        ),
+                        'empty' => true, 'between' => '<div class="controls ui-widget">',
+                    ));
+                    echo $this->Form->input('sub_county_id', array(
+                        'options' => $sub_counties,
+                        'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY'),
+                        'empty' => true, 'between' => '<div class="controls ui-widget">',
+                    ));
+                    ?>
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
+            <hr class="darker">
+            <h4 style="text-align: center;">PATIENT DETAILS</h4>
+            <div class="row-fluid">
             <div class="span6">
                 <?php
                 echo $this->Form->input('patient_name', array(
@@ -224,137 +223,136 @@ echo $this->Form->create('Aefi', array(
                 ?>
             </div>
             <!--/span-->
-        </div>
-        <!--/row-->
-        <hr class="darker">
+            </div>
+            <!--/row-->
+            <hr class="darker">
 
-        <h4 style="text-align: center;">TYPE OF Adverse Event Following Immunization</h4>
-        <div class="row-fluid">
-            <div class="span4">
-                <div style="padding-left: 30px;">
-                    <!-- <p class="help-block"> (please tick) </p> -->
-                    <?php
-                    echo $this->Form->input('bcg', array(
-                        'type' => 'checkbox',   'before' => '<div class="control-group">',
-                        'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiBcg_" name="data[Aefi][bcg]">
-                                                                    <label class="checkbox">',
-                        'after' => 'BCG Lymphadenitis </label>',
-                    ));
-                    echo $this->Form->input('convulsion', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiConvulsion_" name="data[Aefi][convulsion]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Convulsion  </label>',
-                    ));
-                    echo $this->Form->input('urticaria', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiUrticaria_" name="data[Aefi][urticaria]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Generalized urticaria (hives) </label>',
-                    ));
-                    echo $this->Form->input('high_fever', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiHighFever_" name="data[Aefi][high_fever]">
-                                                                    <label class="checkbox">',
-                        'after' => 'High Fever  </label>',
-                    ));
-                    echo $this->Form->input('abscess', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiAbscess_" name="data[Aefi][abscess]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Injection site abscess </label>',
-                    ));
-                    echo $this->Form->input('local_reaction', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiLocalReaction_" name="data[Aefi][local_reaction]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Severe Local Reaction   </label>',
-                    ));
+            <h4 style="text-align: center;">TYPE OF Adverse Event Following Immunization</h4>
+            <div class="row-fluid">
+                <div class="span4">
+                    <div style="padding-left: 30px;">
+                        <!-- <p class="help-block"> (please tick) </p> -->
+                        <?php
+                        echo $this->Form->input('bcg', array(
+                            'type' => 'checkbox',   'before' => '<div class="control-group">',
+                            'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiBcg_" name="data[Aefi][bcg]">
+                                                                        <label class="checkbox">',
+                            'after' => 'BCG Lymphadenitis </label>',
+                        ));
+                        echo $this->Form->input('convulsion', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiConvulsion_" name="data[Aefi][convulsion]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Convulsion  </label>',
+                        ));
+                        echo $this->Form->input('urticaria', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiUrticaria_" name="data[Aefi][urticaria]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Generalized urticaria (hives) </label>',
+                        ));
+                        echo $this->Form->input('high_fever', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiHighFever_" name="data[Aefi][high_fever]">
+                                                                        <label class="checkbox">',
+                            'after' => 'High Fever  </label>',
+                        ));
+                        echo $this->Form->input('abscess', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiAbscess_" name="data[Aefi][abscess]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Injection site abscess </label>',
+                        ));
+                        echo $this->Form->input('local_reaction', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiLocalReaction_" name="data[Aefi][local_reaction]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Severe Local Reaction   </label>',
+                        ));
 
-                    echo $this->Form->input('anaphylaxis', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiAnaphylaxis_" name="data[Aefi][anaphylaxis]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Anaphylaxis </label>',
-                    ));
-                    echo $this->Form->input('meningitis', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiMeningitis_" name="data[Aefi][meningitis]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Encephalopathy, Encephalitis/Meningitis</label>',
-                    ));
-                    echo $this->Form->input('paralysis', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiParalysis_" name="data[Aefi][paralysis]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Paralysis</label>',
-                    ));
-                    echo $this->Form->input('toxic_shock', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiToxicShock_" name="data[Aefi][toxic_shock]">
-                                                                    <label class="checkbox">',
-                        'after' => 'Toxic shock </label>',
-                    ));
-                    echo $this->Form->input('complaint_other', array(
-                        'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
-                        'between' => '<input type="hidden" value="0" id="AefiComlaintOther_" name="data[Aefi][complaint_other]">
-                                                                    <label class="checkbox">',
-                        // 'onclick' => '$("#AefiComplaintOtherSpecify").removeAttr("disabled")',
-                        'after' => 'Other   </label>',
-                    ));
-                    echo $this->Form->input('complaint', array('type' => 'hidden', 'value' => ''));
-                    echo $this->Form->error('Aefi.complaint', array('wrap' => 'span', 'class' => 'control-group required error'));
-                    echo $this->Form->input('complaint_other_specify', array(
-                        'class' => 'span6',  'rows' => '3', 'label' => false, 'between' => false,
-                        'after' => '<p class="help-block">  </p></div>',
-                        'disabled' => true, 'placeholder' => 'If other, specify',
-                    ));
+                        echo $this->Form->input('anaphylaxis', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiAnaphylaxis_" name="data[Aefi][anaphylaxis]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Anaphylaxis </label>',
+                        ));
+                        echo $this->Form->input('meningitis', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiMeningitis_" name="data[Aefi][meningitis]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Encephalopathy, Encephalitis/Meningitis</label>',
+                        ));
+                        echo $this->Form->input('paralysis', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiParalysis_" name="data[Aefi][paralysis]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Paralysis</label>',
+                        ));
+                        echo $this->Form->input('toxic_shock', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiToxicShock_" name="data[Aefi][toxic_shock]">
+                                                                        <label class="checkbox">',
+                            'after' => 'Toxic shock </label>',
+                        ));
+                        echo $this->Form->input('complaint_other', array(
+                            'type' => 'checkbox',   'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+                            'between' => '<input type="hidden" value="0" id="AefiComlaintOther_" name="data[Aefi][complaint_other]">
+                                                                        <label class="checkbox">',
+                            // 'onclick' => '$("#AefiComplaintOtherSpecify").removeAttr("disabled")',
+                            'after' => 'Other   </label>',
+                        ));
+                        echo $this->Form->input('complaint', array('type' => 'hidden', 'value' => ''));
+                        echo $this->Form->error('Aefi.complaint', array('wrap' => 'span', 'class' => 'control-group required error'));
+                        echo $this->Form->input('complaint_other_specify', array(
+                            'class' => 'span6',  'rows' => '3', 'label' => false, 'between' => false,
+                            'after' => '<p class="help-block">  </p></div>',
+                            'disabled' => true, 'placeholder' => 'If other, specify',
+                        ));
 
-                    ?>
+                        ?>
+                    </div>
+                    <!--/padding-->
                 </div>
-                <!--/padding-->
-            </div>
-            <!--/span-->
-            <div class="span4">
-                <?php
-                echo $this->Form->input('date_aefi_started', array('type' => 'text', 'class' => 'span11 date-pick-field', 'label' => array('class' => 'control-label required', 'text' => 'DATE AEFI STARTED'),));
-                echo $this->Form->input('time_aefi_started', array(
-                    'type' => 'time', 'timeFormat' => 24, 'interval' => 5, 'class' => 'span4', 'style' => 'display: inline;',
-                    'label' => array('class' => 'control-label required', 'text' => 'TIME'),
-                ));
-                // echo $this->Form->input('aefi_symptoms', array('label' => array('class' => 'control-label required', 'text' => 'Describe Adverse Event Following Immunization (Signs & Symptoms)'),));
-                echo $this->Form->input('aefi_symptoms', array(
-                    'label' => array('class' => 'required', 'text' => 'Describe AEFI <span style="color:red;">*</span>'),
-                    'between' => false, 'div' => false,
-                    'after' => '<p class="help-block">  (Signs & Symptoms) </p>',
-                    'class' => 'span12', 'rows' => '1'
-                ));
-                echo $this->element('multi/aefi_descriptions');
-                ?>
-            </div>
-            <div class="span4">
-                <div style="padding-left: 10px;">
+                <!--/span-->
+                <div class="span4">
                     <?php
-                    echo $this->Form->input('description_of_reaction', array(
-                        'rows' => '7',
-                        'label' => array('class' => 'required', 'text' => 'Brief details on the event <span style="color:red;">*</span>'),
+                    echo $this->Form->input('date_aefi_started', array('type' => 'text', 'class' => 'span11 date-pick-field', 'label' => array('class' => 'control-label required', 'text' => 'DATE AEFI STARTED'),));
+                    echo $this->Form->input('time_aefi_started', array(
+                        'type' => 'time', 'timeFormat' => 24, 'interval' => 5, 'class' => 'span4', 'style' => 'display: inline;',
+                        'label' => array('class' => 'control-label required', 'text' => 'TIME'),
+                    ));
+                    // echo $this->Form->input('aefi_symptoms', array('label' => array('class' => 'control-label required', 'text' => 'Describe Adverse Event Following Immunization (Signs & Symptoms)'),));
+                    echo $this->Form->input('aefi_symptoms', array(
+                        'label' => array('class' => 'required', 'text' => 'Describe AEFI <span style="color:red;">*</span>'),
                         'between' => false, 'div' => false,
-                        'title' => 'Description of reaction', 'data-content' => 'Description of reaction',
-                        'after' => '<p class="help-block">    (including timeline of occurrence) </p>',
-                        'class' => 'span8',
-
+                        'after' => '<p class="help-block">  (Signs & Symptoms) </p>',
+                        'class' => 'span12', 'rows' => '1'
                     ));
+                    echo $this->element('multi/aefi_descriptions');
                     ?>
                 </div>
+                <div class="span4">
+                    <div style="padding-left: 10px;">
+                        <?php
+                        echo $this->Form->input('description_of_reaction', array(
+                            'rows' => '7',
+                            'label' => array('class' => 'required', 'text' => 'Brief details on the event <span style="color:red;">*</span>'),
+                            'between' => false, 'div' => false,
+                            'title' => 'Description of reaction', 'data-content' => 'Description of reaction',
+                            'after' => '<p class="help-block">    (including timeline of occurrence) </p>',
+                            'class' => 'span8',
+
+                        ));
+                        ?>
+                    </div>
+                </div>
             </div>
-        </div>
-        <!--/row-->
-        <hr>
+            <!--/row-->
+            <hr>
 
-        <?php echo $this->element('multi/list_of_vaccines'); ?>
-
-        <div class="row-fluid">
+            <?php echo $this->element('multi/list_of_vaccines'); ?>
+            <div class="row-fluid">
             <div class="span12">
                 <?php
                 echo $this->Form->input('medical_history', array(
@@ -365,91 +363,91 @@ echo $this->Form->create('Aefi', array(
                 ?>
             </div>
             <!--/span-->
-        </div>
-        <!--/row-->
-        <hr class="darker">
-
-        <div class="row-fluid">
-            <div class="span12 editable">
-                <?php
-                echo $this->Form->input('serious', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'serious',
-                    'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">SERIOUS <span style="color:red;">*</span></label> </div>
-                                         <div class="controls">  <input type="hidden" value="" id="Serious_" name="data[Aefi][serious]"> <label class="radio inline">',
-                    'after' => '</label>',
-                    'options' => array('Yes' => 'Yes'),
-                ));
-                echo $this->Form->input('serious', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'serious',
-                    'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
-                    'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
-                    'before' => '<label class="radio inline">',
-                    'after' => '</label> 
-                                     <span class="help-inline" style="padding-top: 5px;"> <a class="tooltipper" data-original-title="Clears the checked value"
-                                     onclick="$(\'.serious,.serious_yes\').removeAttr(\'checked disabled\')">
-                                     <em class="accordion-toggle">clear!</em></a> </span>
-                                     </div> </div>',
-                    'options' => array('No' => 'No'),
-                ));
-                ?>
             </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span12 editable">
-                <?php
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
-                    'class' => 'serious_yes',
-                    'before' => '<div class="control-group ">   <label class="control-label required">
-                            If Yes</label>  <div class="controls">
-                            <input type="hidden" value="" id="AefiSerious_" name="data[Aefi][serious_yes]"> <label class="radio inline">',
-                    'after' => '</label>',
-                    'options' => array('Death' => 'Death'),
-                ));
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
-                    'class' => 'serious_yes',
-                    'before' => '<label class="radio inline">', 'after' => '</label>',
-                    'options' => array('Life threatening' => 'Life threatening')
-                ));
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
-                    'class' => 'serious_yes',
-                    'before' => '<label class="radio inline">', 'after' => '</label>',
-                    'options' => array('Persistent or significant disability' => 'Persistent or significant disability')
-                ));
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
-                    'class' => 'serious_yes',
-                    'before' => '<label class="radio inline">', 'after' => '</label>',
-                    'options' => array('Hospitalization or prolongation of existing hospitalization' => 'Hospitalization or prolongation of existing hospitalization')
-                ));
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
-                    'class' => 'serious_yes',
-                    'before' => '<label class="radio inline">', 'after' => '</label>',
-                    'options' => array('Congenital anomaly' => 'Congenital anomaly')
-                ));
-                echo $this->Form->input('serious_yes', array(
-                    'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'serious_yes',
-                    'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
-                    'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
-                    'before' => '<label class="radio inline">',
-                    'after' => '</label>
-                                <span class="help-inline" style="padding-top: 5px;"><a id="serious_yes_clear" class="tooltipper" data-original-title="Clear selection"
-                                onclick="$(\'.serious_yes\').removeAttr(\'checked disabled\')">
-                                <em class="accordion-toggle">clear!</em></a> </span>
-
-                                </div> </div>',
-                    'options' => array('Other important medical event' => 'Other important medical event'),
-                ));
-
-                echo $this->Form->input('serious_other', array('label' => false, 'rows' => 1, 'class' => 'span5'));
-                ?>
+            <!--/row-->
+            <hr class="darker">
+            <div class="row-fluid">
+                <div class="span12 editable">
+                    <?php
+                    echo $this->Form->input('serious', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'serious',
+                        'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">SERIOUS <span style="color:red;">*</span></label> </div>
+                                            <div class="controls">  <input type="hidden" value="" id="Serious_" name="data[Aefi][serious]"> <label class="radio inline">',
+                        'after' => '</label>',
+                        'options' => array('Yes' => 'Yes'),
+                    ));
+                    echo $this->Form->input('serious', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'serious',
+                        'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
+                        'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
+                        'before' => '<label class="radio inline">',
+                        'after' => '</label> 
+                                        <span class="help-inline" style="padding-top: 5px;"> <a class="tooltipper" data-original-title="Clears the checked value"
+                                        onclick="$(\'.serious,.serious_yes\').removeAttr(\'checked disabled\')">
+                                        <em class="accordion-toggle">clear!</em></a> </span>
+                                        </div> </div>',
+                        'options' => array('No' => 'No'),
+                    ));
+                    ?>
+                </div>
             </div>
-        </div>
-        <hr class="darker">
-        <div class="row-fluid">
+            <div class="row-fluid">
+                <div class="span12 editable">
+                    <?php
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+                        'class' => 'serious_yes',
+                        'before' => '<div class="control-group ">   <label class="control-label required">
+                                If Yes</label>  <div class="controls">
+                                <input type="hidden" value="" id="AefiSerious_" name="data[Aefi][serious_yes]"> <label class="radio inline">',
+                        'after' => '</label>',
+                        'options' => array('Death' => 'Death'),
+                    ));
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+                        'class' => 'serious_yes',
+                        'before' => '<label class="radio inline">', 'after' => '</label>',
+                        'options' => array('Life threatening' => 'Life threatening')
+                    ));
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+                        'class' => 'serious_yes',
+                        'before' => '<label class="radio inline">', 'after' => '</label>',
+                        'options' => array('Persistent or significant disability' => 'Persistent or significant disability')
+                    ));
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+                        'class' => 'serious_yes',
+                        'before' => '<label class="radio inline">', 'after' => '</label>',
+                        'options' => array('Hospitalization or prolongation of existing hospitalization' => 'Hospitalization or prolongation of existing hospitalization')
+                    ));
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false,
+                        'class' => 'serious_yes',
+                        'before' => '<label class="radio inline">', 'after' => '</label>',
+                        'options' => array('Congenital anomaly' => 'Congenital anomaly')
+                    ));
+                    echo $this->Form->input('serious_yes', array(
+                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'serious_yes',
+                        'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
+                        'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
+                        'before' => '<label class="radio inline">',
+                        'after' => '</label>
+                                    <span class="help-inline" style="padding-top: 5px;"><a id="serious_yes_clear" class="tooltipper" data-original-title="Clear selection"
+                                    onclick="$(\'.serious_yes\').removeAttr(\'checked disabled\')">
+                                    <em class="accordion-toggle">clear!</em></a> </span>
+
+                                    </div> </div>',
+                        'options' => array('Other important medical event' => 'Other important medical event'),
+                    ));
+
+                    echo $this->Form->input('serious_other', array('label' => false, 'rows' => 1, 'class' => 'span5'));
+                    ?>
+                </div>
+            </div>
+            <hr class="darker">
+
+            <div class="row-fluid">
             <div class="span6">
                 <h5 style="text-align: center;">Action Taken:</h5>
                 <?php
@@ -517,7 +515,6 @@ echo $this->Form->create('Aefi', array(
         <!--/row-->
 
         <?php echo $this->element('multi/attachments', ['model' => 'Aefi', 'group' => 'attachment','examples'=>'']); ?>
-
         <div class="row-fluid">
             <div class="span6">
                 <?php
@@ -555,7 +552,6 @@ echo $this->Form->create('Aefi', array(
             <!--/span-->
         </div>
         <!--/row-->
-
         <table class="table table-bordered  table-condensed table-pvborderless">
             <tbody>
                 <tr>
@@ -619,6 +615,7 @@ echo $this->Form->create('Aefi', array(
         </div>
         <!--/row-->
 
+        </div>
     </div>
     <div class="span2">
         <div class="my-sidebar" data-spy="affix">
