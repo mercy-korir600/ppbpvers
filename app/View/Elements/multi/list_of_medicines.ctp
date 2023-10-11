@@ -5,6 +5,7 @@
  */
     // $this->Html->script('multi/list_of_s', array('inline' => false));
   $this->Html->script('list_of_medicines', array('inline' => false));
+  $this->Html->css('sadr', false, array('inline' => false));
 ?>
     <div class="row-fluid">
       <div class="span12">
@@ -14,7 +15,7 @@
       </div>
     </div>                  
 
-    <div class="row-fluid">
+    <div class="row-fluid srollable">
         <div class="span12">
             <table id="listOfMedicinesTable"  class="table table-bordered table-condensed table-pvborder">
                 <thead>
