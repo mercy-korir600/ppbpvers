@@ -116,8 +116,17 @@ echo $this->Session->flash();
             echo $this->Form->input(
               'drug_name',
               array(
-                'div' => false, 'placeholder' => 'drug name',
-                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Drug Name')
+                'div' => false, 'placeholder' => 'brand name',
+                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name')
+              )
+            );
+            ?>
+              <?php
+            echo $this->Form->input(
+              'manufacturer',
+              array(
+                'div' => false, 'placeholder' => 'manufacturer',
+                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Manufacturer')
               )
             );
             ?>
@@ -126,9 +135,10 @@ echo $this->Session->flash();
             <?php
             echo $this->Form->input(
               'medicine_name',
-              array('div' => false, 'placeholder' => 'drug name', 'class' => 'input-small unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Medicine Name'))
+              array('div' => false, 'placeholder' => 'INN', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'INN'))
             );
             ?>
+            
           </td>
           <td colspan="2">
             <h5>Report on:</h5>
@@ -375,7 +385,7 @@ echo $this->Session->flash();
             <td>
               <?php
               // echo h($sadr['Sadr']['reference_no']);             
-              if ($sadr['Sadr']['submitted'] > 1) { 
+              if ($sadr['Sadr']['submitted'] > 1) {
                 echo $this->Html->link($sadr['Sadr']['reference_no'], array('action' => 'view', $sadr['Sadr']['id']), array('escape' => false, 'class' => 'text-' . ((isset($sadr['Sadr']['serious']) && $sadr['Sadr']['serious'] == 'Yes') ? 'error' : 'success')));
               } else {
                 echo $this->Html->link($sadr['Sadr']['reference_no'], array('action' => (($redir == 'reporter') ? 'edit' : 'view'), $sadr['Sadr']['id']), array('escape' => false, 'class' => 'text-' . ((isset($sadr['Sadr']['serious']) && $sadr['Sadr']['serious'] == 'Yes') ? 'error' : 'success')));

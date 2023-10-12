@@ -47,7 +47,7 @@ class SubCountiesController extends AppController {
 					'SubCounty.county_id' => $county
 				),
 				'fields' => array('SubCounty.id', 'SubCounty.sub_county_name'),
-				'limit' => 10
+				'limit' => 20
 			)
 		);
 		//return the results as a json array

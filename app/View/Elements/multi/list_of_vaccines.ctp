@@ -6,6 +6,7 @@
  */
 // $this->Html->script('multi/list_of_aefis', array('inline' => false));
 $this->Html->script('list_of_vaccines_v2', array('inline' => false));
+$this->Html->css('aefi', false, array('inline' => false));
 ?>
 <div class="row-fluid">
   <div class="span12">
@@ -14,7 +15,7 @@ $this->Html->script('list_of_vaccines_v2', array('inline' => false));
       </button></h3>
   </div>
 </div>
-<div class="row-fluid">
+<div class="row-fluid srollable">
   <div class="span12">
     <?php
     $routes = ['Intramuscular' => 'Intramuscular', 'Subcutaneous' => 'Subcutaneous', 'Intradermal' => 'Intradermal'];
