@@ -134,7 +134,7 @@ echo $this->Session->flash();
           <td>
             <?php
             echo $this->Form->input(
-              'medicine_name',
+              'inn',
               array('div' => false, 'placeholder' => 'INN', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'INN'))
             );
             ?>
