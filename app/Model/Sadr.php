@@ -27,7 +27,8 @@ class Sadr extends AppModel
         'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'drug_name' => array('type' => 'query', 'method' => 'findByDrugName', 'encode' => true),
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
-        'medicine_name' => array('type' => 'query', 'method' => 'findByMedicineName', 'encode' => true),
+        'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
+        'manufacturer' => array('type' => 'query', 'method' => 'findByManufacturerName', 'encode' => true),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
         'report_misuse' => array('type' => 'value'),
@@ -73,29 +74,51 @@ class Sadr extends AppModel
     public function findByDrugName($data = array())
     {
         $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
-            'conditions' => array(
-                'OR' => array(
-                    'SadrListOfDrug.drug_name LIKE' => '%' . $data['drug_name'] . '%',
+            'conditions' => array( 
                     'SadrListOfDrug.brand_name LIKE' => '%' . $data['drug_name'] . '%',
-                )
+                
             ),
             'fields' => array('sadr_id', 'sadr_id')
         )));
         return $cond;
     }
-
-    public function findByMedicineName($data = array())
+    
+    public function findByDrugINNName($data = array())
     {
-        $cond = array($this->alias . '.id' => $this->SadrListOfMedicine->find('list', array(
-            'conditions' => array(
-                'OR' => array(
-                    'SadrListOfMedicine.drug_name LIKE' => '%' . $data['medicine_name'] . '%',
-                    'SadrListOfMedicine.brand_name LIKE' => '%' . $data['medicine_name'] . '%',
-                )
+        $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
+            'conditions' => array( 
+                    'SadrListOfDrug.drug_name LIKE' => '%' . $data['inn'] . '%',
+                
             ),
             'fields' => array('sadr_id', 'sadr_id')
         )));
         return $cond;
+    }
+    public function findByManufacturerName($data = array())
+    {
+        $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
+            'conditions' => array( 
+                    'SadrListOfDrug.manufacturer LIKE' => '%' . $data['manufacturer'] . '%',
+                
+            ),
+            'fields' => array('sadr_id', 'sadr_id')
+        )));
+        return $cond;
+    }
+    public function findByMedicineName($data = array())
+    {
+        // debug($data['inn']);
+        
+        $cond = array($this->alias . '.id' => $this->SadrListOfMedicine->find('list', array(
+            'conditions' => array(
+                'SadrListOfMedicine.drug_name LIKE' => '%' . $data['inn'] . '%',
+            ),
+            'fields' => array('sadr_id', 'sadr_id')
+        )));
+        // debug($cond);
+        // exit;
+        return $cond;
+      
     }
     public function findByMarketAuthority($data = array())
     {
@@ -512,14 +535,15 @@ class Sadr extends AppModel
             'message' => 'Please specify the height in Centimeters.'
         )
     );
-    public function validateSeriousReason($check) {
+    public function validateSeriousReason($check)
+    {
         $seriousValue = $this->data[$this->alias]['serious'];
         $reasonValue = current($check);
-    
+
         if ($seriousValue === 'Yes' && empty($reasonValue)) {
             return false;
         }
-    
+
         return true;
     }
     public function atleastOneSuspect($field = null)
