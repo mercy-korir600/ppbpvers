@@ -491,7 +491,7 @@ $this->Html->css('summary', null, array('inline' => false));
             <table class="table table-condensed table-bordered" id="datatablesupplier">
                 <thead>
                     <tr>
-                        <th>County</th>
+                        <th>Supplier</th>
                         <th>PQHPTs</th>
                     </tr>
                 </thead>

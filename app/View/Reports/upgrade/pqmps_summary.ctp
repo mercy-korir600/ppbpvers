@@ -78,7 +78,7 @@ $this->Html->css('summary', null, array('inline' => false));
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
-                        <th>Age group</th>
+                        <th>Year</th>
                         <th>PQHPTs</th>
                     </tr>
                 </thead>
