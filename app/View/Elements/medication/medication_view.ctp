@@ -30,7 +30,7 @@
 						<td style="width: 25%;"></td>
 						<td style="width: 45%;"></td>
 						<td style="width: 15%;">REPORT ID/Type: </td>
-						<td style="width: 15%;"><strong><?php echo $medication['Medication']['id'];  ?></strong></td>
+						<td style="width: 15%;"><strong><?php echo $medication['Medication']['reference_no'];  ?></strong></td>
 					</tr>
 				</table>
 				<table style="width: 100%;">
