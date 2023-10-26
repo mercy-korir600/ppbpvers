@@ -195,7 +195,7 @@
             <reaction>
                 <primarysourcereaction><?php echo $sadr['Sadr']['description_of_reaction']; ?></primarysourcereaction>
                 <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
-                <reactionmeddrallt><?php echo $sadr['Sadr']['report_title']; ?></reactionmeddrallt>
+                <reactionmeddrallt><?php echo $sadr['Sadr']['medra']; ?></reactionmeddrallt>
                 <reactionmeddraversionpt></reactionmeddraversionpt>
                 <reactionmeddrapt></reactionmeddrapt>
                 <termhighlighted/>
@@ -228,9 +228,7 @@
 								'recovered/resolved'=>1,
 								'recovering/resolving' => 2,
 								'recovered/resolved with sequelae' => 3,
-								'not recovered/not resolved' => 4,
-								// 'fatal - unrelated to reaction' => 8,
-								// 'fatal - reaction may be contributory' => 7,
+								'not recovered/not resolved' => 4, 
 								'fatal' => 5,
 								'unknown' => 6,
 							);

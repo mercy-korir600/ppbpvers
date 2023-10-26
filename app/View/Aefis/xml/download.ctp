@@ -28,12 +28,12 @@
                     echo 1;
                 } else { echo 2;}
             ?></serious>
-        <seriousnessdeath><?php   echo ($aefi['Aefi']['serious_yes'] == 'Death') ? 1 : 0; ?></seriousnessdeath>
-        <seriousnesslifethreatening><?php echo ($aefi['Aefi']['serious_yes'] == 'Life threatening') ? 1 : 0; ?></seriousnesslifethreatening>
-        <seriousnesshospitalization><?php echo ($aefi['Aefi']['serious_yes'] == 'Missing cost or prolonged hospitalization') ? 1 : 0; ?></seriousnesshospitalization>
-        <seriousnessdisabling><?php echo ($aefi['Aefi']['serious_yes'] == 'Persistent or significant disability') ? 1 : 0; ?></seriousnessdisabling>
-        <seriousnesscongenitalanomali><?php   echo ($aefi['Aefi']['serious_yes'] == 'Congenital anomaly') ? 1 : 0; ?></seriousnesscongenitalanomali>
-        <seriousnessother><?php   echo ($aefi['Aefi']['serious_yes'] == 'Other important medical event') ? 1 : 0; ?></seriousnessother>
+        <seriousnessdeath><?php   echo ($aefi['Aefi']['serious_yes'] == 'Death') ? 1 : 2; ?></seriousnessdeath>
+        <seriousnesslifethreatening><?php echo ($aefi['Aefi']['serious_yes'] == 'Life threatening') ? 1 : 2; ?></seriousnesslifethreatening>
+        <seriousnesshospitalization><?php echo ($aefi['Aefi']['serious_yes'] == 'Missing cost or prolonged hospitalization') ? 1 : 2; ?></seriousnesshospitalization>
+        <seriousnessdisabling><?php echo ($aefi['Aefi']['serious_yes'] == 'Persistent or significant disability') ? 1 : 2; ?></seriousnessdisabling>
+        <seriousnesscongenitalanomali><?php   echo ($aefi['Aefi']['serious_yes'] == 'Congenital anomaly') ? 1 : 2; ?></seriousnesscongenitalanomali>
+        <seriousnessother><?php   echo ($aefi['Aefi']['serious_yes'] == 'Other important medical event') ? 1 : 2; ?></seriousnessother>
         <receivedateformat>102</receivedateformat>
         <receivedate><?php echo date('Ymd', strtotime($aefi['Aefi']['created'])); ?></receivedate>
         <receiptdateformat>102</receiptdateformat>
@@ -201,12 +201,9 @@
                     if($aefi['Aefi']['abscess']) echo 'Abscess, ';
                     if($aefi['Aefi']['bcg']) echo 'BCG Lymphadenitis, ';
                     if($aefi['Aefi']['meningitis']) echo 'Encephalopathy, ';
-                    if($aefi['Aefi']['toxic_shock']) echo 'Toxic, ';
-                    // if($aefi['Aefi']['ae_thrombocytopenia']) echo 'Thrombocytopenia, ';
+                    if($aefi['Aefi']['toxic_shock']) echo 'Toxic, '; 
                     if($aefi['Aefi']['anaphylaxis']) echo 'Anaphylaxis, ';
-                    if($aefi['Aefi']['high_fever']) echo 'Fever, ';
-                    // if($aefi['Aefi']['ae_3days']) echo 'Severe local reaction > 3 days, ';
-                    // if($aefi['Aefi']['ae_febrile']) echo 'febrile, ';
+                    if($aefi['Aefi']['high_fever']) echo 'Fever, '; 
                     if($aefi['Aefi']['paralysis']) echo 'Paralysis, ';
                     if($aefi['Aefi']['urticaria']) echo 'Generalized urticaria, '; 
                     ?>                 
@@ -259,7 +256,9 @@
                 <drugauthorizationcountry/>
                 <drugauthorizationholder/>
                 <drugstructuredosagenumb><?php echo $listOfVaccine['dosage']; ?></drugstructuredosagenumb>
-                <drugstructuredosageunit/>
+                <drugstructuredosageunit><?php
+					echo $sadrListOfDrug['Dose']['icsr_code'];
+				?></drugstructuredosageunit>
                 <drugseparatedosagenumb/>
                 <drugintervaldosageunitnumb/>
                 <drugintervaldosagedefinition/>
