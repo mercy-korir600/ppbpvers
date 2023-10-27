@@ -27,11 +27,11 @@ $this->assign('Adverse Event Following Immunization', 'active');
         <div class="span12">
           <h3>Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
             <?php if ($redir == 'manager') {
-              echo $this->Html->link(
-                '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
-                array('controller' => 'aefis', 'action' => 'dhis2'),
-                array('escape' => false, 'class' => 'btn btn-success')
-              );
+              // echo $this->Html->link(
+              //   '<i class="fa fa-file-o" aria-hidden="true"></i>  KHIS',
+              //   array('controller' => 'aefis', 'action' => 'dhis2'),
+              //   array('escape' => false, 'class' => 'btn btn-success')
+              // );
             } ?></h3>
           <hr class="soften" style="margin: 7px 0px;">
 
