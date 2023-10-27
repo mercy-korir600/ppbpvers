@@ -65,7 +65,10 @@ class DrugsController extends AppController {
 					'batch_number' => $drug->registration_no,
 					'brand_name' => $drug->brand_name,
 					'inn_name' => $drug->inn_of_api,
-					'manufacturer' => $drug->mah_name,  
+					'manufacturer' => $drug->mah_name,   
+                    'registration_status'=>$drug->registration_status,
+                    'retention_status'=>$drug->retention_status,
+                    'local_trade_rep'=>$drug->local_trade_rep
 				));
 			} 
 			$this->Flash->success('Drug list successfully updated');

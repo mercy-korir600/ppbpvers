@@ -194,10 +194,11 @@ $this->assign('Registry', 'active');
       <thead>
         <tr>
           <th><?php echo $this->Paginator->sort('id'); ?></th>
+          <th><?php echo $this->Paginator->sort('batch_number'); ?></th>
           <th><?php echo $this->Paginator->sort('brand_name'); ?></th>
           <th><?php echo $this->Paginator->sort('inn_name'); ?></th>
           <th><?php echo $this->Paginator->sort('manufacturer'); ?></th>
-          <th><?php echo $this->Paginator->sort('batch_number'); ?></th>
+          <th><?php echo $this->Paginator->sort('local_trade_rep'); ?></th>
           <th><?php echo $this->Paginator->sort('registration_status'); ?></th>
           <th><?php echo $this->Paginator->sort('retention_status'); ?></th>
           <th><?php echo $this->Paginator->sort('donation'); ?></th>
@@ -210,10 +211,11 @@ $this->assign('Registry', 'active');
         foreach ($drugs as $drug) : ?>
         <tr>
           <td><?php echo h($drug['Drug']['id']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['batch_number']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['brand_name']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['inn_name']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['manufacturer']); ?>&nbsp;</td>
-          <td><?php echo h($drug['Drug']['batch_number']); ?>&nbsp;</td>
+          <td><?php echo h($drug['Drug']['local_trade_rep']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['registration_status']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['retention_status']); ?>&nbsp;</td>
           <td><?php echo h($drug['Drug']['donation']); ?>&nbsp;</td>
