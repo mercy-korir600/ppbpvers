@@ -61,6 +61,25 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               ?>
           </td>
         </tr>
+        <tr>
+          <td>
+
+          </td>
+          <td>
+            <?php
+            echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
+              'class' => 'btn btn-primary', 'div' => 'control-group', 'div' => false,
+              'formnovalidate' => 'formnovalidate',
+              'style' => array('margin-bottom: 5px')
+            ));
+            ?>
+          </td>
+          <td>
+            <?php
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'aefi_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
+            ?>
+          </td>
+        </tr>
       </tbody>
     </table>
     <?php echo $this->Form->end(); ?>
