@@ -8,14 +8,14 @@ App::uses('HttpSocket', 'Network/Http');
 class KhisController extends AppController
 {
 
-	/**
-	 * Scaffold
-	 *
-	 * @var mixed
-	 */
-	public $scaffold;
+    /**
+     * Scaffold
+     *
+     * @var mixed
+     */
+    public $scaffold;
 
-	public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -25,44 +25,217 @@ class KhisController extends AppController
     public $presetVars = true;
     public $is_mobile = false;
 
-	public function beforeFilter()
-	{
-		parent::beforeFilter();
-		$this->Auth->allow(
-			'generate_reports_per_vaccines',
-			'sadrs_by_age',
-			'sadrs_by_month',
-            'sadrs_by_gender',
-			'aefis_by_age',
-			'aefis_by_vaccine',
-            'aefis_by_gender',
-            'aefis_by_month',
-            'manager_index',
-			'index'
-        );
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->sync_indicators();
 
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
         }
         $this->set('is_mobile', $this->is_mobile);
-	}
+    }
+    public function sync_indicators()
+    {
 
-	public function manager_index()
-	{
-		$sadrsSummary = $this->sadrs_summary();
-		$aefiSummary = $this->aefi_summary();
+        $this->loadModel('Khis');
+        $apiUrl = Configure::read('khis_data_elements_url');
+        $username = Configure::read('khis_usename');
+        $password =  Configure::read('khis_password');
 
-		$this->set('sadrsSummary', $sadrsSummary);
-		$this->set('aefiSummary', $aefiSummary);
+        //load indicators
+        $ch1 = curl_init($apiUrl);
 
+        // Set cURL options
+        curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch1, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch1, CURLOPT_USERPWD, "$username:$password");
+        // Execute cURL session and get the response
+        $response1 = curl_exec($ch1);
+        $statusCode1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+
+        // Check for cURL errors
+        if (curl_errno($ch1)) {
+            echo 'Curl error: ' . curl_error($ch1);
+        }
+
+        // Close cURL session
+        curl_close($ch1);
+
+        if ($statusCode1 >= 200 && $statusCode1 < 300) {
+            $data = json_decode($response1, true);
+
+            // Check if dataSetElements is set and is an array
+            if (isset($data['dataSetElements']) && is_array($data['dataSetElements'])) {
+                // Loop through each dataSetElement
+                $this->Khis->query('TRUNCATE TABLE khis');
+                foreach ($data['dataSetElements'] as $element) {
+                    // Check if dataElement is set and is an array
+                    if (isset($element['dataElement']) && is_array($element['dataElement'])) {
+                        // Access the name and id of dataElement
+                        $elementName = $element['dataElement']['name'];
+                        $elementId = $element['dataElement']['id'];
+
+                        $this->Khis->create();
+                        $this->Khis->save(array(
+                            'elementId' => $elementId,
+                            'elementName' => $elementName
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    public function manager_index()
+    {
+        $sadrsSummary = $this->sadrs_summary();
+        $aefiSummary = $this->aefi_summary();
+
+        $this->set('sadrsSummary', $sadrsSummary);
+        $this->set('aefiSummary', $aefiSummary);
+        if (isset($this->request->data['uploadReport'])) {
+            $this->prepare_upload_data();
+        }
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('khis_summary');
-        } 
-	}
+        }
+    }
 
-	public function generate_reports_per_vaccines($drug_name = null, $aefiIds = array())
+    public function prepare_upload_data()
+    {
+        //prepare AEFI Data
+        $indicator_value = array();
+        $id_arrays = array(0);
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
+        $criteria['Aefi.deleted'] = false;
+        $criteria['Aefi.archived'] = false;
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if (empty($this->request->data['Report']['county_id'])) {
+            $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
+            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        } else {
+            $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
+
+            // AEFI Gender
+            $gender = $this->Aefi->find('all', array(
+                'fields' => array('gender', 'COUNT(*) as cnt'),
+                'contain' => array(), 'recursive' => -1,
+                'conditions' => $criteria,
+                'group' => array('gender'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            $gCount = 0;
+            foreach ($gender as $result) {
+                $gCount = +$result[0]['cnt'];
+            }
+            // AEFI Age
+
+            $case = "((case 
+        when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
+        when age_months > 0 and age_months < 1 then 'neonate'
+        when age_months < 13 then 'infant'
+        when age_months > 13 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+        else 'unknown'
+       end))";
+
+            $age = $this->Aefi->find('all', array(
+                'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
+                'contain' => array(),
+                'conditions' => $criteria,
+                'group' => array($case),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+            $aCount = 0;
+            foreach ($age as $key => $value) {
+                $aCount = +$value[0]['cnt'];
+            }
+            // AEFI Month
+            $month = $this->Aefi->find('all', array(
+                'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
+                'contain' => array(), 'recursive' => -1,
+                'conditions' => $criteria,
+                'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+                'order' => array('salit'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            $mCount = 0;
+            foreach ($month as $key => $value) {
+                $mCount = +$value[0]['cnt'];
+            }
+
+            // AEFI Vaccine
+            $aefiIds = $this->Aefi->find('list', array(
+                'fields' => array('Aefi.id'),
+                'conditions' => $criteria
+            ));
+            $criteriav['AefiListOfVaccine.aefi_id'] = $aefiIds;
+
+            $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
+                'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
+                'contain' => array('Vaccine'), 'recursive' => -1,
+                'conditions' => $criteriav,
+                'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
+                'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+            ));
+
+            $vCount = 0;
+            foreach ($vaccine as $key => $value) {
+                $vCount = +$value[0]['cnt'];
+            }
+
+
+            debug($age);
+            debug($aCount);
+            debug($gender);
+            debug($gCount);
+            debug($month);
+            debug($mCount);
+            debug($vaccine);
+            debug($vCount);
+
+            $currentDate = date('Y-m-d');
+            $payload = [
+                "dataSet" => "khmkmn2RRx4",
+                "completeDate" => $currentDate,
+                "period" => "202311",
+                "orgUnit" => "vvOK1BxTbet",
+                // "dataValues" => $this->generate_data_values()
+            ];
+
+            debug($payload);
+            exit;
+        }
+    }
+
+    // public function generate_data_values()
+    // {
+    //     $indicator_value = array();
+    //     $this->loadModel('Khis');
+    //     $indicators = $this->Khis->find('all', array('order' => array('Khis.id' => 'ASC')));
+    //     foreach ($indicators as $key => $value) {
+    //         $id = $value;
+    //         $elementId = $value['Khis']['elementId'];
+    //         $elementName = $value['Khis']['elementName'];
+    //         $indicator_value[] = [
+    //             "dataElement" => $elementId,
+    //             "value" => $this->generate_value_by_name($elementName)
+    //         ];
+    //     }
+
+    //     return $indicator_value;
+    // }
+    public function generate_reports_per_vaccines($drug_name = null, $aefiIds = array())
     {
         # code...   add a check to return where AefiListOfVaccine.aefi_id  is in the list of array
         $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
@@ -76,7 +249,7 @@ class KhisController extends AppController
         return $cond;
     }
 
-	public function sadrs_summary()
+    public function sadrs_summary()
     {
         $criteria['Sadr.submitted'] = array(1, 2);
         $criteria['Sadr.copied !='] = '1';
@@ -110,20 +283,7 @@ class KhisController extends AppController
         ));
         $sadrsIds = array_keys($sadrsIds);
         $id_arrays = array();
-        // debug($sadrsIds);
-        // exit;
-        if (!empty($this->request->data['Report']['suspected_drug'])) {
 
-            $ids = $this->generate_reports_per_reaction($this->request->data['Report']['suspected_drug'], $sadrsIds);
-            if (!empty($ids)) {
-                foreach ($ids as $key => $value) {
-                    $id_arrays[] = $key;
-                }
-            }
-            $criteria['Sadr.id'] = $id_arrays;
-        }
-        // debug($id_arrays);
-        // exit;
 
         $geo = $this->Sadr->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
@@ -204,21 +364,17 @@ class KhisController extends AppController
     }
 
 
-	public function aefi_summary() {
+    public function aefi_summary()
+    {
 
-		// Load Data for Counties 
+        // Load Data for Counties 
         $id_arrays = array(0);
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;	
         $criteria['Aefi.archived'] = false;
-
-		$startMonth = $this->request->data['Report']['start_date_month'];
-		$endYear = $this->request->data['Report']['end_date_year'];
-		$criteria['Aefi.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-		$criteria['Aefi.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));
-
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
 
         // Filters
         if (!empty($this->request->data['Report']['county_id'])) {
@@ -329,26 +485,26 @@ class KhisController extends AppController
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
-			'fields' => array(
-				'Vaccine.vaccine_name as vaccine_name',
-				'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
-			),
-			'joins' => array(
-				array(
-					'table' => 'vaccines',
-					'alias' => 'Vaccine1',
-					'type' => 'LEFT',
-					'conditions' => array(
-						'AefiListOfVaccine.vaccine_id = Vaccine.id'
-					)
-				)
-			),
-			'conditions' => array(
-				'AefiListOfVaccine.aefi_id' => $aefiIds,
-			),
-			'group' => array('Vaccine.vaccine_name'),
-			'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
-		));
+            'fields' => array(
+                'Vaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ),
+            'joins' => array(
+                array(
+                    'table' => 'vaccines', // Your Vaccine table name
+                    'alias' => 'Vaccine1',
+                    'type' => 'LEFT',
+                    'conditions' => array(
+                        'AefiListOfVaccine.vaccine_id = Vaccine.id'
+                    )
+                )
+            ),
+            'conditions' => array(
+                'AefiListOfVaccine.aefi_id' => $aefiIds,
+            ),
+            'group' => array('Vaccine.vaccine_name'),
+            'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        ));
         $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array(
                 'AefiListOfVaccine.vaccine_name as vaccine_name',
@@ -409,5 +565,5 @@ class KhisController extends AppController
         $this->set(compact('months'));
 
         $this->set('_serialize', 'geo', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year', 'qualification', 'serious', 'reason', 'outcome', 'facilities', 'months');
-	}
+    }
 }
