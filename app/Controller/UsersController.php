@@ -1458,6 +1458,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
         $this->Acl->allow($group, 'controllers/Saefis');
+        $this->Acl->allow($group, 'controllers/Khis');
 
         //Allow reporters to some
         $group->id = 3;

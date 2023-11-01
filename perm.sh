@@ -49,6 +49,7 @@ app/Console/cake acl grant Group.2 controllers/Reports
 app/Console/cake acl grant Group.2 controllers/AefiDescriptions
 app/Console/cake acl grant Group.2 controllers/Saefis
 app/Console/cake acl grant Group.2 controllers/Reviews
+app/Console/cake acl grant Group.2 controllers/Khis
 
 # Allow reporters to some 
 echo "*************** Assign Reporter Permissions  *******************"

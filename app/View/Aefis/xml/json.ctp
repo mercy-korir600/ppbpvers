@@ -250,8 +250,8 @@ echo "\n"; ?>
             <drugcumulativedosagenumb></drugcumulativedosagenumb>
             <drugcumulativedosageunit></drugcumulativedosageunit>
             <drugdosagetext><?php echo $listOfVaccine['dosage']; ?></drugdosagetext>
-            <drugdosageform></drugdosageform>
-            <drugadministrationroute></drugadministrationroute>
+            <drugdosageform><?php $listOfVaccine['vaccination_route'];?></drugdosageform>
+            <drugadministrationroute><?php echo 058?></drugadministrationroute>
             <drugparadministration></drugparadministration>
             <reactiongestationperiod></reactiongestationperiod>
             <reactiongestationperiodunit></reactiongestationperiodunit>

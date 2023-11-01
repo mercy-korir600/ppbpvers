@@ -94,6 +94,12 @@
                         array('controller' => 'drugs', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                 ?>
              </li>
+             <li class="dropdown <?php echo $this->fetch('KHIS') ?>">
+                <?php
+                    echo $this->Html->link('<i class="fa fa-database"></i> KHIS',
+                        array('controller' => 'khis', 'action'=>'index', 'manager' => true ), array('escape' => false ));
+                ?>
+             </li>
         </ul>
         
     </div>
