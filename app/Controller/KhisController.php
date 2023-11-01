@@ -232,12 +232,8 @@ class KhisController extends AppController
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
-
-		$startMonth = $this->request->data['Report']['start_date_month'];
-		$endYear = $this->request->data['Report']['end_date_year'];
-		$criteria['Aefi.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-		$criteria['Aefi.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));
-
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
 
         // Filters
@@ -355,7 +351,7 @@ class KhisController extends AppController
 			),
 			'joins' => array(
 				array(
-					'table' => 'vaccines',
+					'table' => 'vaccines', // Your Vaccine table name
 					'alias' => 'Vaccine1',
 					'type' => 'LEFT',
 					'conditions' => array(
