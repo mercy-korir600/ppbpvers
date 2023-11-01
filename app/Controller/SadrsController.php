@@ -514,6 +514,7 @@ class SadrsController extends AppController
             'conditions' => array('Sadr.id' => $id),
             'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'County', 'SubCounty', 'Attachment', 'Designation')
         ));
+        $sadr['Sadr']['medra']=" ";
         $sadr = Sanitize::clean($sadr, array('escape' => true));
         $this->set('sadr', $sadr);
         $this->response->download('SADR_' . $sadr['Sadr']['id'] . '.xml');

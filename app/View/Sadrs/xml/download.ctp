@@ -199,7 +199,9 @@
                 <reactionmeddraversionpt></reactionmeddraversionpt>
                 <reactionmeddrapt></reactionmeddrapt>
                 <termhighlighted/>
-                <reactionstartdateformat><?php
+                <reactionstartdateformat>
+                    
+                    <?php
 					$onsetf = 102;
 					if (empty($sadr['Sadr']['date_of_onset_of_reaction']['day']) && empty($sadr['Sadr']['date_of_onset_of_reaction']['month'])) {
 						$onsetf = 602;

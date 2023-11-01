@@ -953,12 +953,6 @@
             $this->set('aefi', $aefi);
             // $this->render('pdf/view');
 
-            if (strpos($this->request->url, 'pdf') !== false) {
-                $this->pdfConfig = array('filename' => 'AEFI_' . $id . '.pdf',  'orientation' => 'portrait');
-                $this->response->download('AEFI_' . $aefi['Aefi']['id'] . '.pdf');
-            }
-        }
-
         public function api_view($id = null)
         {
             $this->Aefi->id = $id;
