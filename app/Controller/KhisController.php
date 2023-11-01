@@ -28,18 +28,7 @@ class KhisController extends AppController
 	public function beforeFilter()
 	{
 		parent::beforeFilter();
-		$this->Auth->allow(
-			'generate_reports_per_vaccines',
-			'sadrs_by_age',
-			'sadrs_by_month',
-            'sadrs_by_gender',
-			'aefis_by_age',
-			'aefis_by_vaccine',
-            'aefis_by_gender',
-            'aefis_by_month',
-            'manager_index',
-			'index'
-        );
+		$this->sync_indicators();
 
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
@@ -47,7 +36,57 @@ class KhisController extends AppController
         }
         $this->set('is_mobile', $this->is_mobile);
 	}
+	public function sync_indicators()
+	{
 
+		$this->loadModel('Khis');
+		$apiUrl = Configure::read('khis_data_elements_url');
+		$username = Configure::read('khis_usename');
+		$password =  Configure::read('khis_password');
+
+		//load indicators
+		$ch1 = curl_init($apiUrl);
+
+		// Set cURL options
+		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch1, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+		curl_setopt($ch1, CURLOPT_USERPWD, "$username:$password");
+		// Execute cURL session and get the response
+		$response1 = curl_exec($ch1);
+		$statusCode1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+
+		// Check for cURL errors
+		if (curl_errno($ch1)) {
+			echo 'Curl error: ' . curl_error($ch1);
+		}
+
+		// Close cURL session
+		curl_close($ch1);
+
+		if ($statusCode1 >= 200 && $statusCode1 < 300) {
+			$data = json_decode($response1, true);
+
+			// Check if dataSetElements is set and is an array
+			if (isset($data['dataSetElements']) && is_array($data['dataSetElements'])) {
+				// Loop through each dataSetElement
+				$this->Khis->query('TRUNCATE TABLE khis');
+				foreach ($data['dataSetElements'] as $element) {
+					// Check if dataElement is set and is an array
+					if (isset($element['dataElement']) && is_array($element['dataElement'])) {
+						// Access the name and id of dataElement
+						$elementName = $element['dataElement']['name'];
+						$elementId = $element['dataElement']['id'];
+
+						$this->Khis->create();
+						$this->Khis->save(array(
+							'elementId' => $elementId,
+							'elementName' => $elementName
+						));
+					}
+				}
+			}
+		}
+	}
 	public function manager_index()
 	{
 		$sadrsSummary = $this->sadrs_summary();
@@ -104,20 +143,7 @@ class KhisController extends AppController
         ));
         $sadrsIds = array_keys($sadrsIds);
         $id_arrays = array();
-        // debug($sadrsIds);
-        // exit;
-        if (!empty($this->request->data['Report']['suspected_drug'])) {
-
-            $ids = $this->generate_reports_per_reaction($this->request->data['Report']['suspected_drug'], $sadrsIds);
-            if (!empty($ids)) {
-                foreach ($ids as $key => $value) {
-                    $id_arrays[] = $key;
-                }
-            }
-            $criteria['Sadr.id'] = $id_arrays;
-        }
-        // debug($id_arrays);
-        // exit;
+         
 
         $geo = $this->Sadr->find('all', array(
             'fields' => array('County.county_name', 'COUNT(*) as cnt'),
