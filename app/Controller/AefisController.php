@@ -952,7 +952,7 @@
             ));
             $this->set('aefi', $aefi);
             // $this->render('pdf/view');
-
+        }
         public function api_view($id = null)
         {
             $this->Aefi->id = $id;
