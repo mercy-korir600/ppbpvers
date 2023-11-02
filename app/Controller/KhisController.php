@@ -29,6 +29,7 @@ class KhisController extends AppController
     {
         parent::beforeFilter();
         $this->sync_indicators();
+        $this->update_organizations();
 
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
@@ -36,6 +37,62 @@ class KhisController extends AppController
         }
         $this->set('is_mobile', $this->is_mobile);
     }
+    public function update_organizations()
+    {
+
+        $this->loadModel('County');
+        $apiUrl = Configure::read('khis_org_units_url');
+        $username = Configure::read('khis_usename');
+        $password =  Configure::read('khis_password');
+
+        //load indicators
+        $ch1 = curl_init($apiUrl);
+
+        // Set cURL options
+        curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch1, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch1, CURLOPT_USERPWD, "$username:$password");
+        // Execute cURL session and get the response
+        $response1 = curl_exec($ch1);
+        $statusCode1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+
+        // Check for cURL errors
+        if (curl_errno($ch1)) {
+            echo 'Curl error: ' . curl_error($ch1);
+        }
+
+        // Close cURL session
+        curl_close($ch1);
+
+        if ($statusCode1 >= 200 && $statusCode1 < 300) {
+            $data = json_decode($response1, true);
+
+            // Check if dataSetElements is set and is an array
+            if (isset($data['organisationUnits']) && is_array($data['organisationUnits'])) {
+                // Loop through each dataSetElement 
+                foreach ($data['organisationUnits'] as $element) {
+                    // Access the name and id of dataElement
+                    $elementName = $element['displayName'];
+                    $elementId = $element['id'];
+
+                    //load model County where name is like name and update the column org_unit 
+                    $nameParts = explode(' ', $elementName);
+                    $firstPart = $nameParts[0];
+
+                    // Find the record where the name is like $firstPart
+                    $record = $this->County->find('first', [
+                        'conditions' => ['county_name LIKE' => $firstPart],
+                    ]);
+
+                    if ($record) {
+                        $record['County']['org_unit'] = $elementId;
+                        $this->County->save($record);
+                    }
+                }
+            }
+        }
+    }
+
     public function sync_indicators()
     {
 
@@ -106,8 +163,7 @@ class KhisController extends AppController
     public function prepare_upload_data()
     {
         //prepare AEFI Data
-        $indicator_value = array();
-        $id_arrays = array(0);
+
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
@@ -190,32 +246,76 @@ class KhisController extends AppController
             ));
 
             $vCount = 0;
-            foreach ($vaccine as $key => $value) {
-                $vCount = +$value[0]['cnt'];
+            foreach ($vaccine as $item) {
+                $vCount +=  $item[0]['cnt'];
             }
 
+            $dataValues = array();
+            $ageIndicator = $this->extract_indicator_element("AEFI submitted by age", $aCount);
+            $dataValues[] = $ageIndicator;
 
-            debug($age);
-            debug($aCount);
-            debug($gender);
-            debug($gCount);
-            debug($month);
-            debug($mCount);
-            debug($vaccine);
-            debug($vCount);
+            $genderIndicator = $this->extract_indicator_element("AEFI submitted by gender", $gCount);
+            $dataValues[] = $genderIndicator;
+
+            $monthIndicator = $this->extract_indicator_element("AEFI submitted per month", $mCount);
+            $dataValues[] = $monthIndicator;
+
+            $vaccineIndicator = $this->extract_indicator_element("AEFI submitted per Vaccine", $vCount);
+            $dataValues[] = $vaccineIndicator;
+
+            $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
+            if (empty($orgUnit)) {
+                $this->Session->setFlash(__('County Detials not updated, please sync data'), 'alerts/flash_error');
+                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+            }
+
 
             $currentDate = date('Y-m-d');
             $payload = [
                 "dataSet" => "khmkmn2RRx4",
                 "completeDate" => $currentDate,
                 "period" => "202311",
-                "orgUnit" => "vvOK1BxTbet",
-                // "dataValues" => $this->generate_data_values()
+                "orgUnit" => $orgUnit,
+                "dataValues" => $dataValues
             ];
 
             debug($payload);
             exit;
         }
+    }
+    public function extract_organization_unit($id = null)
+    {
+        $this->loadModel('County');
+        $this->County->id = $id;
+        if (!$this->County->exists()) {
+            throw new NotFoundException(__('Invalid County Information'));
+        }
+        $report = $this->County->read(null, $id);
+        if ($report) {
+            return $report['County']['org_unit'];
+        } else {
+            return null;
+        }
+    }
+    public function extract_indicator_element($name, $aCount)
+    {
+        $indicator_value = array();
+        $this->loadModel('Khis');
+        $indicators = $this->Khis->find('all', array('order' => array('Khis.id' => 'ASC')));
+        foreach ($indicators as $key => $value) {
+            $id = $value;
+            $elementId = $value['Khis']['elementId'];
+            $elementName = $value['Khis']['elementName'];
+
+            if (strpos($elementName, $name) !== false) {
+                $indicator_value = [
+                    "dataElement" => $elementId,
+                    "value" => $aCount
+                ];
+            }
+        }
+
+        return $indicator_value;
     }
 
     // public function generate_data_values()
@@ -374,41 +474,14 @@ class KhisController extends AppController
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
         }
-        if (!empty($this->request->data['Report']['gender'])) {
-            $criteria['Aefi.gender'] = $this->request->data['Report']['gender'];
-        }
-        if (!empty($this->request->data['Report']['age_group'])) {
-            $age_group = $this->request->data['Report']['age_group'];
-            $criteria['Aefi.age_months'] = "((CASE 
-        WHEN trim(age_months) IN ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') THEN age_months
-        WHEN age_months > 0 AND age_months < 1 THEN 'neonate'
-        WHEN age_months < 13 THEN 'infant'
-        WHEN age_months > 13 THEN 'child'
-        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 0 AND 1 THEN 'infant'
-        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 1 AND 10 THEN 'child'
-        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 18 AND 65 THEN 'adult'
-        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 10 AND 18 THEN 'adolescent'
-        WHEN year(now()) - right(date_of_birth, 4) BETWEEN 65 AND 155 THEN 'elderly'
-        ELSE 'unknown'
-    END)) = '$age_group'";
-        }
+
 
         $aefiIds = $this->Aefi->find('list', array(
             'fields' => array('Aefi.id'),
             'conditions' => $criteria
         ));
         $aefiIds = array_keys($aefiIds);
-        // Start from Here::::
-        if (!empty($this->request->data['Report']['vaccine'])) {
-            $cond = array(); // Initialize $cond with an empty array
-            $ids = $this->generate_reports_per_vaccines($this->request->data['Report']['vaccine'], $aefiIds);
-            if (!empty($ids)) {
-                foreach ($ids as $key => $value) {
-                    $id_arrays[] = $key;
-                }
-            }
-            $criteria['Aefi.id'] = $id_arrays;
-        }
+
 
         //get all the counties in the system without any relation
         $counties = $this->Aefi->County->find('list', array('order' => 'County.county_name ASC'));
@@ -499,51 +572,9 @@ class KhisController extends AppController
             'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
-        $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
-            'fields' => array(
-                'AefiListOfVaccine.vaccine_name as vaccine_name',
-                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
-            ), // Include the Vaccine model to access vaccine_name
-            'conditions' => array(
-                'AefiListOfVaccine.aefi_id IN' => $aefiIds,
-                'AefiListOfVaccine.vaccine_name IS NOT NULL',
-                'AefiListOfVaccine.vaccine_id IS NULL'
-            ),
-            'group' => array('AefiListOfVaccine.vaccine_name'),
-            'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
-        ));
-        // Create a combined result array
-        $combinedResults = [];
-        // debug($vaccine);
-        // exit;
 
-        // Merge the results from both queries into the combined result array
-        foreach ($vaccine as $result) {
-            $vaccineName = $result['Vaccine']['vaccine_name'];
-            $count = $result['0']['cnt'];
 
-            if (!isset($combinedResults[$vaccineName])) {
-                $combinedResults[$vaccineName] = 0;
-            }
 
-            $combinedResults[$vaccineName] += $count;
-        }
-        foreach ($vaccinealt as $result) {
-            $vaccineName = $result['AefiListOfVaccine']['vaccine_name'];
-            $count = $result['0']['cnt'];
-
-            if (!isset($combinedResults[$vaccineName])) {
-                $combinedResults[$vaccineName] = 0;
-            }
-
-            $combinedResults[$vaccineName] += $count;
-        }
-        $vaccine = [];
-        foreach ($combinedResults as $key => $value) {
-            $name['Vaccine']['vaccine_name'] = $key;
-            $name['0']['cnt'] = $value;
-            $vaccine[] = $name;
-        }
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
         $this->set(compact('geo'));
