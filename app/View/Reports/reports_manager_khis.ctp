@@ -10,9 +10,9 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 ?>
 
 
-<div class="row-fluid">
-
-  <div class="span12">
+<div class="container">
+  <div class="row">
+    <div class="col-md-10">
     <?php
     echo $this->Form->create('Report', array(
       // 'url' => array_merge(array('action' => 'index'), $this->params['pass']),
@@ -23,33 +23,57 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
       <tbody>
 
         <tr>
-          <td>
-            <?php
-            echo $this->Form->input(
-              'start_date',
-              array(
-                'div' => false, 'type' => 'text', 'class' => 'span3 input-small unauthorized_index', 'after' => '-to-',
-                'label' => array('class' => 'required', 'text' => 'Report Dates'), 'placeHolder' => 'Start Date'
-              )
-            );
-            echo $this->Form->input(
-              'end_date',
-              array(
-                'div' => false, 'type' => 'text', 'class' => 'span3 input-small unauthorized_index',
-                'after' => '<a style="font-weight:normal" onclick="$(\'.unauthorized_index\').val(\'\');" >
-                                  <em class="accordion-toggle">clear!</em></a>',
-                'label' => false, 'placeHolder' => 'End Date'
-              )
-            );
-
-            ?>
-          </td>
+        <td>
+              <?php
+              echo $this->Form->input(
+                'start_date',
+                array(
+                  'div' => false,
+                  'type' => 'select',
+                  'class' => 'span2 unauthorized_index',
+                  'label' => array('class' => 'required', 'text' => 'Month'),
+                  'options' => array(
+                    '01' => 'January',
+                    '02' => 'February',
+                    '03' => 'March',
+                    '04' => 'April',
+                    '05' => 'May',
+                    '06' => 'June',
+                    '07' => 'July',
+                    '08' => 'August',
+                    '09' => 'September',
+                    '10' => 'October',
+                    '11' => 'November',
+                    '12' => 'December'
+                  ),
+                  'empty' => 'Month'
+                )
+              );
+              ?>
+            </td>
+            <td>
+              <?php
+              $currentYear = date('Y');
+              $years = range(1960, $currentYear);
+              echo $this->Form->input(
+                'end_date',
+                array(
+                  'div' => false,
+                  'type' => 'select',
+                  'class' => 'span2 unauthorized_index',
+                  'label' => array('class' => 'required', 'text' => 'Year'),
+                  'options' => array_combine($years, $years),
+                  'empty' => 'Year'
+                )
+              );
+              ?>
+            </td>
           <td></td>
           <td><?php
               echo $this->Form->input(
                 'county_id',
                 array(
-                  'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',
+                  'div' => false, 'type' => 'select', 'class' => 'span4 unauthorized_index',
                   'label' => array('class' => 'required', 'text' => 'County'),
                   'empty' => 'All',
                   'options' => $counties,
@@ -99,7 +123,8 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
     <hr>
 
     <?php echo $this->fetch('report'); ?>
-  </div>
+    </div>
+ </div>
 
 
   <?php if ($is_mobile) { ?>
@@ -126,26 +151,22 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 <!-- JavaScript Bundle with Popper -->
 <script type="text/javascript">
   $(function() {
-    var adates = $('#ReportStartDate, #ReportEndDate').datepicker({
-      minDate: "-100Y",
-      maxDate: "-0D",
-      dateFormat: 'dd-mm-yy',
-      format: 'dd-mm-yyyy',
-      endDate: '-0d',
-      showButtonPanel: true,
+    var monthYearPicker = $('#ReportStartDate, #ReportEndDate');
+    
+    monthYearPicker.datepicker({
       changeMonth: true,
       changeYear: true,
-      showAnim: 'show',
-      onSelect: function(selectedDate) {
-        var option = this.id == "ReportStartDate" ? "minDate" : "maxDate",
-          instance = $(this).data("datepicker"),
-          date = $.datepicker.parseDate(
-            instance.settings.dateFormat ||
-            $.datepicker._defaults.dateFormat,
-            selectedDate, instance.settings);
-        adates.not(this).datepicker("option", option, date);
+      showButtonPanel: true,
+      dateFormat: 'MM yy',
+      onClose: function (dateText, inst) {
+        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+        
+        $(this).datepicker('setDate', new Date(year, month, 1));
       }
     });
-
+    
+    // Hide the day part of the datepicker
+    monthYearPicker.datepicker('setDate', new Date());
   });
 </script>
