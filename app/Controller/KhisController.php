@@ -30,7 +30,7 @@ class KhisController extends AppController
         parent::beforeFilter();
         $this->sync_indicators();
         $this->update_organizations();
-	
+
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
@@ -156,7 +156,7 @@ class KhisController extends AppController
         $this->set('aefiSummary', $aefiSummary);
         if (isset($this->request->data['uploadReport'])) {
             $this->prepare_upload_data();
-			$this->prepare_upload_sadr();
+            $this->prepare_upload_sadr();
         }
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
@@ -167,6 +167,7 @@ class KhisController extends AppController
     public function prepare_upload_data()
     {
         //prepare AEFI Data
+        $dataValues = array();
 
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
@@ -176,17 +177,16 @@ class KhisController extends AppController
             $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
         }
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
-            $month = $this->request->data['Report']['start_date'];
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $monthdata = $this->request->data['Report']['start_date'];
             $year = $this->request->data['Report']['end_date'];
 
             // Calculate the start and end dates for the given month and year
-            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
-            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$monthdata"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$monthdata"));
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
-        
         }
-            
+
         if (empty($this->request->data['Report']['county_id'])) {
             $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
@@ -202,9 +202,23 @@ class KhisController extends AppController
                 'having' => array('COUNT(*) >' => 0),
             ));
 
-            $gCount = 0;
-            foreach ($gender as $result) {
-                $gCount = +$result[0]['cnt'];
+            foreach ($gender as $key => $result) {
+                if ($result['Aefi']['gender'] == "Female") {
+
+                    $dataValues[] = [
+                        "dataElement" => "YRy6ZboTEnh",
+                        "categoryOptionCombo" => "HSgm52qfmu9",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Aefi']['gender'] == "Male") {
+
+                    $dataValues[] = [
+                        "dataElement" => "YRy6ZboTEnh",
+                        "categoryOptionCombo" => "HZqsa0U6ivP",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
             }
             // AEFI Age
 
@@ -228,10 +242,52 @@ class KhisController extends AppController
                 'group' => array($case),
                 'having' => array('COUNT(*) >' => 0),
             ));
-            $aCount = 0;
-            foreach ($age as $key => $value) {
-                $aCount = +$value[0]['cnt'];
+
+            foreach ($age as $key => $result) {
+                if ($result[0]['ager'] == "elderly") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "D1wVwZpCZxk",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "adult") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "YB86GwI0Xwk",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "adolescent") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "xp9OJZGm7S8",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "child") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "AjVBULP0Qz9",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "infant") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "uZJ1ke751Tr",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "neonate") {
+                    $dataValues[] = [
+                        "dataElement" => "XWs9UY7rVqV",
+                        "categoryOptionCombo" => "GIn7lBrO466",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
             }
+
             // AEFI Month
             $month = $this->Aefi->find('all', array(
                 'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
@@ -242,9 +298,12 @@ class KhisController extends AppController
                 'having' => array('COUNT(*) >' => 0),
             ));
 
-            $mCount = 0;
             foreach ($month as $key => $value) {
-                $mCount = +$value[0]['cnt'];
+                $dataValues[] = [
+                    "dataElement" => "q25dTTsh47j",
+                    "categoryOptionCombo" => "NhSoXUMPK2K",
+                    "value" => $value[0]['cnt']
+                ];
             }
 
             // AEFI Vaccine
@@ -262,24 +321,166 @@ class KhisController extends AppController
                 'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
             ));
 
-            $vCount = 0;
-            foreach ($vaccine as $item) {
-                $vCount +=  $item[0]['cnt'];
+            foreach ($vaccine as $result) {
+                // debug($result['Vaccine']['vaccine_name']);
+                if ($result['Vaccine']['vaccine_name'] == "Measles Rubella Vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "O6GZbn5NeQz",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Pentavalent  Vaccine (DTP-HepB-Hib)") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "bkV02yl15NP",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Human Papiloma virus vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "bCchLF54Yny",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Malaria (RTSS)Vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "ycuc2y0fDXt",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Pneumococcal conjugate vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "Sc7xJnZJ7gk",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Rota virus vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "VDXUoBlY3F0",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "BCG") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "Z6wzg4Jiwyu",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID -19 Vaccine- ASTRAZENECA") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "tJeWBrf6hAY",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Bivalent oral Polio vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "UfqetIpenw0",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID-19 Vaccine - PFIZER/BioNTech") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "Z7MLnbvSBcB",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID-19 Vaccine-SPUTNIK V") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "rwlm0VJiIZP",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID-19Vaccine-COVISHIELD") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "LAgjDEk2drU",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID -19 Vaccine- MODERNA") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "FByR0P9oEWy",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+
+                if ($result['Vaccine']['vaccine_name'] == "COVID-19 Vaccine - (JOHNSON&JOHNSONS)JANSSEN") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "n0Uvcnd2Lz2",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID -19 Vaccine- SINOPHARM") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "w2QHHuUGh0E",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "COVID -19 Vaccine- VAXZEVRIA") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "A2qFEzm6VRE",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                
+                if ($result['Vaccine']['vaccine_name'] == "Hepatitis B Vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "FVetBgxhuI1",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Inactivated polio vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "M7feACojOHg",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Rabies vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "IzksPENNmY3",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Anti Snake venom") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "N5cgWeeUJgS",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Tetanus Diptheria Vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "WlnLdfF9izd",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Vaccine']['vaccine_name'] == "Yellow fever virus vaccine") {
+                    $dataValues[] = [
+                        "dataElement" => "St9YPLSwhzr",
+                        "categoryOptionCombo" => "zfVJtQ3Dlat",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                
             }
-
-            $dataValues = array();
-            $ageIndicator = $this->extract_indicator_element("AEFI submitted by age", $aCount);
-            $dataValues[] = $ageIndicator;
-
-            $genderIndicator = $this->extract_indicator_element("AEFI submitted by gender", $gCount);
-            $dataValues[] = $genderIndicator;
-
-            $monthIndicator = $this->extract_indicator_element("AEFI submitted per month", $mCount);
-            $dataValues[] = $monthIndicator;
-
-            $vaccineIndicator = $this->extract_indicator_element("AEFI submitted per Vaccine", $vCount);
-            $dataValues[] = $vaccineIndicator;
-
             $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
             if (empty($orgUnit)) {
                 $this->Session->setFlash(__('County Detials not updated, please sync data'), 'alerts/flash_error');
@@ -291,10 +492,13 @@ class KhisController extends AppController
             $payload = [
                 "dataSet" => "khmkmn2RRx4",
                 "completeDate" => $currentDate,
-                "period" => "202311",
+                "period" => $year . "" . $monthdata,
                 "orgUnit" => $orgUnit,
                 "dataValues" => $dataValues
             ];
+
+            // debug($payload);
+            // exit;
             $apiUrl = Configure::read('khis_data_values_url');
             $username = Configure::read('khis_usename');
             $password =  Configure::read('khis_password');
@@ -304,41 +508,46 @@ class KhisController extends AppController
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
+            // curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)); // Convert the payload to a query string
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json', // Set the content type 
+            ));
+
 
             // Execute cURL session and get the response
             $response = curl_exec($ch);
             $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = "";
 
             // Check for cURL errors
             if (curl_errno($ch)) {
-                echo 'Curl error: ' . curl_error($ch);
+                $error = curl_error($ch);
             }
 
             // Close cURL session
             curl_close($ch);
 
             if ($statusCode >= 200 && $statusCode < 300) {
-                $data = json_decode($response, true);
+                // $data = json_decode($response, true);
                 $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
                 $this->redirect(array('controller' => 'khis', 'action' => 'index'));
             } else {
-                $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
+                $this->Session->setFlash(__('Experienced problems submitting data, please try again' . $error . '\n Response ' . $response), 'alerts/flash_error');
                 $this->redirect($this->referer());
             }
         }
     }
 
-	public function prepare_upload_sadr()
+    public function prepare_upload_sadr()
     {
         //prepare SADR Data
-
+        $dataValues = array();
         $criteria['Sadr.submitted'] = array(1, 2);
         $criteria['Sadr.copied !='] = '1';
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
             $month = $this->request->data['Report']['start_date'];
             $year = $this->request->data['Report']['end_date'];
 
@@ -346,10 +555,8 @@ class KhisController extends AppController
             $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
             $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
             $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
-        
-       
         }
-      
+
         if (empty($this->request->data['Report']['county_id'])) {
             $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
@@ -408,17 +615,14 @@ class KhisController extends AppController
             $mCount = 0;
             foreach ($monthly as $key => $value) {
                 $mCount = +$value[0]['cnt'];
+                // Add monthly data
+                $dataValues[] = [
+                    "dataElement" => "q25dTTsh47j",
+                    "categoryOptionCombo" => "NhSoXUMPK2K",
+                    "value" => $aCount
+                ];
             }
 
-            $dataValues = array();
-            $ageIndicator = $this->extract_indicator_element("Sadr submitted by age", $aCount);
-            $dataValues[] = $ageIndicator;
-
-            $genderIndicator = $this->extract_indicator_element("Sadr submitted by gender", $gCount);
-            $dataValues[] = $genderIndicator;
-
-            $monthIndicator = $this->extract_indicator_element("Sadr submitted per month", $mCount);
-            $dataValues[] = $monthIndicator;
 
             $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
             if (empty($orgUnit)) {
@@ -431,48 +635,47 @@ class KhisController extends AppController
             $payload = [
                 "dataSet" => "khmkmn2RRx4",
                 "completeDate" => $currentDate,
-                "period" => "202311",
+                "period" => $year . "" . $month,
                 "orgUnit" => $orgUnit,
                 "dataValues" => $dataValues
             ];
+            debug($payload);
+            exit;
             $apiUrl = Configure::read('khis_data_values_url');
             $username = Configure::read('khis_usename');
             $password =  Configure::read('khis_password');
-            
+
             $ch = curl_init($apiUrl);
-             
+
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
-            
+
             // Execute cURL session and get the response
             $response = curl_exec($ch);
             $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            
+
             // Check for cURL errors
             if (curl_errno($ch)) {
                 echo 'Curl error: ' . curl_error($ch);
             }
-            
+
             // Close cURL session
             curl_close($ch);
-            
+
             if ($statusCode >= 200 && $statusCode < 300) {
                 $data = json_decode($response, true);
                 $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
                 $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-             
             } else {
                 $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
                 $this->redirect($this->referer());
             }
-            
-             
         }
     }
-	
+
     public function extract_organization_unit($id = null)
     {
         $this->loadModel('County');
@@ -529,7 +732,7 @@ class KhisController extends AppController
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
             $month = $this->request->data['Report']['start_date'];
             $year = $this->request->data['Report']['end_date'];
 
@@ -625,7 +828,7 @@ class KhisController extends AppController
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
             $month = $this->request->data['Report']['start_date'];
             $year = $this->request->data['Report']['end_date'];
 
@@ -633,10 +836,8 @@ class KhisController extends AppController
             $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
             $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
-        
-       
         }
-	
+
         // Filters
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
@@ -739,8 +940,9 @@ class KhisController extends AppController
             'group' => array('Vaccine.vaccine_name'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
-
-
+        // foreach ($vaccine as $result) {
+        //     debug($result['Vaccine']['vaccine_name']);
+        // }
 
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
