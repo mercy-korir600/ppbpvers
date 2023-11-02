@@ -278,9 +278,41 @@ class KhisController extends AppController
                 "orgUnit" => $orgUnit,
                 "dataValues" => $dataValues
             ];
-
-            debug($payload);
-            exit;
+            $apiUrl = Configure::read('khis_data_values_url');
+            $username = Configure::read('khis_usename');
+            $password =  Configure::read('khis_password');
+            
+            $ch = curl_init($apiUrl);
+             
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
+            
+            // Execute cURL session and get the response
+            $response = curl_exec($ch);
+            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            
+            // Check for cURL errors
+            if (curl_errno($ch)) {
+                echo 'Curl error: ' . curl_error($ch);
+            }
+            
+            // Close cURL session
+            curl_close($ch);
+            
+            if ($statusCode >= 200 && $statusCode < 300) {
+                $data = json_decode($response, true);
+                $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
+                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+             
+            } else {
+                $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
+                $this->redirect($this->referer());
+            }
+            
+             
         }
     }
     public function extract_organization_unit($id = null)
