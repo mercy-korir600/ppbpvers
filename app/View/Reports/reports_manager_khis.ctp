@@ -102,7 +102,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
           </td>
           <td>
             <?php
-            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'aefi_summary'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
+            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => '/'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
             ?>
           </td>
           <td>

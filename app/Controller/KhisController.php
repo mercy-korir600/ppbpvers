@@ -30,7 +30,7 @@ class KhisController extends AppController
         parent::beforeFilter();
         $this->sync_indicators();
         $this->update_organizations();
-
+	
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
@@ -153,6 +153,7 @@ class KhisController extends AppController
         $this->set('aefiSummary', $aefiSummary);
         if (isset($this->request->data['uploadReport'])) {
             $this->prepare_upload_data();
+			$this->prepare_upload_sadr();
         }
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
@@ -168,8 +169,19 @@ class KhisController extends AppController
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        
+       
+        }
+        // if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+        //     $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if (empty($this->request->data['Report']['county_id'])) {
             $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
@@ -315,6 +327,150 @@ class KhisController extends AppController
              
         }
     }
+
+	public function prepare_upload_sadr()
+    {
+        //prepare SADR Data
+
+        $criteria['Sadr.submitted'] = array(1, 2);
+        $criteria['Sadr.copied !='] = '1';
+        $criteria['Sadr.deleted'] = false;
+        $criteria['Sadr.archived'] = false;
+		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        
+       
+        }
+      
+        if (empty($this->request->data['Report']['county_id'])) {
+            $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
+            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        } else {
+            $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
+
+            // Sadr Gender
+            $sadr_gender = $this->Sadr->find('all', array(
+                'fields' => array('gender', 'COUNT(*) as cnt'),
+                'contain' => array(), 'recursive' => -1,
+                'conditions' => $criteria,
+                'group' => array('gender'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            $gCount = 0;
+            foreach ($sadr_gender as $result) {
+                $gCount = +$result[0]['cnt'];
+            }
+            // Sadr Age
+
+            $case = "((case 
+        when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
+        when age_months > 0 and age_months < 1 then 'neonate'
+        when age_months < 13 then 'infant'
+        when age_months > 13 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+        else 'unknown'
+       end))";
+
+            $sadr_age = $this->Sadr->find('all', array(
+                'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
+                'contain' => array(),
+                'conditions' => $criteria,
+                'group' => array($case),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+            $aCount = 0;
+            foreach ($sadr_age as $key => $value) {
+                $aCount = +$value[0]['cnt'];
+            }
+            // SADR Month
+            $monthly = $this->Sadr->find('all', array(
+                'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
+                'contain' => array(), 'recursive' => -1,
+                'conditions' => $criteria,
+                'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+                'order' => array('salit'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            $mCount = 0;
+            foreach ($monthly as $key => $value) {
+                $mCount = +$value[0]['cnt'];
+            }
+
+            $dataValues = array();
+            $ageIndicator = $this->extract_indicator_element("Sadr submitted by age", $aCount);
+            $dataValues[] = $ageIndicator;
+
+            $genderIndicator = $this->extract_indicator_element("Sadr submitted by gender", $gCount);
+            $dataValues[] = $genderIndicator;
+
+            $monthIndicator = $this->extract_indicator_element("Sadr submitted per month", $mCount);
+            $dataValues[] = $monthIndicator;
+
+            $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
+            if (empty($orgUnit)) {
+                $this->Session->setFlash(__('County Detials not updated, please sync data'), 'alerts/flash_error');
+                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+            }
+
+
+            $currentDate = date('Y-m-d');
+            $payload = [
+                "dataSet" => "khmkmn2RRx4",
+                "completeDate" => $currentDate,
+                "period" => "202311",
+                "orgUnit" => $orgUnit,
+                "dataValues" => $dataValues
+            ];
+            $apiUrl = Configure::read('khis_data_values_url');
+            $username = Configure::read('khis_usename');
+            $password =  Configure::read('khis_password');
+            
+            $ch = curl_init($apiUrl);
+             
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
+            
+            // Execute cURL session and get the response
+            $response = curl_exec($ch);
+            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            
+            // Check for cURL errors
+            if (curl_errno($ch)) {
+                echo 'Curl error: ' . curl_error($ch);
+            }
+            
+            // Close cURL session
+            curl_close($ch);
+            
+            if ($statusCode >= 200 && $statusCode < 300) {
+                $data = json_decode($response, true);
+                $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
+                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+             
+            } else {
+                $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
+                $this->redirect($this->referer());
+            }
+            
+             
+        }
+    }
+	
     public function extract_organization_unit($id = null)
     {
         $this->loadModel('County');
@@ -350,23 +506,6 @@ class KhisController extends AppController
         return $indicator_value;
     }
 
-    // public function generate_data_values()
-    // {
-    //     $indicator_value = array();
-    //     $this->loadModel('Khis');
-    //     $indicators = $this->Khis->find('all', array('order' => array('Khis.id' => 'ASC')));
-    //     foreach ($indicators as $key => $value) {
-    //         $id = $value;
-    //         $elementId = $value['Khis']['elementId'];
-    //         $elementName = $value['Khis']['elementName'];
-    //         $indicator_value[] = [
-    //             "dataElement" => $elementId,
-    //             "value" => $this->generate_value_by_name($elementName)
-    //         ];
-    //     }
-
-    //     return $indicator_value;
-    // }
     public function generate_reports_per_vaccines($drug_name = null, $aefiIds = array())
     {
         # code...   add a check to return where AefiListOfVaccine.aefi_id  is in the list of array
@@ -388,13 +527,15 @@ class KhisController extends AppController
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
-			$startMonth = $this->request->data['Report']['start_date'];
-			$endYear = $this->request->data['Report']['end_date'];
-			$criteria['Sadr.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-			$criteria['Sadr.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));}
-        
-        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
+		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        }
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
         }
@@ -404,9 +545,6 @@ class KhisController extends AppController
         if (!empty($this->request->data['Report']['age_group'])) {
             $criteria['Sadr.age_group'] = $this->request->data['Report']['age_group'];
         }
-        if (!empty($this->request->data['Report']['report_title'])) {
-            $criteria['Sadr.report_title'] = $this->request->data['Report']['report_title'];
-        }
 
         $sadrsIds = $this->Sadr->find('list', array(
             'fields' => array('Sadr.id'),
@@ -414,16 +552,6 @@ class KhisController extends AppController
         ));
         $sadrsIds = array_keys($sadrsIds);
         $id_arrays = array();
-
-
-        $geo = $this->Sadr->find('all', array(
-            'fields' => array('County.county_name', 'COUNT(*) as cnt'),
-            'contain' => array('County'),
-            'conditions' => $criteria,
-            'group' => array('County.county_name', 'County.id'),
-            'having' => array('COUNT(*) >' => 0),
-        ));
-
 
         $monthly = $this->Sadr->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
@@ -477,21 +605,11 @@ class KhisController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-        $this->set(compact('counties'));
-        $this->set(compact('geo'));
         $this->set(compact('sadr_gender'));
         $this->set(compact('sadr_age'));
         $this->set(compact('monthly'));
         $this->set(compact('year'));
-        $this->set(compact('reaction'));
-        $this->set(compact('report_title'));
-        $this->set(compact('qualification'));
-        $this->set(compact('seriousness'));
-        $this->set(compact('seriousness_reason'));
-        $this->set(compact('outcome_data'));
-        $this->set(compact('facility_data'));
-        $this->set(compact('suspected'));
-        $this->set('_serialize', 'geo', 'counties', 'sadr_gender', 'sadr_age', 'monthly', 'year', 'reaction', 'report_title', 'qualification', 'seriousness', 'seriousness_reason', 'outcome_data', 'facility_data', 'suspected');
+        $this->set('_serialize', 'sadr_gender', 'sadr_age', 'monthly', 'year');
     }
 
 
@@ -505,11 +623,17 @@ class KhisController extends AppController
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
-		$startMonth = $this->request->data['Report']['start_date'];
-		$endYear = $this->request->data['Report']['end_date'];
-		$criteria['Aefi.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-		$criteria['Aefi.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));}
+		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        
+       
+        }
 	
         // Filters
         if (!empty($this->request->data['Report']['county_id'])) {
@@ -599,7 +723,7 @@ class KhisController extends AppController
             ),
             'joins' => array(
                 array(
-                    'table' => 'vaccines', // Your Vaccine table name
+                    'table' => 'vaccines',
                     'alias' => 'Vaccine1',
                     'type' => 'LEFT',
                     'conditions' => array(
@@ -618,18 +742,12 @@ class KhisController extends AppController
 
         $this->set(compact('vaccines'));
         $this->set(compact('counties'));
-        $this->set(compact('geo'));
         $this->set(compact('sex'));
         $this->set(compact('age'));
         $this->set(compact('year'));
         $this->set(compact('vaccine'));
-        $this->set(compact('qualification'));
-        $this->set(compact('serious'));
-        $this->set(compact('reason'));
-        $this->set(compact('outcome'));
-        $this->set(compact('facilities'));
         $this->set(compact('months'));
 
-        $this->set('_serialize', 'geo', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year', 'qualification', 'serious', 'reason', 'outcome', 'facilities', 'months');
+        $this->set('_serialize', 'vaccines', 'vaccine', 'counties', 'sex', 'age', 'year', 'months');
     }
 }
