@@ -148,15 +148,7 @@ class KhisController extends AppController
     }
     public function manager_index()
     {
-        // if (empty($this->request->data['Report']['start_date']) && empty($this->request->data['Report']['end_date'])) {
-        //     $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
-        //     $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-        // }
 
-        // if (empty($this->request->data['Report']['county_id'])) {
-        //     $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
-        //     $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-        // }
         $sadrsSummary = $this->sadrs_summary();
         $aefiSummary = $this->aefi_summary();
 
@@ -183,8 +175,17 @@ class KhisController extends AppController
             $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
         }
-        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        
+        }
+            
         if (empty($this->request->data['Report']['county_id'])) {
             $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
@@ -400,12 +401,18 @@ class KhisController extends AppController
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
-			$startMonth = $this->request->data['Report']['start_date'];
-			$endYear = $this->request->data['Report']['end_date'];
-			$criteria['Sadr.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-			$criteria['Sadr.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));}
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
         
+       
+        }
+
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
@@ -517,12 +524,17 @@ class KhisController extends AppController
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
 
-		if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])){
-		$startMonth = $this->request->data['Report']['start_date'];
-		$endYear = $this->request->data['Report']['end_date'];
-		$criteria['Aefi.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-		$criteria['Aefi.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));}
-	
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $month = $this->request->data['Report']['start_date'];
+            $year = $this->request->data['Report']['end_date'];
+
+            // Calculate the start and end dates for the given month and year
+            $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
+            $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+        
+        }
+
         // Filters
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
