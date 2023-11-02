@@ -76,12 +76,14 @@ class KhisController extends AppController
                     $elementId = $element['id'];
 
                     //load model County where name is like name and update the column org_unit 
-                    $nameParts = explode(' ', $elementName);
-                    $firstPart = $nameParts[0];
-
+                    if ($elementName != "Nairobi County") {
+                        $elementNameWithoutCounty = trim(str_replace('County', '', $elementName));
+                    } else {
+                        $elementNameWithoutCounty = $elementName;
+                    }
                     // Find the record where the name is like $firstPart
                     $record = $this->County->find('first', [
-                        'conditions' => ['county_name LIKE' => $firstPart],
+                        'conditions' => ['county_name LIKE' => $elementNameWithoutCounty],
                     ]);
 
                     if ($record) {
@@ -146,6 +148,15 @@ class KhisController extends AppController
     }
     public function manager_index()
     {
+        // if (empty($this->request->data['Report']['start_date']) && empty($this->request->data['Report']['end_date'])) {
+        //     $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
+        //     $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        // }
+
+        // if (empty($this->request->data['Report']['county_id'])) {
+        //     $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
+        //     $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        // }
         $sadrsSummary = $this->sadrs_summary();
         $aefiSummary = $this->aefi_summary();
 
@@ -168,6 +179,10 @@ class KhisController extends AppController
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
+        if (empty($this->request->data['Report']['start_date']) && empty($this->request->data['Report']['end_date'])) {
+            $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
+            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        }
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if (empty($this->request->data['Report']['county_id'])) {
@@ -281,38 +296,35 @@ class KhisController extends AppController
             $apiUrl = Configure::read('khis_data_values_url');
             $username = Configure::read('khis_usename');
             $password =  Configure::read('khis_password');
-            
+
             $ch = curl_init($apiUrl);
-             
+
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
-            
+
             // Execute cURL session and get the response
             $response = curl_exec($ch);
             $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            
+
             // Check for cURL errors
             if (curl_errno($ch)) {
                 echo 'Curl error: ' . curl_error($ch);
             }
-            
+
             // Close cURL session
             curl_close($ch);
-            
+
             if ($statusCode >= 200 && $statusCode < 300) {
                 $data = json_decode($response, true);
                 $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
                 $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-             
             } else {
                 $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
                 $this->redirect($this->referer());
             }
-            
-             
         }
     }
     public function extract_organization_unit($id = null)
