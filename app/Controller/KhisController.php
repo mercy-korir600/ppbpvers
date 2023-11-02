@@ -355,14 +355,8 @@ class KhisController extends AppController
         $criteria['Sadr.copied !='] = '1';
         $criteria['Sadr.deleted'] = false;
         $criteria['Sadr.archived'] = false;
-
-		$startMonth = $this->request->data['Report']['start_date_month'];
-		$endYear = $this->request->data['Report']['end_date_year'];
-		$criteria['Sadr.reporter_date >= ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01"));
-		$criteria['Sadr.reporter_date < ?'] = date('Y-m-d', strtotime("{$endYear}-{$startMonth}-01 +1 month"));
-
-        // if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-        //     $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
@@ -408,7 +402,7 @@ class KhisController extends AppController
 
 
         // Get All SADRs by Gender 
-        $sadr_gender = $this->Sadr->find('all', array(
+        $sex = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
@@ -428,7 +422,7 @@ class KhisController extends AppController
                 else 'unknown'
                end))";
 
-        $sadr_age = $this->Sadr->find('all', array(
+        $age = $this->Sadr->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
             'contain' => array(),
             'conditions' => $criteria,
@@ -448,8 +442,8 @@ class KhisController extends AppController
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
-        $this->set(compact('sadr_gender'));
-        $this->set(compact('sadr_age'));
+        $this->set(compact('sex'));
+        $this->set(compact('age'));
         $this->set(compact('monthly'));
         $this->set(compact('year'));
         $this->set(compact('reaction'));
@@ -471,7 +465,7 @@ class KhisController extends AppController
         $id_arrays = array(0);
         $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
-        $criteria['Aefi.deleted'] = false;	
+        $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
