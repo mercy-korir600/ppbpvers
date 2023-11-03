@@ -141,7 +141,7 @@ $this->Html->css('summary', null, array('inline' => false));
 <hr>
 <!-- SADR Summary Table -->
 <div class="row-fluid">
-    <div class="span6">
+    <div class="span4">
         <h4>SADRs Gender Distribution</h4>
         <?php $c = 0; ?>
         <table class="table table-condensed table-bordered" id="sadr_gender_table">
@@ -171,7 +171,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </table>
     </div>
 
-    <div class="span6">
+    <div class="span4">
         <h4>SADRs Age Distribution</h4>
         <?php $c = 0; ?>
         <table class="table table-condensed table-bordered" id="sadr_age_table">
@@ -200,9 +200,7 @@ $this->Html->css('summary', null, array('inline' => false));
             </tfoot>
         </table>
     </div>
-</div>
-<div class="row-fluid">
-<div class="span6">
+    <div class="span4">
         <h4>SADRs per Month</h4>
 
         <?php $c = 0; ?>
@@ -234,6 +232,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </table>
     </div>
 </div>
+ 
 
 <script type="text/javascript">
     function vaccineTab(evt, vaccinetabName) {

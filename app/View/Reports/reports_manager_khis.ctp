@@ -53,8 +53,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
             </td>
             <td>
               <?php
-              $currentYear = date('Y');
-              $years = range(1960, $currentYear);
+              
               echo $this->Form->input(
                 'end_date',
                 array(
@@ -62,7 +61,7 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                   'type' => 'select',
                   'class' => 'span2 unauthorized_index',
                   'label' => array('class' => 'required', 'text' => 'Year'),
-                  'options' => array_combine($years, $years),
+                  'options' => $years,
                   'empty' => 'Year'
                 )
               );

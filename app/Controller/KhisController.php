@@ -151,13 +151,17 @@ class KhisController extends AppController
 
         $sadrsSummary = $this->sadrs_summary();
         $aefiSummary = $this->aefi_summary();
+        $currentYear = date('Y');
+        $years = range($currentYear, $currentYear - 19);
 
         $this->set('sadrsSummary', $sadrsSummary);
         $this->set('aefiSummary', $aefiSummary);
+        $this->set('years', $years);
         if (isset($this->request->data['uploadReport'])) {
             $this->prepare_upload_data();
             $this->prepare_upload_sadr();
         }
+
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('khis_summary');
