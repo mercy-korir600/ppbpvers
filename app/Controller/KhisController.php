@@ -436,7 +436,7 @@ class KhisController extends AppController
                         "value" => $result[0]['cnt']
                     ];
                 }
-                
+
                 if ($result['Vaccine']['vaccine_name'] == "Hepatitis B Vaccine") {
                     $dataValues[] = [
                         "dataElement" => "St9YPLSwhzr",
@@ -479,7 +479,6 @@ class KhisController extends AppController
                         "value" => $result[0]['cnt']
                     ];
                 }
-                
             }
             $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
             if (empty($orgUnit)) {
@@ -487,6 +486,9 @@ class KhisController extends AppController
                 $this->redirect(array('controller' => 'khis', 'action' => 'index'));
             }
 
+            $sadr_data_values = $this->prepare_upload_sadr();
+            //add this sadr values to the main $dataValues to make one complete array 
+            $dataValues = array_merge($dataValues, $sadr_data_values);
 
             $currentDate = date('Y-m-d');
             $payload = [
@@ -571,25 +573,34 @@ class KhisController extends AppController
                 'group' => array('gender'),
                 'having' => array('COUNT(*) >' => 0),
             ));
+            foreach ($sadr_gender as $key => $result) {
+                if ($result['Sadr']['gender'] == "Female") {
 
-            $gCount = 0;
-            foreach ($sadr_gender as $result) {
-                $gCount = +$result[0]['cnt'];
+                    $dataValues[] = [
+                        "dataElement" => "zhcRP1VMKRQ",
+                        "categoryOptionCombo" => "HSgm52qfmu9",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Sadr']['gender'] == "Male") {
+
+                    $dataValues[] = [
+                        "dataElement" => "zhcRP1VMKRQ",
+                        "categoryOptionCombo" => "HZqsa0U6ivP",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
             }
             // Sadr Age
-
             $case = "((case 
-        when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
-        when age_months > 0 and age_months < 1 then 'neonate'
-        when age_months < 13 then 'infant'
-        when age_months > 13 then 'child'
-        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
-        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
-        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
-        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
-        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
-        else 'unknown'
-       end))";
+            when trim(age_group) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_group
+            when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+            when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+            when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+            when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+            when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+            else 'unknown'
+           end))";
 
             $sadr_age = $this->Sadr->find('all', array(
                 'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
@@ -598,9 +609,49 @@ class KhisController extends AppController
                 'group' => array($case),
                 'having' => array('COUNT(*) >' => 0),
             ));
-            $aCount = 0;
-            foreach ($sadr_age as $key => $value) {
-                $aCount = +$value[0]['cnt'];
+            foreach ($sadr_age as $key => $result) {
+                if ($result[0]['ager'] == "elderly") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "D1wVwZpCZxk",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "adult") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "YB86GwI0Xwk",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "adolescent") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "xp9OJZGm7S8",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "child") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "AjVBULP0Qz9",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "infant") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "uZJ1ke751Tr",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result[0]['ager'] == "neonate") {
+                    $dataValues[] = [
+                        "dataElement" => "WBTIuVZIHeV",
+                        "categoryOptionCombo" => "GIn7lBrO466",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
             }
             // SADR Month
             $monthly = $this->Sadr->find('all', array(
@@ -612,68 +663,16 @@ class KhisController extends AppController
                 'having' => array('COUNT(*) >' => 0),
             ));
 
-            $mCount = 0;
+
             foreach ($monthly as $key => $value) {
-                $mCount = +$value[0]['cnt'];
-                // Add monthly data
                 $dataValues[] = [
-                    "dataElement" => "q25dTTsh47j",
+                    "dataElement" => "xesjTUtnEpH",
                     "categoryOptionCombo" => "NhSoXUMPK2K",
-                    "value" => $aCount
+                    "value" => $value[0]['cnt']
                 ];
             }
-
-
-            $orgUnit = $this->extract_organization_unit($this->request->data['Report']['county_id']);
-            if (empty($orgUnit)) {
-                $this->Session->setFlash(__('County Detials not updated, please sync data'), 'alerts/flash_error');
-                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-            }
-
-
-            $currentDate = date('Y-m-d');
-            $payload = [
-                "dataSet" => "khmkmn2RRx4",
-                "completeDate" => $currentDate,
-                "period" => $year . "" . $month,
-                "orgUnit" => $orgUnit,
-                "dataValues" => $dataValues
-            ];
-            debug($payload);
-            exit;
-            $apiUrl = Configure::read('khis_data_values_url');
-            $username = Configure::read('khis_usename');
-            $password =  Configure::read('khis_password');
-
-            $ch = curl_init($apiUrl);
-
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); // Convert the payload to a query string
-
-            // Execute cURL session and get the response
-            $response = curl_exec($ch);
-            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-            // Check for cURL errors
-            if (curl_errno($ch)) {
-                echo 'Curl error: ' . curl_error($ch);
-            }
-
-            // Close cURL session
-            curl_close($ch);
-
-            if ($statusCode >= 200 && $statusCode < 300) {
-                $data = json_decode($response, true);
-                $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
-                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('Experienced problems submitting data, please try again'), 'alerts/flash_error');
-                $this->redirect($this->referer());
-            }
         }
+        return $dataValues;
     }
 
     public function extract_organization_unit($id = null)
