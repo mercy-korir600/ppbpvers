@@ -1242,9 +1242,164 @@
                     'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
                 )
             ));
+
+            if(!empty($aefi['Aefi']['aefi_symptoms'])){
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => $aefi['Aefi']['aefi_symptoms'],
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+
+            }
+
+            // debug($aefi['Aefi']['aefi_symptoms']);
+            // exit;
+
+            // retrieve meddra equivalent of the description:
+            if ($aefi['Aefi']['local_reaction']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Severe",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+
+            if ($aefi['Aefi']['convulsion']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Seizures",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['abscess']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Abscess",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['bcg']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "BCG Lymphadenitis",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['meningitis']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Encephalopathy",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['toxic_shock']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Toxic shock",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['anaphylaxis']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Anaphylaxis",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['high_fever']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Severe",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['paralysis']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Paralysis",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            if ($aefi['Aefi']['urticaria']) {
+
+                $aefi['AefiDescription'][] = array(
+                    'id' => $aefi['Aefi']['id'],
+                    'aefi_id' => $aefi['Aefi']['id'],
+                    'description' => "Generalized urticaria",
+                    'created' => $aefi['Aefi']['created'],
+                    'modified' => $aefi['Aefi']['modified']
+                );
+            }
+            $medDRAList = array();
+            if (!empty($aefi['AefiDescription'])) {
+
+                $medDRAList = $this->generateMedDRACodeValue($aefi['AefiDescription']);
+            }
+
+            $aefi['Aefi']['reactions'] = $medDRAList;
+
+            // debug($aefi['Aefi']['reactions']);
+            // exit;
             $aefi = Sanitize::clean($aefi, array('escape' => true));
             $this->set('aefi', $aefi);
             $this->response->download('AEFI_' . $aefi['Aefi']['id'] . '.xml');
+        }
+
+
+        public  function generateMedDRACodeValue($medDRAs = array())
+        {
+            $this->loadModel('Meddra');
+            $medDRAList = array();
+            foreach ($medDRAs as $md) {
+                $description = $md['description'];
+                $meddra = $this->Meddra->find('first', array(
+                    'conditions' => array(
+                        'Meddra.llt_name' => $description
+                    ),
+                    'fields' => array('Meddra.llt_name', 'Meddra.pt_code')
+                ));
+
+                if ($meddra) {
+                    // Record found
+                    $llt_name = $meddra['Meddra']['llt_name'];
+                    $pt_code = $meddra['Meddra']['pt_code'];
+                    // Do something with $llt_name and $pt_code
+                    $medDRAList[] = array(
+                        'llt_name' => $llt_name,
+                        'pt_code' => $pt_code
+                    );
+                }
+            }
+            return $medDRAList;
         }
 
         public function vigiflow($id = null)

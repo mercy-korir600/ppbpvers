@@ -193,7 +193,7 @@
                 <patientautopsyyesno/>
             </patientdeath>
             <reaction>
-                <primarysourcereaction><?php echo $sadr['Sadr']['description_of_reaction']; ?></primarysourcereaction>
+                <primarysourcereaction><?php echo $sadr['Sadr']['reaction']; ?></primarysourcereaction>
                 <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
                 <reactionmeddrallt><?php echo $sadr['Sadr']['medra']; ?></reactionmeddrallt>
                 <reactionmeddraversionpt></reactionmeddraversionpt>

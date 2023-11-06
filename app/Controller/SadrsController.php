@@ -83,11 +83,11 @@ class SadrsController extends AppController
         if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
             if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
                 $criteria['OR'] = array(
-                    'Sadr.user_id' => $this->Auth->user('id'), 
+                    'Sadr.user_id' => $this->Auth->user('id'),
                     array(
                         'Sadr.serious' => 'Yes',
                         'Sadr.submitted' => array(2, 3),
-                        'Sadr.county_id' => $this->Auth->user('county_id') 
+                        'Sadr.county_id' => $this->Auth->user('county_id')
                     )
                 );
             } else {
@@ -337,7 +337,7 @@ class SadrsController extends AppController
 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
-            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment','SadrOriginal.ReviewComment', 'ReviewComment.Attachment','ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment', 'SadrOriginal.ReviewComment', 'ReviewComment.Attachment', 'ExternalComment')
         ));
         $this->set('sadr', $sadr);
 
@@ -514,10 +514,32 @@ class SadrsController extends AppController
             'conditions' => array('Sadr.id' => $id),
             'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'County', 'SubCounty', 'Attachment', 'Designation')
         ));
-        $sadr['Sadr']['medra']=" ";
+        if (empty($sadr['Sadr']['reaction'])) {
+            $this->Session->setFlash(__('Please provide a reaction'), 'flash_error');
+            $this->redirect($this->referer());
+        }
+       
+        $sadr['Sadr']['medra'] = $this->generate_meddra_code($sadr['Sadr']['reaction']);
         $sadr = Sanitize::clean($sadr, array('escape' => true));
         $this->set('sadr', $sadr);
         $this->response->download('SADR_' . $sadr['Sadr']['id'] . '.xml');
+    }
+
+    public function generate_meddra_code($name = null)
+    {
+        $this->loadModel('Meddra');
+        $meddra = $this->Meddra->find('first', array(
+            'conditions' => array(
+                'Meddra.llt_name' => $name
+            ),
+            'fields' => array('Meddra.llt_name', 'Meddra.pt_code')
+        ));
+
+        if ($meddra) {
+            // Record found 
+            return $meddra['Meddra']['pt_code'];
+        }
+        return null;
     }
 
     public function vigiflow($id = null)
@@ -887,7 +909,7 @@ class SadrsController extends AppController
                 'User.id' => 'DESC'
             )
         ));
-      
+
         foreach ($users as $user) {
             $model =  'reporter';
             if ($user['User']['group_id'] == 2) {
