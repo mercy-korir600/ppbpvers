@@ -96,7 +96,7 @@
              </li>
              <li class="dropdown <?php echo $this->fetch('KHIS') ?>">
                 <?php
-                    echo $this->Html->link('<i class="fa fa-database"></i> KHIS',
+                    echo $this->Html->link('<i class="fa fa-database"></i> Data Aggregate',
                         array('controller' => 'khis', 'action'=>'index', 'manager' => true ), array('escape' => false ));
                 ?>
              </li>

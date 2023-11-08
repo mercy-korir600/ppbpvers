@@ -158,8 +158,7 @@ class KhisController extends AppController
         $this->set('aefiSummary', $aefiSummary);
         $this->set('years', $years);
         if (isset($this->request->data['uploadReport'])) {
-            $this->prepare_upload_data();
-            $this->prepare_upload_sadr();
+            $this->prepare_upload_data(); 
         }
 
 
@@ -207,23 +206,36 @@ class KhisController extends AppController
             ));
 
             foreach ($gender as $key => $result) {
-                if ($result['Aefi']['gender'] == "Female") {
 
-                    $dataValues[] = [
-                        "dataElement" => "YRy6ZboTEnh",
-                        "categoryOptionCombo" => "HSgm52qfmu9",
-                        "value" => $result[0]['cnt']
-                    ];
-                }
-                if ($result['Aefi']['gender'] == "Male") {
+                $dataElement = GenderElements::GENDER_DATA_ELEMENT;
+                $categoryOptionCombo = ($result['Aefi']['gender'] == "Female") ? GenderElements::FEMALE_CATEGORY_OPTION_COMBO : GenderElements::MALE_CATEGORY_OPTION_COMBO;
+    
+                $dataValues[] = array(
+                    "dataElement" => $dataElement,
+                    "categoryOptionCombo" => $categoryOptionCombo,
+                    "value" => $result[0]['cnt']
+                );
+                // if ($result['Aefi']['gender'] == "Female") {
 
-                    $dataValues[] = [
-                        "dataElement" => "YRy6ZboTEnh",
-                        "categoryOptionCombo" => "HZqsa0U6ivP",
-                        "value" => $result[0]['cnt']
-                    ];
-                }
+                //     $dataValues[] = [
+                //         "dataElement" => "YRy6ZboTEnh",
+                //         "categoryOptionCombo" => "HSgm52qfmu9",
+                //         "value" => $result[0]['cnt']
+                //     ];
+                // }
+                // if ($result['Aefi']['gender'] == "Male") {
+
+                //     $dataValues[] = [
+                //         "dataElement" => "YRy6ZboTEnh",
+                //         "categoryOptionCombo" => "HZqsa0U6ivP",
+                //         "value" => $result[0]['cnt']
+                //     ];
+                // }
             }
+
+
+            debug($dataValues);
+            exit;
             // AEFI Age
 
             $case = "((case 

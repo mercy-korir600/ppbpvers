@@ -1334,7 +1334,7 @@
                 $aefi['AefiDescription'][] = array(
                     'id' => $aefi['Aefi']['id'],
                     'aefi_id' => $aefi['Aefi']['id'],
-                    'description' => "Severe",
+                    'description' => "Fever",
                     'created' => $aefi['Aefi']['created'],
                     'modified' => $aefi['Aefi']['modified']
                 );

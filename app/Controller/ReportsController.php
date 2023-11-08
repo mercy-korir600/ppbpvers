@@ -815,16 +815,20 @@ class ReportsController extends AppController
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
+// debug($facilities);
+// exit;
 
         $months = $this->Aefi->find('all', array(
-            'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
+            'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt','id'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit','Aefi.id'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
+
+        // debug($months);
+        // exit;
         $conditions = array_merge($criteria, array('serious_yes IS NOT NULL'));
 
         $reason = $this->Aefi->find('all', array(
@@ -850,7 +854,8 @@ class ReportsController extends AppController
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
             ),
-            'group' => array('Vaccine.vaccine_name'),
+            // 'group' => array('Vaccine.vaccine_name'),
+            'group' => array('Vaccine.vaccine_name','Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
         $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
@@ -917,7 +922,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_aefi_summary');
         } else {
+              if ($this->Auth->User('user_type') == 'County Pharmacist'){
+                $this->render('upgrade/county_aefi');
+              }else{
             $this->render('upgrade/aefi_summary');
+              }
         }
     }
     public function pqmps_summary()
