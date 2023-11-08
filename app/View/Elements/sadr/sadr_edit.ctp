@@ -600,10 +600,12 @@ $this->Html->css('sadr', false, array('inline' => false));
 							'placeholder' => 'type here...',
 							'title' => 'Reaction',
 							'data-content' => 'e.g Nevirapine related Rash',
-							'after' => '<p class="help-block"> e.g Nevirapine related rash </p></div>',
+							'after' => '</div>',
 							'class' => 'span5 mapop',
 						)
 						);
+
+						echo $this->element('multi/sadr_reactions');
 
 						echo $this->Form->input('date_of_onset_of_reaction', array(
 							'type' => 'date',

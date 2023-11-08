@@ -171,4 +171,8 @@ $(document).ready(function () {
         $('#SadrMedicinalProduct').attr("checked", false); 
     }
     );
+
+    $("#SadrReactionReaction").autocomplete({
+		source: "/meddras/autocomplete.json"
+	});
 });

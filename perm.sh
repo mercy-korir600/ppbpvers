@@ -47,6 +47,7 @@ app/Console/cake acl grant Group.2 controllers/Notifications
 app/Console/cake acl grant Group.2 controllers/Comments 
 app/Console/cake acl grant Group.2 controllers/Reports
 app/Console/cake acl grant Group.2 controllers/AefiDescriptions
+app/Console/cake acl grant Group.2 controllers/SadrReactions
 app/Console/cake acl grant Group.2 controllers/Saefis
 app/Console/cake acl grant Group.2 controllers/Reviews
 app/Console/cake acl grant Group.2 controllers/Khis
@@ -131,6 +132,7 @@ app/Console/cake acl grant Group.3 controllers/Pints/delete
 app/Console/cake acl grant Group.3 controllers/Comments
 app/Console/cake acl grant Group.3 controllers/Reports
 app/Console/cake acl grant Group.3 controllers/AefiDescriptions
+app/Console/cake acl grant Group.3 controllers/SadrReactions
 app/Console/cake acl grant Group.3 controllers/Saefis
 app/Console/cake acl grant Group.3 controllers/Reviews
 
@@ -166,6 +168,7 @@ app/Console/cake acl grant Group.4 controllers/Notifications/delete
 app/Console/cake acl grant Group.4 controllers/Comments
 app/Console/cake acl grant Group.4 controllers/Reports
 app/Console/cake acl grant Group.4 controllers/Saefis
+app/Console/cake acl grant Group.4 controllers/SadrReactions
 
  
 
@@ -211,6 +214,7 @@ app/Console/cake acl grant Group.5 controllers/Notifications
 app/Console/cake acl grant Group.5 controllers/Comments 
 app/Console/cake acl grant Group.5 controllers/Reports
 app/Console/cake acl grant Group.5 controllers/AefiDescriptions
+app/Console/cake acl grant Group.5 controllers/SadrReactions
 app/Console/cake acl grant Group.5 controllers/Saefis
 
 

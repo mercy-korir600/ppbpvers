@@ -337,7 +337,7 @@ class SadrsController extends AppController
 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
-            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment', 'SadrOriginal.ReviewComment', 'ReviewComment.Attachment', 'ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment', 'SadrOriginal.ReviewComment', 'ReviewComment.Attachment', 'ExternalComment')
         ));
         $this->set('sadr', $sadr);
 
@@ -408,7 +408,7 @@ class SadrsController extends AppController
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
             'contain' => array(
-                'SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
+                'SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
                 'SadrOriginal', 'SadrOriginal.SadrDescription', 'SadrOriginal.SadrListOfDrug', 'SadrOriginal.SadrListOfDrug.Route', 'SadrOriginal.SadrListOfDrug.Frequency', 'SadrOriginal.SadrListOfDrug.Dose', 'SadrOriginal.SadrListOfMedicine', 'SadrOriginal.SadrListOfMedicine.Route', 'SadrOriginal.SadrListOfMedicine.Frequency', 'SadrOriginal.SadrListOfMedicine.Dose', 'SadrOriginal.County', 'SadrOriginal.SubCounty', 'SadrOriginal.Attachment', 'SadrOriginal.Designation', 'SadrOriginal.ExternalComment', 'SadrOriginal.ReviewComment'
             )
         ));
@@ -640,7 +640,7 @@ class SadrsController extends AppController
             $sadr = Hash::remove($this->Sadr->find(
                 'first',
                 array(
-                    'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfMedicine'),
+                    'contain' => array('SadrListOfDrug','SadrReaction', 'SadrDescription', 'SadrListOfMedicine'),
                     'conditions' => array('Sadr.id' => $id)
                 )
             ), 'Sadr.id');
@@ -1083,7 +1083,7 @@ class SadrsController extends AppController
         $sadr = Hash::remove($this->Sadr->find(
             'first',
             array(
-                'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfMedicine'),
+                'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfMedicine'),
                 'conditions' => array('Sadr.id' => $id)
             )
         ), 'Sadr.id');
@@ -1096,6 +1096,7 @@ class SadrsController extends AppController
         $sadr = Hash::remove($sadr, 'SadrListOfMedicine.{n}.id');
         $data_save = $sadr['Sadr'];
         $data_save['SadrListOfDrug'] = $sadr['SadrListOfDrug'];
+        $data_save['SadrReaction'] = $sadr['SadrReaction'];
         if (isset($sadr['SadrListOfMedicine'])) $data_save['SadrListOfMedicine'] = $sadr['SadrListOfMedicine'];
         $data_save['sadr_id'] = $id;
         $data_save['user_id'] = $this->Auth->User('id');;
@@ -1157,7 +1158,7 @@ class SadrsController extends AppController
         //Manager will always edit a copied report
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $sadr['Sadr']['sadr_id']),
-            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
         ));
         $this->set('sadr', $sadr);
 

@@ -308,7 +308,14 @@ class Sadr extends AppModel
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ReviewComment.model' => 'Sadr', 'ReviewComment.category' => 'review'),
+        ),
+        'SadrReaction' => array(
+            'className' => 'SadrReaction',
+            'foreignKey' => 'sadr_id',
+            'dependent' => true
         )
+
+        
     );
 
     public $validate = array(
