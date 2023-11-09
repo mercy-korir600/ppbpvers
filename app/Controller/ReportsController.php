@@ -439,7 +439,7 @@ class ReportsController extends AppController
     public function generate_reports_per_reaction($drug_name = null, $ids = array())
     {
         # code...
-        $cond = $this->Sadr->SadrListOfDrug->find('list', array( 
+        $cond = $this->Sadr->SadrListOfDrug->find('list', array(
             'conditions' => array(
                 // 'SadrListOfDrug.drug_name' => $drug_name,
                 'LOWER(SadrListOfDrug.drug_name) LIKE' => '%' . strtolower($drug_name) . '%',
@@ -573,7 +573,7 @@ class ReportsController extends AppController
             'group' => array('reaction'),
             'having' => array('COUNT(*) >' => 0),
         ));
- 
+
 
         // Reporter Qualification
         $qualification = $this->Sadr->find('all', array(
@@ -670,8 +670,9 @@ class ReportsController extends AppController
             $this->render('upgrade/manager_sadr_summary');
         } else {
             if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') {
-                $this->render('upgrade/sadrs/county');
+                $this->render('upgrade/county_sadr');
             } else {
+
                 $this->render('upgrade/sadr_summary');
             }
         }
@@ -815,8 +816,8 @@ class ReportsController extends AppController
             'order' => array('COUNT(*) DESC'),
             'having' => array('COUNT(*) >' => 0),
         ));
-// debug($facilities);
-// exit;
+        // debug($facilities);
+        // exit;
 
         $months = $this->Aefi->find('all', array(
             'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
@@ -855,7 +856,7 @@ class ReportsController extends AppController
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
             ),
             'group' => array('Vaccine.vaccine_name'),
-            // 'group' => array('Vaccine.vaccine_name','Vaccine.id'),
+            // 'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
         $vaccinealt = $this->Aefi->AefiListOfVaccine->find('all', array(
@@ -922,11 +923,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_aefi_summary');
         } else {
-              if ($this->Auth->User('user_type') == 'County Pharmacist'){
+            if ($this->Auth->User('user_type') == 'County Pharmacist') {
                 $this->render('upgrade/county_aefi');
-              }else{
-            $this->render('upgrade/aefi_summary');
-              }
+            } else {
+                $this->render('upgrade/aefi_summary');
+            }
         }
     }
     public function pqmps_summary()
@@ -1298,6 +1299,14 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
+           // PQHPTS per Designation
+           $designation = $this->Device->find('all', array(
+            'fields' => array('Designation.name', 'COUNT(*) as cnt'),
+            'contain' => array('Designation'),
+            'conditions' => $criteria,
+            'group' => array('Designation.name', 'Designation.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
         // Amos
 
         $this->set(compact('counties'));
@@ -1311,13 +1320,18 @@ class ReportsController extends AppController
         $this->set(compact('outcome'));
         $this->set(compact('facilities'));
         $this->set(compact('months'));
+        $this->set(compact('designation'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'serious', 'reason', 'brands', 'outcome', 'facilities', 'months');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'serious', 'reason', 'brands', 'outcome', 'facilities', 'months','designation');
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_devices_summary');
         } else {
-            $this->render('upgrade/devices_summary');
+            if ($this->Auth->User('user_type') == 'County Pharmacist') {
+                $this->render('upgrade/county_devices');
+            } else {
+                $this->render('upgrade/devices_summary');
+            }
         }
     }
     public function transfusions_summary()
@@ -1459,7 +1473,14 @@ class ReportsController extends AppController
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
-
+        // $facilities = $this->Transfusion->find('all', array(
+        //     'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
+        //     'contain' => array(), 'recursive' => -1,
+        //     'conditions' => $criteria,
+        //     'group' => array('name_of_institution'),
+        //     'order' => array('COUNT(*) DESC'),
+        //     'having' => array('COUNT(*) >' => 0),
+        // ));
 
         $this->set(compact('counties'));
         $this->set(compact('geo'));
@@ -1470,7 +1491,7 @@ class ReportsController extends AppController
         $this->set(compact('outcome'));
         $this->set(compact('previous_reactions'));
         $this->set(compact('previous_transfusion'));
-        $this->set(compact('months'));
+        $this->set(compact('months')); 
 
         $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
         $this->set('_serialize', 'qualification', 'outcome', 'previous_reactions', 'previous_transfusion', 'months');
@@ -1478,7 +1499,10 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_transfusions_summary');
         } else {
-            $this->render('upgrade/transfusions_summary');
+            if ($this->Auth->User('user_type') == 'County Pharmacist'){
+                $this->render('upgrade/county_transfusions');
+            }else{
+            $this->render('upgrade/transfusions_summary');}
         }
     }
     public function saes_summary()
@@ -1821,7 +1845,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_medications_summary');
         } else {
+            if ($this->Auth->User('user_type') == 'County Pharmacist') {
+                $this->render('upgrade/county_medications');
+            }else{
             $this->render('upgrade/medications_summary');
+            }
         }
     }
     public function sadrs_by_age()
