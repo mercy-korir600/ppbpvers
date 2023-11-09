@@ -10,7 +10,7 @@ $this->assign('DEVICE', 'active');
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($device['ExternalComment']); ?>)</a></li>
 
     <?php
-    if ($this->Session->read('Auth.User.user_type') === "County Pharmacist") {
+    if ($this->Session->read('Auth.User.user_type') === "County Pharmacistcc") {
       if (isset($device['Device']['serious']) && in_array($device['Device']['serious'], ['Fatal', 'Serious'])) { ?>
         <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>
     <?php

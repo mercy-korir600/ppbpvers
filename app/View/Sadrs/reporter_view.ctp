@@ -9,7 +9,7 @@ $this->assign('SADR', 'active');
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $sadr['Sadr']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($sadr['ExternalComment']); ?>)</a></li>
     <?php
-     if ($this->Session->read('Auth.User.user_type') === "County Pharmacist") {
+     if ($this->Session->read('Auth.User.user_type') === "County Pharmacistcc") {
     if ($sadr['Sadr']['serious'] == "Yes") {
     ?>
       <li><a href="#committee-review" data-toggle="tab">Committee Review </a></li>

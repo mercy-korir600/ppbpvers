@@ -158,7 +158,7 @@ class KhisController extends AppController
         $this->set('aefiSummary', $aefiSummary);
         $this->set('years', $years);
         if (isset($this->request->data['uploadReport'])) {
-            $this->prepare_upload_data(); 
+            $this->prepare_upload_data();
         }
 
 
@@ -187,12 +187,33 @@ class KhisController extends AppController
             // Calculate the start and end dates for the given month and year
             $startDate = date('Y-m-01 00:00:00', strtotime("$year-$monthdata"));
             $endDate = date('Y-m-t 23:59:59', strtotime("$year-$monthdata"));
-            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+
+
+            if (strtotime($startDate) > strtotime(date('Y-m-01 00:00:00')) || strtotime($endDate) > strtotime(date('Y-m-t 23:59:59'))) {
+                $this->Session->setFlash(__('Aggregate data should be from the previous month'), 'alerts/flash_error');
+                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+            } else {
+
+                $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
+            }
         }
 
         if (empty($this->request->data['Report']['county_id'])) {
-            $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
-            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+
+            //prepare data for the whole country with the affected counties:
+            $geo = $this->Aefi->find('all', array(
+                'fields' => array('County.county_name', 'COUNT(*) as cnt'),
+                'contain' => array('County'),
+                'conditions' => $criteria,
+                'group' => array('County.county_name', 'County.id'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            //loop through each county
+            foreach ($geo as $single) {
+                $criteria['Aefi.county_id'] = $single['County']['id'];
+            }
+            // exit;
         } else {
             $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
 
@@ -206,50 +227,37 @@ class KhisController extends AppController
             ));
 
             foreach ($gender as $key => $result) {
+                if ($result['Aefi']['gender'] == "Female") {
 
-                $dataElement = GenderElements::GENDER_DATA_ELEMENT;
-                $categoryOptionCombo = ($result['Aefi']['gender'] == "Female") ? GenderElements::FEMALE_CATEGORY_OPTION_COMBO : GenderElements::MALE_CATEGORY_OPTION_COMBO;
-    
-                $dataValues[] = array(
-                    "dataElement" => $dataElement,
-                    "categoryOptionCombo" => $categoryOptionCombo,
-                    "value" => $result[0]['cnt']
-                );
-                // if ($result['Aefi']['gender'] == "Female") {
+                    $dataValues[] = [
+                        "dataElement" => "YRy6ZboTEnh",
+                        "categoryOptionCombo" => "HSgm52qfmu9",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
+                if ($result['Aefi']['gender'] == "Male") {
 
-                //     $dataValues[] = [
-                //         "dataElement" => "YRy6ZboTEnh",
-                //         "categoryOptionCombo" => "HSgm52qfmu9",
-                //         "value" => $result[0]['cnt']
-                //     ];
-                // }
-                // if ($result['Aefi']['gender'] == "Male") {
-
-                //     $dataValues[] = [
-                //         "dataElement" => "YRy6ZboTEnh",
-                //         "categoryOptionCombo" => "HZqsa0U6ivP",
-                //         "value" => $result[0]['cnt']
-                //     ];
-                // }
+                    $dataValues[] = [
+                        "dataElement" => "YRy6ZboTEnh",
+                        "categoryOptionCombo" => "HZqsa0U6ivP",
+                        "value" => $result[0]['cnt']
+                    ];
+                }
             }
-
-
-            debug($dataValues);
-            exit;
+ 
             // AEFI Age
-
             $case = "((case 
-        when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
-        when age_months > 0 and age_months < 1 then 'neonate'
-        when age_months < 13 then 'infant'
-        when age_months > 13 then 'child'
-        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
-        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
-        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
-        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
-        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
-        else 'unknown'
-       end))";
+            when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
+            when age_months > 0 and age_months < 1 then 'neonate'
+            when age_months < 13 then 'infant'
+            when age_months > 13 then 'child'
+            when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+            when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+            when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+            when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+            when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+            else 'unknown'
+           end))";
 
             $age = $this->Aefi->find('all', array(
                 'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
@@ -303,7 +311,6 @@ class KhisController extends AppController
                     ];
                 }
             }
-
             // AEFI Month
             $month = $this->Aefi->find('all', array(
                 'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
@@ -515,8 +522,8 @@ class KhisController extends AppController
                 "dataValues" => $dataValues
             ];
 
-            // debug($payload);
-            // exit;
+            debug($payload);
+            exit;
             $apiUrl = Configure::read('khis_data_values_url');
             $username = Configure::read('khis_usename');
             $password =  Configure::read('khis_password');
@@ -553,6 +560,76 @@ class KhisController extends AppController
             } else {
                 $this->Session->setFlash(__('Experienced problems submitting data, please try again' . $error . '\n Response ' . $response), 'alerts/flash_error');
                 $this->redirect($this->referer());
+            }
+        }
+    }
+
+    public function prepare_age_group_data($criteria)
+    {
+
+        $case = "((case 
+        when trim(age_months) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_months
+        when age_months > 0 and age_months < 1 then 'neonate'
+        when age_months < 13 then 'infant'
+        when age_months > 13 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+        else 'unknown'
+       end))";
+
+        $age = $this->Aefi->find('all', array(
+            'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        foreach ($age as $key => $result) {
+            if ($result[0]['ager'] == "elderly") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "D1wVwZpCZxk",
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "adult") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "YB86GwI0Xwk",
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "adolescent") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "xp9OJZGm7S8",
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "child") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "AjVBULP0Qz9",
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "infant") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "uZJ1ke751Tr",
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "neonate") {
+                $dataValues[] = [
+                    "dataElement" => "XWs9UY7rVqV",
+                    "categoryOptionCombo" => "GIn7lBrO466",
+                    "value" => $result[0]['cnt']
+                ];
             }
         }
     }
@@ -742,6 +819,8 @@ class KhisController extends AppController
 
     public function sadrs_summary()
     {
+        // debug($this->request->data);
+        // exit;
         $criteria['Sadr.submitted'] = array(1, 2);
         $criteria['Sadr.copied !='] = '1';
         $criteria['Sadr.deleted'] = false;
@@ -754,16 +833,13 @@ class KhisController extends AppController
             // Calculate the start and end dates for the given month and year
             $startDate = date('Y-m-01 00:00:00', strtotime("$year-$month"));
             $endDate = date('Y-m-t 23:59:59', strtotime("$year-$month"));
+            // debug($startDate);
+            // debug($endDate);
+            // exit;
             $criteria['Sadr.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
         }
         if (!empty($this->request->data['Report']['county_id'])) {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
-        }
-        if (!empty($this->request->data['Report']['gender'])) {
-            $criteria['Sadr.gender'] = $this->request->data['Report']['gender'];
-        }
-        if (!empty($this->request->data['Report']['age_group'])) {
-            $criteria['Sadr.age_group'] = $this->request->data['Report']['age_group'];
         }
 
         $sadrsIds = $this->Sadr->find('list', array(
@@ -774,10 +850,10 @@ class KhisController extends AppController
         $id_arrays = array();
 
         $monthly = $this->Sadr->find('all', array(
-            'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
+            'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
             'contain' => array(), 'recursive' => -1,
             'conditions' => $criteria,
-            'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -835,6 +911,7 @@ class KhisController extends AppController
 
     public function aefi_summary()
     {
+
 
         // Load Data for Counties 
         $id_arrays = array(0);

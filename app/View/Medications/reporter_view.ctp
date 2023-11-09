@@ -9,7 +9,7 @@ $this->assign('MED', 'active');
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $medication['Medication']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($medication['ExternalComment']); ?>)</a></li>
     <?php
-     if ($this->Session->read('Auth.User.user_type') === "County Pharmacist") {
+     if ($this->Session->read('Auth.User.user_type') === "County Pharmacistcc") {
     $requiredOutcomes = [
       "Treatment /intervention required-caused temporary harm",
       "Initial/prolonged hospitalization-caused temporary harm",

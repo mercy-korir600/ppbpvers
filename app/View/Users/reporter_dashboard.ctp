@@ -438,7 +438,7 @@ $this->Html->script('dashboard', array('inline' => false));
                   $vname = (!empty($adr['Transfusion']['faint'])) ? $adr['Transfusion']['faint'] : $adr['Transfusion']['reference_no'];
                   echo $this->Html->link(
                     $vname . ' <small class="muted">(' . $adr['Transfusion']['reference_no'] . ')</small>',
-                    array('controller' => 'sadrs', 'action' => 'view', $adr['Transfusion']['id']),
+                    array('controller' => 'transfusions', 'action' => 'view', $adr['Transfusion']['id']),
                     array('escape' => false, 'class' => 'text-' . ((isset($adr['Transfusion']['faint']) && $adr['Transfusion']['faint'] == 'Severe') ? 'error' : 'success'))
                   );
                   echo "</li>";
