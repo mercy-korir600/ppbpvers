@@ -855,7 +855,7 @@ class ReportsController extends AppController
             'conditions' => array(
                 'AefiListOfVaccine.aefi_id' => $aefiIds,
             ),
-            // 'group' => array('Vaccine.vaccine_name'),
+            'group' => array('Vaccine.vaccine_name'),
             // 'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
