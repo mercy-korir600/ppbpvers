@@ -590,15 +590,10 @@ class KhisController extends AppController
             }
             
             $dataValues = array_merge($gender_data_values, $age_data_values, $month_data_values, $vaccines_data_values);
-            //     $gender_data_values[] = $this->prepare_county_gender_data_values($criteria, $org_unit, $period);
-            //     $age_data_values[] = $this->prepare_county_age_data_values($criteria, $org_unit, $period);
-            //     $month_data_values[] = $this->prepare_county_month_data_values($criteria, $org_unit, $period);
-            //     $vaccines_data_values[] = $this->prepare_county_vaccines_data_values($criteria, $org_unit, $period);
-            // }
+          
+            $sadr_data_values = $this->prepare_upload_sadr();
 
-            // $dataValues = array_merge($gender_data_values, $age_data_values, $month_data_values, $vaccines_data_values);
-
-            // $sadr_data_values = $this->prepare_upload_sadr();
+            $dataValues = array_merge($dataValues, $sadr_data_values);
 
             $payload = [
                 "dataSet" => "khmkmn2RRx4", 
@@ -948,7 +943,7 @@ class KhisController extends AppController
 
         if ($statusCode >= 200 && $statusCode < 300) {
             // $data = json_decode($response, true);
-            $this->Session->setFlash(__('Integration Successfully, data posted successfully'), 'alerts/flash_success');
+            $this->Session->setFlash(__('Integration Successful, data posted successfully'), 'alerts/flash_success');
             $this->redirect(array('controller' => 'khis', 'action' => 'index'));
         } else {
             $this->Session->setFlash(__('Experienced problems submitting data, please try again' . $error . '\n Response ' . $response), 'alerts/flash_error');
@@ -1045,8 +1040,30 @@ class KhisController extends AppController
         }
 
         if (empty($this->request->data['Report']['county_id'])) {
-            $this->Session->setFlash(__('Please provide county data field'), 'alerts/flash_error');
-            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+              $geo = $this->Sadr->find('all', array(
+                'fields' => array('County.county_name', 'County.org_unit', 'COUNT(*) as cnt'),
+                'contain' => array('County'),
+                'conditions' => $criteria,
+                'group' => array('County.county_name', 'County.org_unit', 'County.id'),
+                'having' => array('COUNT(*) >' => 0),
+            ));
+
+            //loop through each county
+            $gender_data_values = array();
+            $age_data_values = array();
+            $month_data_values = array(); 
+            $period = $year . "" . $month;
+            foreach ($geo as $single) {
+                $org_unit = $single['County']['org_unit'];
+                $criteria['Sadr.county_id'] = $single['County']['id'];
+                $gender_data_values = array_merge($gender_data_values, $this->prepare_county_sadr_gender_data_values($criteria, $org_unit, $period));
+                $age_data_values = array_merge($age_data_values, $this->prepare_county_sadr_age_data_values($criteria, $org_unit, $period));
+                $month_data_values = array_merge($month_data_values, $this->prepare_county_sadr_month_data_values($criteria, $org_unit, $period));
+            }
+            $dataValues = array_merge($gender_data_values, $age_data_values, $month_data_values);
+          
+
+            return $dataValues;
         } else {
             $criteria['Sadr.county_id'] = $this->request->data['Report']['county_id'];
 
@@ -1157,6 +1174,147 @@ class KhisController extends AppController
                 ];
             }
         }
+        return $dataValues;
+    }
+
+    public function prepare_county_sadr_gender_data_values($criteria, $org_unit, $period)
+    {
+        $dataValues = array();
+        $sadr_gender = $this->Sadr->find('all', array(
+            'fields' => array('gender', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('gender'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        foreach ($sadr_gender as $key => $result) {
+            if ($result['Sadr']['gender'] == "Female") {
+
+                $dataValues[] = [
+                    "dataElement" => "zhcRP1VMKRQ",
+                    "categoryOptionCombo" => "HSgm52qfmu9",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result['Sadr']['gender'] == "Male") {
+
+                $dataValues[] = [
+                    "dataElement" => "zhcRP1VMKRQ",
+                    "categoryOptionCombo" => "HZqsa0U6ivP",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+        } 
+
+        return $dataValues;
+    }
+    public function prepare_county_sadr_age_data_values($criteria, $org_unit, $period)
+    {
+        $dataValues = array();
+        $case = "((case 
+        when trim(age_group) in ('neonate', 'infant', 'child', 'adolescent', 'adult', 'elderly') then age_group
+        when year(now()) - right(date_of_birth, 4) between 0 and 1 then 'infant'
+        when year(now()) - right(date_of_birth, 4) between 1 and 10 then 'child'
+        when year(now()) - right(date_of_birth, 4) between 18 and 65 then 'adult'
+        when year(now()) - right(date_of_birth, 4) between 10 and 18 then 'adolescent'
+        when year(now()) - right(date_of_birth, 4) between 65 and 155 then 'elderly'
+        else 'unknown'
+       end))";
+
+        $sadr_age = $this->Sadr->find('all', array(
+            'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'conditions' => $criteria,
+            'group' => array($case),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        foreach ($sadr_age as $key => $result) {
+            if ($result[0]['ager'] == "elderly") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "D1wVwZpCZxk",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "adult") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "YB86GwI0Xwk",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "adolescent") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "xp9OJZGm7S8",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "child") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "AjVBULP0Qz9",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "infant") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "uZJ1ke751Tr",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+            if ($result[0]['ager'] == "neonate") {
+                $dataValues[] = [
+                    "dataElement" => "WBTIuVZIHeV",
+                    "categoryOptionCombo" => "GIn7lBrO466",
+                    "period" => $period,
+                    "orgUnit" => $org_unit,
+                    "value" => $result[0]['cnt']
+                ];
+            }
+        }
+
+        return $dataValues;
+    }
+
+    public function prepare_county_sadr_month_data_values($criteria, $org_unit, $period)
+    {
+        $dataValues = array();
+        $monthly = $this->Sadr->find('all', array(
+            'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(), 'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+
+        foreach ($monthly as $key => $value) {
+            $dataValues[] = [
+                "dataElement" => "xesjTUtnEpH",
+                "categoryOptionCombo" => "NhSoXUMPK2K",
+                "period" => $period,
+                "orgUnit" => $org_unit,
+                "value" => $value[0]['cnt']
+            ];
+        } 
+
         return $dataValues;
     }
 
