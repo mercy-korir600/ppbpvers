@@ -121,7 +121,7 @@ echo $this->Session->flash();
               )
             );
             ?>
-              <?php
+            <?php
             echo $this->Form->input(
               'manufacturer',
               array(
@@ -137,8 +137,16 @@ echo $this->Session->flash();
               'inn',
               array('div' => false, 'placeholder' => 'INN', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'INN'))
             );
+            //  echo $this->Form->checkbox('submitted', array('hiddenField' => false, 'label' => 'Submitted'));
+           ?>
+            <h5>Suspected Drugs?<br></h5>
+            <?php
+            echo $this->Form->input('suspected_drug', array(
+              'type' => 'checkbox', 'hiddenField' => false,
+              'label' => array('class' => '', 'text' => 'Only Suspected?')
+            ));
             ?>
-            
+
           </td>
           <td colspan="2">
             <h5>Report on:</h5>

@@ -29,6 +29,7 @@ class Sadr extends AppModel
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
         'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
         'manufacturer' => array('type' => 'query', 'method' => 'findByManufacturerName', 'encode' => true),
+        'suspected_drug'=> array('type' => 'query', 'method' => 'dummy'),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
         'report_misuse' => array('type' => 'value'),
@@ -73,33 +74,81 @@ class Sadr extends AppModel
 
     public function findByDrugName($data = array())
     {
-        $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
-            'conditions' => array( 
-                    'SadrListOfDrug.brand_name LIKE' => '%' . $data['drug_name'] . '%',
-                
-            ),
-            'fields' => array('sadr_id', 'sadr_id')
-        )));
-        return $cond;
+        // $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
+        //     'conditions' => array(
+        //         'SadrListOfDrug.brand_name LIKE' => '%' . $data['drug_name'] . '%',
+
+        //     ),
+        //     'fields' => array('sadr_id', 'sadr_id')
+        // )));
+        // return $cond;
+        $conditions = array();
+
+        // Check if 'suspected_drug' is supplied
+        if (isset($data['suspected_drug']) && !empty($data['suspected_drug'])) {
+            $conditions[$this->alias . '.id'] = $this->SadrListOfDrug->find('list', array(
+                'conditions' => array(
+                    'SadrListOfDrug.brand_name LIKE' => '%' . $data['inn'] . '%',
+                    'SadrListOfDrug.suspected_drug LIKE' => '%' . $data['suspected_drug'] . '%',
+                ),
+                'fields' => array('sadr_id', 'sadr_id')
+            ));
+        } else {
+            // Include only the condition for 'brand_name'
+            $conditions[$this->alias . '.id'] = $this->SadrListOfDrug->find('list', array(
+                'conditions' => array(
+                    'SadrListOfDrug.brand_name LIKE' => '%' . $data['inn'] . '%',
+                ),
+                'fields' => array('sadr_id', 'sadr_id')
+            ));
+        }
+
+        return $conditions;
     }
-    
+
     public function findByDrugINNName($data = array())
     {
-        $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
-            'conditions' => array( 
+        // suspected_drug
+
+        // // add a check in condirion to check if suspected_drug is supplied then check that field as well
+        // $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
+        //     'conditions' => array( 
+        //             'SadrListOfDrug.drug_name LIKE' => '%' . $data['inn'] . '%',
+
+        //     ),
+        //     'fields' => array('sadr_id', 'sadr_id')
+        // )));
+        // return $cond;
+        $conditions = array();
+
+        // Check if 'suspected_drug' is supplied
+        if (isset($data['suspected_drug']) && !empty($data['suspected_drug'])) {
+            $conditions[$this->alias . '.id'] = $this->SadrListOfDrug->find('list', array(
+                'conditions' => array(
                     'SadrListOfDrug.drug_name LIKE' => '%' . $data['inn'] . '%',
-                
-            ),
-            'fields' => array('sadr_id', 'sadr_id')
-        )));
-        return $cond;
+                    'SadrListOfDrug.suspected_drug LIKE' => '%' . $data['suspected_drug'] . '%',
+                ),
+                'fields' => array('sadr_id', 'sadr_id')
+            ));
+        } else {
+            // Include only the condition for 'drug_name'
+            $conditions[$this->alias . '.id'] = $this->SadrListOfDrug->find('list', array(
+                'conditions' => array(
+                    'SadrListOfDrug.drug_name LIKE' => '%' . $data['inn'] . '%',
+                ),
+                'fields' => array('sadr_id', 'sadr_id')
+            ));
+        }
+
+        return $conditions;
+
     }
     public function findByManufacturerName($data = array())
     {
         $cond = array($this->alias . '.id' => $this->SadrListOfDrug->find('list', array(
-            'conditions' => array( 
-                    'SadrListOfDrug.manufacturer LIKE' => '%' . $data['manufacturer'] . '%',
-                
+            'conditions' => array(
+                'SadrListOfDrug.manufacturer LIKE' => '%' . $data['manufacturer'] . '%',
+
             ),
             'fields' => array('sadr_id', 'sadr_id')
         )));
@@ -108,7 +157,7 @@ class Sadr extends AppModel
     public function findByMedicineName($data = array())
     {
         // debug($data['inn']);
-        
+
         $cond = array($this->alias . '.id' => $this->SadrListOfMedicine->find('list', array(
             'conditions' => array(
                 'SadrListOfMedicine.drug_name LIKE' => '%' . $data['inn'] . '%',
@@ -118,7 +167,6 @@ class Sadr extends AppModel
         // debug($cond);
         // exit;
         return $cond;
-      
     }
     public function findByMarketAuthority($data = array())
     {
@@ -315,7 +363,7 @@ class Sadr extends AppModel
             'dependent' => true
         )
 
-        
+
     );
 
     public $validate = array(
