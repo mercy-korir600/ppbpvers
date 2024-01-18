@@ -198,6 +198,8 @@ class CommentsController extends AppController
   public function comment_file_download($id = null)
   {
     # code... 
+    // debug('Response Here');
+    // exit;
     $this->loadModel('Attachment');
 
     $attachment = $this->Attachment->find('first', array(
@@ -206,7 +208,8 @@ class CommentsController extends AppController
     ));
 
     $filename = $attachment['Attachment']['basename'];
-    $file = WWW_ROOT . 'media/transfer/img' . DS . $filename; // Assuming your files are in the "files" folder under the webroot directory.
+    $dirname = $attachment['Attachment']['dirname'];
+    $file = WWW_ROOT . 'media/transfer'.DS. $dirname . DS . $filename; // Assuming your files are in the "files" folder under the webroot directory.
 
     $this->response->file($file, array(
       'download' => true,

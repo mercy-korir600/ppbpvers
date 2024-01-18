@@ -112,7 +112,7 @@ class Aefi extends AppModel
         $cond = array($this->alias . '.id' => $this->AefiListOfVaccine->find('list', array(
             'conditions' => array(
                 'OR' => array(
-                    'AefiListOfVaccine.vaccine_id' => $vdrugs,
+                    'AefiListOfVaccine.vaccine_id' => $vdrugs, 
                     'AefiListOfVaccine.vaccine_manufacturer' => $vdrugs,
                 )
             ),
