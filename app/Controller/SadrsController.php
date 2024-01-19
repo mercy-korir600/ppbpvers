@@ -722,7 +722,7 @@ class SadrsController extends AppController
         $count = $this->Sadr->find('count',  array(
             'fields' => 'Sadr.reference_no',
             'conditions' => array(
-                'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+                'Sadr.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
             )
         ));
         $count++;
@@ -954,7 +954,7 @@ class SadrsController extends AppController
             $count = $this->Sadr->find('count',  array(
                 'fields' => 'Sadr.reference_no',
                 'conditions' => array(
-                    'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+                    'Sadr.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
                 )
             ));
             $count++;

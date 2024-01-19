@@ -615,7 +615,6 @@ class Sadr extends AppModel
     {
         if (!empty($this->data['SadrListOfDrug'])) {
             foreach ($this->data['SadrListOfDrug'] as $val) {
-
                 // Only check for the suspected medicine:
                 if ($val['suspected_drug']) {
                     if (!empty($field['date_of_onset_of_reaction']['day']) && !empty($field['date_of_onset_of_reaction']['month']) && !empty($field['date_of_onset_of_reaction']['year'])) {
