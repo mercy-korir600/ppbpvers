@@ -542,9 +542,9 @@ class KhisController extends AppController
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
-        if (empty($this->request->data['Report']['start_date']) && empty($this->request->data['Report']['end_date'])) {
-            $this->Session->setFlash(__('Please provide the month of submission'), 'alerts/flash_error');
-            $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+        if (empty($this->request->data['Report']['start_date']) || empty($this->request->data['Report']['end_date'])) {
+            $this->Session->setFlash(__('Please provide both the year and the month of submission'), 'alerts/flash_error');
+            $this->redirect($this->referer());
         }
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
             $monthdata = $this->request->data['Report']['start_date'];
@@ -556,7 +556,7 @@ class KhisController extends AppController
 
             if (strtotime($startDate) > strtotime(date('Y-m-01 00:00:00')) || strtotime($endDate) > strtotime(date('Y-m-t 23:59:59'))) {
                 $this->Session->setFlash(__('Aggregate data should be from the previous month'), 'alerts/flash_error');
-                $this->redirect(array('controller' => 'khis', 'action' => 'index'));
+                $this->redirect($this->referer());
             } else {
 
                 $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate)));
@@ -600,7 +600,8 @@ class KhisController extends AppController
                 "dataValues" => $dataValues
             ];
             
-        } else {
+        }
+         else {
             $criteria['Aefi.county_id'] = $this->request->data['Report']['county_id'];
 
             // AEFI Gender
@@ -898,6 +899,8 @@ class KhisController extends AppController
             $sadr_data_values = $this->prepare_upload_sadr();
             //add this sadr values to the main $dataValues to make one complete array 
             $dataValues = array_merge($dataValues, $sadr_data_values);
+            
+
 
             $currentDate = date('Y-m-d');
             $payload = [

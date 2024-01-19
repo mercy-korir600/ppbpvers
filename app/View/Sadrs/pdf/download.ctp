@@ -20,7 +20,7 @@
 	?>
 	<div class="page">
 	
-	<img  style="width: 100%; background-color: #FFFD77" src="img/sadr_pdf.png" alt="SADR">			
+	<!-- <img  style="width: 100%; background-color: #FFFD77" src="img/sadr_pdf.png" alt="SADR">			 -->
 	<br>
 	
 	<table style="width: 100%;">

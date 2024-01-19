@@ -337,7 +337,7 @@ class SadrsController extends AppController
 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
-            'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment', 'SadrOriginal.ReviewComment', 'ReviewComment.Attachment', 'ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation',  'ReviewComment', 'SadrOriginal.ReviewComment', 'ReviewComment.Attachment', 'ExternalComment')
         ));
         $this->set('sadr', $sadr);
 
@@ -399,16 +399,11 @@ class SadrsController extends AppController
 
     public function general_viewer($id = null)
     {
-        # code...
-        if (strpos($this->request->url, 'pdf') !== false) {
-            $this->pdfConfig = array('filename' => 'SADR_' . $id . '.pdf',  'orientation' => 'portrait');
-            // $this->response->download('SADR_'.$sadr['Sadr']['id'].'.pdf');
-        }
-
+        # code... 
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $id),
             'contain' => array(
-                'SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
+                'SadrListOfDrug', 'SadrDescription', 'SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
                 'SadrOriginal', 'SadrOriginal.SadrDescription', 'SadrOriginal.SadrListOfDrug', 'SadrOriginal.SadrListOfDrug.Route', 'SadrOriginal.SadrListOfDrug.Frequency', 'SadrOriginal.SadrListOfDrug.Dose', 'SadrOriginal.SadrListOfMedicine', 'SadrOriginal.SadrListOfMedicine.Route', 'SadrOriginal.SadrListOfMedicine.Frequency', 'SadrOriginal.SadrListOfMedicine.Dose', 'SadrOriginal.County', 'SadrOriginal.SubCounty', 'SadrOriginal.Attachment', 'SadrOriginal.Designation', 'SadrOriginal.ExternalComment', 'SadrOriginal.ReviewComment'
             )
         ));
@@ -419,13 +414,13 @@ class SadrsController extends AppController
             )
         ));
 
-        // debug($sadr);
-        // exit;
+
         $this->set(['sadr' => $sadr, 'managers' => $managers]);
 
 
         if (strpos($this->request->url, 'pdf') !== false) {
             $this->pdfConfig = array('filename' => 'SADR_' . $id . '.pdf',  'orientation' => 'portrait');
+           
             $this->response->download('SADR_' . $sadr['Sadr']['id'] . '.pdf');
         }
     }
@@ -518,7 +513,7 @@ class SadrsController extends AppController
             $this->Session->setFlash(__('Please provide a reaction'), 'flash_error');
             $this->redirect($this->referer());
         }
-       
+
         $sadr['Sadr']['medra'] = $this->generate_meddra_code($sadr['Sadr']['reaction']);
         $sadr = Sanitize::clean($sadr, array('escape' => true));
         $this->set('sadr', $sadr);
@@ -640,7 +635,7 @@ class SadrsController extends AppController
             $sadr = Hash::remove($this->Sadr->find(
                 'first',
                 array(
-                    'contain' => array('SadrListOfDrug','SadrReaction', 'SadrDescription', 'SadrListOfMedicine'),
+                    'contain' => array('SadrListOfDrug', 'SadrReaction', 'SadrDescription', 'SadrListOfMedicine'),
                     'conditions' => array('Sadr.id' => $id)
                 )
             ), 'Sadr.id');
@@ -775,7 +770,7 @@ class SadrsController extends AppController
                         $count = $this->Sadr->find('count',  array(
                             'fields' => 'Sadr.reference_no',
                             'conditions' => array(
-                                'Sadr.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
+                                'Sadr.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Sadr.reference_no !=' => 'new'
                             )
                         ));
                         $count++;
@@ -1083,7 +1078,7 @@ class SadrsController extends AppController
         $sadr = Hash::remove($this->Sadr->find(
             'first',
             array(
-                'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfMedicine'),
+                'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrReaction', 'SadrListOfMedicine'),
                 'conditions' => array('Sadr.id' => $id)
             )
         ), 'Sadr.id');
@@ -1158,7 +1153,7 @@ class SadrsController extends AppController
         //Manager will always edit a copied report
         $sadr = $this->Sadr->find('first', array(
             'conditions' => array('Sadr.id' => $sadr['Sadr']['sadr_id']),
-            'contain' => array('SadrListOfDrug', 'SadrDescription','SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
+            'contain' => array('SadrListOfDrug', 'SadrDescription', 'SadrReaction', 'SadrListOfDrug.Route', 'SadrListOfDrug.Frequency', 'SadrListOfDrug.Dose', 'SadrListOfMedicine', 'SadrListOfMedicine.Route', 'SadrListOfMedicine.Frequency', 'SadrListOfMedicine.Dose', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment')
         ));
         $this->set('sadr', $sadr);
 

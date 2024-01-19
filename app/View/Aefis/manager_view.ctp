@@ -84,7 +84,10 @@ $this->assign('Adverse Event Following Immunization', 'active');
             echo $this->element('comments/add', [
               'model' => [
                 'model_id' => $oid, 'foreign_key' => $oid,
-                'model' => 'Aefi', 'category' => 'external', 'url' => 'report_feedback'
+                'model' => 'Aefi', 
+                'category' => 'external', 
+                'url' => 'report_feedback',
+                'review' =>false,
               ]
             ])
             ?>

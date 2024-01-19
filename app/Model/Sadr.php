@@ -29,7 +29,7 @@ class Sadr extends AppModel
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
         'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
         'manufacturer' => array('type' => 'query', 'method' => 'findByManufacturerName', 'encode' => true),
-        'suspected_drug'=> array('type' => 'query', 'method' => 'dummy'),
+        'suspected_drug' => array('type' => 'query', 'method' => 'dummy'),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
         'report_misuse' => array('type' => 'value'),
@@ -141,7 +141,6 @@ class Sadr extends AppModel
         }
 
         return $conditions;
-
     }
     public function findByManufacturerName($data = array())
     {
@@ -616,10 +615,14 @@ class Sadr extends AppModel
     {
         if (!empty($this->data['SadrListOfDrug'])) {
             foreach ($this->data['SadrListOfDrug'] as $val) {
-                if (!empty($field['date_of_onset_of_reaction']['day']) && !empty($field['date_of_onset_of_reaction']['month']) && !empty($field['date_of_onset_of_reaction']['year'])) {
-                    return strtotime(implode('-', $field['date_of_onset_of_reaction'])) >= strtotime($val['start_date']);
-                } else {
-                    return $field['date_of_onset_of_reaction']['year'] >= date('Y', strtotime($val['start_date']));
+
+                // Only check for the suspected medicine:
+                if ($val['suspected_drug']) {
+                    if (!empty($field['date_of_onset_of_reaction']['day']) && !empty($field['date_of_onset_of_reaction']['month']) && !empty($field['date_of_onset_of_reaction']['year'])) {
+                        return strtotime(implode('-', $field['date_of_onset_of_reaction'])) >= strtotime($val['start_date']);
+                    } else {
+                        return $field['date_of_onset_of_reaction']['year'] >= date('Y', strtotime($val['start_date']));
+                    }
                 }
             }
         }

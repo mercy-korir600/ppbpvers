@@ -18,7 +18,7 @@
 			<div class="span12">
 
 				<?php 
-				echo $this->element('aefi/aefi_view');
+				echo $this->element('aefi/download');
 				?>
 				
 			</div>
