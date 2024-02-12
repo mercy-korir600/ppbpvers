@@ -1243,7 +1243,7 @@
                 )
             ));
 
-            if(!empty($aefi['Aefi']['aefi_symptoms'])){
+            if (!empty($aefi['Aefi']['aefi_symptoms'])) {
                 $aefi['AefiDescription'][] = array(
                     'id' => $aefi['Aefi']['id'],
                     'aefi_id' => $aefi['Aefi']['id'],
@@ -1251,7 +1251,6 @@
                     'created' => $aefi['Aefi']['created'],
                     'modified' => $aefi['Aefi']['modified']
                 );
-
             }
 
             // debug($aefi['Aefi']['aefi_symptoms']);
@@ -1598,7 +1597,16 @@
                         $this->Aefi->saveField('submitted_date', date("Y-m-d H:i:s"));
                         //lucian
                         if (!empty($aefi['Aefi']['reference_no']) && $aefi['Aefi']['reference_no'] == 'new') {
-                            $reference = $this->generateReferenceNumber();
+                            // $reference = $this->generateReferenceNumber();
+                            $count = $this->Aefi->find('count',  array(
+                                'fields' => 'Aefi.reference_no',
+                                'conditions' => array(
+                                    'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                                )
+                            ));
+                            $count++;
+                            $count = ($count < 10) ? "0$count" : $count;
+                            $reference = 'AEFI/' . date('Y') . '/' . $count;
                             $this->Aefi->saveField('reference_no', $reference);
                         }
                         //bokelo
@@ -1953,12 +1961,12 @@
                 $count = $this->Aefi->find('count',  array(
                     'fields' => 'Aefi.reference_no',
                     'conditions' => array(
-                        'Aefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                        'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
                     )
                 ));
                 $count++;
                 $count = ($count < 10) ? "0$count" : $count;
-                $save_data['Aefi']['reference_no'] = 'Adverse Event Following Immunization/' . date('Y') . '/' . $count;
+                $save_data['Aefi']['reference_no'] = 'AEFI/' . date('Y') . '/' . $count;
             }
             // $save_data['Aefi']['report_type'] = 'Initial';
             //bokelo
@@ -2188,7 +2196,16 @@
                         $this->Aefi->saveField('submitted_date', date("Y-m-d H:i:s"));
                         //lucian
                         if (!empty($aefi['Aefi']['reference_no']) && $aefi['Aefi']['reference_no'] == 'new') {
-                            $reference = $this->generateReferenceNumber();
+                            // $reference = $this->generateReferenceNumber();
+                            $count = $this->Aefi->find('count',  array(
+                                'fields' => 'Aefi.reference_no',
+                                'conditions' => array(
+                                    'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                                )
+                            ));
+                            $count++;
+                            $count = ($count < 10) ? "0$count" : $count;
+                            $reference = 'AEFI/' . date('Y') . '/' . $count;
                             $this->Aefi->saveField('reference_no', $reference);
                         }
                         //bokelo
