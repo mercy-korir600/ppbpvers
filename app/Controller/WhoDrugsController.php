@@ -169,6 +169,7 @@ class WhoDrugsController extends AppController
 
 	public function admin_sync()
 	{
+		// set_time_limit(600);
 		$HttpSocket = new HttpSocket();
 		$options = array(
 			'header' => array(
@@ -193,22 +194,21 @@ class WhoDrugsController extends AppController
 			foreach ($data as $drug) {
 				// save the drug to the database
 				$this->WhoDrug->create();
+				$isGeneric=$drug->isGeneric;
+				if($isGeneric){
+					$gen="Y";
+				}else{
+					$gen="N";
+				}
 				$data = array(
 					'WhoDrug' => array(
 						'drug_name' => $drug->drugName,
 						'MedId' => $drug->medicinalProductID,
-						'generic' => $drug->isGeneric,
+						'generic' => $gen,
 						'drug_record_number' =>  $drug->drugCode
 					)
 				);
-				if ($this->WhoDrug->save($data, false)) { 
-					$this->Flash->success('Record Saved' );
-					 
-				} else {
-					$error = $this->WhoDrug->validationErrors;
-					$this->Flash->error('Failed to save record' . $error);
-					$this->redirect($this->referer());
-				}
+				 
 			}
 			$this->Flash->success('Drug list successfully updated');
 			$this->redirect($this->referer());
