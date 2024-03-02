@@ -53,15 +53,14 @@ if ($this->request->params['controller'] == 'help_infos') {
 			);
 			?>
 		</li>
-		<li class="<?php echo $auto; ?>">
+		<!-- <li class="<?php echo $auto; ?>">
 			<?php
-			echo $this->Html->link(
-				'<i class="icon-tag"></i> AUTO DRUGS',
+			echo $this->Html->link(				'<i class="icon-tag"></i> AUTO DRUGS',
 				array('controller' => 'auto_drugs', 'action' => 'index', 'admin' => true),
 				array('escape' => false)
 			);
 			?>
-		</li>
+		</li> -->
 		<li class="divider"></li>
 		<li class="nav-header"><i class="icon-book"></i> OTHER CONTENT </li>
 		<li class="<?php echo $dC; ?>">
