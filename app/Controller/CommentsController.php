@@ -21,7 +21,17 @@ class CommentsController extends AppController
     if ($this->request->is('post') || $this->request->is('put')) {
       $this->Comment->create();
       $model = $this->request->data['Comment']['model'];
+      $category = $this->request->data['Comment']['category'];
       $data = $this->request->data;
+      if (isset($data['Attachment']) && is_array($data['Attachment'])) {
+        // Loop through each Attachment
+        foreach ($data['Attachment'] as &$attachment) {
+          // Update the 'category' for each Attachment
+          $attachment['category'] = $category;
+        }
+        // Unset the reference to avoid potential issues
+        unset($attachment);
+      }
       // debug($data);
       // exit;
       if ($model) {
@@ -82,6 +92,8 @@ class CommentsController extends AppController
           $this->Session->setFlash(__('The comment has been sent to the user'), 'alerts/flash_success');
           $this->redirect($this->referer());
         } else {
+          $errors = $this->Comment->validationErrors;
+          $this->Session->setFlash(__('The comment could not be saved. Errors: ') . json_encode($errors), 'alerts/flash_error');      
           $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'alerts/flash_error');
           $this->redirect($this->referer());
         }

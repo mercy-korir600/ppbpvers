@@ -36,7 +36,7 @@
 				</div>
 			</div>
 
-			<?php echo $this->element('sadr/download');?>
+			<?php echo $this->element('sadr/sadr_view');?>
 			
 		</div>
 		</div>
