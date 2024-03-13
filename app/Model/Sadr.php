@@ -156,20 +156,14 @@ class Sadr extends AppModel
     }
 
     public function findByVigiflowStatus($data = array())
-    {
-
-        // if data['vigiflow'] is 0 return where the vigiflow_ref is not null else return those null
-        $cond = array();
-
-        // Check if the 'vigiflow' key exists in the input data array
-        if (isset($data['vigiflow'])) {
-            // if data['vigiflow'] is 0, return where the vigiflow_ref is not null
+    { 
+        $cond = array(); 
+        if (isset($data['vigiflow'])) { 
             if ($data['vigiflow'] == 0) {
                 $cond = array(
                     $this->alias . '.vigiflow_ref IS NOT NULL'
                 );
             } else {
-                // if data['vigiflow'] is not 0, return where the vigiflow_ref is null
                 $cond=array(
                     $this->alias . '.vigiflow_ref IS NULL'
                 );

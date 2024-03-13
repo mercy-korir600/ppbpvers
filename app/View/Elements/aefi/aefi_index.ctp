@@ -287,7 +287,19 @@ $this->assign('Adverse Event Following Immunization', 'active');
                 'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
                 'class' => 'input-xlarge'
               ));  ?></td>
-          <td></td>
+          <td>
+          <h5>Vigiflow status:</h5>
+            <?php
+          echo $this->Form->input('vigiflow', array(
+            'type' => 'select', 'options' => [
+              '0' => 'Uploaded',
+              '1' => 'Pending',
+            ], 'empty' => true,
+            'label' => array('class' => 'control-label', 'text' => ''),
+            'class' => 'input-xlarge'
+          ));
+           ?>
+          </td>
           <td></td>
           <td></td>
         </tr>

@@ -53,8 +53,24 @@ class Aefi extends AppModel
         'gender' => array('type' => 'value'),
         'submitted' => array('type' => 'value'),
         'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true),
+        'vigiflow' => array('type' => 'query', 'method' => 'findByVigiflowStatus', 'encode' => true),
     );
-
+    public function findByVigiflowStatus($data = array())
+    { 
+        $cond = array(); 
+        if (isset($data['vigiflow'])) { 
+            if ($data['vigiflow'] == 0) {
+                $cond = array(
+                    $this->alias . '.vigiflow_ref IS NOT NULL'
+                );
+            } else {
+                $cond=array(
+                    $this->alias . '.vigiflow_ref IS NULL'
+                );
+            }
+        }
+        return $cond;
+    }
     public function dummy($data = array())
     {
         return array('1' => '1');
