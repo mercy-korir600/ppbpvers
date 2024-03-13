@@ -227,6 +227,13 @@ class SadrsController extends AppController
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
+
+            $sadrs=$this->Sadr->find(
+                'all',
+                array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'limit' => 1000)
+            );
+            // debug($sadrs);
+            // exit;
             $this->csv_export($this->Sadr->find(
                 'all',
                 array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'limit' => 10000)
@@ -267,10 +274,13 @@ class SadrsController extends AppController
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
-            $this->csv_export($this->Sadr->find(
+            $sadrs=$this->Sadr->find(
                 'all',
                 array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'limit' => 1000)
-            ));
+            );
+            // debug($sadrs);
+            // exit;
+            $this->csv_export($sadrs);
         }
         //end csv export
         $this->set('page_options', $this->page_options);
