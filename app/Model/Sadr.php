@@ -29,6 +29,7 @@ class Sadr extends AppModel
         'health_program' => array('type' => 'query', 'method' => 'findByHealthProgram', 'encode' => true),
         'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
         'manufacturer' => array('type' => 'query', 'method' => 'findByManufacturerName', 'encode' => true),
+        'vigiflow' => array('type' => 'query', 'method' => 'findByVigiflowStatus', 'encode' => true),
         'suspected_drug' => array('type' => 'query', 'method' => 'dummy'),
         'report_sadr' => array('type' => 'value'),
         'report_therapeutic' => array('type' => 'value'),
@@ -153,6 +154,30 @@ class Sadr extends AppModel
         )));
         return $cond;
     }
+
+    public function findByVigiflowStatus($data = array())
+    {
+
+        // if data['vigiflow'] is 0 return where the vigiflow_ref is not null else return those null
+        $cond = array();
+
+        // Check if the 'vigiflow' key exists in the input data array
+        if (isset($data['vigiflow'])) {
+            // if data['vigiflow'] is 0, return where the vigiflow_ref is not null
+            if ($data['vigiflow'] == 0) {
+                $cond = array(
+                    $this->alias . '.vigiflow_ref IS NOT NULL'
+                );
+            } else {
+                // if data['vigiflow'] is not 0, return where the vigiflow_ref is null
+                $cond=array(
+                    $this->alias . '.vigiflow_ref IS NULL'
+                );
+            }
+        }
+        return $cond;
+    }
+
     public function findByMedicineName($data = array())
     {
         // debug($data['inn']);
