@@ -601,7 +601,7 @@ class PqmpsController extends AppController
                         $count = $this->Pqmp->find('count',  array(
                             'fields' => 'Pqmp.reference_no',
                             'conditions' => array(
-                                'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                                'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
                             )
                         ));
                         $count++;
