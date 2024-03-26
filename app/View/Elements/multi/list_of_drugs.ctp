@@ -2,7 +2,7 @@
 /**
  * @var \App\View\AppView $this
  */
-$this->Html->script('list_of_drugs', array('inline' => false));
+$this->Html->script('list_of_drugs_v2', array('inline' => false));
 $this->Html->css('sadr', false, array('inline' => false));
 ?>
 <style>
@@ -32,14 +32,14 @@ $this->Html->css('sadr', false, array('inline' => false));
 					<th style="width: 9%;">Brand Name <span style="color:red;">*</span></th>
 					<th style="width: 7%;">Batch/ Lot No.<span style="color:red;">*</span></th>
 					<th style="width: 7%;">Manufacturer<span style="color:red;">*</span></th>
-					<th colspan="2" style="width: 20%;" class="required" title="Dosage" data-content="">
+					<th colspan="1" style="width: 15%;" class="required" title="Dosage" data-content="">
 						<label class="required">DOSE <span style="color:red;">*</span></label>
 					</th>
 					<th colspan="2" class="required" style="width: 15%;">
 						<label class="required">ROUTE AND FREQUENCY <span
 								style="color:red;">*</span><span>Other</span></label>
 					</th>
-					<th style="width: 23%;" colspan="2">
+					<th style="width: 28%;" colspan="2">
 						<h6>Treatment Period <span class="help-block required"> (dd-mm-yyyy) </span></h6>
 						<label class="required pull-left">Start Date <span style="color:red;">*</span></label>
 						<span class="pull-right" style="padding-right: 10px;">Stop Date</span>
@@ -120,7 +120,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						);
 						?>
 					</td>
-					<td data-title="Dose *">
+					<td  colspan="1" data-title="Dose *">
 						<?php
 						echo $this->Form->input(
 							'SadrListOfDrug.0.dose',
@@ -131,10 +131,6 @@ $this->Html->css('sadr', false, array('inline' => false));
 								'class' => 'span12 autosave-ignore',
 							)
 						);
-						?>
-					</td>
-					<td style="border-left:0px;">
-						<?php
 						echo $this->Form->input(
 							'SadrListOfDrug.0.dose_id',
 							array(
@@ -149,6 +145,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						);
 						?>
 					</td>
+					 
 					<td data-title="Route *">
 						<?php
 						echo $this->Form->input(
