@@ -32,7 +32,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 					<th style="width: 9%;">Brand Name <span style="color:red;">*</span></th>
 					<th style="width: 7%;">Batch/ Lot No.<span style="color:red;">*</span></th>
 					<th style="width: 7%;">Manufacturer<span style="color:red;">*</span></th>
-					<th colspan="2" style="width: 13%;" class="required" title="Dosage" data-content="">
+					<th colspan="2" style="width: 20%;" class="required" title="Dosage" data-content="">
 						<label class="required">DOSE <span style="color:red;">*</span></label>
 					</th>
 					<th colspan="2" class="required" style="width: 15%;">
@@ -44,7 +44,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						<label class="required pull-left">Start Date <span style="color:red;">*</span></label>
 						<span class="pull-right" style="padding-right: 10px;">Stop Date</span>
 					</th>
-					<th style="width: 5%;">
+					<th style="width: 3%;">
 						<label>INDICATION </label>
 					</th>
 					<th colspan="2" style="width: 8%;" class="required tooltipper"
@@ -128,7 +128,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 								'label' => false,
 								'between' => false,
 								'error' => array('attributes' => array('class' => 'help-block')),
-								'class' => 'span11 autosave-ignore',
+								'class' => 'span12 autosave-ignore',
 							)
 						);
 						?>
