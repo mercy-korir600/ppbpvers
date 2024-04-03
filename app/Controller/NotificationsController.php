@@ -104,10 +104,14 @@ class NotificationsController extends AppController {
 		// $this->Notification->recursive = 0;
 		// $this->set('notifications', $this->paginate());
 		$this->Prg->commonProcess();
-        $page_options = array('20' => '20', '25' => '25');
+        $page_options = array('20' => '20', '25' => '25', '50' => '50', '100' => '100');
+        // if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
+        // if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
+        //     else $this->paginate['limit'] = reset($page_options);
         if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
-        if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
-            else $this->paginate['limit'] = reset($page_options);
+        if (!empty($this->request->query['pages'])) $this->paginate['limit'] = $this->request->query['pages'];
+        else $this->paginate['limit'] = reset($this->page_options);
+ 
 
         $criteria = $this->Notification->parseCriteria($this->passedArgs);
         $criteria['Notification.user_id'] = $this->Auth->User('id');
