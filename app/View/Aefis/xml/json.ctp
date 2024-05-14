@@ -84,7 +84,7 @@ echo "\n"; ?>
     <?php
     if (!empty($aefi['Aefi']['date_of_birth'])) {
         $string = $aefi['Aefi']['date_of_birth'];
-        if (strlen($string) > 7) {
+        // if (strlen($string) > 7) {
             $birthdatef = 102;
             if (empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
                 $birthdatef = 602;
@@ -95,10 +95,10 @@ echo "\n"; ?>
             }
             echo '<patientbirthdateformat>' . $birthdatef . '</patientbirthdateformat>';
             echo "\n";
-        } else {
-            echo '<patientbirthdateformat/>';
-            echo "\n";
-        }
+        // } else {
+        //     echo '<patientbirthdateformat/>';
+        //     echo "\n";
+        // }
     } else {
         echo '<patientbirthdateformat/>';
         echo "\n";
