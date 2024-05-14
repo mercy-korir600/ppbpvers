@@ -1,4 +1,4 @@
-'<?php
+<?php
     App::uses('AppController', 'Controller');
     App::uses('Sanitize', 'Utility');
     App::uses('CakeText', 'Utility');
@@ -423,6 +423,8 @@
             $json = json_encode($xml);
             $report = json_decode($json, TRUE);
 
+          
+
             // stream_context_set_default(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
             $options = array(
                 'ssl_verify_peer' => false
@@ -453,7 +455,7 @@
                     'report' => $report
                 );
 
-                // debug($report);
+                // debug($payload);
                 // exit;
                 $results = $HttpSocket->post(
                     Configure::read('mhra_incidents'),
