@@ -1,7 +1,7 @@
 <?php
 
-use JetBrains\PhpStorm\Deprecated;
 
+App::uses('Sanitize', 'Utility');
 App::uses('AppController', 'Controller');
 /**
  * PreviousDates Controller
@@ -79,13 +79,230 @@ class ReportsController extends AppController
             'saes_by_concomittant',
             'landing',
             'e2b_summary',
-            's_summary'
+            's_summary',
+            'd_aefi_analytics'
         );
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
         }
         $this->set('is_mobile', $this->is_mobile);
+    }
+
+    public function d_aefi_analytics()
+    {
+
+        // Load Data for Counties 
+        $id_arrays = array(0);
+        $criteria['Aefi.submitted'] = array(1, 2);
+        $criteria['Aefi.copied !='] = '1';
+        $criteria['Aefi.deleted'] = false;
+        $criteria['Aefi.archived'] = false;
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Aefi.reporter_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+        if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
+
+
+        $aefiIds = $this->Aefi->find('list', array(
+            'fields' => array('Aefi.id'),
+            'conditions' => $criteria
+        ));
+        $aefiIds = array_keys($aefiIds);
+        // debug($aefiIds);
+        // exit;
+
+
+        $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
+
+        $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
+            'fields' => array(
+                'Vaccine.vaccine_name as vaccine_name',
+                'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'
+            ),
+            'contain' => array('Vaccine'), // Include the Vaccine model to access vaccine_name
+            'conditions' => array(
+                'AefiListOfVaccine.aefi_id' => $aefiIds,
+                'AefiListOfVaccine.vaccine_name IS NOT NULL',
+            ),
+            'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
+            'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
+        ));
+        // debug($vaccine);
+        // exit;
+        //loop through to get specific report:
+
+        $data = [];
+        foreach ($vaccine as $vc) {
+            if (!is_null($vc['Vaccine']['vaccine_name'])) {
+
+                $cond = $this->count_every_vaccine($vc);
+                // Find the intersection of the two arrays
+                $commonElements = array_intersect($cond, $aefiIds);
+                $reports = [];
+                foreach ($commonElements as $key => $cm) {
+                    $reactions = [];
+                    $aefi = $this->Aefi->find('first', array(
+                        'conditions' => array('Aefi.id' => $cm),
+                        'contain' => array('AefiDescription', 'AefiListOfVaccine.Vaccine'),
+
+                    ));
+                    $aefi = Sanitize::clean($aefi, array('escape' => true));
+
+                    if ($aefi['Aefi']['bcg'] == '1') {
+                        $reactions[] = "BCG Lymphadenitis";
+                    }
+                    if ($aefi['Aefi']['convulsion'] == '1') {
+                        $reactions[] = "Convulsion";
+                    }
+                    if ($aefi['Aefi']['urticaria'] == '1') {
+                        $reactions[] = "Generalized urticaria (hives)";
+                    }
+                    if ($aefi['Aefi']['high_fever'] == '1') {
+                        $reactions[] = "High Fever";
+                    }
+                    if ($aefi['Aefi']['abscess'] == '1') {
+                        $reactions[] = "Injection site abscess";
+                    }
+                    if ($aefi['Aefi']['local_reaction'] == '1') {
+                        $reactions[] = "Severe Local Reaction";
+                    }
+                    if ($aefi['Aefi']['anaphylaxis'] == '1') {
+                        $reactions[] = "Anaphylaxis";
+                    }
+                    if ($aefi['Aefi']['meningitis'] == '1') {
+                        $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+                    }
+                    if ($aefi['Aefi']['paralysis'] == '1') {
+                        $reactions[] = "Paralysis";
+                    }
+                    if ($aefi['Aefi']['toxic_shock'] == '1') {
+                        $reactions[] = "Toxic shock";
+                    }
+                    $reactions[] = $aefi['Aefi']['aefi_symptoms'];
+
+                    // added reactions
+
+                    $multiple = $aefi['AefiDescription'];
+                    if (!empty($multiple)) {
+                        foreach ($multiple as $other) {
+                            $reactions[] = $other['description'];
+                        }
+                    }
+                    $reports[] = array(
+                        'aefi_id' => $cm,
+                        'reactions' => $reactions
+                    );
+                }
+                $data[] = array(
+                    'total_reports' => count($aefiIds),
+                    'name' => $vc['Vaccine']['vaccine_name'],
+                    'drug_reports' => count($reports),
+                    'reports' => $reports
+                );
+            }
+        }
+        // Target Vaccine
+        $reactionLists = Configure::read('analytics');
+        // debug($reactionName); 
+
+        // loop through to get all target reaction key => name
+        $data[] = array(
+            'total_reports' => count($aefiIds),
+            'name' => $vc['Vaccine']['vaccine_name'],
+            'drug_reports' => count($reports),
+            'reports' => $reports
+        );
+
+        $inputData = [];
+        foreach ($data as $dt) {
+            // Initialize count
+          $current_drug_name=  $dt['name'];
+          $total_report_count=count($aefiIds);
+          $drug_related_reports=count($dt['reports']);
+
+            $reactionDetails=[];
+            foreach ($reactionLists as $reactionName) {
+                $reactionCount = $this->count_specific_reaction($data, $reactionName);
+                $drugReactionCount = $this->count_specific_drug_reaction($dt, $reactionName);
+                $reactionDetails[]=array(
+
+                'B_reports_with_reaction' => $reactionCount,
+                'AB_reports_with_drug_and_reaction' => $drugReactionCount,               
+                'reaction_at_hand' => $reactionName,
+                'E_(AB)_expected_count'=>($drug_related_reports * $reactionCount)/$total_report_count
+                );
+            }
+
+            $inputData[] = array(
+                'current_drug_name' => $current_drug_name,
+                'N_total_reports' => $total_report_count,
+                'A_reports_with_drug' => $drug_related_reports,
+                'reactionDetails'=>$reactionDetails
+            );
+        }
+        debug($inputData);
+        exit;
+
+
+
+        $this->set(compact('vaccines'));
+        $this->set(compact('vaccine'));
+
+        $this->set('_serialize', 'vaccines', 'vaccine');
+    }
+    public function count_specific_drug_reaction($vaccine, $reactionName)
+    {
+        $reactionCount = 0;
+        foreach ($vaccine['reports'] as $report) {
+            foreach ($report['reactions'] as $reaction) {
+                if (stripos($reaction, $reactionName) !== false) {
+                    $reactionCount++;
+                }
+            }
+        }
+        return $reactionCount;
+    }
+    public function count_specific_reaction($data, $reactionName)
+    {
+        // Iterate through the data to count the occurrences of the reaction
+        $reactionCount = 0;
+        foreach ($data as $vaccine) {
+            foreach ($vaccine['reports'] as $report) {
+                foreach ($report['reactions'] as $reaction) {
+                    if (stripos($reaction, $reactionName) !== false) {
+                        $reactionCount++;
+                    }
+                }
+            }
+        }
+        return $reactionCount;
+    }
+    public function count_every_vaccine($vc)
+    {
+        $vc_name = $vc['Vaccine']['vaccine_name'];
+        $cond = array(); // Initialize $cond with an empty array
+
+        $subquery = $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
+            'conditions' => array(
+                'Vaccine.vaccine_name LIKE' => '%' . $vc_name . '%',
+            ),
+            'fields' => array('id'),
+            'recursive' => -1 // To avoid unnecessary recursive queries
+        ));
+
+        if ($subquery) {
+            $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
+                'conditions' => array(
+                    'AefiListOfVaccine.vaccine_id IN' => $subquery,
+                    'AefiListOfVaccine.aefi_id IS NOT NULL' // Exclude null values
+
+                ),
+                'keyField' => 'aefi_id',
+                'valueField' => 'aefi_id'
+            ));
+        }
+
+        return $cond;
     }
     public function serious_sadr_summary($criteria = array())
     {
@@ -1299,8 +1516,8 @@ class ReportsController extends AppController
             'having' => array('COUNT(*) >' => 0),
         ));
 
-           // PQHPTS per Designation
-           $designation = $this->Device->find('all', array(
+        // PQHPTS per Designation
+        $designation = $this->Device->find('all', array(
             'fields' => array('Designation.name', 'COUNT(*) as cnt'),
             'contain' => array('Designation'),
             'conditions' => $criteria,
@@ -1322,7 +1539,7 @@ class ReportsController extends AppController
         $this->set(compact('months'));
         $this->set(compact('designation'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'serious', 'reason', 'brands', 'outcome', 'facilities', 'months','designation');
+        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'serious', 'reason', 'brands', 'outcome', 'facilities', 'months', 'designation');
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_devices_summary');
@@ -1491,7 +1708,7 @@ class ReportsController extends AppController
         $this->set(compact('outcome'));
         $this->set(compact('previous_reactions'));
         $this->set(compact('previous_transfusion'));
-        $this->set(compact('months')); 
+        $this->set(compact('months'));
 
         $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year');
         $this->set('_serialize', 'qualification', 'outcome', 'previous_reactions', 'previous_transfusion', 'months');
@@ -1499,10 +1716,11 @@ class ReportsController extends AppController
         if ($this->Session->read('Auth.User.group_id') == 2) {
             $this->render('upgrade/manager_transfusions_summary');
         } else {
-            if ($this->Auth->User('user_type') == 'County Pharmacist'){
+            if ($this->Auth->User('user_type') == 'County Pharmacist') {
                 $this->render('upgrade/county_transfusions');
-            }else{
-            $this->render('upgrade/transfusions_summary');}
+            } else {
+                $this->render('upgrade/transfusions_summary');
+            }
         }
     }
     public function saes_summary()
@@ -1847,8 +2065,8 @@ class ReportsController extends AppController
         } else {
             if ($this->Auth->User('user_type') == 'County Pharmacist') {
                 $this->render('upgrade/county_medications');
-            }else{
-            $this->render('upgrade/medications_summary');
+            } else {
+                $this->render('upgrade/medications_summary');
             }
         }
     }

@@ -78,4 +78,18 @@
         ?>
       </li>
       <li class="divider"></li>
+      <li class="nav-header"><i class="fa fa-thermometer-full" aria-hidden="true"></i> Disproportionality Analysis</li>
+      <li class="<?php echo $this->fetch('d-aefi-analysis'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> AEFI Reports',  array('controller' => 'reports', 'action'=>'d_aefi_analytics', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('d-sadr-analysis'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> SADR Reports',  array('controller' => 'reports', 'action'=>'d_sadr_analytics', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="divider"></li>
     </ul>
