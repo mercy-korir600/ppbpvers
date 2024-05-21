@@ -5,6 +5,70 @@ $this->Html->css('summary', null, array('inline' => false));
 ?>
 
 <?php $this->start('report'); ?>
+
+<div class="row-fluid">
+    <div class="span12">
+        <table class="table table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>Vaccine Name</th>
+                    <th>N-Total</th>
+                    <th>A-Drug</th>
+                    <th colspan="2">Disproportionality Analysis Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($inputData as $key => $value) {
+                    echo "<tr>";
+                    echo "<th>" . $value['current_drug_name'] . "</th>";
+                    echo "<th>" . $value['N_total_reports'] . "</th>";
+                    echo "<th>" . $value['A_reports_with_drug'] . "</th>";
+                    echo "<td>"; ?>
+                    <table class="table table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Drug Reaction</th>
+                                <th>B-</th>
+                                <th>AB</th>
+                                <th>E_AB</th>
+                                <th>IC</th>
+                                <th>Log IC</th>
+                                <th>Var(IC)</th>
+                                <th>Standard Error (SE) of IC</th>
+                                <th>95% Confidence Interval</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            foreach ($value['reactionDetails'] as $key => $dt) { ?>
+                                <?php
+                                echo "<tr>"; 
+                                echo "<td>" . $dt['reaction_at_hand'] . "</td>";
+                                echo "<td>" . $dt['B_reports_with_reaction'] . "</td>";
+                                echo "<td>" . $dt['AB_reports_with_drug_and_reaction'] . "</td>";
+                                echo "<td>" . $dt['E_(AB)_expected_count'] . "</td>";
+                                echo "<td>" . $dt['IC_raw_calculated_data'] . "</td>";
+                                echo "<td>" . $dt['IC_raw_calculated_log_data'] . "</td>"; 
+                                echo "<td>" . $dt['Var(IC)_Variance_of_IC'] . "</td>";
+                                echo "<td>" . $dt['Standard_Error_(SE)_of_IC'] . "</td>";
+                                echo "<td>" . $dt['95%_Confidence_Interval'] . "</td>";
+                                echo "</tr>";  
+                                ?>
+
+                            <?php } ?>
+                        </tbody>
+                    </table><?php
+
+                            echo "</td>";
+                            echo "</tr>";
+                        }
+                            ?>
+
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="row-fluid">
     <div class="span12">
         <h4>AEFIs per Vaccines</h4>
@@ -24,7 +88,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="vaccineTable" class="tabcontentvaccine">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablevaccine">
                 <thead>
                     <tr>
@@ -43,7 +107,7 @@ $this->Html->css('summary', null, array('inline' => false));
                     }
                     ?>
                 </tbody>
-           </table>
+            </table>
             <table class="table table-condensed table-bordered">
 
                 <tbody>
@@ -57,9 +121,8 @@ $this->Html->css('summary', null, array('inline' => false));
     </div>
 </div>
 <hr>
- 
+
 <script type="text/javascript">
-   
     function vaccineTab(evt, vaccinetabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentvaccine");
@@ -74,12 +137,12 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
-  
+
     // Get the element with id="defaultOpen" and click on it vaccine  reason serious outcome facility month
-    document.getElementById("vaccineOpen").click(); 
-    
-  
- 
+    document.getElementById("vaccineOpen").click();
+
+
+
     Highcharts.chart('sadrs-vaccine', {
         data: {
             table: 'datatablevaccine'
@@ -104,9 +167,5 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-  
-     
- 
-   
 </script>
 <?php $this->end(); ?>

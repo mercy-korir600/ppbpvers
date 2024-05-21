@@ -224,12 +224,50 @@ class ReportsController extends AppController
             foreach ($reactionLists as $reactionName) {
                 $reactionCount = $this->count_specific_reaction($data, $reactionName);
                 $drugReactionCount = $this->count_specific_drug_reaction($dt, $reactionName);
+
+                // Calculating Expected Counts
+                $expected_count=($drug_related_reports * $reactionCount)/$total_report_count;
+
+                $numerator=$drugReactionCount+0.5;
+                $denominator=$expected_count+0.5;
+                $calculated_data=$numerator/$denominator;
+
+                // Observed vs. Expected -> IC (Information Component):
+
+                $calculated_log_data=log($calculated_data,2);
+
+                //Confidence Interval for IC
+
+                /**
+                 * 
+                 * Var(IC)= 1/(AB+0.5) + 1/(A−AB+0.5) + 1/(B−AB+0.5)  + 1/(N−A−B+AB+0.5)​
+
+                 */
+
+                $variance_of_ic=1/($numerator) +1/($drug_related_reports-$drugReactionCount+0.5)+1/($reactionCount-$drugReactionCount+0.5)+1/($total_report_count-$drug_related_reports-$reactionCount+$drugReactionCount+0.5);
+
+                // Standard Error (SE) of IC:
+                /*
+                SE(IC)= Var(IC)
+                */
+                $standard_error = sqrt($variance_of_ic);
+
+                /**
+                 * 95% Confidence Interval: -> Lower Bound(IC025)=IC−1.96×SE(IC)
+                 * */
+                $lower_bound=$calculated_log_data-1.96*$standard_error;
+                
                 $reactionDetails[]=array(
 
                 'B_reports_with_reaction' => $reactionCount,
                 'AB_reports_with_drug_and_reaction' => $drugReactionCount,               
                 'reaction_at_hand' => $reactionName,
-                'E_(AB)_expected_count'=>($drug_related_reports * $reactionCount)/$total_report_count
+                'E_(AB)_expected_count'=>$expected_count,
+                'IC_raw_calculated_data'=>$calculated_data                ,
+                'IC_raw_calculated_log_data'=>$calculated_log_data,
+                'Var(IC)_Variance_of_IC'=>$variance_of_ic,
+                'Standard_Error_(SE)_of_IC'=>$standard_error,
+                '95%_Confidence_Interval'=>$lower_bound
                 );
             }
 
@@ -240,15 +278,16 @@ class ReportsController extends AppController
                 'reactionDetails'=>$reactionDetails
             );
         }
-        debug($inputData);
-        exit;
+        // debug($inputData);
+        // exit;
 
 
 
         $this->set(compact('vaccines'));
         $this->set(compact('vaccine'));
+        $this->set(compact('inputData'));
 
-        $this->set('_serialize', 'vaccines', 'vaccine');
+        $this->set('_serialize', 'vaccines', 'vaccineinputData','');
     }
     public function count_specific_drug_reaction($vaccine, $reactionName)
     {
