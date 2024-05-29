@@ -110,6 +110,15 @@
             );
             ?>
         </li>
+        <!-- <li class="<?php echo $this->fetch('Disproportionality Analysis') ?>">
+            <?php
+            echo $this->Html->link(
+                '<i class="fa fa-bar-chart" aria-hidden="true"></i> Disproportionality Analysis',
+                array('controller' => 'reports', 'action' => 'index', 'manager' => false),
+                array('escape' => false)
+            );
+            ?>
+        </li> -->
 
         <li class="<?php echo $this->fetch('NT') ?>">
             <?php

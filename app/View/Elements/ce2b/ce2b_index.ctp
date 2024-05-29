@@ -160,7 +160,7 @@ echo $this->Session->flash();
                     <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
                     <th><?php echo $this->Paginator->sort('company_name'); ?></th>
                     <th><?php echo $this->Paginator->sort('reporter_email'); ?></th>
-                    <th><?php echo $this->Paginator->sort('e2b_file'); ?></th>
+                    <th><?php echo $this->Paginator->sort('e2b_file_type'); ?></th>
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
                 </tr>
@@ -176,7 +176,7 @@ echo $this->Session->flash();
                             ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['company_name']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['reporter_email']); ?>&nbsp;</td>
-                        <td></td>
+                        <td><?php echo h($ce2b['Ce2b']['e2b_type']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['created']); ?>&nbsp;</td>
                         <td class="actions">
                             <?php

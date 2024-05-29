@@ -348,6 +348,16 @@ class Aefi extends AppModel
                 //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
+        'sub_county_id' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+                'message' => 'Please select a sub county',
+                //'allowEmpty' => false,
+                'required' => true,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+            ),
+        ),
         'designation_id' => array(
             'numeric' => array(
                 'rule' => array('numeric'),

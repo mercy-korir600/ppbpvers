@@ -103,7 +103,7 @@ echo $this->Form->create('Aefi', array(
                     ));
                     echo $this->Form->input('sub_county_id', array(
                         'options' => $sub_counties,
-                        'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY'),
+                        'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY <span style="color:red;">*</span>'),
                         'empty' => true, 'between' => '<div class="controls ui-widget">',
                     ));
                     ?>

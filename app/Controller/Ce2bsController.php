@@ -228,6 +228,141 @@ class Ce2bsController extends AppController
         $this->general_editor($id);
     }
 
+    private function parseE2BReport($xmlFilePath)
+    {
+        try {
+            if (!file_exists($xmlFilePath)) {
+                throw new NotFoundException(__('Invalid file path'));
+            }
+
+            $xml = simplexml_load_file($xmlFilePath);
+            if ($xml === false) {
+                throw new Exception(__('Failed to load XML file'));
+            }
+
+            $namespaces = $xml->getNamespaces(true);
+            $xml->registerXPathNamespace('hl7', $namespaces['']);
+
+            $data = [];
+
+            // Batch Number
+            $data['batch_number'] = (string) $xml->id['extension'];
+
+            // Date of Batch Transmission
+            $data['batch_transmission_date'] = (string) $xml->creationTime['value'];
+
+            // Type of Messages in Batch
+            $data['message_type'] = (string) $xml->name['code'];
+
+            // ICSR Message Header
+            $icsr = $xml->xpath('//hl7:PORR_IN049016UV')[0];
+
+            // Message Identifier
+            $data['message_identifier'] = (string) $icsr->id['extension'];
+
+            // Date of Message Creation
+            $data['message_creation_date'] = (string) $icsr->creationTime['value'];
+
+            // Message Receiver Identifier
+            $data['message_receiver'] = (string) $icsr->receiver->device->id['extension'];
+
+            // Message Sender Identifier
+            $data['message_sender'] = (string) $icsr->sender->device->id['extension'];
+
+            // Case Safety Report
+            $caseReport = $icsr->controlActProcess->subject->investigationEvent;
+
+            // Sender's Case Safety Report Unique Identifier
+            $data['case_report_identifier'] = (string) $caseReport->id[0]['extension'];
+
+            // Worldwide Unique Case Identification Number
+            $data['unique_case_identifier'] = (string) $caseReport->id[1]['extension'];
+
+            // Case Narrative
+            $data['case_narrative'] = (string) $caseReport->text;
+
+            // Date Report Was First Received from Source
+            $data['report_received_date'] = (string) $caseReport->effectiveTime->low['value'];
+
+            // Date of Receipt of the Most Recent Information for This Report
+            $data['most_recent_info_date'] = (string) $caseReport->availabilityTime['value'];
+
+            // Extract Batch Receiver Identifier
+            $data['batch_receiver_identifier'] = (string) $xml->receiver->device->id['extension'];
+
+            // Extract Batch Sender Identifier
+            $data['batch_sender_identifier'] = (string) $xml->sender->device->id['extension'];
+            //     <!--D: Patient Characteristics-->
+            $primaryRole = $caseReport->component->adverseEventAssessment->subject1->primaryRole;
+            // return $component;
+            $data['patient_name'] = (string)  $primaryRole->player1->name;
+            $data['patient_gender'] = (string) $primaryRole->player1->administrativeGenderCode['code'];
+
+            $subjectOf2 = $primaryRole->subjectOf2;
+            // <!--D.7.1.r: Relevant Medical History and Concurrent Conditions (not including reaction / event)
+
+            $components = $subjectOf2->organizer->component;
+
+            $MedicalData = [];
+
+            foreach ($components as $component) {
+                $observation = $component->observation;
+                $obsData = [];
+                // Extract code
+                $obsData['code'] = (string) $observation->code['code'];
+                // Extract codeSystemVersion
+                $obsData['codeSystemVersion'] = (string) $observation->code['codeSystemVersion'];
+                // Extract codeSystem
+                $obsData['codeSystem'] = (string) $observation->code['codeSystem'];
+                // Extract effectiveTime
+                $obsData['effectiveTime'] = (string) $observation->effectiveTime->low['value'];
+                // Add the extracted observation data to the main data array
+                $MedicalData[] = $obsData;
+            }
+            $data['medical_history'] = $MedicalData;
+            //  <!--E.i: REACTION(S)/EVENT(S) - (1)-->
+            $subjectOf2s = [];
+            foreach ($primaryRole->subjectOf2 as $sample) {
+                $subjectOf2s[] = $sample;
+            }
+            $firstItem = null;
+            $lastItem = null;
+            if (!empty($subjectOf2s)) {
+                // Get the first item
+                // $firstItem = $subjectOf2s[0];
+                // Get the last item
+                // $lastItem = $subjectOf2s[count($subjectOf2s) - 1];
+
+                // Remove the first item
+                $firstItem = array_shift($subjectOf2s);
+
+                // Remove the last item
+                $lastItem = array_pop($subjectOf2s);
+            }
+            $reactions = [];
+
+            foreach ($subjectOf2s as $reaction) {
+                $single = $reaction->observation;
+                $reactionDetails = array(
+                    'id' => (string) $single->id['root'],
+                    'code' => (string) $single->code['code'],
+                    'effectiveTime' => (string) $single->effectiveTime->low['value'],
+                    'medra_code' => (string) $single->value['code'],
+                    'country_origin' => (string) $single->location->locatedEntity->locatedPlace->code['code'],
+                    'medra_translation' => (string) $single->outboundRelationship2->observation->value
+
+                );
+                $reactions[] = $reactionDetails;
+            }
+
+            // return $subjectOf2s;
+            //    return $data['reactions']=$reactions;
+
+            return $data;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
     public function general_editor($id = null)
     {
         # code...
@@ -245,44 +380,77 @@ class Ce2bsController extends AppController
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
+
+            // debug($this->request->data['Ce2b']['e2b_type']);
+            // exit;
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
             if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
-
-                    try {
-                        $file = $this->request->data['Ce2b']['e2b_file_data'];
-                        $xmlString = file_get_contents($file['tmp_name']);
-                        $xml = Xml::build($xmlString);
-                        // Find all the messagereceiveridentifier elements
-                        $elements = $xml->xpath('//messagereceiveridentifier');
-
-                        // Loop through the elements and extract their values
-                        $valid = false;
-                        foreach ($elements as $element) {
-                            $value = (string) $element;
-                            if ($value == 'KE') {
-                                $valid = true;
-                            }
-                        }
-                        if (!$valid) {
-                            $this->Session->setFlash(__('The E2b file is not valid. Please try again later'), 'alerts/flash_error');
-                            $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-                        }
+                    if ($this->request->data['Ce2b']['e2b_type'] == "R2") {
                         try {
-                            $xmlString = $xml->asXML();
-                            $this->Ce2b->saveField('e2b_content', $xmlString);
-                        } catch (Exception $e) {
+                            $file = $this->request->data['Ce2b']['e2b_file_data'];
+                            $xmlString = file_get_contents($file['tmp_name']);
+                            $xml = Xml::build($xmlString);
+                            // Find all the messagereceiveridentifier elements
+                            $elements = $xml->xpath('//messagereceiveridentifier');
+
+                            // Loop through the elements and extract their values
+                            $valid = false;
+                            foreach ($elements as $element) {
+                                $value = (string) $element;
+                                if ($value == 'KE') {
+                                    $valid = true;
+                                }
+                            }
+                            if (!$valid) {
+                                $this->Session->setFlash(__('The E2b file is not valid. Please try again later'), 'alerts/flash_error');
+                                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                            }
+                            try {
+                                $xmlString = $xml->asXML();
+                                $this->Ce2b->saveField('e2b_content', $xmlString);
+                            } catch (Exception $e) {
+                                $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                            }
+                        } catch (XmlException $e) {
                             $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
-                    } catch (XmlException $e) {
-                        $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
-                        $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-                    }
+                    } else {
 
+                        /**Dealing with R3 */
+
+                        $file = $this->request->data['Ce2b']['e2b_file_data'];
+
+                        // Check if file was uploaded successfully
+                        if ($file['error'] === UPLOAD_ERR_OK) {
+                            $xmlFilePath = $file['tmp_name']; // Temporary file path
+                            $data = $this->parseE2BReport($xmlFilePath);
+
+                            if (is_null($data)) {
+                                $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                            } else {
+                                try {
+                                    $xmlString = file_get_contents($file['tmp_name']);
+                                    $xml = Xml::build($xmlString);
+                                    $xmlString = $xml->asXML();
+                                    $this->Ce2b->saveField('e2b_content', $xmlString);
+                                } catch (Exception $e) {
+                                    $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                                    $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                                }
+                            }
+                        } else {
+                            // $this->Session->setFlash(__('File upload failed'), 'default', array('class' => 'error'));
+                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                            $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                        }
+                    }
 
                     //lucian
                     // if(empty($ce2b->reference_no)) {
@@ -468,28 +636,40 @@ class Ce2bsController extends AppController
             'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
-        $data = [];
-        try {
-            $xml = $ce2b['Ce2b']['e2b_content'];
-            $xml = Xml::build($xml);
-            $elements = $xml->xpath('//*');
+        // debug($ce2b['Ce2b']['e2b_type']);
+        // exit;
 
-            foreach ($elements as $element) {
-                $key = $element->getName();
-                $value = (string) $element;
-                if ($key == 'ichicsr' || $key == 'ichicsrmessageheader') {
-                    continue;
-                } else {
-                    $data[] = [
-                        'key' => $key,
-                        'value' => $value
-                    ];
+        if ($ce2b['Ce2b']['e2b_type'] === "R2") {
+
+            $data = [];
+            try {
+                $xml = $ce2b['Ce2b']['e2b_content'];
+                $xml = Xml::build($xml);
+                $elements = $xml->xpath('//*');
+
+                foreach ($elements as $element) {
+                    $key = $element->getName();
+                    $value = (string) $element;
+                    if ($key == 'ichicsr' || $key == 'ichicsrmessageheader') {
+                        continue;
+                    } else {
+                        $data[] = [
+                            'key' => $key,
+                            'value' => $value
+                        ];
+                    }
                 }
+            } catch (Exception $e) {
             }
-        } catch (Exception $e) {
-        }
 
-        $this->set(['ce2b' => $ce2b, 'data' => $data]);
+            $this->set(['ce2b' => $ce2b, 'data' => $data]);
+        } else {
+
+            $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
+            $this->set(['ce2b' => $ce2b]);
+            $this->set(['e2b' => $e2b]);
+            $this->render('ce2b_r3');
+        }
 
         if (strpos($this->request->url, 'pdf') !== false) {
             $this->pdfConfig = array('filename' => 'E2b' . $id . '.pdf',  'orientation' => 'portrait');

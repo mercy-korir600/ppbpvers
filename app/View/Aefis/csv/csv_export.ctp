@@ -1,7 +1,7 @@
 <?php
 	
 	$header = array('id' => '#', 'reference_no' => 'Reference No.', 'report_type' => 'Type', 'name_of_institution' => 'Institution', 'institution_code' => 'Institution Code',
-		'counties' => 'County', 'patient_name' => 'Patient Name', 'guardian_name' => 'Guardian Name', 'ip_no' => 'IP/OP No', 'patient_address' => 'Patient Address', 'date_born' => 'Date of birth','age_months' => 'Age in months', 
+		'counties' => 'County','subcounties' => 'Sub County', 'patient_name' => 'Patient Name', 'guardian_name' => 'Guardian Name', 'ip_no' => 'IP/OP No', 'patient_address' => 'Patient Address', 'date_born' => 'Date of birth','age_months' => 'Age in months', 
 		'gender' => 'Gender', 'patient_village' => 'Patient Village', 'patient_county' => 'Patient county', 'patient_ward' => 'Patient Ward',
 		'vaccination_center' => 'Vaccination center','vaccination_type' => 'Vaccination service', 'vaccination_county' => 'Vaccination county',
 		'bcg' => 'BCG Lymphadenitis', 'convulsion' => 'Convulsion','urticaria' => 'Generalized urticaria', 'high_fever' => 'High Fever',
@@ -58,7 +58,10 @@
 			}
 			elseif ($key == 'counties') {
 				$row[$key] = '"' . preg_replace('/"/','""',$caefi['County']['county_name']) . '"';
+			} elseif ($key == 'subcounties') {
+				$row[$key] = '"' . preg_replace('/"/','""',$caefi['SubCounty']['sub_county_name']) . '"';
 			} 
+			
 			elseif ($key == 'patient_name') {
 				$row[$key] = '"' . preg_replace('/"/','""',$caefi['Aefi']['patient_name']) . '"';
 			} 

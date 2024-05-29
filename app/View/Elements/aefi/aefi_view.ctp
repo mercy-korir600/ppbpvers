@@ -131,7 +131,7 @@
 							<table>
 								<tbody>
 								<tr>
-									<td style="width: 50%;">DATE Adverse Event Following Immunization STARTED </td>
+									<td style="width: 50%;">DATE AEFI STARTED </td>
 									<td><strong><?php echo $aefi['Aefi']['date_aefi_started'] ?>	</strong></td>
 								</tr>
 								<tr>
@@ -145,7 +145,7 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-									  Describe Adverse Event Following Immunization (Signs & Symptoms) <br>
+									  Describe AEFI (Signs & Symptoms) <br>
 									  <strong><?php echo $aefi['Aefi']['aefi_symptoms'] ?>	</strong><br>
 									  <?php
 					                     foreach ($aefi['AefiDescription'] as $aefiDescription): 
