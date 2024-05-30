@@ -662,7 +662,11 @@ class Ce2bsController extends AppController
             } catch (Exception $e) {
             }
 
-            $this->set(['ce2b' => $ce2b, 'data' => $data]);
+            // $this->set(['ce2b' => $ce2b, 'data' => $data]);
+
+            $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
+            $this->set(['ce2b' => $ce2b]);
+            $this->set(['e2b' => $e2b]);
         } else {
 
             $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));

@@ -1,6 +1,6 @@
 <?php
 $this->extend('/Reports/upgrade/menu/d_aefi');
-$this->assign('d-aefi-analysis', 'active');
+$this->assign('d-sadr-analysis', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>
 

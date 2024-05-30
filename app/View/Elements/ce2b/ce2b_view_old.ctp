@@ -1,5 +1,5 @@
 <?php
-$this->assign('E2B', 'active');
+$this->assign('Ce2b', 'active');
 $ichecked = "&#x2611;";
 $nchecked = "&#x2610;";
 ?>
@@ -50,47 +50,28 @@ $nchecked = "&#x2610;";
                         </td>
                     </tr>
                 </table>
-                <!-- Start of Data Manipulation -->
+                
                 <table class="table" style="width: 100%;">
-                    <tr style="background: #DAEDF3;">
-                        <td colspan="2"> I. REACTION INFORMATION </td>
+                    <tr>
+                        <td style="width: 10%;"><b>E2B Content:</b> </td>
                     </tr>
                     <tr>
-                        <td width="30%" class="table-label required">
-                            <p>Creation Time <small class="muted"></small> </p>
-                        </td>
-                        <td><?php
-                            echo   implode(" | ", array_merge(Hash::extract($e2b, 'MCCI_IN200100UV01.creationTime'), Hash::extract($e2b, 'MCCI_IN200100UV01.{n}.creationTime')));
-                            ?></td>
-                    </tr> 
-                    <tr>
-                        <td width="30%" class="table-label required">
-                            <p>Message Identifier  <small class="muted"></small> </p>
-                        </td>
-                        <td><?php
-                            echo   implode(" | ", array_merge(Hash::extract($e2b, 'MCCI_IN200100UV01.PORR_IN049016UV.id'), Hash::extract($e2b, 'MCCI_IN200100UV01.{n}.PORR_IN049016UV.id')));
-                            ?></td>
-                    </tr> 
-                    <tr>
-                        <td width="30%" class="table-label required">
-                            <p>Sender <small class="muted"></small> </p>
-                        </td>
-                        <td><?php 
-                        echo   implode(" | ", array_merge(Hash::extract($e2b, 'MCCI_IN200100UV01.PORR_IN049016UV.sender.device.id'), Hash::extract($e2b, 'MCCI_IN200100UV01.PORR_IN049016UV.sender.device.{n}.id'))); 
+                        <td style="width: 10%;">Label </td>
+                        <td style="width: 10%;">Value </td>
+                        <td style="width: 10%;">Help </td>
+                    </tr>
+                    <?php
 
-                            ?></td>
-                    </tr>
+                    foreach($data as $dt){?>
+                    
+                   
                     <tr>
-                        <td width="30%" class="table-label required">
-                            <p>Receiver <small class="muted"></small> </p>
-                        </td>
-                        <td><?php 
-                        echo   implode(" | ", array_merge(Hash::extract($e2b, 'MCCI_IN200100UV01.PORR_IN049016UV.receiver.device.id'), Hash::extract($e2b, 'MCCI_IN200100UV01.PORR_IN049016UV.receiver.device.{n}.id'))); 
-
-                            ?></td>
+                        <td style="width: 10%;"><?php echo $dt['key'] ?> </td>
+                        <td style="width: 10%;"> <?php echo $dt['value'] ?></td>
+                        <td style="width: 10%;"> </td>
                     </tr>
+                    <?php } ?>
                 </table>
-                <!-- End of Content  -->
                 <hr>
 
                 <?php if (count($ce2b['Attachment']) > 0) { ?>
