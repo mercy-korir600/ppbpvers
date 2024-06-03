@@ -9,16 +9,31 @@ App::uses('AppModel', 'Model');
  * @property SubCounty $SubCounty
  * @property Designation $Designation
  */
-class Aggregate extends AppModel {
+class Aggregate extends AppModel
+{
 
-	public $actsAs = array('Media.Transfer', 'Media.Coupler', 'Media.Meta', 'Search.Searchable','Containable');
+	public $actsAs = array('Media.Transfer', 'Media.Coupler', 'Media.Meta', 'Search.Searchable', 'Containable');
 	public $filterArgs = array(
 		'reference_no' => array('type' => 'like', 'encode' => true),
 		'start_date' => array('type' => 'query', 'method' => 'dummy'),
 		'end_date' => array('type' => 'query', 'method' => 'dummy'),
+        'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aggregate.reporter_date as DATE) BETWEEN ? AND ?'),
 	);
+	public function dummy($data = array())
+	{
+		return array('1' => '1');
+	}
 
+	public function makeRangeCondition($data = array())
+    {
+        if (!empty($data['start_date'])) $start_date = date('Y-m-d', strtotime($data['start_date']));
+        else $start_date = date('Y-m-d', strtotime('2012-05-01'));
 
+        if (!empty($data['end_date'])) $end_date = date('Y-m-d', strtotime($data['end_date']));
+        else $end_date = date('Y-m-d');
+
+        return array($start_date, $end_date);
+    }
 
 	public $hasMany = array(
 		'Attachment' => array(
@@ -28,36 +43,36 @@ class Aggregate extends AppModel {
 			'conditions' => array('Attachment.model' => 'Aggregate', 'Attachment.group' => 'attachment'),
 		),
 		'ExternalComment' => array(
-            'className' => 'Comment',
-            'foreignKey' => 'foreign_key',
-            'dependent' => true,
-            'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external' ),
-        ),
+			'className' => 'Comment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
+		),
 		'ReviewComment' => array(
-            'className' => 'Comment',
-            'foreignKey' => 'foreign_key',
-            'dependent' => true,
-            'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review' ),
-        )
+			'className' => 'Comment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
+		)
 
-		
+
 	);
 
-/**
- * Validation rules
- *
- * @var array
- */
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
-		'e2b_file_data' => array( 
+		'e2b_file_data' => array(
 			'resource'   => array(
 				'rule' => 'checkResource',
 				'allowEmpty' => false,
 				'message' => 'Please attach a file!'
 			),
-			'access'     => array('rule' => 'checkAccess'),  
+			'access'     => array('rule' => 'checkAccess'),
 			'permission' => array('rule' => array('checkPermission', '*')),
-			'size'       => array('rule' => array('checkSize', '5M')), 
+			'size'       => array('rule' => array('checkSize', '5M')),
 		),
 		'reporter_email' => array(
 			'notBlank' => array(
@@ -70,11 +85,11 @@ class Aggregate extends AppModel {
 
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',

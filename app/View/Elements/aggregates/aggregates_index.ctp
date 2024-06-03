@@ -28,7 +28,7 @@ echo $this->Session->flash();
 <div class="row-fluid">
     <div class="span12">
         <?php
-        echo $this->Form->create('Aggregates', array(
+        echo $this->Form->create('Aggregate', array(
             'url' => array_merge(array('action' => 'index'), $this->params['pass']),
             'class' => 'ctr-groups', 'style' => array('padding:9px;', 'background-color: #F5F5F5'),
         ));
@@ -125,7 +125,7 @@ echo $this->Session->flash();
                     </td>
                     <td>
                         <?php
-                        echo $this->Html->link('<i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel', array('action' => 'index', 'ext' => 'csv', '?' => $this->request->query), array('class' => 'btn btn-success', 'escape' => false));
+                        // echo $this->Html->link('<i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel', array('action' => 'index', 'ext' => 'csv', '?' => $this->request->query), array('class' => 'btn btn-success', 'escape' => false));
                         ?>
                     </td>
                 </tr>
@@ -161,67 +161,61 @@ echo $this->Session->flash();
                     <th><?php echo $this->Paginator->sort('company_name'); ?></th>
                     <th><?php echo $this->Paginator->sort('reporter_email'); ?></th> 
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
+                    <th><?php echo $this->Paginator->sort('date_submitted'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                foreach ($aggregates as $ce2b) : ?>
+                foreach ($aggregates as $aggregate) : ?>
                     <tr class="">
-                        <td><?php echo h($ce2b['Aggregate']['id']); ?>&nbsp;</td>
+                        <td><?php echo h($aggregate['Aggregate']['id']); ?>&nbsp;</td>
                         <td>
                             <?php
-                            echo $this->Html->link($ce2b['Aggregate']['reference_no'], array('action' => 'view', $ce2b['Aggregate']['id']), array('escape' => false));
+                            echo $this->Html->link($aggregate['Aggregate']['reference_no'], array('action' => 'view', $aggregate['Aggregate']['id']), array('escape' => false));
                             ?>&nbsp;</td>
-                        <td><?php echo h($ce2b['Aggregate']['company_name']); ?>&nbsp;</td>
-                        <td><?php echo h($ce2b['Aggregate']['reporter_email']); ?>&nbsp;</td> 
-                        <td><?php echo h($ce2b['Aggregate']['created']); ?>&nbsp;</td>
+                        <td><?php echo h($aggregate['Aggregate']['company_name']); ?>&nbsp;</td>
+                        <td><?php echo h($aggregate['Aggregate']['reporter_email']); ?>&nbsp;</td> 
+                        <td><?php echo h($aggregate['Aggregate']['created']); ?>&nbsp;</td>
+                        <td><?php echo h($aggregate['Aggregate']['submitted_date']); ?>&nbsp;</td>
                         <td class="actions">
                             <?php
-                            if ($ce2b['Aggregate']['submitted'] > 1) {
+                            if ($aggregate['Aggregate']['submitted'] > 1) {
                                 echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
-                                    array('controller' => 'aggregates', 'action' => 'view', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
+                                
                                 echo "&nbsp;";
-                                if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'aggregates', 'action' => 'download', $ce2b['Ce2b']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
-                                echo "&nbsp;";
-                               
-                                if ($redir == 'manager') echo $this->Html->link(
-                                    '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
-                                    array('controller' => 'aggregates', 'action' => 'vigiflow', $ce2b['Aggregate']['id'], 'manager' => false),
-                                    array('escape' => false)
-                                );
-                                echo "&nbsp;";
-                                if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Aggregate']['copied'] == 2) echo $this->Html->link(
+                                if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
-                                    array('controller' => 'aggregates', 'action' => 'edit', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'edit', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
-                                if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Aggregate']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'aggregates', 'action' => 'copy', $ce2b['Ce2b']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                                // if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'aggregates', 'action' => 'copy', $aggregate['Ce2b']['id']), array('escape' => false), __('Create a clean copy to edit?'));
                                 echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
-                                    array('controller' => 'aggregates', 'action' => 'archive', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'archive', $aggregate['Aggregate']['id']),
                                     array('escape' => false), __('Are you sure you want to archive the report?')
                                   );
                             } else {
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
-                                    array('controller' => 'aggregates', 'action' => 'edit', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'edit', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
-                                    array('controller' => 'aggregates', 'action' => 'delete', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'delete', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
                                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
-                                    array('controller' => 'aggregates', 'action' => 'view', $ce2b['Aggregate']['id']),
+                                    array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
                                
@@ -249,7 +243,7 @@ echo $this->Session->flash();
             changeYear: true,
             showAnim: 'show',
             onSelect: function(selectedDate) {
-                var option = this.id == "PadrStartDate" ? "minDate" : "maxDate",
+                var option = this.id == "AggregateStartDate" ? "minDate" : "maxDate",
                     instance = $(this).data("datepicker"),
                     date = $.datepicker.parseDate(
                         instance.settings.dateFormat ||

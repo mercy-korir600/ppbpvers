@@ -227,33 +227,84 @@ class AggregatesController extends AppController
 		$this->Session->setFlash(__('The Aggregate report has been created'), 'alerts/flash_success');
 		$this->redirect(array('action' => 'edit', $this->Aggregate->id));
 	}
-	public function reporter_view($id=null)
+	public function reporter_view($id = null)
 	{
 		$this->Aggregate->id = $id;
-        if (!$this->Aggregate->exists()) {
-            $this->Session->setFlash(__('Could not verify the Aggregate report ID. Please ensure the ID is correct.'), 'flash_error');
-            $this->redirect('/');
-        }
-        $this->general_view($id);
+		if (!$this->Aggregate->exists()) {
+			$this->Session->setFlash(__('Could not verify the Aggregate report ID. Please ensure the ID is correct.'), 'flash_error');
+			$this->redirect('/');
+		}
+		$this->general_view($id);
 	}
 
-	public function general_view($id=null)
+	public function general_view($id = null)
 	{
 		$aggregate = $this->Aggregate->find('first', array(
-            'conditions' => array('Aggregate.id' => $id),
-            'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
-        ));
-		$this->set(['aggregate' => $aggregate]); 
-
+			'conditions' => array('Aggregate.id' => $id),
+			'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
+		));
+		$this->set(['aggregate' => $aggregate]);
 	}
 	// MANAGER USER
 	public function manager_index()
 	{
+
+		$this->Prg->commonProcess();
+		if (!empty($this->passedArgs['start_date']) || !empty($this->passedArgs['end_date'])) $this->passedArgs['range'] = true;
+		if (isset($this->passedArgs['pages']) && !empty($this->passedArgs['pages'])) $this->paginate['limit'] = $this->passedArgs['pages'];
+		else $this->paginate['limit'] = reset($this->page_options);
+		//Health program fiasco
+		if ($this->Session->read('Auth.User.user_type') == 'Public Health Program') {
+			$this->passedArgs['health_program'] = $this->Session->read('Auth.User.health_program');
+		}
+
+		$criteria = $this->Aggregate->parseCriteria($this->passedArgs);
+
+		if (isset($this->request->query['submitted'])) {
+			if ($this->request->query['submitted'] == 1) {
+				$criteria['Aggregate.submitted'] = array(0, 1);
+			} else {
+				$criteria['Aggregate.submitted'] = array(2, 3);
+			}
+		} else {
+			$criteria['Aggregate.submitted'] = array(2, 3);
+		}
+
+		// add deleted condition to criteria
+		$criteria['Aggregate.deleted'] = false;
+		$criteria['Aggregate.archived']=false;
+		$this->paginate['conditions'] = $criteria;
+		$this->paginate['order'] = array('Aggregate.submitted_date' => 'desc');
+		$this->set('aggregates', Sanitize::clean($this->paginate(), array('encode' => false)));
+		$this->set('page_options', $this->page_options);
 	}
 	public function manager_edit()
 	{
+
 	}
-	public function manager_view()
+	public function manager_view($id=null)
 	{
+		$this->Aggregate->id = $id;
+		if (!$this->Aggregate->exists()) {
+			$this->Session->setFlash(__('Could not verify the Aggregate report ID. Please ensure the ID is correct.'), 'flash_error');
+			$this->redirect('/');
+		}
+		$this->general_view($id);
 	}
+	public function manager_archive($id = null)
+    {
+        $this->Aggregate->id = $id;
+        if (!$this->Aggregate->exists()) {
+            throw new NotFoundException(__('Invalid Aggregate'));
+        }
+        $aggregate = $this->Aggregate->read(null, $id);
+        $aggregate['Aggregate']['archived'] = true;
+        $aggregate['Aggregate']['archived_date'] = date("Y-m-d H:i:s");
+        if ($this->Aggregate->save($aggregate, array('validate' => false))) {
+            $this->Session->setFlash(__('Aggregate Report Archived successfully'), 'alerts/flash_success');
+            $this->redirect(array('action' => 'index'));
+        }
+        $this->Session->setFlash(__('Aggregate Report was not archied'), 'alerts/flash_error');
+        $this->redirect($this->referer());
+    }
 }
