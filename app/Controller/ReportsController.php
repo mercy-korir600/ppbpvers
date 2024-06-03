@@ -79,7 +79,9 @@ class ReportsController extends AppController
             'saes_by_concomittant',
             'landing',
             'e2b_summary',
-            's_summary','d_aefi_analytics','d_sadr_analytics'
+            's_summary',
+            'd_aefi_analytics',
+            'd_sadr_analytics'
         );
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
@@ -101,15 +103,31 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
 
 
+     
+        // debug($aefiIds);
+        // exit;
+    //     if (!empty($this->request->data)){
+    //    debug($this->request->data);
+    //     exit;}
+
+        if (!empty($this->request->data['Report']['vaccines'])) {
+            $cond = array(); // Initialize $cond with an empty array
+            $ids = $this->generate_reports_per_vaccines_id($this->request->data['Report']['vaccines']);
+            if (!empty($ids)) {
+                foreach ($ids as $key => $value) {
+                    $id_arrays[] = $key;
+                }
+            }
+            $criteria['Aefi.id'] = $id_arrays;
+        }
         $aefiIds = $this->Aefi->find('list', array(
             'fields' => array('Aefi.id'),
             'conditions' => $criteria
         ));
         $aefiIds = array_keys($aefiIds);
-        // debug($aefiIds);
+
+        // debug($id_arrays);
         // exit;
-
-
         $vaccines = $this->Aefi->AefiListOfVaccine->Vaccine->find('list');
 
         $vaccine = $this->Aefi->AefiListOfVaccine->find('all', array(
@@ -204,29 +222,32 @@ class ReportsController extends AppController
         // debug($reactionName); 
 
         // loop through to get all target reaction key => name
-      
-        $total_report_count=count($aefiIds);
+
+        $total_report_count = count($aefiIds);  // N
         $inputData = [];
         foreach ($data as $dt) {
             // Initialize count
-          $current_drug_name=  $dt['name'];
-          $drug_related_reports=count($dt['reports']);
+            $current_drug_name =  $dt['name'];
+            $drug_related_reports = count($dt['reports']); //A
 
-            $reactionDetails=[];
+            $reactionDetails = [];
             foreach ($reactionLists as $reactionName) {
-                $reactionCount = $this->count_specific_reaction($data, $reactionName);
-                $drugReactionCount = $this->count_specific_drug_reaction($dt, $reactionName);
+                $reactionCount = $this->count_specific_reaction($data, $reactionName); // B
+                $drugReactionCount = $this->count_specific_drug_reaction($dt, $reactionName); //AB
 
                 // Calculating Expected Counts
-                $expected_count=($drug_related_reports * $reactionCount)/$total_report_count;
+                // $expected_count = (($drug_related_reports +  $drugReactionCount) * ($reactionCount + $drugReactionCount)) / $total_report_count;
+                $expected_count_raw=($drug_related_reports * $reactionCount)/$total_report_count;
+                $expected_count=round($expected_count_raw,5);
 
-                $numerator=$drugReactionCount+0.5;
-                $denominator=$expected_count+0.5;
-                $calculated_data=$numerator/$denominator;
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
 
                 // Observed vs. Expected -> IC (Information Component):
 
-                $calculated_log_data=log($calculated_data,2);
+                $calculated_log_data_raw = log($calculated_data, 2);
+                $calculated_log_data=round($calculated_log_data_raw,5);
 
                 //Confidence Interval for IC
 
@@ -236,8 +257,13 @@ class ReportsController extends AppController
 
                  */
 
-                $variance_of_ic=1/($numerator) +1/($drug_related_reports-$drugReactionCount+0.5)+1/($reactionCount-$drugReactionCount+0.5)+1/($total_report_count-$drug_related_reports-$reactionCount+$drugReactionCount+0.5);
+                $variance_of_ic_raw=1/($numerator) +1/($drug_related_reports-$drugReactionCount+0.5)+1/($reactionCount-$drugReactionCount+0.5)+1/($total_report_count-$drug_related_reports-$reactionCount+$drugReactionCount+0.5);
 
+                $variance_of_ic=round($variance_of_ic_raw,5);
+                // $variance_of_ic_first = (1 / $numerator) + (1 / $denominator);
+                // $constant = 0.4804530139182;
+
+                // $variance_of_ic = (1 / $constant) * $variance_of_ic_first;
                 // Standard Error (SE) of IC:
                 /*
                 SE(IC)= Var(IC)
@@ -247,19 +273,19 @@ class ReportsController extends AppController
                 /**
                  * 95% Confidence Interval: -> Lower Bound(IC025)=IC−1.96×SE(IC)
                  * */
-                $lower_bound=$calculated_log_data-1.96*$standard_error;
-                
-                $reactionDetails[]=array(
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
 
-                'B_reports_with_reaction' => $reactionCount,
-                'AB_reports_with_drug_and_reaction' => $drugReactionCount,               
-                'reaction_at_hand' => $reactionName,
-                'E_(AB)_expected_count'=>$expected_count,
-                'IC_raw_calculated_data'=>$calculated_data                ,
-                'IC_raw_calculated_log_data'=>$calculated_log_data,
-                'Var(IC)_Variance_of_IC'=>$variance_of_ic,
-                'Standard_Error_(SE)_of_IC'=>$standard_error,
-                '95%_Confidence_Interval'=>$lower_bound
+                $reactionDetails[] = array(
+
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' => $drugReactionCount,
+                    'reaction_at_hand' => $reactionName,
+                    'E_(AB)_expected_count' => $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
                 );
             }
 
@@ -267,12 +293,12 @@ class ReportsController extends AppController
                 'current_drug_name' => $current_drug_name,
                 'N_total_reports' => $total_report_count,
                 'A_reports_with_drug' => $drug_related_reports,
-                'reactionDetails'=>$reactionDetails
+                'reactionDetails' => $reactionDetails
             );
         }
         // debug($inputData);
         // exit;
-        $total=$total_report_count;
+        $total = $total_report_count;
 
 
 
@@ -281,7 +307,7 @@ class ReportsController extends AppController
         $this->set(compact('inputData'));
         $this->set(compact('total'));
 
-        $this->set('_serialize', 'vaccines','total', 'vaccineinputData','');
+        $this->set('_serialize', 'vaccines', 'total', 'vaccineinputData', '');
     }
     public function d_sadr_analytics()
     {
@@ -400,29 +426,29 @@ class ReportsController extends AppController
         // debug($reactionName); 
 
         // loop through to get all target reaction key => name
-      
-        $total_report_count=count($aefiIds);
+
+        $total_report_count = count($aefiIds);
         $inputData = [];
         foreach ($data as $dt) {
             // Initialize count
-          $current_drug_name=  $dt['name'];
-          $drug_related_reports=count($dt['reports']);
+            $current_drug_name =  $dt['name'];
+            $drug_related_reports = count($dt['reports']);
 
-            $reactionDetails=[];
+            $reactionDetails = [];
             foreach ($reactionLists as $reactionName) {
                 $reactionCount = $this->count_specific_reaction($data, $reactionName);
                 $drugReactionCount = $this->count_specific_drug_reaction($dt, $reactionName);
 
                 // Calculating Expected Counts
-                $expected_count=($drug_related_reports * $reactionCount)/$total_report_count;
+                $expected_count = ($drug_related_reports * $reactionCount) / $total_report_count;
 
-                $numerator=$drugReactionCount+0.5;
-                $denominator=$expected_count+0.5;
-                $calculated_data=$numerator/$denominator;
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
 
                 // Observed vs. Expected -> IC (Information Component):
 
-                $calculated_log_data=log($calculated_data,2);
+                $calculated_log_data = log($calculated_data, 2);
 
                 //Confidence Interval for IC
 
@@ -432,7 +458,7 @@ class ReportsController extends AppController
 
                  */
 
-                $variance_of_ic=1/($numerator) +1/($drug_related_reports-$drugReactionCount+0.5)+1/($reactionCount-$drugReactionCount+0.5)+1/($total_report_count-$drug_related_reports-$reactionCount+$drugReactionCount+0.5);
+                $variance_of_ic = 1 / ($numerator) + 1 / ($drug_related_reports - $drugReactionCount + 0.5) + 1 / ($reactionCount - $drugReactionCount + 0.5) + 1 / ($total_report_count - $drug_related_reports - $reactionCount + $drugReactionCount + 0.5);
 
                 // Standard Error (SE) of IC:
                 /*
@@ -443,19 +469,19 @@ class ReportsController extends AppController
                 /**
                  * 95% Confidence Interval: -> Lower Bound(IC025)=IC−1.96×SE(IC)
                  * */
-                $lower_bound=$calculated_log_data-1.96*$standard_error;
-                
-                $reactionDetails[]=array(
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
 
-                'B_reports_with_reaction' => $reactionCount,
-                'AB_reports_with_drug_and_reaction' => $drugReactionCount,               
-                'reaction_at_hand' => $reactionName,
-                'E_(AB)_expected_count'=>$expected_count,
-                'IC_raw_calculated_data'=>$calculated_data                ,
-                'IC_raw_calculated_log_data'=>$calculated_log_data,
-                'Var(IC)_Variance_of_IC'=>$variance_of_ic,
-                'Standard_Error_(SE)_of_IC'=>$standard_error,
-                '95%_Confidence_Interval'=>$lower_bound
+                $reactionDetails[] = array(
+
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' => $drugReactionCount,
+                    'reaction_at_hand' => $reactionName,
+                    'E_(AB)_expected_count' => $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
                 );
             }
 
@@ -463,12 +489,12 @@ class ReportsController extends AppController
                 'current_drug_name' => $current_drug_name,
                 'N_total_reports' => $total_report_count,
                 'A_reports_with_drug' => $drug_related_reports,
-                'reactionDetails'=>$reactionDetails
+                'reactionDetails' => $reactionDetails
             );
         }
         // debug($inputData);
         // exit;
-        $total=$total_report_count;
+        $total = $total_report_count;
 
 
 
@@ -477,9 +503,9 @@ class ReportsController extends AppController
         $this->set(compact('inputData'));
         $this->set(compact('total'));
 
-        $this->set('_serialize', 'vaccines','total', 'vaccineinputData','');
+        $this->set('_serialize', 'vaccines', 'total', 'vaccineinputData', '');
     }
-    
+
     public function count_specific_drug_reaction($vaccine, $reactionName)
     {
         $reactionCount = 0;
@@ -840,9 +866,10 @@ class ReportsController extends AppController
 
         $this->set(compact('data'));
         $this->set('_serialize', 'data');
-        $this->render('sadrs_by_designation');
-    }
+        $this->render('sadrs_by_designation'); 
+               
 
+    }
     public function generate_reports_per_vaccines_old($drug_name = null)
     {
         # code...   
@@ -878,6 +905,18 @@ class ReportsController extends AppController
                 'AefiListOfVaccine.vaccine_id' => $drug_name,
                 'AefiListOfVaccine.aefi_id IS NOT NULL',
                 'AefiListOfVaccine.aefi_id IN' => $aefiIds
+            ),
+            'fields' => array('aefi_id', 'aefi_id')
+        ));
+        return $cond;
+    }
+    public function generate_reports_per_vaccines_id($drug_name = null)
+    {
+        # code...   add a check to return where AefiListOfVaccine.aefi_id  is in the list of array
+        $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
+            'conditions' => array(
+                'AefiListOfVaccine.vaccine_id' => $drug_name,
+                'AefiListOfVaccine.aefi_id IS NOT NULL', 
             ),
             'fields' => array('aefi_id', 'aefi_id')
         ));

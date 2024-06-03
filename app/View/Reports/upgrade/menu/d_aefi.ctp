@@ -63,6 +63,20 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                         ?>
                     </td>
                     <td>
+                    <?php
+                      
+
+                    echo $this->Form->input(
+                        'vaccines',
+                        array(
+                          'div' => false, 'type' => 'select', 'class' => 'span8 unauthorized_index',
+                          'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),
+                          'empty' => 'All',
+                          'options' => $vaccines,
+          
+                        )
+                      );
+                     ?>
                     
                     </td>
                     <td>

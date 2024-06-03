@@ -36,6 +36,13 @@
                 array('controller' => 'ce2bs', 'action'=>'index', 'reporter' => true ), array('escape' => false ));
           } ?>
      </li>
+     <li class="<?php echo $this->fetch('AGGREGATE') ?>">
+        <?php
+         if($this->Session->read('Auth.User.user_type')=="Market Authority"){
+            echo $this->Html->link('<i class="fa fa-paperclip" aria-hidden="true"></i> AGGREGATEs',
+                array('controller' => 'aggregates', 'action'=>'index', 'reporter' => true ), array('escape' => false ));
+          } ?>
+     </li>
      <li class="<?php echo $this->fetch('DEV') ?>">
         <?php
             if($this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Html->link('<i class="fa fa-stethoscope" aria-hidden="true"></i> Devices',
