@@ -62,32 +62,29 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 
                         ?>
                     </td>
+                </tr>
+                <tr>
                     <td>
-                    <?php
-                      
+                        <?php
+                        echo $this->Form->input(
+                            'suspected_drug',
+                            array(
+                                'div' => false, 'type' => 'text', 'class' => 'span8 unauthorized_index',
+                                'label' => array('class' => 'required', 'text' => 'Suspected drug '), 'placeHolder' => 'drug name'
 
-                    echo $this->Form->input(
-                        'vaccines',
-                        array(
-                          'div' => false, 'type' => 'select', 'class' => 'span8 unauthorized_index',
-                          'label' => array('class' => 'required', 'text' => 'Suspected Vaccine '),
-                          'empty' => 'All',
-                          'options' => $vaccines,
-          
-                        )
-                      );
-                     ?>
-                    
+                            )
+                        ); ?>
+
                     </td>
                     <td>
-                       </td>
+                    </td>
                 </tr>
-             
+
 
                 <tr>
                     <td>
 
-                    </td> 
+                    </td>
                     <td>
                         <?php
                         echo $this->Form->button('<i class="icon-search icon-white"></i> Search', array(
@@ -98,10 +95,10 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                         ?>
                     </td>
                     <td>
-            <?php
-            echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'd_aefi_analytics'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
-            ?>
-          </td>
+                        <?php
+                        echo $this->Html->link('<i class="icon-remove"></i> Clear', array('action' => 'd_sadr_analytics'), array('class' => 'btn', 'escape' => false, 'style' => array('margin-bottom: 5px')));
+                        ?>
+                    </td>
                 </tr>
             </tbody>
         </table>

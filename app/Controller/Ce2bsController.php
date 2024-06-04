@@ -439,7 +439,26 @@ class Ce2bsController extends AppController
                                     $xmlString = file_get_contents($file['tmp_name']);
                                     $xml = Xml::build($xmlString);
                                     $xmlString = $xml->asXML();
-                                    $this->Ce2b->saveField('e2b_content', $xmlString);
+
+                                    $filePath = WWW_ROOT . 'files' . DS . $file['name'];
+                                    move_uploaded_file($file['tmp_name'], $filePath);
+
+                                    $xmlArray = Xml::toArray(Xml::build($filePath));
+                                    $flattenedData = $this->flattenXml($xmlArray);
+
+
+                                    $newReportData = $this->extractReportData($flattenedData);
+
+                                    // $dataSample= $flattenedData["MCCI_IN200100UV01.creationTime"];
+                                    // debug($dataSample);                                    //
+                                    // $this->Ce2b->save($newReportData);
+
+                                    foreach($newReportData as $key=>$value){
+                                        $this->Ce2b->saveField($key, $value, false);
+                                    }
+                                    debug($flattenedData);
+                                    exit;
+                                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
                                 } catch (Exception $e) {
                                     $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                                     $this->redirect(array('action' => 'edit', $this->Ce2b->id));
@@ -547,6 +566,46 @@ class Ce2bsController extends AppController
         $this->set(compact('sub_counties'));
         $designations = $this->Ce2b->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
+    }
+
+    public function extractReportData($flattenedData)
+
+    {
+        $save_data = array(
+            'creation_time' => $flattenedData["MCCI_IN200100UV01.creationTime"],
+            'sender_reference'=>$flattenedData['MCCI_IN200100UV01.PORR_IN049016UV.id.@extension'],
+            'receiver_id'=>$flattenedData["MCCI_IN200100UV01.PORR_IN049016UV.receiver.device.id.@extension"]
+        );
+
+        return $save_data;
+    }
+
+    private function flattenXml($xmlArray)
+    {
+        $data = [];
+        $this->recursiveFlatten($xmlArray, $data);
+        return $data;
+    }
+
+    private function recursiveFlatten($element, &$data, $parentKey = '')
+    {
+        foreach ($element as $key => $value) {
+            $newKey = $parentKey ? $parentKey . '.' . $key : $key;
+            if (is_array($value)) {
+                if (isset($value['@attributes'])) {
+                    foreach ($value['@attributes'] as $attrKey => $attrValue) {
+                        $data[$newKey . '.' . $attrKey] = $attrValue;
+                    }
+                }
+                if (isset($value['@value'])) {
+                    $data[$newKey] = $value['@value'];
+                } else {
+                    $this->recursiveFlatten($value, $data, $newKey);
+                }
+            } else {
+                $data[$newKey] = $value;
+            }
+        }
     }
     public function reporter_add()
     {

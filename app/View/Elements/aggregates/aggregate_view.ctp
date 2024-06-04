@@ -33,7 +33,7 @@ $nchecked = "&#x2610;";
 
                 <table class="table" style="width: 100%;">
                     <tr>
-                        <td style="width: 10%;"><b>E2B FILE:</b> </td>
+                        <td style="width: 10%;"><b>FILE:</b> </td>
                     </tr>
                     <tr>
                         <td style="width: 10%;">COMPANY NAME: </td>

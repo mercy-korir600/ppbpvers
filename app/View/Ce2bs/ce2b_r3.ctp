@@ -5,7 +5,7 @@ $this->assign('E2B', 'active');
   <ul id="reviewer_tab" class="nav nav-tabs">
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $ce2b['Ce2b']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($ce2b['ExternalComment']); ?>)</a></li>
-    <li><a href="#committee-review" data-toggle="tab">Committee Review (<?php echo count($ce2b['ReviewComment']); ?>)</a></li>
+    <!-- <li><a href="#committee-review" data-toggle="tab">Committee Review (<?php echo count($ce2b['ReviewComment']); ?>)</a></li> -->
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">

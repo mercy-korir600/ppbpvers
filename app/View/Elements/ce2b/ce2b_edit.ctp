@@ -236,14 +236,11 @@ $this->Html->script('ce2b', array('inline' => false));
                     <br>
                     <hr>
                     <?php
-                    echo $this->Html->link(
-                        '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
-                        array('action' => 'view', 'ext' => 'pdf', $this->request->data['Ce2b']['id']),
-                        array(
-                            'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
-                            'data-content' => 'Download the pdf version of the report',
-                        )
-                    );
+                    // echo $this->Html->link(                        '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',array('action' => 'view', 'ext' => 'pdf', $this->request->data['Ce2b']['id']),                        array(
+                            // 'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
+                            // 'data-content' => 'Download the pdf version of the report',
+                        // )
+                    // );
                     ?>
                     <br>
                     <hr>

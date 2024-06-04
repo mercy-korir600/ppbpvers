@@ -1,5 +1,5 @@
 <?php
-$this->extend('/Reports/upgrade/menu/d_aefi');
+$this->extend('/Reports/upgrade/menu/d_sadr');
 $this->assign('d-sadr-analysis', 'active');
 $this->Html->css('summary', null, array('inline' => false));
 ?>
@@ -25,9 +25,9 @@ $this->Html->css('summary', null, array('inline' => false));
                     <th>Total Cases <?php echo $total ?></th>
                 </tr>
                 <tr>
-                    <th>Vaccine Name</th>
-                    <!-- <th>Total Cases</th> -->
-                    <!-- <th>A-Drug</th> -->
+                    <th>Drug Name</th>
+                    <th>Total Cases</th>
+                    <th>A-Drug</th>
                     <th colspan="2">Disproportionality Analysis Data</th>
                 </tr>
             </thead>
@@ -36,8 +36,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 foreach ($inputData as $key => $value) {
                     echo "<tr>";
                     echo "<th>" . $value['current_drug_name'] . "</th>";
-                    // echo "<th>" . $value['N_total_reports'] . "</th>";
-                    // echo "<th>" . $value['A_reports_with_drug'] . "</th>";
+                    echo "<th>" . $value['N_total_reports'] . "</th>";
+                    echo "<th>" . $value['A_reports_with_drug'] . "</th>";
                     echo "<td>"; ?>
                     <table class="table table-condensed table-bordered">
                         <thead>
