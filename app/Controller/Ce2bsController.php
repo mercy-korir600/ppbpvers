@@ -453,7 +453,15 @@ class Ce2bsController extends AppController
                                     // debug($dataSample);                                    //
                                     // $this->Ce2b->save($newReportData);
 
-                                    foreach($newReportData as $key=>$value){
+
+                                    if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
+                                        $reference = $this->generateReferenceNumber();
+                                        $this->Ce2b->saveField('reference_no', $reference);
+                                        // $this->Ce2b->saveField('submitted', 2);
+                                        $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
+                                    }
+
+                                    foreach ($newReportData as $key => $value) {
                                         $this->Ce2b->saveField($key, $value, false);
                                     }
                                     debug($flattenedData);
@@ -508,12 +516,12 @@ class Ce2bsController extends AppController
 
 
                     //Send SMS
-                    if (!empty($ce2b['Ce2b']['reporter_phone']) && strlen(substr($ce2b['Ce2b']['reporter_phone'], -9)) == 9 && is_numeric(substr($ce2b['Ce2b']['reporter_phone'], -9))) {
-                        $datum['phone'] = '254' . substr($ce2b['Ce2b']['reporter_phone'], -9);
-                        $variables['reference_url'] = Router::url(['controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id'], 'reporter' => true, 'full_base' => true]);
-                        $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
-                        $this->QueuedTask->createJob('GenericSms', $datum);
-                    }
+                    // if (!empty($ce2b['Ce2b']['reporter_phone']) && strlen(substr($ce2b['Ce2b']['reporter_phone'], -9)) == 9 && is_numeric(substr($ce2b['Ce2b']['reporter_phone'], -9))) {
+                    //     $datum['phone'] = '254' . substr($ce2b['Ce2b']['reporter_phone'], -9);
+                    //     $variables['reference_url'] = Router::url(['controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id'], 'reporter' => true, 'full_base' => true]);
+                    //     $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                    //     $this->QueuedTask->createJob('GenericSms', $datum);
+                    // }
 
                     //Notify managers
                     $users = $this->Ce2b->User->find('all', array(
@@ -571,12 +579,33 @@ class Ce2bsController extends AppController
     public function extractReportData($flattenedData)
 
     {
-        $save_data = array(
-            'creation_time' => $flattenedData["MCCI_IN200100UV01.creationTime"],
-            'sender_reference'=>$flattenedData['MCCI_IN200100UV01.PORR_IN049016UV.id.@extension'],
-            'receiver_id'=>$flattenedData["MCCI_IN200100UV01.PORR_IN049016UV.receiver.device.id.@extension"]
-        );
+        $mappings = [
+            'creation_time' => "MCCI_IN200100UV01.creationTime",
+            'sender_reference' => 'MCCI_IN200100UV01.PORR_IN049016UV.id.@extension',
+            'receiver_id' => "MCCI_IN200100UV01.PORR_IN049016UV.receiver.device.id.@extension",
+            'sender_id' => "MCCI_IN200100UV01.PORR_IN049016UV.sender.device.id.@extension",
+            'sender_unique_identifier' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.id.0.@extension",
+            'worldwide_identifier' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.id.1.@extension",
+            'case_narrative' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.text",
+            'date_first_received' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.effectiveTime.low",
+            'date_most_recent_info' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.availabilityTime",
+            'patient_name' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.name",
+            'patient_sex' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.administrativeGenderCode.@code",
+            'patient_dob' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.birthTime",
+            'patient_number' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.asIdentifiedEntity.id.@extension",
+            'past_medical'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.0.organizer.component.0.observation.outboundRelationship2.observation.value.@",
+            'sender_address'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.streetAddressLine",
+            'sender_city'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.city",
+            'sender_state'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.state",
+            'sender_department'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.name",
+            'sender_organization'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.assignedEntity.representedOrganization.name"
+        ];
 
+        $save_data = [];
+        foreach ($mappings as $key => $path) {
+            // Check if the path exists in the flattened data and is not null
+            $save_data[$key] = isset($flattenedData[$path]) ? $flattenedData[$path] : null;
+        }
         return $save_data;
     }
 
@@ -728,9 +757,9 @@ class Ce2bsController extends AppController
             $this->set(['e2b' => $e2b]);
         } else {
 
-            $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
+            // $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
             $this->set(['ce2b' => $ce2b]);
-            $this->set(['e2b' => $e2b]);
+            // $this->set(['e2b' => $e2b]);
             $this->render('ce2b_r3');
         }
 
