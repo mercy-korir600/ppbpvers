@@ -459,7 +459,8 @@ class ReportsController extends AppController
         // Get reports with the reaction
         $cond = $this->Sadr->find('list', array(
             'conditions' => array(
-                'LOWER(Sadr.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
+                'Sadr.reaction' => $reactionName
+                // 'LOWER(Sadr.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
             ),
             'fields' => array('id', 'id')
         ));
@@ -467,7 +468,8 @@ class ReportsController extends AppController
         // also checkout the reactions incase of multiples
         $condothers = $this->Sadr->SadrReaction->find('list', array(
             'conditions' => array(
-                'LOWER(SadrReaction.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
+                'SadrReaction.reaction' => $reactionName
+                // 'LOWER(SadrReaction.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
             ),
             'fields' => array('sadr_id', 'sadr_id')
         ));

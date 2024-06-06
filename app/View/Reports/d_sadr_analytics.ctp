@@ -42,43 +42,54 @@ $this->Html->css('summary', null, array('inline' => false));
                     <table class="table table-condensed table-bordered">
                         <thead>
                             <tr>
-                                <th>Drug Reaction</th>
-                                <th>Observed</th>
-                                <!-- <th>AB</th> -->
-                                <th>Expected</th>
-                                <th>IC025 > 0</th>
-                                <!-- <th>IC</th> -->
+                                <!-- <th>Drug Reaction</th>
+                                <th>B-Observed</th>
+                                <th>AB - (Both Drug and Reaction)</th>
+                                <th>E_AB (Expected)</th>
+                                <th>IC</th>
                                 <th>Log IC</th>
-                                <!-- <th>Var(IC)</th> -->
-                                <!-- <th>Standard Error (SE) of IC</th> -->
+                                <th>Var(IC)</th>
+                                <th>Standard Error (SE) of IC</th>
+                                <th>95% Confidence Interval</th> -->
+
+                                <th>Drug Reaction</th>
+                                <th>Observed</th> 
+                                <th>Expected</th>
+                                <th>IC025>0</th> 
+                                <th>IC</th> 
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             foreach ($value['reactionDetails'] as $key => $dt) { ?>
                                 <?php
+                                //   echo "<tr>"; 
+                                //   echo "<td>" . $dt['reaction_at_hand'] . "</td>";
+                                //   echo "<td>" . $dt['B_reports_with_reaction'] . "</td>";
+                                //   echo "<td>" . $dt['AB_reports_with_drug_and_reaction'] . "</td>";
+                                //   echo "<td>" . $dt['E_(AB)_expected_count'] . "</td>";
+                                //   echo "<td>" . $dt['IC_raw_calculated_data'] . "</td>";
+                                //   echo "<td>" . $dt['IC_raw_calculated_log_data'] . "</td>"; 
+                                //   echo "<td>" . $dt['Var(IC)_Variance_of_IC'] . "</td>";
+                                //   echo "<td>" . $dt['Standard_Error_(SE)_of_IC'] . "</td>";
+                                //   echo "<td>" . $dt['95%_Confidence_Interval'] . "</td>";
+                                //   echo "</tr>";  
 
                                 // Assuming $dt is an array with your data
-                                $confidenceInterval = round($dt['95%_Confidence_Interval']);
+                                $confidenceInterval = $dt['95%_Confidence_Interval']; //round($dt['95%_Confidence_Interval']);
 
                                 // Determine the color based on the value
                                 $color = $confidenceInterval > 0 ? 'red' : 'green';
-                                $number = round($dt['IC_raw_calculated_log_data']);
-                                if ($number == -0) {
-                                    $number = 0;
-                                }
+
+                                $log = $dt['IC_raw_calculated_log_data']; //round($dt['IC_raw_calculated_log_data']);
+
+
                                 echo "<tr>";
                                 echo "<td>" . $dt['reaction_at_hand'] . "</td>";
-                                echo "<td>" . $dt['B_reports_with_reaction'] . "</td>";
-                                // echo "<td>" . $dt['AB_reports_with_drug_and_reaction'] . "</td>";
-                                echo "<td>" . round($dt['E_(AB)_expected_count']) . "</td>";
-                                // echo "<td>" . round($dt['95%_Confidence_Interval']) . "</td>";
-                                // Output the table cell with the conditional color
-                                echo "<td style='color: $color;'>" . $confidenceInterval . "</td>";
-                                // echo "<td>" . $dt['IC_raw_calculated_data'] . "</td>";
-                                echo "<td>" .  $number . "</td>";
-                                // echo "<td>" . $dt['Var(IC)_Variance_of_IC'] . "</td>";
-                                // echo "<td>" . $dt['Standard_Error_(SE)_of_IC'] . "</td>";
+                                echo "<td>" . $dt['B_reports_with_reaction'] . "</td>"; 
+                                echo "<td>" . (int)$dt['E_(AB)_expected_count'] . "</td>";
+                                echo "<td style='color: $color;'>" . round($confidenceInterval,2) . "</td>";  
+                                echo "<td>" . $log . "</td>"; 
                                 echo "</tr>";
                                 ?>
 
