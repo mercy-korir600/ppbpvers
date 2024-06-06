@@ -208,6 +208,7 @@ class ReportsController extends AppController
                 );
             }
         }
+
         // Target Vaccine
         $reactionLists = Configure::read('analytics');
         // debug($reactionName); 
@@ -311,12 +312,14 @@ class ReportsController extends AppController
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Sadr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
 
+        $id_arrays = array();
+
+
         $sadrsIds = $this->Sadr->find('list', array(
             'fields' => array('Sadr.id'),
             'conditions' => $criteria
         ));
         $sadrsIds = array_keys($sadrsIds);
-        $id_arrays = array();
 
         if (!empty($this->request->data['Report']['suspected_drug'])) {
 
@@ -328,8 +331,9 @@ class ReportsController extends AppController
             }
             $criteria['Sadr.id'] = $id_arrays;
         }
+
         // Get All SADRs by Reaction
-        $criteria['Sadr.reaction !='] = ''; 
+        $criteria['Sadr.reaction !='] = '';
         if (!empty($this->request->data['Report']['suspected_drug'])) {
             $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
                 'fields' => array(
@@ -357,52 +361,72 @@ class ReportsController extends AppController
             ));
         }
 
-
         $inputData = [];
         $total_report_count = count($sadrsIds);
+        $reactionLists = $this->generate_reaction_list($sadrsIds);
 
         foreach ($suspected as $vc) {
             $current_drug_name = $vc['SadrListOfDrug']['drug_name'];
             $drug_related_reports = $vc[0]['cnt'];
             $reactionDetails = [];
-            $reactions=[];
-            // get each report thereIn
+            foreach ($reactionLists as $reactionName) {
 
-            // $multiple = $aefi['AefiDescription'];
-            // if (!empty($multiple)) {
-            //     foreach ($multiple as $other) {
-            //         $reactions[] = $other['description'];
-            //     }
-            // }
+                $reactionCount= count($this->get_sadr_reports_with_reaction($reactionName));
+                $drugReactionCount= count($this->get_sadr_reports_with_drug_and_reaction($reactionName, $current_drug_name, $sadrsIds));
 
-            //Get the reports with this suspected drug, if so, return the reaction
 
-            // $reactionCount = $this->get_reactions_caused_by_suspected_drug($current_drug_name,$sadrsIds);
+                 // Calculating Expected Counts
+                // $expected_count = (($drug_related_reports +  $drugReactionCount) * ($reactionCount + $drugReactionCount)) / $total_report_count;
+                $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
+                $expected_count = round($expected_count_raw, 5);
 
-// debug($reactionCount);
-// exit;
-            // manupulate reactions
-            // foreach ($reactions as $vc) {
-            //     if (!is_null($vc['Sadr']['reaction'])) {
-            //         // $data[] = array(
-            //         //     'reaction_name' => $vc['Sadr']['reaction'],
-            //         //     'reports_with_reaction' => $vc[0]['rea']
-            //         // );
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
 
-            //         $reactionDetails[] = array(
+                // Observed vs. Expected -> IC (Information Component):
 
-            //             // 'B_reports_with_reaction' => $reactionCount,
-            //             // 'AB_reports_with_drug_and_reaction' => $drugReactionCount,
-            //             // 'reaction_at_hand' => $reactionName,
-            //             // 'E_(AB)_expected_count' => $expected_count,
-            //             // 'IC_raw_calculated_data' => $calculated_data,
-            //             // 'IC_raw_calculated_log_data' => $calculated_log_data,
-            //             // 'Var(IC)_Variance_of_IC' => $variance_of_ic,
-            //             // 'Standard_Error_(SE)_of_IC' => $standard_error,
-            //             // '95%_Confidence_Interval' => $lower_bound
-            //         );
-            //     }
-            // }
+                $calculated_log_data_raw = log($calculated_data, 2);
+                $calculated_log_data = round($calculated_log_data_raw, 5);
+
+                //Confidence Interval for IC
+
+                /**
+                 * 
+                 * Var(IC)= 1/(AB+0.5) + 1/(A−AB+0.5) + 1/(B−AB+0.5)  + 1/(N−A−B+AB+0.5)​
+
+                 */
+
+                $variance_of_ic_raw = 1 / ($numerator) + 1 / ($drug_related_reports - $drugReactionCount + 0.5) + 1 / ($reactionCount - $drugReactionCount + 0.5) + 1 / ($total_report_count - $drug_related_reports - $reactionCount + $drugReactionCount + 0.5);
+
+                $variance_of_ic = round($variance_of_ic_raw, 5);
+                // $variance_of_ic_first = (1 / $numerator) + (1 / $denominator);
+                // $constant = 0.4804530139182;
+
+                // $variance_of_ic = (1 / $constant) * $variance_of_ic_first;
+                // Standard Error (SE) of IC:
+                /*
+                SE(IC)= Var(IC)
+                */
+                $standard_error = sqrt($variance_of_ic);
+
+                /**
+                 * 95% Confidence Interval: -> Lower Bound(IC025)=IC−1.96×SE(IC)
+                 * */
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
+
+                $reactionDetails[] = array(
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' => $drugReactionCount,
+                    'reaction_at_hand' => $reactionName,
+                    'E_(AB)_expected_count' => $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
+                );
+            }
 
             $inputData[] = array(
                 'current_drug_name' => $current_drug_name,
@@ -411,7 +435,7 @@ class ReportsController extends AppController
                 'reactionDetails' => $reactionDetails
             );
         }
-        // debug($reactions);
+        // debug($reactionDetails);
         // exit;
         $total = $total_report_count;
         $this->set(compact('inputData'));
@@ -419,7 +443,78 @@ class ReportsController extends AppController
         $this->set('_serialize', 'inputData', 'total');
     }
 
-    public function get_reactions_caused_by_suspected_drug($current_drug_name,$sadrsIds)
+    public function get_sadr_reports_with_drug_and_reaction($reactionName, $current_drug_name, $sadrsIds)
+    {
+        $reports_with_reaction = $this->get_sadr_reports_with_reaction($reactionName);
+
+        $reports_with_drug = $this->get_reactions_caused_by_suspected_drug($current_drug_name, $sadrsIds);
+
+        $commonReports = array_intersect($reports_with_reaction, $reports_with_drug);
+
+        return $commonReports;
+    }
+
+    public function get_sadr_reports_with_reaction($reactionName)
+    {
+        // Get reports with the reaction
+        $cond = $this->Sadr->find('list', array(
+            'conditions' => array(
+                'LOWER(Sadr.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
+            ),
+            'fields' => array('id', 'id')
+        ));
+
+        // also checkout the reactions incase of multiples
+        $condothers = $this->Sadr->SadrReaction->find('list', array(
+            'conditions' => array(
+                'LOWER(SadrReaction.reaction) LIKE' => '%' . strtolower($reactionName) . '%',
+            ),
+            'fields' => array('sadr_id', 'sadr_id')
+        ));
+        $mergedReports = array_unique(array_merge($cond, $condothers));
+
+        return $mergedReports;
+    }
+
+    public function generate_reaction_list($cm)
+    {
+        // Get unique reactions 
+        $uniqueRecords = $this->Sadr->SadrReaction->find('all', array(
+            'fields' => array('DISTINCT SadrReaction.reaction'),
+            'conditions' => array(
+                'SadrReaction.reaction IS NOT NULL',
+                'SadrReaction.reaction !=' => ''
+            )
+        ));
+
+        $reactionNames = array();
+
+        // Extract the reaction names from the result set
+        foreach ($uniqueRecords as $record) {
+            $reactionNames[] = rtrim(trim($record['SadrReaction']['reaction'], ', '));
+        }
+
+        // Now add the parent reaction
+
+        $sadrs = $this->Sadr->find('all', array(
+            'fields' => array('DISTINCT Sadr.reaction'),
+            'conditions' => array('Sadr.id' => $cm),
+            'contain' => array(),
+
+        ));
+
+        $originalReactionNames = array();
+
+        // Extract the reaction names from the result set
+        foreach ($sadrs as $record) {
+            $originalReactionNames[] = rtrim(trim($record['Sadr']['reaction'], ', '));
+        }
+        $mergedReactionNames = array_unique(array_merge($reactionNames, $originalReactionNames));
+
+        return $mergedReactionNames;
+    }
+
+    public function get_reactions_caused_by_suspected_drug($current_drug_name, $sadrsIds)
     {
 
         $cond = array(); // Initialize $cond with an empty array
@@ -427,9 +522,8 @@ class ReportsController extends AppController
         $cond = $this->Sadr->SadrListOfDrug->find('list', array(
             'conditions' => array(
                 'SadrListOfDrug.drug_name LIKE' => '%' . $current_drug_name . '%',
-                'SadrListOfDrug.sadr_id' => $sadrsIds,
-                'SadrListOfDrug.sadr_id IS NOT NULL' // Exclude null values
-
+                'SadrListOfDrug.sadr_id IN' => $sadrsIds,
+                'SadrListOfDrug.sadr_id IS NOT NULL'
             ),
             'keyField' => 'sadr_id',
             'valueField' => 'sadr_id'

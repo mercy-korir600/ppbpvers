@@ -26,8 +26,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 </tr>
                 <tr>
                     <th>Drug Name</th>
-                    <th>Total Cases</th>
-                    <th>A-Drug</th>
+                    <!-- <th>Total Cases</th> -->
+                    <!-- <th>A-Drug</th> -->
                     <th colspan="2">Disproportionality Analysis Data</th>
                 </tr>
             </thead>
@@ -36,8 +36,8 @@ $this->Html->css('summary', null, array('inline' => false));
                 foreach ($inputData as $key => $value) {
                     echo "<tr>";
                     echo "<th>" . $value['current_drug_name'] . "</th>";
-                    echo "<th>" . $value['N_total_reports'] . "</th>";
-                    echo "<th>" . $value['A_reports_with_drug'] . "</th>";
+                    // echo "<th>" . $value['N_total_reports'] . "</th>";
+                    // echo "<th>" . $value['A_reports_with_drug'] . "</th>";
                     echo "<td>"; ?>
                     <table class="table table-condensed table-bordered">
                         <thead>
@@ -63,8 +63,10 @@ $this->Html->css('summary', null, array('inline' => false));
 
                                 // Determine the color based on the value
                                 $color = $confidenceInterval > 0 ? 'red' : 'green';
-
-
+                                $number = round($dt['IC_raw_calculated_log_data']);
+                                if ($number == -0) {
+                                    $number = 0;
+                                }
                                 echo "<tr>";
                                 echo "<td>" . $dt['reaction_at_hand'] . "</td>";
                                 echo "<td>" . $dt['B_reports_with_reaction'] . "</td>";
@@ -74,7 +76,7 @@ $this->Html->css('summary', null, array('inline' => false));
                                 // Output the table cell with the conditional color
                                 echo "<td style='color: $color;'>" . $confidenceInterval . "</td>";
                                 // echo "<td>" . $dt['IC_raw_calculated_data'] . "</td>";
-                                echo "<td>" . round($dt['IC_raw_calculated_log_data']) . "</td>";
+                                echo "<td>" .  $number . "</td>";
                                 // echo "<td>" . $dt['Var(IC)_Variance_of_IC'] . "</td>";
                                 // echo "<td>" . $dt['Standard_Error_(SE)_of_IC'] . "</td>";
                                 echo "</tr>";

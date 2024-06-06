@@ -446,6 +446,10 @@ class Ce2bsController extends AppController
                                     $xmlArray = Xml::toArray(Xml::build($filePath));
                                     $flattenedData = $this->flattenXml($xmlArray);
 
+                                    $reactions = $this->extractObservations($flattenedData);
+
+                                    debug($reactions);
+                                    // exit;
 
                                     $newReportData = $this->extractReportData($flattenedData);
 
@@ -576,6 +580,66 @@ class Ce2bsController extends AppController
         $this->set(compact('designations'));
     }
 
+    private function extractObservations($flattenedData) {
+        $observations = [];
+        $index = 1;
+    
+        while (true) {
+            // Construct the dynamic key for the observation
+            $observationKey = "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.{$index}.observation";
+            
+            // Check if the key exists in the flattened data
+            if (isset($flattenedData[$observationKey . ".@classCode"])) {
+                // Construct the dynamic key for the locatedPlace code within the observation
+                $locatedPlaceKey = $observationKey . ".location.locatedEntity.locatedPlace.code.@code";
+                $start_date=$observationKey . ".effectiveTime.low";
+
+                $meddra_code_key=$observationKey .  ".value.@code";
+                $meddra_version_key=$observationKey . ".value.@codeSystemVersion";
+                $reaction_name_key=$observationKey.".outboundRelationship2.0.observation.value.@";
+
+
+
+                $start_of_reaction=null;
+                $country_of_source=null;
+                $meddra_code=null;
+                $meddra_version=null;
+                $reaction_name=null;
+                if (isset($flattenedData[$reaction_name_key])) {
+                    $reaction_name=$flattenedData[$reaction_name_key];
+                }
+                    
+                if (isset($flattenedData[$meddra_version_key])) {
+                    $meddra_version=$flattenedData[$meddra_version_key];
+                }
+                if (isset($flattenedData[$meddra_code_key])) {
+                    $meddra_code=$flattenedData[$meddra_code_key];
+                }
+                if (isset($flattenedData[$start_date])) {
+                    $start_of_reaction=$flattenedData[$start_date];
+                }
+                if (isset($flattenedData[$locatedPlaceKey])) {
+                    $country_of_source= $flattenedData[$locatedPlaceKey];
+                    
+                }
+                $observations[] = [
+                    'index' => $index,
+                    'reaction_name'=>$reaction_name,
+                    'start_of_reaction'=>$start_of_reaction,
+                    'meddra_code'=>$meddra_code,
+                    'meddra_version'=>$meddra_version,
+                    'country_of_source' => $country_of_source
+                ];
+                $index++;
+            } else {
+                // Break the loop if the key does not exist
+                break;
+            }
+        }
+    
+        return $observations;
+    }
+
     public function extractReportData($flattenedData)
 
     {
@@ -593,12 +657,12 @@ class Ce2bsController extends AppController
             'patient_sex' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.administrativeGenderCode.@code",
             'patient_dob' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.birthTime",
             'patient_number' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.player1.asIdentifiedEntity.id.@extension",
-            'past_medical'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.0.organizer.component.0.observation.outboundRelationship2.observation.value.@",
-            'sender_address'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.streetAddressLine",
-            'sender_city'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.city",
-            'sender_state'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.state",
-            'sender_department'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.name",
-            'sender_organization'=>"MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.assignedEntity.representedOrganization.name"
+            'past_medical' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.0.organizer.component.0.observation.outboundRelationship2.observation.value.@",
+            'sender_address' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.streetAddressLine",
+            'sender_city' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.city",
+            'sender_state' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.addr.state",
+            'sender_department' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.name",
+            'sender_organization' => "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.subjectOf1.controlActEvent.author.assignedEntity.representedOrganization.assignedEntity.representedOrganization.name"
         ];
 
         $save_data = [];
@@ -606,9 +670,39 @@ class Ce2bsController extends AppController
             // Check if the path exists in the flattened data and is not null
             $save_data[$key] = isset($flattenedData[$path]) ? $flattenedData[$path] : null;
         }
+
+        $reactions = $this->extractSubjectOf2Observations($flattenedData);
+        // debug($reactions);
+        // exit;
         return $save_data;
     }
 
+    private function extractSubjectOf2Observations($data)
+    {
+        $observations = [];
+        $index = 0;
+
+        while (true) {
+            $baseKey = "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.$index";
+            $observationKey = "$baseKey.observation";
+
+            if (isset($data[$observationKey])) {
+                $observation = [];
+                foreach ($data as $key => $value) {
+                    if (strpos($key, $baseKey) === 0) {
+                        $subKey = substr($key, strlen($baseKey) + 1);
+                        $observation[$subKey] = $value;
+                    }
+                }
+                $observations[] = $observation;
+                $index++;
+            } else {
+                break;
+            }
+        }
+
+        return $observations;
+    }
     private function flattenXml($xmlArray)
     {
         $data = [];
