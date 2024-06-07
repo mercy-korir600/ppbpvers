@@ -72,7 +72,7 @@ class AggregatesController extends AppController
 		));
 		$count++;
 		$count = ($count < 10) ? "0$count" : $count;
-		$reference = 'AGGR/' . date('Y') . '/' . $count;
+		$reference = 'PSUR/' . date('Y') . '/' . $count;
 		//ensure that the reference number is unique
 		$exists = $this->Aggregate->find('count',  array(
 			'fields' => 'Aggregate.reference_no',
@@ -88,7 +88,7 @@ class AggregatesController extends AppController
 	{
 		$this->Aggregate->id = $id;
 		if (!$this->Aggregate->exists()) {
-			throw new NotFoundException(__('Invalid E2b'));
+			throw new NotFoundException(__('Invalid Agregate Report'));
 		}
 		$aggregate = $this->Aggregate->read(null, $id);
 		if ($aggregate['Aggregate']['submitted'] > 1) {
@@ -105,13 +105,11 @@ class AggregatesController extends AppController
 			if (isset($this->request->data['submitReport'])) {
 				$validate = 'first';
 			}
+			// debug($this->request->data);
+			// exit;
 			if ($this->Aggregate->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
 				if (isset($this->request->data['submitReport'])) {
-
-
-					// debug($this->request->data);
-					// exit;
-
+ 
 
 					//lucian
 					// if(empty($aggregate->reference_no)) {

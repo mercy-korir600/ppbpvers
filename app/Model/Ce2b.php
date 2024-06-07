@@ -82,6 +82,19 @@ class Ce2b extends AppModel
             'dependent' => true,
             'conditions' => array('ReviewComment.model' => 'Ce2b', 'ReviewComment.category' => 'review' ),
         ),
+		'Ce2bListOfDrug' => array(
+            'className' => 'Ce2bListOfDrug',
+            'foreignKey' => 'ce2b_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
 		'Ce2bReaction' => array(
             'className' => 'Ce2bReaction',
             'foreignKey' => 'ce2b_id',

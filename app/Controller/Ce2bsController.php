@@ -462,7 +462,7 @@ class Ce2bsController extends AppController
                                     if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
                                         $reference = $this->generateReferenceNumber();
                                         $this->Ce2b->saveField('reference_no', $reference);
-                                        // $this->Ce2b->saveField('submitted', 2);
+                                        $this->Ce2b->saveField('submitted', 2);
                                         $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
                                     }
 
@@ -816,7 +816,7 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-            'contain' => array('Designation','Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
+            'contain' => array('Designation','Ce2bListOfDrug','Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
         // debug($ce2b['Ce2b']['e2b_type']);

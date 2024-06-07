@@ -26,14 +26,14 @@ $nchecked = "&#x2610;";
                             <h5>P.O. Box 27663-00506 NAIROBI</h5>
                             <h5>Tel: +254795743049</h5>
                             <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
-                            <h5 style="color: red;">E2B</h5>
+                            <h5 style="color: red;">PSUR Report</h5>
                         </div>
                     </div>
                 </div>
 
                 <table class="table" style="width: 100%;">
                     <tr>
-                        <td style="width: 10%;"><b>FILE:</b> </td>
+                        <!-- <td style="width: 10%;"><b>FILE:</b> </td> -->
                     </tr>
                     <tr>
                         <td style="width: 10%;">COMPANY NAME: </td>
@@ -61,7 +61,7 @@ $nchecked = "&#x2610;";
                             foreach ($aggregate['Attachment'] as $attachment) : ?>
                                 <tr>
                                     <td style="width: 10%;"><?php echo $i++; ?></td>
-                                    <td>
+                                    <td style="width : 30%;">
                                         <a href="/attachments/download/<?php echo $attachment['id']; ?>"><?php echo __($attachment['basename']); ?></a>
                                     </td>
                                     <td><?php echo $attachment['description']; ?></td>

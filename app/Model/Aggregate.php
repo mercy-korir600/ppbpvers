@@ -9,87 +9,125 @@ App::uses('AppModel', 'Model');
  * @property SubCounty $SubCounty
  * @property Designation $Designation
  */
-class Aggregate extends AppModel
-{
-
-	public $actsAs = array('Media.Transfer', 'Media.Coupler', 'Media.Meta', 'Search.Searchable', 'Containable');
-	public $filterArgs = array(
-		'reference_no' => array('type' => 'like', 'encode' => true),
-		'start_date' => array('type' => 'query', 'method' => 'dummy'),
-		'end_date' => array('type' => 'query', 'method' => 'dummy'),
-        'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aggregate.reporter_date as DATE) BETWEEN ? AND ?'),
-	);
-	public function dummy($data = array())
-	{
-		return array('1' => '1');
-	}
-
-	public function makeRangeCondition($data = array())
-    {
-        if (!empty($data['start_date'])) $start_date = date('Y-m-d', strtotime($data['start_date']));
-        else $start_date = date('Y-m-d', strtotime('2012-05-01'));
-
-        if (!empty($data['end_date'])) $end_date = date('Y-m-d', strtotime($data['end_date']));
-        else $end_date = date('Y-m-d');
-
-        return array($start_date, $end_date);
-    }
-
-	public $hasMany = array(
-		'Attachment' => array(
-			'className' => 'Attachment',
-			'foreignKey' => 'foreign_key',
-			'dependent' => true,
-			'conditions' => array('Attachment.model' => 'Aggregate', 'Attachment.group' => 'attachment'),
-		),
-		'ExternalComment' => array(
-			'className' => 'Comment',
-			'foreignKey' => 'foreign_key',
-			'dependent' => true,
-			'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
-		),
-		'ReviewComment' => array(
-			'className' => 'Comment',
-			'foreignKey' => 'foreign_key',
-			'dependent' => true,
-			'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
-		)
+class Aggregate extends AppModel {
 
 
-	);
-
-	/**
-	 * Validation rules
-	 *
-	 * @var array
-	 */
+	public $actsAs = array('Search.Searchable', 'Containable');
+/**
+ * Validation rules
+ *
+ * @var array
+ */
 	public $validate = array(
-		'e2b_file_data' => array(
-			'resource'   => array(
-				'rule' => 'checkResource',
-				'allowEmpty' => false,
-				'message' => 'Please attach a file!'
+		'action_date' => array(
+			'datetime' => array(
+				'rule' => array('datetime'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
-			'access'     => array('rule' => 'checkAccess'),
-			'permission' => array('rule' => array('checkPermission', '*')),
-			'size'       => array('rule' => array('checkSize', '5M')),
 		),
-		'reporter_email' => array(
+		'brand_name' => array(
 			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please specify the reporter_email'
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'inn_name' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'mah' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'therapeutic_group' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'authorised_indications' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'form_strength' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'introduction' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'worldwide_marketing' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'action_taken' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 	);
 
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
-	/**
-	 * belongsTo associations
-	 *
-	 * @var array
-	 */
+/**
+ * belongsTo associations
+ *
+ * @var array
+ */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',
@@ -126,5 +164,39 @@ class Aggregate extends AppModel
 			'fields' => '',
 			'order' => ''
 		)
+	);
+
+	public $hasMany = array(
+        'AggregateListOfSignal' => array(
+            'className' => 'AggregateListOfSignal',
+            'foreignKey' => 'aggregate_id',
+            'dependent' => true,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ), 
+        'Attachment' => array(
+            'className' => 'Attachment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('Attachment.model' => 'Aggregate', 'Attachment.group' => 'attachment'),
+        ),
+		'ExternalComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
+        ),
+		'ReviewComment' => array(
+            'className' => 'Comment',
+            'foreignKey' => 'foreign_key',
+            'dependent' => true,
+            'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
+        ),
 	);
 }
