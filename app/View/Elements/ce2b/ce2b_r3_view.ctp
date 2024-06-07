@@ -1,7 +1,7 @@
 <?php
 $this->assign('E2B', 'active');
 $ichecked = "&#x2611;";
-$nchecked = "&#x2610;"; 
+$nchecked = "&#x2610;";
 ?>
 
 <!-- Ce2b
@@ -40,21 +40,21 @@ $nchecked = "&#x2610;";
                             <tr width="100%">
                                 <th colspan="2">Sender's Safety Report Unique Identifier</th>
                             </tr>
-                            <tr >
-                                <td colspan="2"><?php echo $ce2b['Ce2b']['sender_unique_identifier'];?></td>
+                            <tr>
+                                <td colspan="2"><?php echo $ce2b['Ce2b']['sender_unique_identifier']; ?></td>
                             </tr>
                             <tr>
                                 <th colspan="2">Type of Report</th>
                             </tr>
                             <tr>
-                                <td colspan="2"><?php echo $ce2b['Ce2b']['e2b_type'];?></td>
+                                <td colspan="2"><?php echo $ce2b['Ce2b']['e2b_type']; ?></td>
                             </tr>
                             <tr>
                                 <th>Date of Creation</th>
                                 <th>Date First Received from source</th>
                             </tr>
                             <tr>
-                                <td><?php echo $ce2b['Ce2b']['creation_time'];?></td>
+                                <td><?php echo $ce2b['Ce2b']['creation_time']; ?></td>
                                 <td><?php echo $ce2b['Ce2b']['date_first_received']; ?></td>
                             </tr>
                             <!-- <tr>
@@ -238,8 +238,8 @@ $nchecked = "&#x2610;";
                                 <td><?php echo $ce2b['Ce2b']['patient_name']; ?></td>
                                 <td><?php echo $ce2b['Ce2b']['patient_number']; ?></td>
                                 <td></td>
-                                <td><?php 
-                                 echo date('Y-m-d', strtotime($ce2b['Ce2b']['patient_dob'])); ?></td>
+                                <td><?php
+                                    echo date('Y-m-d', strtotime($ce2b['Ce2b']['patient_dob'])); ?></td>
                             </tr>
                             <!-- <tr>
                                 <td>Age at the time of onset of reaction/ event (number)</td>
@@ -265,16 +265,16 @@ $nchecked = "&#x2610;";
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td colspan="2"><?php 
-                                if (isset($ce2b['Ce2b']['patient_sex'])) {
-                                    $patientSex = $ce2b['Ce2b']['patient_sex'];
-                                    if ($patientSex == 2) {
-                                        echo 'Female';
-                                    } elseif ($patientSex == 1) {
-                                        echo 'Male';
-                                    }  
-                                }
-                                ?></td>
+                                <td colspan="2"><?php
+                                                if (isset($ce2b['Ce2b']['patient_sex'])) {
+                                                    $patientSex = $ce2b['Ce2b']['patient_sex'];
+                                                    if ($patientSex == 2) {
+                                                        echo 'Female';
+                                                    } elseif ($patientSex == 1) {
+                                                        echo 'Male';
+                                                    }
+                                                }
+                                                ?></td>
                             </tr>
                             <!-- <tr>
                                 <td>Last menstrual period date</td>
@@ -286,7 +286,7 @@ $nchecked = "&#x2610;";
                                 <th colspan="4">Text for relevant medical history and concurrent conditions (not including reaction/event)</th>
                             </tr>
                             <tr>
-                                <td colspan="4"><?php echo $ce2b['Ce2b']['past_medical'];?></td>
+                                <td colspan="4"><?php echo $ce2b['Ce2b']['past_medical']; ?></td>
                             </tr>
                             <!-- <tr>
                                 <td>Concomitant therapies</td>
@@ -518,7 +518,43 @@ $nchecked = "&#x2610;";
                         <h5 style="background: #18C4D1; padding:20px;">Reaction(s)/Event(s)</h5>
 
                         <table class="table" style="width: 100%;">
-                            <!-- <tr width="100%">
+                            <tr>
+                                <th>Reaction Name</th>
+                                <th>Start Date</th>
+                                <th>MedDRA Code</th>
+                                <!-- <th>MedDRA Version</th> -->
+                                <th>Results in death</th>
+                                <th>Life threatening</th>
+                                <th>Caused / prolonged hospitalization </th>
+                                <th>Disabling / Incapacitating</th>
+                                <th>Congenital anomaly / birth defect</th>
+                                <th>Occurence Country</th>
+                            </tr>
+                            <?php
+
+                            foreach ($ce2b['Ce2bReaction'] as $reaction) {
+                            ?>
+                                <tr>
+                                    <td><?php echo $reaction['reaction_name'] ?></td>
+                                    <td><?php echo $reaction['start_date'] ?></td>
+                                    <td><?php echo $reaction['meddra_code'] ?></td>
+                                    <!-- <td></td> -->
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><?php echo $reaction['source_country'] ?></td>
+                                </tr>
+
+                                <!-- 
+                              `reaction_name` text DEFAULT NULL,
+   `meddra_code` text DEFAULT NULL,
+    `` text DEFAULT NULL,
+      `` text DEFAULT NULL,    
+                            
+                            
+                            <tr width="100%">
                                 <td>Reaction / event as reported by the primary source in native language</td>
 
                             </tr>
@@ -585,6 +621,7 @@ $nchecked = "&#x2610;";
                                 <td></td>
                                 <td></td>
                             </tr> -->
+                            <?php } ?>
                         </table>
                         <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
                         <table class="table" style="width: 100%;">
@@ -646,7 +683,7 @@ $nchecked = "&#x2610;";
                             </tr> -->
                         </table>
                         <h5 style="background: #18C4D1; padding:20px;">Drugs Information</h5>
-                       
+
                         <table class="table" style="width: 100%;">
                             <!-- <tr width="100%">
                                 <td>Characterization of Drug Role</td>
@@ -867,11 +904,11 @@ $nchecked = "&#x2610;";
                             </tr> -->
                         </table>
                         <h5 style="background: #18C4D1; padding:20px;">Narrative case summary and further information</h5>
-                   
+
                         <table class="table" style="width: 100%;">
 
 
-                        <tr>
+                            <tr>
                                 <td colspan="2"><?php echo $ce2b['Ce2b']['case_narrative']; ?></td>
                             </tr>
                             <!-- <tr width="100%">
@@ -930,7 +967,7 @@ $nchecked = "&#x2610;";
                                 <td></td> 
                             </tr> -->
                         </table>
-                   
+
                     </div>
                 </div>
 

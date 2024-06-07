@@ -770,6 +770,8 @@ class SadrsController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
+            // debug($this->request->data);
+            // exit;
             if ($this->Sadr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Sadr->saveField('submitted', 2);

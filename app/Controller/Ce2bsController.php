@@ -380,12 +380,27 @@ class Ce2bsController extends AppController
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
-
-            // debug($this->request->data['Ce2b']['e2b_type']);
-            // exit;
+ 
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
+            }
+
+            if ($this->request->data['Ce2b']['e2b_type'] == "R3") {
+                $file = $this->request->data['Ce2b']['e2b_file_data'];
+                $xmlString = file_get_contents($file['tmp_name']);
+                $xml = Xml::build($xmlString);
+                $xmlString = $xml->asXML();
+
+                $filePath = WWW_ROOT . 'files' . DS . $file['name'];
+                move_uploaded_file($file['tmp_name'], $filePath);
+
+                $xmlArray = Xml::toArray(Xml::build($filePath));
+                $flattenedData = $this->flattenXml($xmlArray);
+                $reactions = $this->extractObservations($flattenedData);
+
+                $this->request->data['Ce2bReaction']=$reactions; 
+
             }
             if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
@@ -431,25 +446,11 @@ class Ce2bsController extends AppController
                             $xmlFilePath = $file['tmp_name']; // Temporary file path
                             $data = $this->parseE2BReport($xmlFilePath);
 
-                            if (is_null($data)) {
-                                $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
-                                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-                            } else {
-                                try {
-                                    $xmlString = file_get_contents($file['tmp_name']);
-                                    $xml = Xml::build($xmlString);
-                                    $xmlString = $xml->asXML();
-
-                                    $filePath = WWW_ROOT . 'files' . DS . $file['name'];
-                                    move_uploaded_file($file['tmp_name'], $filePath);
-
-                                    $xmlArray = Xml::toArray(Xml::build($filePath));
-                                    $flattenedData = $this->flattenXml($xmlArray);
-
-                                    $reactions = $this->extractObservations($flattenedData);
-
-                                    debug($reactions);
-                                    // exit;
+                            // if (is_null($data)) {
+                            //     $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                            //     $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                            // } else {
+                                try { 
 
                                     $newReportData = $this->extractReportData($flattenedData);
 
@@ -468,16 +469,15 @@ class Ce2bsController extends AppController
                                     foreach ($newReportData as $key => $value) {
                                         $this->Ce2b->saveField($key, $value, false);
                                     }
-                                    debug($flattenedData);
-                                    exit;
+                                    // debug($flattenedData);
+                                    // exit;
                                     $this->Ce2b->saveField('e2b_content', $xmlString, false);
                                 } catch (Exception $e) {
                                     $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                                     $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                                 }
-                            }
-                        } else {
-                            // $this->Session->setFlash(__('File upload failed'), 'default', array('class' => 'error'));
+                            // }
+                        } else { 
                             $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
@@ -580,55 +580,56 @@ class Ce2bsController extends AppController
         $this->set(compact('designations'));
     }
 
-    private function extractObservations($flattenedData) {
+    private function extractObservations($flattenedData)
+    {
         $observations = [];
         $index = 1;
-    
+
         while (true) {
             // Construct the dynamic key for the observation
             $observationKey = "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.{$index}.observation";
-            
+
             // Check if the key exists in the flattened data
             if (isset($flattenedData[$observationKey . ".@classCode"])) {
                 // Construct the dynamic key for the locatedPlace code within the observation
                 $locatedPlaceKey = $observationKey . ".location.locatedEntity.locatedPlace.code.@code";
-                $start_date=$observationKey . ".effectiveTime.low";
+                $start_date = $observationKey . ".effectiveTime.low";
 
-                $meddra_code_key=$observationKey .  ".value.@code";
-                $meddra_version_key=$observationKey . ".value.@codeSystemVersion";
-                $reaction_name_key=$observationKey.".outboundRelationship2.0.observation.value.@";
+                $meddra_code_key = $observationKey .  ".value.@code";
+                $meddra_version_key = $observationKey . ".value.@codeSystemVersion";
+                $reaction_name_key = $observationKey . ".outboundRelationship2.0.observation.value.@";
 
 
 
-                $start_of_reaction=null;
-                $country_of_source=null;
-                $meddra_code=null;
-                $meddra_version=null;
-                $reaction_name=null;
+                $start_of_reaction = null;
+                $country_of_source = null;
+                $meddra_code = null;
+                $meddra_version = null;
+                $reaction_name = null;
                 if (isset($flattenedData[$reaction_name_key])) {
-                    $reaction_name=$flattenedData[$reaction_name_key];
+                    $reaction_name = $flattenedData[$reaction_name_key];
                 }
-                    
+
                 if (isset($flattenedData[$meddra_version_key])) {
-                    $meddra_version=$flattenedData[$meddra_version_key];
+                    $meddra_version = $flattenedData[$meddra_version_key];
                 }
                 if (isset($flattenedData[$meddra_code_key])) {
-                    $meddra_code=$flattenedData[$meddra_code_key];
+                    $meddra_code = $flattenedData[$meddra_code_key];
                 }
                 if (isset($flattenedData[$start_date])) {
-                    $start_of_reaction=$flattenedData[$start_date];
+                    $start_of_reaction = $flattenedData[$start_date];
                 }
                 if (isset($flattenedData[$locatedPlaceKey])) {
-                    $country_of_source= $flattenedData[$locatedPlaceKey];
-                    
+                    $country_of_source = $flattenedData[$locatedPlaceKey];
                 }
-                $observations[] = [
-                    'index' => $index,
-                    'reaction_name'=>$reaction_name,
-                    'start_of_reaction'=>$start_of_reaction,
-                    'meddra_code'=>$meddra_code,
-                    'meddra_version'=>$meddra_version,
-                    'country_of_source' => $country_of_source
+                $observations[] = [ 
+                        'index' => $index,
+                        'reaction_name' => $reaction_name,
+                        'start_date' => $start_of_reaction,
+                        'meddra_code' => $meddra_code,
+                        'meddra_version' => $meddra_version,
+                        'source_country' => $country_of_source
+                    
                 ];
                 $index++;
             } else {
@@ -636,7 +637,7 @@ class Ce2bsController extends AppController
                 break;
             }
         }
-    
+
         return $observations;
     }
 
@@ -815,7 +816,7 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-            'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
+            'contain' => array('Designation','Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
         // debug($ce2b['Ce2b']['e2b_type']);
@@ -852,6 +853,8 @@ class Ce2bsController extends AppController
         } else {
 
             // $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
+            // debug($ce2b);
+            // exit;
             $this->set(['ce2b' => $ce2b]);
             // $this->set(['e2b' => $e2b]);
             $this->render('ce2b_r3');

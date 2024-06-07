@@ -81,8 +81,12 @@ class Ce2b extends AppModel
             'foreignKey' => 'foreign_key',
             'dependent' => true,
             'conditions' => array('ReviewComment.model' => 'Ce2b', 'ReviewComment.category' => 'review' ),
+        ),
+		'Ce2bReaction' => array(
+            'className' => 'Ce2bReaction',
+            'foreignKey' => 'ce2b_id',
+            'dependent' => true
         )
-
 		
 	);
 	/**
