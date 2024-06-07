@@ -32,4 +32,14 @@ class AggregateListOfSignal extends AppModel {
 			'order' => ''
 		)
 	);
+
+	public $validate = array(
+		'signal_term' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide signal term'
+			),
+		),
+	);
 }

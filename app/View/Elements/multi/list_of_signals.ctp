@@ -195,7 +195,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                             'label' => false,
                                             'between' => false,
                                             'after' => false,
-                                            'class' => 'span11 autoComblete autosave-ignore',
+                                            'class' => 'span11 autosave-ignore',
                                             'error' => array('attributes' => array('class' => 'help-block')),
                                             'data-items' => '4',
                                             'autocomplete' => 'off',

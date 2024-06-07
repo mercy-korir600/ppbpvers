@@ -9,125 +9,165 @@ App::uses('AppModel', 'Model');
  * @property SubCounty $SubCounty
  * @property Designation $Designation
  */
-class Aggregate extends AppModel {
+class Aggregate extends AppModel
+{
 
 
 	public $actsAs = array('Search.Searchable', 'Containable');
-/**
- * Validation rules
- *
- * @var array
- */
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
-		'action_date' => array(
-			'datetime' => array(
-				'rule' => array('datetime'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 		'brand_name' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide a brand_name'
 			),
 		),
 		'inn_name' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide a inn_name'
 			),
 		),
 		'mah' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide a Marketing Authorization Holder'
 			),
 		),
 		'therapeutic_group' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide Therapeutic Group Code'
 			),
 		),
 		'authorised_indications' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide authorised indications'
 			),
 		),
 		'form_strength' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide pharmaceutical form(s)'
 			),
 		),
 		'introduction' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide Brief Introduction'
 			),
 		),
 		'worldwide_marketing' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide worldwide marketing'
 			),
 		),
 		'action_taken' => array(
 			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide action_taken'
 			),
+		),
+		'reference_changes' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide reference_changes'
+			),
+		),
+		'estimated_exposure' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide estimated_exposure'
+			),
+		),
+		'clinical_findings' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide clinical findings'
+			),
+		),
+		'efficacy' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide efficacy'
+			),
+		),
+		'late_breaking' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide late breaking information'
+			),
+		),
+		'safety_concerns' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide safety concerns'
+			),
+		),
+
+
+		// Handle other signals, atleast one of them should be provided here 
+
+
+		'risks_evaluation' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide risks evaluation'
+			),
+		),
+		'risks_characterisation' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide risks characterisation'
+			),
+		),
+
+		// ENSURE ATLEAST ONE ATTACHMENT PROVIDED
+		'sample' => array(
+			'atleastOneAttachment' => array(
+				'rule'     => 'atleastOneAttachment',
+				'required' => false,
+				'message'  => 'Please upload a file'
+			),
+
 		),
 	);
 
+
+	public function atleastOneAttachment($field = null)
+	{
+		return !empty($this->data['Attachment']);
+	}
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',
@@ -167,36 +207,36 @@ class Aggregate extends AppModel {
 	);
 
 	public $hasMany = array(
-        'AggregateListOfSignal' => array(
-            'className' => 'AggregateListOfSignal',
-            'foreignKey' => 'aggregate_id',
-            'dependent' => true,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ), 
-        'Attachment' => array(
-            'className' => 'Attachment',
-            'foreignKey' => 'foreign_key',
-            'dependent' => true,
-            'conditions' => array('Attachment.model' => 'Aggregate', 'Attachment.group' => 'attachment'),
-        ),
+		'AggregateListOfSignal' => array(
+			'className' => 'AggregateListOfSignal',
+			'foreignKey' => 'aggregate_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Attachment' => array(
+			'className' => 'Attachment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('Attachment.model' => 'Aggregate', 'Attachment.group' => 'attachment'),
+		),
 		'ExternalComment' => array(
-            'className' => 'Comment',
-            'foreignKey' => 'foreign_key',
-            'dependent' => true,
-            'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
-        ),
+			'className' => 'Comment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
+		),
 		'ReviewComment' => array(
-            'className' => 'Comment',
-            'foreignKey' => 'foreign_key',
-            'dependent' => true,
-            'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
-        ),
+			'className' => 'Comment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
+		),
 	);
 }

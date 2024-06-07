@@ -2,6 +2,8 @@
 $this->assign('AGGREGATE', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
 $this->Html->script('ce2b', array('inline' => false));
+$this->Html->script('ckeditor/ckeditor', array('inline' => false));
+$this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 ?>
 
 <!-- SADR
@@ -53,274 +55,266 @@ $this->Html->script('ce2b', array('inline' => false));
 
             <div class="row-fluid">
                 <div class="span12">
-
-
                     <section id="aefisview">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#assessment" data-toggle="tab">Assessment</a></li>
-                            <li class=""><a href="#section1" data-toggle="tab">1. PSUR/PBRER Data</a></li>
-                            <li><a href="#section2" data-toggle="tab">2. Signal and risk management </a></li>
-                            <li><a href="#attachment" data-toggle="tab">3. Attachment </a></li>
-
-                        </ul>
-
-                        <div class="tab-content">
-                            <div style="margin: 10px;" class="tab-pane  " id="attachment">
-                                <div class="row-fluid">
-                                    <div class="span8">
-
-                                        <?php echo $this->element('multi/aggregates', ['model' => 'Aggregate', 'group' => 'attachment', 'examples' => '']); ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="margin: 10px;" class="tab-pane active" id="assessment">
-                                <div class="row-fluid">
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'brand_name',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'Invented/Brand name of the
+                        <div style="margin: 10px;">
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'brand_name',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'Invented/Brand name of the
                                                 medicinal product(s) <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'inn_name',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'INN (or common name) of the
+                                    ?>
+                                </div>
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'inn_name',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'INN (or common name) of the
                                                 active substance(s)<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
+                                    ?>
                                 </div>
-                                <div class="row-fluid">
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'mah',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => '
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'mah',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => '
                                                 Marketing authorization holder<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'local_technical',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'Local Technical Representative (where applicable)<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-
-                                        ?>
-                                    </div>
+                                    ?>
                                 </div>
-                                <div class="row-fluid">
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'therapeutic_group',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'Pharmaco-therapeutic group (ATC
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'local_technical',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'Local Technical Representative (where applicable)<span style="color:red;"></span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'therapeutic_group',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'Pharmaco-therapeutic group (ATC
                                                 Code)<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'authorised_indications',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'Indications authorised in Kenya for
+                                    ?>
+                                </div>
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'authorised_indications',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'Indications authorised in Kenya for
                                                 the product (list all the indications)<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
+                                    ?>
                                 </div>
-                                <div class="row-fluid">
-                                    <div class="span6">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'form_strength',
-                                            array(
-                                                'class' => 'span8',
-                                                'label' => array('class' => 'control-label required', 'text' => 'Pharmaceutical form(s) and
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'form_strength',
+                                        array(
+                                            'class' => 'span8',
+                                            'label' => array('class' => 'control-label required', 'text' => 'Pharmaceutical form(s) and
                                                 strength(s)<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        ?>
-                                    </div>
+                                    ?>
                                 </div>
                             </div>
-                            <div style="margin: 10px;" class="tab-pane" id="section1">
-                                <div class="row-fluid">
-                                    <div class="span10">
-                                        <?php
+                        </div>
+                        <hr>
+                        <div style="margin: 10px;">
+                            <div class="row-fluid">
+                                <div class="span10">
+                                    <?php
 
-                                        echo $this->Form->input(
-                                            'introduction',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1. Introduction <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'worldwide_marketing',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.2 Worldwide Marketing Approval Status <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        ?>
-                                        <h5>1.3 Overview of exposure and safety data</h5>
-                                        <?php
+                                    echo $this->Form->input(
+                                        'introduction',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1. Introduction <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'worldwide_marketing',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.2 Worldwide Marketing Approval Status <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    ?>
+                                    <h5>1.3 Overview of exposure and safety data</h5>
+                                    <?php
 
-                                        echo $this->Form->input(
-                                            'action_taken',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.1 Actions Taken in the Reporting Interval for Safety Reasons <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'reference_changes',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.2 Changes to Reference Safety Information <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'estimated_exposure',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.3 Estimated Exposure and Use Patterns<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
+                                    echo $this->Form->input(
+                                        'action_taken',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.1 Actions Taken in the Reporting Interval for Safety Reasons <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'reference_changes',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.2 Changes to Reference Safety Information <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'estimated_exposure',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.3 Estimated Exposure and Use Patterns<span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
 
-                                        echo $this->Form->input(
-                                            'clinical_findings',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.4 Findings from clinical trials and other sources<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'efficacy',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.5 Lack of efficacy in controlled clinical trials<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'late_breaking',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '1.3.6 Late-breaking information<span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        ?>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="margin: 10px;" class="tab-pane" id="section2">
-                                <div class="row-fluid">
-                                    <div class="span10">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'safety_concerns',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '2.1 Summary of safety concerns <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        ); ?>
-                                        <h5>2.2 Signal evaluation</h5>
-                                        <p>Tabular overview of signals: new, ongoing or closed during the reporting interval dd.mm.yyyy to dd.mm.yyyy</p>
-
-                                    </div>
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="span12">
-                                        <?php
-                                        echo $this->element('multi/list_of_signals');
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="span10">
-                                        <?php
-                                        echo $this->Form->input(
-                                            'risks_evaluation',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '2.3 Evaluation of risks and new information <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-                                        echo $this->Form->input(
-                                            'risks_characterisation',
-                                            array(
-                                                'class' => 'span10',
-                                                'rows' => '3',
-                                                'label' => array('class' => 'control-label required', 'text' => '2.4 Characterisation of risks <span style="color:red;">*</span>'),
-                                                'after' => '<p class="help-block"> </p></div>',
-                                            )
-                                        );
-
-
-                                        ?>
-                                    </div>
+                                    echo $this->Form->input(
+                                        'clinical_findings',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.4 Findings from clinical trials and other sources<span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'efficacy',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.5 Lack of efficacy in controlled clinical trials<span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'late_breaking',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '1.3.6 Late-breaking information<span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    ?>
 
                                 </div>
                             </div>
                         </div>
+                        <hr>
+                        <div style="margin: 10px;">
+                            <div class="row-fluid">
+                                <div class="span10">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'safety_concerns',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '2.1 Summary of safety concerns <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    ); ?>
+                                    <h5>2.2 Signal evaluation</h5>
+                                    <p>Tabular overview of signals: new, ongoing or closed during the reporting interval dd.mm.yyyy to dd.mm.yyyy</p>
+
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <?php
+                                    echo $this->element('multi/list_of_signals');
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span10">
+                                    <?php
+                                    echo $this->Form->input(
+                                        'risks_evaluation',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '2.3 Evaluation of risks and new information <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'risks_characterisation',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label required', 'text' => '2.4 Characterisation of risks <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+
+
+                                    ?>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr>
+                        <div style="margin: 10px;">
+                            <div class="row-fluid">
+                                <div class="span8">
+
+                                    <?php echo $this->element('multi/aggregates', ['model' => 'Aggregate', 'group' => 'attachment', 'examples' => '']); ?>
+                                </div>
+                            </div>
+                        </div>
+
                     </section>
                 </div>
             </div>
@@ -369,3 +363,19 @@ $this->Html->script('ce2b', array('inline' => false));
     </div>
     <?php echo $this->Form->end(); ?>
 </section>
+
+
+
+<script type="text/javascript">
+	CKEDITOR.replace( 'data[Aggregate][introduction]');
+    CKEDITOR.replace( 'data[Aggregate][worldwide_marketing]');
+    CKEDITOR.replace( 'data[Aggregate][action_taken]');
+    CKEDITOR.replace( 'data[Aggregate][reference_changes]');
+    CKEDITOR.replace( 'data[Aggregate][estimated_exposure]');
+    CKEDITOR.replace( 'data[Aggregate][clinical_findings]');
+	CKEDITOR.replace( 'data[Aggregate][efficacy]');
+    CKEDITOR.replace( 'data[Aggregate][late_breaking]');
+    CKEDITOR.replace( 'data[Aggregate][safety_concerns]');
+    CKEDITOR.replace( 'data[Aggregate][risks_evaluation]');
+    CKEDITOR.replace( 'data[Aggregate][risks_characterisation]');
+</script>

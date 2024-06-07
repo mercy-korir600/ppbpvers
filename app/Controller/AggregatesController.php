@@ -57,7 +57,7 @@ class AggregatesController extends AppController
 		// add deleted condition to criteria
 		$criteria['Aggregate.deleted'] = false;
 		$this->paginate['conditions'] = $criteria;
-		$this->paginate['order'] = array('Aggregate.created' => 'desc');
+		$this->paginate['order'] = array('Aggregate.submitted_date' => 'desc');
 		$this->set('aggregates', Sanitize::clean($this->paginate(), array('encode' => false)));
 		$this->set('page_options', $this->page_options);
 	}
