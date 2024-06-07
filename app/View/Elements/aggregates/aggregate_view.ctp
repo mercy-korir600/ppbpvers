@@ -33,7 +33,6 @@ $nchecked = "&#x2610;";
 
                 <table class="table" style="width: 100%;">
                     <tr>
-                        <!-- <td style="width: 10%;"><b>FILE:</b> </td> -->
                     </tr>
                     <tr>
                         <td style="width: 10%;">COMPANY NAME: </td>
@@ -43,9 +42,87 @@ $nchecked = "&#x2610;";
                         <td style="width: 10%;">REPORT ID: </td>
                         <td style="width: 20%;">
                             <p><strong><?php echo $aggregate['Aggregate']['reference_no'] ?></strong></p>
-                        </td> 
+                        </td>
                     </tr>
-                </table> 
+                </table>
+                <hr>
+                <div class="row-fluid" style="margin:10px ;">
+                <div class="row-fluid">
+                    <div class="span3">
+                        <p> <strong>Brand Name</strong></p>
+                    </div>
+                    <div class="span3">
+                        <p><strong>INN Name</strong></p>
+                    </div>
+                    <div class="span3">
+                        <p><strong>Market authorization Holder</strong></p>
+                    </div>
+                    <div class="span3">
+                        <p><strong>Local Technical Rep</strong></p>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span3">
+                        <p><?php echo $aggregate['Aggregate']['brand_name'] ?></p>
+
+                    </div>
+                    <div class="span3">
+                        <p><?php echo $aggregate['Aggregate']['inn_name'] ?></p>
+                    </div>
+                    <div class="span3">
+                        <p><?php echo $aggregate['Aggregate']['mah'] ?></p>
+                    </div>
+                    <div class="span3">
+                        <p><?php echo $aggregate['Aggregate']['local_technical'] ?></p>
+
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span3">
+                        <p> <strong>Gherapeutic Group Code</strong></p>
+                    </div>
+                    <div class="span3">
+                        <p><strong>Authorized Indicators</strong></p>
+                    </div>
+                    <div class="span3">
+                        <p><strong>Pharmaceutical Forms</strong></p>
+                    </div>
+                    <div class="span3">
+                    </div>
+
+                </div>
+                <div class="row-fluid" >
+                    <div class="span3">
+                        <?php echo $aggregate['Aggregate']['therapeutic_group'] ?> </div>
+                    <div class="span3">
+                        <?php echo $aggregate['Aggregate']['authorised_indications'] ?> </div>
+                    <div class="span3">
+                        <?php echo $aggregate['Aggregate']['form_strength'] ?> </div>
+                    <div class="span3">
+                    </div>
+                </div>
+                <hr>
+
+                <h5>1. Introduction</h5>
+
+                <p><?php echo $aggregate['Aggregate']['introduction'] ?></p>
+
+                <h5>1.2 Worldwide Marketing Approval Status</h5>
+
+                <p><?php echo $aggregate['Aggregate']['worldwide_marketing'] ?></p>
+
+                <h5>1.3 Overview of exposure and safety data</h5>
+                <p><?php echo $aggregate['Aggregate']['action_taken'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['reference_changes'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['estimated_exposure'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['clinical_findings'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['efficacy'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['late_breaking'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['safety_concerns'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['risks_evaluation'] ?></p>
+                <p><?php echo $aggregate['Aggregate']['risks_characterisation'] ?></p> 
+
+                </div>            
                 <hr>
 
                 <?php if (count($aggregate['Attachment']) > 0) { ?>

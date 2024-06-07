@@ -42,4 +42,29 @@ class AggregateListOfSignal extends AppModel {
 			),
 		),
 	);
+
+
+	public function beforeSave($options = array())
+	{
+		if (!empty($this->data['AggregateListOfSignal']['date_detected'])) {
+			$this->data['AggregateListOfSignal']['date_detected'] = $this->dateFormatBeforeSave($this->data['AggregateListOfSignal']['date_detected']);
+		}
+		if (!empty($this->data['AggregateListOfSignal']['date_closed'])) {
+			$this->data['AggregateListOfSignal']['date_closed'] = $this->dateFormatBeforeSave($this->data['AggregateListOfSignal']['date_closed']);
+		}
+		return true;
+	}
+
+	public function afterFind($results, $primary = false)
+	{
+		foreach ($results as $key => $val) {
+			if (isset($val['AggregateListOfSignal']['date_detected'])) {
+				$results[$key]['AggregateListOfSignal']['date_detected'] = $this->dateFormatAfterFind($val['AggregateListOfSignal']['date_detected']);
+			}
+			if (isset($val['AggregateListOfSignal']['date_closed'])) {
+				$results[$key]['AggregateListOfSignal']['date_closed'] = $this->dateFormatAfterFind($val['AggregateListOfSignal']['date_closed']);
+			}
+		}
+		return $results;
+	}
 }

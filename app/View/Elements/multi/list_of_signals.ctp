@@ -3,7 +3,7 @@
 /**
  * @var \App\View\AppView $this
  */
-$this->Html->script('list_of_drugs_v2', array('inline' => false));
+$this->Html->script('list_of_signals', array('inline' => false));
 $this->Html->css('sadr', false, array('inline' => false));
 ?>
 <style>
@@ -56,7 +56,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span11 autoComblete autosave-ignore',
+                                'class' => 'span11  autosave-ignore',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                                 'data-items' => '4',
                                 'autocomplete' => 'off',
@@ -64,14 +64,13 @@ $this->Html->css('sadr', false, array('inline' => false));
                         );
                         ?>
                     </td>
-                    <td data-title="Date detected (dd-mm-yyyy)">
+                    <td data-title="">
                         <?php
-
 
                         echo $this->Form->input(
                             'AggregateListOfSignal.0.date_detected',
                             array(
-                                'type' => 'date',
+                                'type' => 'text',
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
@@ -79,6 +78,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'error' => array('attributes' => array('class' => 'help-block')),
                             )
                         );
+
                         ?>
                     </td>
                     <td data-title="Status">
@@ -105,17 +105,16 @@ $this->Html->css('sadr', false, array('inline' => false));
                     </td>
                     <td data-title="Data Closed">
                         <?php
+
                         echo $this->Form->input(
                             'AggregateListOfSignal.0.date_closed',
                             array(
-                                'type' => 'date',
+                                'type' => 'text',
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
                                 'class' => 'span12 autosave-ignore',
-                                'error' => array(
-                                    'attributes' => array('class' => 'help-block'),
-                                )
+                                'error' => array('attributes' => array('class' => 'help-block')),
                             )
                         );
                         ?>
@@ -174,7 +173,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span11 autoComblete2 autosave-ignore',
+                                'class' => 'span11  autosave-ignore',
                             )
                         );
                         ?>
@@ -189,8 +188,10 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 <?php echo $i + 1; ?>
                             </td>
                             <td> <?php
+                                    echo $this->Form->input('AggregateListOfSignal.' . $i . '.id', array('type' => 'hidden'));
+
                                     echo $this->Form->input(
-                                        'AggregateListOfSignal'.$i.'signal_term',
+                                        'AggregateListOfSignal.' . $i . '.signal_term',
                                         array(
                                             'label' => false,
                                             'between' => false,
@@ -206,11 +207,10 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td data-title="Date detected (dd-mm-yyyy)">
                                 <?php
 
-
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'date_detected',
+                                    'AggregateListOfSignal.' . $i . '.date_detected',
                                     array(
-                                        'type' => 'date',
+                                        'type' => 'text',
                                         'label' => false,
                                         'between' => false,
                                         'after' => false,
@@ -223,7 +223,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td data-title="Status">
                                 <?php
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'status',
+                                    'AggregateListOfSignal.' . $i . '.status',
                                     array(
                                         'empty' => true,
                                         'label' => false,
@@ -244,17 +244,16 @@ $this->Html->css('sadr', false, array('inline' => false));
                             </td>
                             <td data-title="Data Closed">
                                 <?php
+
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'date_closed',
+                                    'AggregateListOfSignal.' . $i . '.date_closed',
                                     array(
-                                        'type' => 'date',
+                                        'type' => 'text',
                                         'label' => false,
                                         'between' => false,
                                         'after' => false,
                                         'class' => 'span12 autosave-ignore',
-                                        'error' => array(
-                                            'attributes' => array('class' => 'help-block'),
-                                        )
+                                        'error' => array('attributes' => array('class' => 'help-block')),
                                     )
                                 );
                                 ?>
@@ -262,7 +261,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td data-title="Source of Trigger">
                                 <?php
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'source_trigger',
+                                    'AggregateListOfSignal.' . $i . '.source_trigger',
                                     array(
                                         'label' => false,
                                         'between' => false,
@@ -275,7 +274,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td colspan="1" data-title="Reason Summary">
                                 <?php
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'reason_summary',
+                                    'AggregateListOfSignal.' . $i . '.reason_summary',
                                     array(
                                         'empty' => true,
                                         'label' => false,
@@ -292,13 +291,13 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td data-title="Method of signal evaluation *">
                                 <?php
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'evaluation_method',
+                                    'AggregateListOfSignal.' . $i . '.evaluation_method',
                                     array(
                                         'empty' => true,
                                         'label' => false,
                                         'between' => false,
                                         'after' => false,
-                                        'class' => 'span12 autosave-ignore showHidden',
+                                        'class' => 'span12 autosave-ignore',
                                         'type' => 'text',
                                         'error' => array('attributes' => array('class' => 'help-block')),
                                     )
@@ -308,12 +307,12 @@ $this->Html->css('sadr', false, array('inline' => false));
                             <td data-title="Outcome  *">
                                 <?php
                                 echo $this->Form->input(
-                                    'AggregateListOfSignal'.$i.'outcome',
+                                    'AggregateListOfSignal.' . $i . '.outcome',
                                     array(
                                         'label' => false,
                                         'between' => false,
                                         'after' => false,
-                                        'class' => 'span11 autoComblete2 autosave-ignore',
+                                        'class' => 'span12 autosave-ignore',
                                     )
                                 );
                                 ?>
