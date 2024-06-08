@@ -167,9 +167,12 @@ echo $this->Session->flash();
             </thead>
             <tbody>
                 <?php
+                $counter=0;
                 foreach ($aggregates as $aggregate) : ?>
                     <tr class="">
-                        <td><?php echo h($aggregate['Aggregate']['id']); ?>&nbsp;</td>
+                        <td><?php 
+                        $counter++;
+                        echo $counter; ?>&nbsp;</td>
                         <td>
                             <?php
                             echo $this->Html->link($aggregate['Aggregate']['reference_no'], array('action' => 'view', $aggregate['Aggregate']['id']), array('escape' => false));

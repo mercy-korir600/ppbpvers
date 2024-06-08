@@ -1,12 +1,3 @@
-<?php
-$this->assign('Aggregate', 'active');
-$ichecked = "&#x2611;";
-$nchecked = "&#x2610;";
-?>
-
-<!-- Aggregate
-    ================================================== -->
-
 <div class="row-fluid" id="abonokode">
     <div class="span12">
 
@@ -17,8 +8,10 @@ $nchecked = "&#x2610;";
                 <div class="row-fluid">
                     <div class="span12">
                         <?php
-                        echo $this->Html->image('confidence.png', array('alt' => 'in confidence', 'class' => 'pull-right'));
-                        echo $this->Html->image('coa.png', array('alt' => 'COA', 'style' => 'margin-left: 45%;'));
+                        echo ($this->Html->image('header-object.png', array('alt' => 'in confidence', 'style' => 'margin-left: 45%;', 'fullBase' => true, 'class' => 'pull-right')));
+
+                        // echo $this->Html->image('confidence.png', array('alt' => 'in confidence', 'class' => 'pull-right'));
+                        // echo $this->Html->image('coa.png', array('alt' => 'COA', 'style' => 'margin-left: 45%;'));
                         ?>
                         <div class="babayao" style="text-align: center;">
                             <h4>MINISTRY OF HEALTH</h4>
@@ -32,76 +25,73 @@ $nchecked = "&#x2610;";
                 </div>
 
                 <table class="table" style="width: 100%;">
+
                     <tr>
-                    </tr>
-                    <tr>
-                        <td style="width: 10%;">COMPANY NAME: </td>
-                        <td style="width: 25%;">
-                            <p><strong><?php echo $aggregate['Aggregate']['company_name'] ?></strong></p>
-                        </td>
                         <td style="width: 10%;">REPORT ID: </td>
                         <td style="width: 20%;">
                             <p><strong><?php echo $aggregate['Aggregate']['reference_no'] ?></strong></p>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <p> <strong>Brand Name</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['brand_name'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><strong>INN Name</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['inn_name'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><strong>Market authorization Holder</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['mah'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><strong>Local Technical Rep</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['local_technical'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p> <strong>Therapeutic Group Code</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['therapeutic_group'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><strong>Authorized Indicators</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['authorised_indications'] ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><strong>Pharmaceutical Forms</strong></p>
+                        </td>
+                        <td>
+                            <p><?php echo $aggregate['Aggregate']['form_strength'] ?></p>
+                        </td>
+                    </tr>
+
                 </table>
                 <hr>
                 <div class="row-fluid" style="margin:10px ;">
-                    <div class="row-fluid">
-                        <div class="span3">
-                            <p> <strong>Brand Name</strong></p>
-                        </div>
-                        <div class="span3">
-                            <p><strong>INN Name</strong></p>
-                        </div>
-                        <div class="span3">
-                            <p><strong>Market authorization Holder</strong></p>
-                        </div>
-                        <div class="span3">
-                            <p><strong>Local Technical Rep</strong></p>
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3">
-                            <p><?php echo $aggregate['Aggregate']['brand_name'] ?></p>
-
-                        </div>
-                        <div class="span3">
-                            <p><?php echo $aggregate['Aggregate']['inn_name'] ?></p>
-                        </div>
-                        <div class="span3">
-                            <p><?php echo $aggregate['Aggregate']['mah'] ?></p>
-                        </div>
-                        <div class="span3">
-                            <p><?php echo $aggregate['Aggregate']['local_technical'] ?></p>
-
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3">
-                            <p> <strong>Gherapeutic Group Code</strong></p>
-                        </div>
-                        <div class="span3">
-                            <p><strong>Authorized Indicators</strong></p>
-                        </div>
-                        <div class="span3">
-                            <p><strong>Pharmaceutical Forms</strong></p>
-                        </div>
-                        <div class="span3">
-                        </div>
-
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3">
-                            <?php echo $aggregate['Aggregate']['therapeutic_group'] ?> </div>
-                        <div class="span3">
-                            <?php echo $aggregate['Aggregate']['authorised_indications'] ?> </div>
-                        <div class="span3">
-                            <?php echo $aggregate['Aggregate']['form_strength'] ?> </div>
-                        <div class="span3">
-                        </div>
-                    </div>
-                    <hr>
 
                     <h5>1. Introduction</h5>
                     <div class="row-fluid">
@@ -176,22 +166,21 @@ $nchecked = "&#x2610;";
                             <p><?php echo $aggregate['Aggregate']['risks_characterisation'] ?></p>
                         </div>
                     </div>
+
                     <hr>
 
-                    <h5>3 Benefit evaluation  </h5>
+                    <h5>3 Benefit evaluation </h5>
                     <div class="row-fluid">
                         <div class="span11">
                             <p><?php echo $aggregate['Aggregate']['benefit_evaluation'] ?></p>
                         </div>
                     </div>
-
-                    <h5>4 Benefit-risk balance</h5>
+                    <h5>4 Benefit-risk balance </h5>
                     <div class="row-fluid">
                         <div class="span11">
                             <p><?php echo $aggregate['Aggregate']['risk_balance'] ?></p>
                         </div>
                     </div>
-
                 </div>
                 <hr>
 

@@ -84,8 +84,81 @@ class AggregatesController extends AppController
 
 		return $reference;
 	}
+
+	public function validateEditorData($data)
+	{
+		$response = array(
+			'valid' => true,
+			'message' => ''
+		);
+		
+		if (empty($data['Aggregate']['introduction'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide a Brief Introduction<br>";
+		}
+		
+		if (empty($data['Aggregate']['worldwide_marketing'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide worldwide marketing<br>";
+		}
+		
+		if (empty($data['Aggregate']['action_taken'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide action taken<br>";
+		}
+		
+		if (empty($data['Aggregate']['reference_changes'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide reference changes<br>";
+		}
+		
+		if (empty($data['Aggregate']['estimated_exposure'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide estimated exposure<br>";
+		}
+		
+		if (empty($data['Aggregate']['clinical_findings'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide clinical findings<br>";
+		}
+		
+		if (empty($data['Aggregate']['efficacy'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide efficacy<br>";
+		}
+		
+		if (empty($data['Aggregate']['late_breaking'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide late breaking<br>";
+		}
+		
+		if (empty($data['Aggregate']['safety_concerns'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide safety concerns<br>";
+		}
+		
+		if (empty($data['Aggregate']['risks_evaluation'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide risks evaluation<br>";
+		}
+		
+		if (empty($data['Aggregate']['risks_characterisation'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide risks characterisation<br>";
+		}
+		
+		// Remove the last newline character if present
+		$response['message'] = rtrim($response['message'], "\n");
+		
+		return $response;
+		
+	}
 	public function reporter_edit($id = null)
 	{
+		$isValid = array(
+			'valid' => true,
+			'message' => 'success'
+		);
 		$this->Aggregate->id = $id;
 		if (!$this->Aggregate->exists()) {
 			throw new NotFoundException(__('Invalid Agregate Report'));
@@ -104,12 +177,17 @@ class AggregatesController extends AppController
 			$validate = false;
 			if (isset($this->request->data['submitReport'])) {
 				$validate = 'first';
+				$isValid = $this->validateEditorData($this->request->data);
+				if ($isValid['valid'] != true) {
+					$validate = false;
+					unset($this->request->data['submitReport']);
+				}
 			}
+
 			// debug($this->request->data);
 			// exit;
 			if ($this->Aggregate->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
 				if (isset($this->request->data['submitReport'])) {
- 
 
 					//lucian
 					// if(empty($aggregate->reference_no)) {
@@ -183,11 +261,23 @@ class AggregatesController extends AppController
 					$this->Session->setFlash(__('The Aggregate report has been submitted to PPB'), 'alerts/flash_success');
 					$this->redirect(array('action' => 'view', $this->Aggregate->id));
 				}
-				// debug($this->request->data);
+				if ($isValid['valid'] != true) {
+					$message = 'The application was not successfully submitted. Please correct the errors below...';
+					$message = $message . "<br>" . $isValid['message'];
+					$this->Session->setFlash(__($message), 'alerts/flash_error');
+					$this->redirect($this->referer());
+				}
+
 				$this->Session->setFlash(__('The Aggregate report has been saved'), 'alerts/flash_success');
 				$this->redirect($this->referer());
 			} else {
-				$this->Session->setFlash(__('The Aggregate report could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
+				$message = 'The application was not successfully submitted. Please correct the errors below...';
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('response', array('message' => 'Failure', 'errors' => $message));
+				} else {
+					$this->Session->setFlash(__($message), 'alerts/flash_error');
+				}
+				// $this->Session->setFlash(__('The Aggregate report could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
 			}
 		} else {
 			$this->request->data = $this->Aggregate->read(null, $id);
@@ -241,7 +331,11 @@ class AggregatesController extends AppController
 			'conditions' => array('Aggregate.id' => $id),
 			'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
 		));
-		$this->set(['aggregate' => $aggregate]);
+		$this->set(['aggregate' => $aggregate]);  
+		if (strpos($this->request->url, 'pdf') !== false) {
+            $this->pdfConfig = array('filename' => 'PSUR_' . $id . '.pdf',  'orientation' => 'portrait');
+            $this->response->download('PSUR_' . $aggregate['Aggregate']['id'] . '.pdf');
+        }
 	}
 	// MANAGER USER
 	public function manager_index()
@@ -270,7 +364,7 @@ class AggregatesController extends AppController
 
 		// add deleted condition to criteria
 		$criteria['Aggregate.deleted'] = false;
-		$criteria['Aggregate.archived']=false;
+		$criteria['Aggregate.archived'] = false;
 		$this->paginate['conditions'] = $criteria;
 		$this->paginate['order'] = array('Aggregate.submitted_date' => 'desc');
 		$this->set('aggregates', Sanitize::clean($this->paginate(), array('encode' => false)));
@@ -278,9 +372,8 @@ class AggregatesController extends AppController
 	}
 	public function manager_edit()
 	{
-
 	}
-	public function manager_view($id=null)
+	public function manager_view($id = null)
 	{
 		$this->Aggregate->id = $id;
 		if (!$this->Aggregate->exists()) {
@@ -290,19 +383,19 @@ class AggregatesController extends AppController
 		$this->general_view($id);
 	}
 	public function manager_archive($id = null)
-    {
-        $this->Aggregate->id = $id;
-        if (!$this->Aggregate->exists()) {
-            throw new NotFoundException(__('Invalid Aggregate'));
-        }
-        $aggregate = $this->Aggregate->read(null, $id);
-        $aggregate['Aggregate']['archived'] = true;
-        $aggregate['Aggregate']['archived_date'] = date("Y-m-d H:i:s");
-        if ($this->Aggregate->save($aggregate, array('validate' => false))) {
-            $this->Session->setFlash(__('Aggregate Report Archived successfully'), 'alerts/flash_success');
-            $this->redirect(array('action' => 'index'));
-        }
-        $this->Session->setFlash(__('Aggregate Report was not archied'), 'alerts/flash_error');
-        $this->redirect($this->referer());
-    }
+	{
+		$this->Aggregate->id = $id;
+		if (!$this->Aggregate->exists()) {
+			throw new NotFoundException(__('Invalid Aggregate'));
+		}
+		$aggregate = $this->Aggregate->read(null, $id);
+		$aggregate['Aggregate']['archived'] = true;
+		$aggregate['Aggregate']['archived_date'] = date("Y-m-d H:i:s");
+		if ($this->Aggregate->save($aggregate, array('validate' => false))) {
+			$this->Session->setFlash(__('Aggregate Report Archived successfully'), 'alerts/flash_success');
+			$this->redirect(array('action' => 'index'));
+		}
+		$this->Session->setFlash(__('Aggregate Report was not archied'), 'alerts/flash_error');
+		$this->redirect($this->referer());
+	}
 }

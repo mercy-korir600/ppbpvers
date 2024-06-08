@@ -12,6 +12,8 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
     <?php
     echo $this->Session->flash();
+
+    
     echo $this->Form->create('Aggregate', array(
         'type' => 'file',
         'class' => 'form-vertical',
@@ -169,12 +171,13 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 <div class="span10">
                                     <?php
 
-                                    echo $this->Form->input(
+                    
+                                      echo $this->Form->input(
                                         'introduction',
                                         array(
                                             'class' => 'span10',
                                             'rows' => '3',
-                                            'label' => array('class' => 'control-label', 'text' => '1. Introduction <span style="color:red;">*</span>'),
+                                            'label' => array('class' => 'control-label', 'text' => '1 Introduction <span style="color:red;">*</span>'),
                                             'after' => '<p class="help-block"> </p></div>',
                                         )
                                     );
@@ -304,6 +307,34 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 </div>
 
                             </div>
+                            <hr>
+                            <div class="row-fluid">
+                                <div class="span10">
+                                <?php
+                                    echo $this->Form->input(
+                                        'benefit_evaluation',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label ', 'text' => '3 Benefit evaluation <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'risk_balance',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label ', 'text' => '4 Benefit-risk balance <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
+                                    ?>
+
+
+
+                                </div>
+                            </div>
                         </div>
                         <hr>
                         <div style="margin: 10px;">
@@ -379,15 +410,20 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
 
 <script type="text/javascript">
-	CKEDITOR.replace( 'data[Aggregate][introduction]');
-    CKEDITOR.replace( 'data[Aggregate][worldwide_marketing]');
-    CKEDITOR.replace( 'data[Aggregate][action_taken]');
-    CKEDITOR.replace( 'data[Aggregate][reference_changes]');
-    CKEDITOR.replace( 'data[Aggregate][estimated_exposure]');
-    CKEDITOR.replace( 'data[Aggregate][clinical_findings]');
-	CKEDITOR.replace( 'data[Aggregate][efficacy]');
-    CKEDITOR.replace( 'data[Aggregate][late_breaking]');
-    CKEDITOR.replace( 'data[Aggregate][safety_concerns]');
-    CKEDITOR.replace( 'data[Aggregate][risks_evaluation]');
-    CKEDITOR.replace( 'data[Aggregate][risks_characterisation]');
+	CKEDITOR.replace('data[Aggregate][introduction]');
+    CKEDITOR.replace('data[Aggregate][worldwide_marketing]');
+    CKEDITOR.replace('data[Aggregate][action_taken]');
+    CKEDITOR.replace('data[Aggregate][reference_changes]');
+    CKEDITOR.replace('data[Aggregate][estimated_exposure]');
+    CKEDITOR.replace('data[Aggregate][clinical_findings]');
+	CKEDITOR.replace('data[Aggregate][efficacy]');
+    CKEDITOR.replace('data[Aggregate][late_breaking]');
+    CKEDITOR.replace('data[Aggregate][safety_concerns]');
+    CKEDITOR.replace('data[Aggregate][risks_evaluation]');
+    CKEDITOR.replace('data[Aggregate][risks_characterisation]');
+    CKEDITOR.replace('data[Aggregate][benefit_evaluation]');
+    CKEDITOR.replace('data[Aggregate][risk_balance]');
+
+
+     
 </script>

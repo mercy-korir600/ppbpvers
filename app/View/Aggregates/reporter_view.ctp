@@ -14,7 +14,7 @@
           </div>
           <div class="span2">
             <?php
-                // echo $this->Html->link('Download PDF', array('controller'=>'ce2bs','action'=>'view', 'ext'=> 'pdf', $ce2b['Aggregate']['id']),                            array('class' => 'btn btn-primary btn-block mapop', 'title'=>'Download PDF',                            'data-content' => 'Download the pdf version of the report',));
+                 echo $this->Html->link('Download PDF', array('controller'=>'aggregates','action'=>'view', 'ext'=> 'pdf', $aggregate['Aggregate']['id']),                            array('class' => 'btn btn-primary btn-block mapop', 'title'=>'Download PDF',                            'data-content' => 'Download the pdf version of the report',));
             ?>
             <hr>               
           </div>

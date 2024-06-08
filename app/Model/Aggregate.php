@@ -13,7 +13,10 @@ class Aggregate extends AppModel
 {
 
 
-	public $actsAs = array('Search.Searchable', 'Containable');
+	public $actsAs = array('Containable', 'Search.Searchable');
+    public $filterArgs = array(
+        'protocol_no' => array('type' => 'like', 'encode' => true),
+	);
 	/**
 	 * Validation rules
 	 *
@@ -62,98 +65,98 @@ class Aggregate extends AppModel
 				'message'  => 'Please provide pharmaceutical form(s)'
 			),
 		),
-		'introduction' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide Brief Introduction'
-			),
-		),
-		'worldwide_marketing' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide worldwide marketing'
-			),
-		),
-		'action_taken' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide action_taken'
-			),
-		),
-		'reference_changes' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide reference_changes'
-			),
-		),
-		'estimated_exposure' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide estimated_exposure'
-			),
-		),
-		'clinical_findings' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide clinical findings'
-			),
-		),
-		'efficacy' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide efficacy'
-			),
-		),
-		'late_breaking' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide late breaking information'
-			),
-		),
-		'safety_concerns' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide safety concerns'
-			),
-		),
+		// 'introduction' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide Brief Introduction'
+		// 	),
+		// ),
+		// 'worldwide_marketing' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide worldwide marketing'
+		// 	),
+		// ),
+		// 'action_taken' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide action_taken'
+		// 	),
+		// ),
+		// 'reference_changes' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide reference_changes'
+		// 	),
+		// ),
+		// 'estimated_exposure' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide estimated_exposure'
+		// 	),
+		// ),
+		// 'clinical_findings' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide clinical findings'
+		// 	),
+		// ),
+		// 'efficacy' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide efficacy'
+		// 	),
+		// ),
+		// 'late_breaking' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide late breaking information'
+		// 	),
+		// ),
+		// 'safety_concerns' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide safety concerns'
+		// 	),
+		// ),
 
 
-		// Handle other signals, atleast one of them should be provided here 
+		// // Handle other signals, atleast one of them should be provided here 
 
 
-		'risks_evaluation' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide risks evaluation'
-			),
-		),
-		'risks_characterisation' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide risks characterisation'
-			),
-		),
+		// 'risks_evaluation' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide risks evaluation'
+		// 	),
+		// ),
+		// 'risks_characterisation' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide risks characterisation'
+		// 	),
+		// ),
 
-		// ENSURE ATLEAST ONE ATTACHMENT PROVIDED
-		'sample' => array(
-			'atleastOneAttachment' => array(
-				'rule'     => 'atleastOneAttachment',
-				'required' => false,
-				'message'  => 'Please upload a file'
-			),
+		// // ENSURE ATLEAST ONE ATTACHMENT PROVIDED
+		// 'sample' => array(
+		// 	'atleastOneAttachment' => array(
+		// 		'rule'     => 'atleastOneAttachment',
+		// 		'required' => false,
+		// 		'message'  => 'Please upload a file'
+		// 	),
 
-		),
+		// ),
 	);
 
 
