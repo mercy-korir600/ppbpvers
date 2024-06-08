@@ -235,11 +235,17 @@ class Aggregate extends AppModel
 			'dependent' => true,
 			'conditions' => array('ExternalComment.model' => 'Aggregate', 'ExternalComment.category' => 'external'),
 		),
-		'ReviewComment' => array(
+		'ReviewerComment' => array(
 			'className' => 'Comment',
 			'foreignKey' => 'foreign_key',
 			'dependent' => true,
-			'conditions' => array('ReviewComment.model' => 'Aggregate', 'ReviewComment.category' => 'review'),
+			'conditions' => array('ReviewerComment.model' => 'Aggregate', 'ReviewerComment.category' => 'review'),
+		),
+		'Recommendation' => array(
+			'className' => 'Comment',
+			'foreignKey' => 'foreign_key',
+			'dependent' => true,
+			'conditions' => array('Recommendation.model' => 'Aggregate', 'Recommendation.category' => 'recommendation'),
 		),
 	);
 }

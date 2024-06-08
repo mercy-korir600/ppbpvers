@@ -5,7 +5,10 @@
   <ul id="reviewer_tab" class="nav nav-tabs">
         <li class="active"><a href="#formview" data-toggle="tab"><?php echo $aggregate['Aggregate']['reference_no']; ?></a></li>
         <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($aggregate['ExternalComment']); ?>)</a></li>
-    </ul>
+        <li><a href="#reviewer_comments" data-toggle="tab">Reviewer’s comments (<?php echo count($aggregate['ReviewerComment']); ?>)</a></li>
+        <li><a href="#recommendation_comments" data-toggle="tab">Recommendations (<?php echo count($aggregate['Recommendation']); ?>)</a></li>
+
+     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="formview">
         <div class="row-fluid">   
@@ -35,6 +38,46 @@
                     echo $this->element('comments/add', [
                                  'model' => ['model_id' => $aggregate['Aggregate']['id'], 'foreign_key' => $aggregate['Aggregate']['id'],   
                                              'model' => 'Aggregate','review'=>false, 'category' => 'external', 'url' => 'report_feedback']]) 
+                ?>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="reviewer_comments">
+        <!-- 12600 Letters debat -->
+        <div class="amend-form">
+            <h5 class="text-info"><u>Reviewer’s comments</u></h5>
+            <div class="row-fluid">
+              <div class="span8">    
+                  <?php                       
+                    echo $this->element('comments/list', ['comments' => $aggregate['ReviewerComment']]);
+                  ?> 
+                </div>
+                <div class="span4 lefty">
+                <?php  
+                    echo $this->element('comments/add', [
+                                 'model' => ['model_id' => $aggregate['Aggregate']['id'], 'foreign_key' => $aggregate['Aggregate']['id'],   
+                                             'model' => 'Aggregate','review'=>false, 'category' => 'review', 'url' => 'report_feedback']]) 
+                ?>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="recommendation_comments">
+        <!-- 12600 Letters debat -->
+        <div class="amend-form">
+            <h5 class="text-info"><u>Recommendations</u></h5>
+            <div class="row-fluid">
+              <div class="span8">    
+                  <?php                       
+                    echo $this->element('comments/list', ['comments' => $aggregate['Recommendation']]);
+                  ?> 
+                </div>
+                <div class="span4 lefty">
+                <?php  
+                    echo $this->element('comments/add', [
+                                 'model' => ['model_id' => $aggregate['Aggregate']['id'], 'foreign_key' => $aggregate['Aggregate']['id'],   
+                                             'model' => 'Aggregate','review'=>false, 'category' => 'recommendation', 'url' => 'report_feedback']]) 
                 ?>
                 </div>
             </div>
