@@ -380,27 +380,34 @@ class Ce2bsController extends AppController
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
- 
+
+            $flattenedData = null;
+            $xmlString = null;
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
-            }
+                if ($this->request->data['Ce2b']['e2b_type'] == "R3") {
+                    $file = $this->request->data['Ce2b']['e2b_file_data'];
+                    $xmlString = file_get_contents($file['tmp_name']);
+                    $xml = Xml::build($xmlString);
+                    $xmlString = $xml->asXML();
 
-            if ($this->request->data['Ce2b']['e2b_type'] == "R3") {
-                $file = $this->request->data['Ce2b']['e2b_file_data'];
-                $xmlString = file_get_contents($file['tmp_name']);
-                $xml = Xml::build($xmlString);
-                $xmlString = $xml->asXML();
+                    $filePath = WWW_ROOT . 'files' . DS . $file['name'];
+                    move_uploaded_file($file['tmp_name'], $filePath);
 
-                $filePath = WWW_ROOT . 'files' . DS . $file['name'];
-                move_uploaded_file($file['tmp_name'], $filePath);
+                    $xmlArray = Xml::toArray(Xml::build($filePath));
+                    $flattenedData = $this->flattenXml($xmlArray);
+                    // $reactions = $this->extractObservations($flattenedData);
 
-                $xmlArray = Xml::toArray(Xml::build($filePath));
-                $flattenedData = $this->flattenXml($xmlArray);
-                $reactions = $this->extractObservations($flattenedData);
-
-                $this->request->data['Ce2bReaction']=$reactions; 
-
+                    // $this->request->data['Ce2bReaction'] = $reactions;
+                    // $drugs = $this->extractDrugs($flattenedData, count($reactions));
+                    // $this->request->data['Ce2bListOfDrug'] = $drugs;
+                    // debug($reactions);
+                    // debug(count($reactions));
+                    // debug($drugs);
+                    // debug($flattenedData);
+                    // exit;
+                }
             }
             if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
@@ -445,39 +452,27 @@ class Ce2bsController extends AppController
                         if ($file['error'] === UPLOAD_ERR_OK) {
                             $xmlFilePath = $file['tmp_name']; // Temporary file path
                             $data = $this->parseE2BReport($xmlFilePath);
+                            try {
 
-                            // if (is_null($data)) {
-                            //     $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
-                            //     $this->redirect(array('action' => 'edit', $this->Ce2b->id));
-                            // } else {
-                                try { 
+                                $newReportData = $this->extractReportData($flattenedData);
 
-                                    $newReportData = $this->extractReportData($flattenedData);
-
-                                    // $dataSample= $flattenedData["MCCI_IN200100UV01.creationTime"];
-                                    // debug($dataSample);                                    //
-                                    // $this->Ce2b->save($newReportData);
-
-
-                                    if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
-                                        $reference = $this->generateReferenceNumber();
-                                        $this->Ce2b->saveField('reference_no', $reference);
-                                        $this->Ce2b->saveField('submitted', 2);
-                                        $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
-                                    }
-
-                                    foreach ($newReportData as $key => $value) {
-                                        $this->Ce2b->saveField($key, $value, false);
-                                    }
-                                    // debug($flattenedData);
-                                    // exit;
-                                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
-                                } catch (Exception $e) {
-                                    $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
-                                    $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                                if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
+                                    $reference = $this->generateReferenceNumber();
+                                    $this->Ce2b->saveField('reference_no', $reference);
+                                    $this->Ce2b->saveField('submitted', 2);
+                                    $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
                                 }
+
+                                foreach ($newReportData as $key => $value) {
+                                    $this->Ce2b->saveField($key, $value, false);
+                                }
+                                $this->Ce2b->saveField('e2b_content', $xmlString, false);
+                            } catch (Exception $e) {
+                                $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                            }
                             // }
-                        } else { 
+                        } else {
                             $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
@@ -579,6 +574,57 @@ class Ce2bsController extends AppController
         $designations = $this->Ce2b->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
     }
+    private function extractDrugs($flattenedData, $reaction)
+
+    {
+        $observations = [];
+        $index = $reaction + 1;
+
+        while (true) {
+            // Construct the dynamic key for the observation
+            $observationKey = "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.{$index}.organizer";
+
+            // Check if the key exists in the flattened data
+            if (isset($flattenedData[$observationKey . ".@classCode"])) {
+
+                $brand_name_key = $observationKey .  ".component.substanceAdministration.consumable.instanceOfKind.kindOfProduct.ingredient.ingredientSubstance.name";
+                $dose_key = $observationKey . ".component.substanceAdministration.outboundRelationship2.substanceAdministration.doseQuantity";
+                $drug_name_key = $observationKey .  ".component.substanceAdministration.consumable.instanceOfKind.kindOfProduct.name";
+                $route_key = $observationKey . ".component.substanceAdministration.outboundRelationship2.substanceAdministration.routeCode.originalText";
+                $drug_name = null;
+                $brand_name = null;
+                $dose = null;
+                $route = null;
+                if (isset($flattenedData[$drug_name_key])) {
+                    $drug_name = $flattenedData[$drug_name_key];
+                }
+
+                if (isset($flattenedData[$dose_key])) {
+                    $dose = $flattenedData[$dose_key];
+                }
+                if (isset($flattenedData[$brand_name_key])) {
+                    $brand_name = $flattenedData[$brand_name_key];
+                }
+                if (isset($flattenedData[$route_key])) {
+                    $route = $flattenedData[$route_key];
+                }
+                $observations[] = [
+                    'index' => $index,
+                    'drug_name' => $drug_name,
+                    'brand_name' => $brand_name,
+                    'dose' => $dose,
+                    'route' => $route
+
+                ];
+                $index++;
+            } else {
+                // Break the loop if the key does not exist
+                break;
+            }
+        }
+
+        return $observations;
+    }
 
     private function extractObservations($flattenedData)
     {
@@ -622,14 +668,14 @@ class Ce2bsController extends AppController
                 if (isset($flattenedData[$locatedPlaceKey])) {
                     $country_of_source = $flattenedData[$locatedPlaceKey];
                 }
-                $observations[] = [ 
-                        'index' => $index,
-                        'reaction_name' => $reaction_name,
-                        'start_date' => $start_of_reaction,
-                        'meddra_code' => $meddra_code,
-                        'meddra_version' => $meddra_version,
-                        'source_country' => $country_of_source
-                    
+                $observations[] = [
+                    'index' => $index,
+                    'reaction_name' => $reaction_name,
+                    'start_date' => $start_of_reaction,
+                    'meddra_code' => $meddra_code,
+                    'meddra_version' => $meddra_version,
+                    'source_country' => $country_of_source
+
                 ];
                 $index++;
             } else {
@@ -816,7 +862,7 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-            'contain' => array('Designation','Ce2bListOfDrug','Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
+            'contain' => array('Designation', 'Ce2bListOfDrug', 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
         // debug($ce2b['Ce2b']['e2b_type']);

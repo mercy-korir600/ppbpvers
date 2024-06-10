@@ -146,6 +146,14 @@ class AggregatesController extends AppController
 			$response['valid'] = false;
 			$response['message'] .= "Please provide risks characterisation<br>";
 		}
+		if (empty($data['Aggregate']['benefit_evaluation'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide benefit evaluation<br>";
+		}
+		if (empty($data['Aggregate']['risk_balance'])) {
+			$response['valid'] = false;
+			$response['message'] .= "Please provide risk balance<br>";
+		}
 		
 		// Remove the last newline character if present
 		$response['message'] = rtrim($response['message'], "\n");

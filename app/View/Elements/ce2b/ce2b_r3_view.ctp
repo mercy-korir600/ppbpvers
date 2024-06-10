@@ -685,7 +685,29 @@ $nchecked = "&#x2610;";
                         <h5 style="background: #18C4D1; padding:20px;">Drugs Information</h5>
 
                         <table class="table" style="width: 100%;">
-                            <!-- <tr width="100%">
+                            <thead>
+                                <th>Drug Name</th>
+                                <th>Brand</th>
+                                <th>Dose</th>
+                                <th>Route</th>
+                            </thead>
+                            <tbody>
+                                <?php
+
+                                foreach ($ce2b['Ce2bListOfDrug'] as $drug) {
+                                ?>
+                                    <tr>
+                                        <td><?php echo $drug['drug_name'] ?></td>
+                                        <td><?php echo $drug['brand_name'] ?></td>
+                                        <td><?php echo $drug['dose'] ?></td>
+                                        <td><?php echo $drug['route'] ?></td>
+                                    </tr>
+
+                                <?php } ?>
+
+                            </tbody>
+                        </table>
+                        <!-- <tr width="100%">
                                 <td>Characterization of Drug Role</td>
                                 <td>MPID version date/number</td>
                                 <td>Medicinal Product Identifier (MPID)</td>
@@ -901,8 +923,8 @@ $nchecked = "&#x2610;";
                             <tr>
                                 <td>Additional information on drug</td>
                                 <td>Additional information on drug (free text)</td>
-                            </tr> -->
-                        </table>
+                            </tr>
+                        </table>  -->
                         <h5 style="background: #18C4D1; padding:20px;">Narrative case summary and further information</h5>
 
                         <table class="table" style="width: 100%;">
