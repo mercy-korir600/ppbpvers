@@ -44,6 +44,14 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
                 'data-content' => 'Download the pdf version of the report',
               )
             );
+            echo $this->Html->link(
+              'PRIMS Integration',
+              array('controller' => 'pqmps', 'action' => 'prims', $pqmp['PqmpOriginal']['id']),
+              array(
+                'class' => 'btn btn-primary btn-block mapop', 'title' => 'PRIMS Integration',
+                'data-content' => 'Download the pdf version of the report',
+              )
+            );
             ?>
             <hr>
 
@@ -63,6 +71,14 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
             array('controller' => 'pqmps', 'action' => 'view', 'ext' => 'pdf', $pqmp['Pqmp']['id']),
             array(
               'class' => 'btn btn-primary btn-block mapop', 'title' => 'Download PDF',
+              'data-content' => 'Download the pdf version of the report',
+            )
+          );
+          echo $this->Html->link(
+            'PRIMS Integration',
+            array('controller' => 'pqmps', 'action' => 'prims', $pqmp['Pqmp']['id']),
+            array(
+              'class' => 'btn btn-success btn-block mapop', 'title' => 'PRIMS Integration',
               'data-content' => 'Download the pdf version of the report',
             )
           );
