@@ -67,7 +67,10 @@ class AggregatesController extends AppController
 		$count = $this->Aggregate->find('count',  array(
 			'fields' => 'Aggregate.reference_no',
 			'conditions' => array(
-				'Aggregate.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aggregate.reference_no !=' => 'new'
+				'Aggregate.submitted_date BETWEEN ? and ?' => array(
+					date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 
+					'Aggregate.reference_no !=' => 'new',
+					'Aggregate.report_type !='=>'Followup'
 			)
 		));
 		$count++;
@@ -161,6 +164,44 @@ class AggregatesController extends AppController
 		return $response;
 		
 	}
+
+	public function reporter_followup($id = null)
+    {
+        if ($this->request->is('post')) {
+            $this->Aggregate->id = $id;
+            if (!$this->Aggregate->exists()) {
+                throw new NotFoundException(__('Invalid Aggregate Report'));
+            }
+            $aggregate = Hash::remove($this->Aggregate->find(
+                'first',
+                array(
+                    'contain' => array('AggregateListOfSignal'),
+                    'conditions' => array('Aggregate.id' => $id)
+                )
+            ), 'Aggregate.id');
+
+            $aggregate = Hash::remove($aggregate, 'AggregateListOfSignal.{n}.id'); 
+            $data_save = $aggregate['Aggregate'];
+            $data_save['AggregateListOfSignal'] = $aggregate['AggregateListOfSignal']; 
+            $data_save['aggregate_id'] = $id;
+
+            $count = $this->Aggregate->find('count',  array('conditions' => array(
+                'Aggregate.reference_no LIKE' => $aggregate['Aggregate']['reference_no'] . '%',
+            )));
+            $count = ($count < 10) ? "0$count" : $count;
+            $data_save['reference_no'] = $aggregate['Aggregate']['reference_no']; //.'_F'.$count;
+            $data_save['report_type'] = 'Followup';
+            $data_save['submitted'] = 0;
+
+            if ($this->Aggregate->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+                $this->Session->setFlash(__('Follow up ' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
+                $this->redirect(array('action' => 'edit', $this->Aggregate->id));
+            } else {
+                $this->Session->setFlash(__('The followup could not be saved. Please, try again.'), 'alerts/flash_error');
+                $this->redirect($this->referer());
+            }
+        }
+    }
 	public function reporter_edit($id = null)
 	{
 		$isValid = array(
@@ -337,7 +378,7 @@ class AggregatesController extends AppController
 	{
 		$aggregate = $this->Aggregate->find('first', array(
 			'conditions' => array('Aggregate.id' => $id),
-			'contain' => array('Designation', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewerComment', 'ReviewerComment.Attachment','Recommendation','Recommendation.Attachment')
+			'contain' => array('Designation','AggregateListOfSignal', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewerComment', 'ReviewerComment.Attachment','Recommendation','Recommendation.Attachment')
 		));
 		$this->set(['aggregate' => $aggregate]);  
 		if (strpos($this->request->url, 'pdf') !== false) {

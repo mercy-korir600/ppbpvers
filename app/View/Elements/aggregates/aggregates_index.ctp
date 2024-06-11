@@ -19,7 +19,7 @@ echo $this->Session->flash();
         }
         ?>
         <h3>E2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
-           
+
         </h3>
         <hr class="soften" style="margin: 7px 0px;">
     </div>
@@ -158,8 +158,8 @@ echo $this->Session->flash();
                 <tr>
                     <th><?php echo $this->Paginator->sort('id'); ?></th>
                     <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
-                    <th><?php echo $this->Paginator->sort('company_name'); ?></th>
-                    <th><?php echo $this->Paginator->sort('reporter_email'); ?></th> 
+                    <th><?php echo $this->Paginator->sort('brand_name'); ?></th>
+                    <th><?php echo $this->Paginator->sort('reporter_email'); ?></th>
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
                     <th><?php echo $this->Paginator->sort('date_submitted'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
@@ -167,18 +167,30 @@ echo $this->Session->flash();
             </thead>
             <tbody>
                 <?php
-                $counter=0;
+                $counter = 0;
                 foreach ($aggregates as $aggregate) : ?>
                     <tr class="">
-                        <td><?php 
-                        $counter++;
-                        echo $counter; ?>&nbsp;</td>
+                        <td><?php
+                            $counter++;
+                            echo $counter; ?>&nbsp;</td>
                         <td>
                             <?php
                             echo $this->Html->link($aggregate['Aggregate']['reference_no'], array('action' => 'view', $aggregate['Aggregate']['id']), array('escape' => false));
                             ?>&nbsp;</td>
-                        <td><?php echo h($aggregate['Aggregate']['company_name']); ?>&nbsp;</td>
-                        <td><?php echo h($aggregate['Aggregate']['reporter_email']); ?>&nbsp;</td> 
+                        <td>
+                            <?php
+                            echo $this->Text->truncate($aggregate['Aggregate']['brand_name'], 42);
+                            if ($aggregate['Aggregate']['report_type'] == 'Followup') {
+                                echo "<br> Initial: ";
+                                echo $this->Html->link(
+                                    '<label class="label label-info">' . $aggregate['Aggregate']['reference_no'] . '</label>',
+                                    array('action' => 'view', $aggregate['Aggregate']['aggregate_id']),
+                                    array('escape' => false)
+                                );
+                            }
+                            ?>&nbsp;
+                        </td>
+                        <td><?php echo h($aggregate['Aggregate']['reporter_email']); ?>&nbsp;</td>
                         <td><?php echo h($aggregate['Aggregate']['created']); ?>&nbsp;</td>
                         <td><?php echo h($aggregate['Aggregate']['submitted_date']); ?>&nbsp;</td>
                         <td class="actions">
@@ -189,7 +201,7 @@ echo $this->Session->flash();
                                     array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
-                                
+
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
@@ -201,8 +213,9 @@ echo $this->Session->flash();
                                 echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                                     array('controller' => 'aggregates', 'action' => 'archive', $aggregate['Aggregate']['id']),
-                                    array('escape' => false), __('Are you sure you want to archive the report?')
-                                  );
+                                    array('escape' => false),
+                                    __('Are you sure you want to archive the report?')
+                                );
                             } else {
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
@@ -221,7 +234,6 @@ echo $this->Session->flash();
                                     array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
-                               
                             }
                             ?>
                         </td>

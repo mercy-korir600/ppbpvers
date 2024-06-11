@@ -179,13 +179,7 @@ class Aggregate extends AppModel
 			'fields' => '',
 			'order' => ''
 		),
-		'Ce2b' => array(
-			'className' => 'Ce2b',
-			'foreignKey' => 'ce2b_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
+		 
 		'County' => array(
 			'className' => 'County',
 			'foreignKey' => 'county_id',

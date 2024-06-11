@@ -163,12 +163,59 @@ $nchecked = "&#x2610;";
                     </div>
                     <h5>2.2 Signal evaluation</h5>
                     <!-- Table Here -->
+                    <div class="row-fluid">
+                        <div class="span11">
+                            <table class="table table-bordered  table-condensed table-pvborder">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th colspan="" class="required tooltipper" title="This is the signal term" data-content=""> Signal term </th>
+                                        <th style="width: 9%;">Date detected <span style="color:red;">*</span></th>
+                                        <th style="width: 7%;">Status<span style="color:red;">*</span></th>
+                                        <th style="width: 7%;">Data closed (for closed signals)<span style="color:red;">*</span></th>
+                                        <th colspan="1" style="width: 15%;" class="required" title="Dosage" data-content="">
+                                            <label class="required">Source or trigger of signal <span style="color:red;">*</span></label>
+                                        </th>
+                                        <th colspan="" class="required" style="width: 15%;">
+                                            <label class="required">Reason summary</label>
+                                        </th>
+                                        <th style="width: 28%;" colspan="1">
+                                            <label class="required pull-left">Method of signal valuation<span style="color:red;">*</span></label>
+                                            <span class="pull-right" style="padding-right: 10px;"></span>
+                                        </th>
+                                        <th style="width: 3%;">
+                                            <label>Outcome, if closed </label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $cc = 0;
+                                    foreach ($aggregate['AggregateListOfSignal'] as $rep) { ?>
+                                        <tr>
+                                            <td><?php $cc++;
+                                                echo $cc; ?></td>
+                                            <td><?php echo $rep['signal_term']; ?></td>
+                                            <td><?php echo $rep['date_detected']; ?></td>
+                                            <td><?php echo $rep['status']; ?></td>
+                                            <td><?php echo $rep['date_closed']; ?></td>
+                                            <td><?php echo $rep['source_trigger']; ?></td>
+                                            <td><?php echo $rep['reason_summary']; ?></td>
+                                            <td><?php echo $rep['evaluation_method']; ?></td>
+                                            <td><?php echo $rep['outcome']; ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <h5>2.3 Evaluation of risks and new information</h5>
                     <div class="row-fluid">
                         <div class="span11">
                             <p><?php echo $aggregate['Aggregate']['risks_evaluation'] ?></p>
                         </div>
                     </div>
+
 
                     <h5>2.4 Characterisation of risks </h5>
                     <div class="row-fluid">
@@ -178,7 +225,7 @@ $nchecked = "&#x2610;";
                     </div>
                     <hr>
 
-                    <h5>3 Benefit evaluation  </h5>
+                    <h5>3 Benefit evaluation </h5>
                     <div class="row-fluid">
                         <div class="span11">
                             <p><?php echo $aggregate['Aggregate']['benefit_evaluation'] ?></p>

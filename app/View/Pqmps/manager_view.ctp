@@ -45,10 +45,10 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
               )
             );
             echo $this->Html->link(
-              'PRIMS Integration',
+              'PMS Data',
               array('controller' => 'pqmps', 'action' => 'prims', $pqmp['PqmpOriginal']['id']),
               array(
-                'class' => 'btn btn-primary btn-block mapop', 'title' => 'PRIMS Integration',
+                'class' => 'btn btn-primary btn-block mapop', 'title' => 'PMS Data',
                 'data-content' => 'Download the pdf version of the report',
               )
             );

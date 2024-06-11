@@ -1,7 +1,7 @@
 <?php
 $this->assign('AGGREGATE', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
-$this->Html->script('ce2b', array('inline' => false));
+$this->Html->script('aggregate', array('inline' => false));
 $this->Html->script('ckeditor/ckeditor', array('inline' => false));
 $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 ?>
@@ -13,7 +13,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
     <?php
     echo $this->Session->flash();
 
-    
+
     echo $this->Form->create('Aggregate', array(
         'type' => 'file',
         'class' => 'form-vertical',
@@ -171,8 +171,8 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 <div class="span10">
                                     <?php
 
-                    
-                                      echo $this->Form->input(
+
+                                    echo $this->Form->input(
                                         'introduction',
                                         array(
                                             'class' => 'span10',
@@ -310,7 +310,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                             <hr>
                             <div class="row-fluid">
                                 <div class="span10">
-                                <?php
+                                    <?php
                                     echo $this->Form->input(
                                         'benefit_evaluation',
                                         array(
@@ -342,7 +342,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 <div class="span8">
 
                                     <?php
-                                    
+
                                     echo $this->Form->input(
                                         'sample',
                                         array(
@@ -357,6 +357,168 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 </div>
                             </div>
                         </div>
+
+
+
+                        <!-- Reporter Details -->
+                        <div style="margin: 10px;">
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <?php
+                                echo $this->Form->input(
+                                    'reporter_name',
+                                    array(
+                                        'div' => array('class' => 'control-group required'),
+                                        'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
+                                    )
+                                );
+                                echo $this->Form->input(
+                                    'reporter_email',
+                                    array(
+                                        'type' => 'email',
+                                        'div' => array('class' => 'control-group required'),
+                                        'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
+                                    )
+                                );
+
+                                ?>
+                            </div>
+                            <!--/span-->
+                            <div class="span6">
+                                <?php
+                                echo $this->Form->input(
+                                    'designation_id',
+                                    array('label' => array('class' => 'control-label required', 'text' => 'DESIGNATION' . ' <span style="color:red;">*</span>'), 'empty' => true)
+                                );
+                                echo $this->Form->input(
+                                    'reporter_phone',
+                                    array(
+                                        'div' => array('class' => 'control-group'),
+                                        'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
+                                    )
+                                );
+
+                                echo $this->Form->input(
+                                    'reporter_date',
+                                    array(
+                                        'type' => 'text',
+                                        'class' => 'date-pick-field',
+                                        'label' => array('class' => 'control-label required', 'text' => 'Date <span style="color:red;">*</span>'),
+                                    )
+                                );
+                                ?>
+                            </div>
+                            <!--/span-->
+                        </div>
+                        <!--/row-->
+                        <table class="table table-bordered  table-condensed table-pvborderless">
+                            <tbody>
+                                <tr>
+                                    <td width="45%">
+                                        <h5 class="pull-right text-success">Is the person submitting different from
+                                            reporter?&nbsp;</h5>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        echo $this->Form->input(
+                                            'person_submitting',
+                                            array(
+                                                'type' => 'radio',
+                                                'label' => false,
+                                                'legend' => false,
+                                                'div' => false,
+                                                'hiddenField' => false,
+                                                'error' => false,
+                                                'class' => 'person-submit',
+                                                'before' => '<div class="form-inline">
+												<input type="hidden" value="" id="SadrPersonSubmitting_" name="data[Sadr][person_submitting]">
+												<label class="radio">',
+                                                'after' => '</label>&nbsp;&nbsp;',
+                                                'options' => array('Yes' => 'Yes'),
+                                            )
+                                        );
+                                        echo $this->Form->input(
+                                            'person_submitting',
+                                            array(
+                                                'type' => 'radio',
+                                                'label' => false,
+                                                'legend' => false,
+                                                'div' => false,
+                                                'hiddenField' => false,
+                                                'class' => 'person-submit',
+                                                'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
+                                                'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
+                                                'before' => '<label class="radio">',
+                                                'after' => '</label> </div>',
+                                                'options' => array('No' => 'No'),
+                                            )
+                                        );
+                                        ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <?php
+                                echo $this->Form->input(
+                                    'reporter_name_diff',
+                                    array(
+                                        'div' => array('class' => 'control-group required'),
+                                        'class' => 'diff',
+                                        'label' => array('class' => 'control-label required', 'text' => 'Name <span style="color:red;">*</span>'),
+                                    )
+                                );
+                                echo $this->Form->input(
+                                    'reporter_email_diff',
+                                    array(
+                                        'type' => 'email',
+                                        'div' => array('class' => 'control-group required'),
+                                        'class' => 'diff',
+                                        'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
+                                    )
+                                );
+                                ?>
+                            </div>
+                            <!--/span-->
+                            <div class="span6">
+                                <?php
+                                echo $this->Form->input(
+                                    'reporter_designation_diff',
+                                    array(
+                                        'type' => 'select',
+                                        'options' => $designations,
+                                        'empty' => true,
+                                        'class' => 'diff',
+                                        'label' => array('class' => 'control-label required', 'text' => 'Designation' . ' <span style="color:red;">*</span>'),
+                                        'empty' => true
+                                    )
+                                );
+                                echo $this->Form->input(
+                                    'reporter_phone_diff',
+                                    array(
+                                        'div' => array('class' => 'control-group'),
+                                        'class' => 'diff',
+                                        'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
+                                    )
+                                );
+                                echo $this->Form->input(
+                                    'reporter_date_diff',
+                                    array(
+                                        'type' => 'text',
+                                        'class' => 'date-pick-field diff',
+                                        'label' => array('class' => 'control-label required', 'text' => 'Date'),
+                                    )
+                                );
+                                ?>
+                            </div>
+                            <!--/span-->
+                        </div>
+                        <!--/row-->
+                        </div>
+
+
+                        <!-- End of Reporter Details -->
 
                     </section>
                 </div>
@@ -410,20 +572,17 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
 
 <script type="text/javascript">
-	CKEDITOR.replace('data[Aggregate][introduction]');
+    CKEDITOR.replace('data[Aggregate][introduction]');
     CKEDITOR.replace('data[Aggregate][worldwide_marketing]');
     CKEDITOR.replace('data[Aggregate][action_taken]');
     CKEDITOR.replace('data[Aggregate][reference_changes]');
     CKEDITOR.replace('data[Aggregate][estimated_exposure]');
     CKEDITOR.replace('data[Aggregate][clinical_findings]');
-	CKEDITOR.replace('data[Aggregate][efficacy]');
+    CKEDITOR.replace('data[Aggregate][efficacy]');
     CKEDITOR.replace('data[Aggregate][late_breaking]');
     CKEDITOR.replace('data[Aggregate][safety_concerns]');
     CKEDITOR.replace('data[Aggregate][risks_evaluation]');
     CKEDITOR.replace('data[Aggregate][risks_characterisation]');
     CKEDITOR.replace('data[Aggregate][benefit_evaluation]');
     CKEDITOR.replace('data[Aggregate][risk_balance]');
-
-
-     
 </script>
