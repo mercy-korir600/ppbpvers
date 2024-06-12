@@ -22,7 +22,58 @@ class PqmpsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('guest_add', 'guest_edit', 'manager_prims');
+        $this->Auth->allow('guest_add', 'guest_edit', 'manager_prims', 'pms_feedback');
+    }
+
+    public function api_pms_feedback()
+    {
+
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $report_id = $this->request->data['report_id']; 
+            $this->Pqmp->id = $report_id;
+            if (!$this->Pqmp->exists()) {
+
+                $this->set([
+                    'status' => 'error',
+                    'message' => 'Could not verify the PQHPT report ID provided, please ensure the ID is correct and try again later!', 
+                    '_serialize' => ['status', 'message']
+                ]);
+            } else {
+
+                $this->loadModel('Comment');
+                $this->Comment->create();
+                $data = array(
+                    'Comment' => array(
+                        'foreign_key' => $report_id,
+                        'user_id' => $this->Auth->User('id'),
+                        'model' => "Pqmp",
+                        'model_id' => $report_id,
+                        'category' => 'external',
+                        'sender' => $this->Auth->User('name'),
+                        'subject' => $this->request->data['subject'],
+                        'content' => $this->request->data['content']
+                    )
+                );
+
+                if ($this->Comment->saveAssociated($data, array('deep' => true))) {
+                    $this->set([
+                        'status' => 'success',
+                        'message' => 'Feedback sent successfully', 
+                        '_serialize' => ['status', 'message']
+                    ]);
+                } else {
+                    $errors = $this->Comment->validationErrors;
+                    $this->set([
+                        'status' => 'error',
+                        'message' => 'Feedback could not be saved' . json_encode($errors),                         
+                        '_serialize' => ['status', 'message']
+                    ]);
+                }
+
+            }
+        } else {
+            throw new MethodNotAllowedException();
+        }
     }
 
     public function blackhole($type)
