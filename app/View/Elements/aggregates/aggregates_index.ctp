@@ -18,7 +18,7 @@ echo $this->Session->flash();
             );
         }
         ?>
-        <h3>E2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
+        <h3>Aggregate Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
 
         </h3>
         <hr class="soften" style="margin: 7px 0px;">
@@ -224,7 +224,7 @@ echo $this->Session->flash();
                                 );
                                 echo "&nbsp;";
                                 if ($redir == 'reporter') echo $this->Html->link(
-                                    '<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
+                                    '<span class="label label-danger tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
                                     array('controller' => 'aggregates', 'action' => 'delete', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );

@@ -623,8 +623,8 @@ $nchecked = "&#x2610;";
                             </tr> -->
                             <?php } ?>
                         </table>
-                        <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
-                        <table class="table" style="width: 100%;">
+                        <!-- <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
+                        <table class="table" style="width: 100%;"> -->
                             <!-- <tr width="100%">
                                 <td>Test date</td>
                                 <td>Test name</td>
@@ -681,7 +681,7 @@ $nchecked = "&#x2610;";
                             <tr>
                                 <td></td> 
                             </tr> -->
-                        </table>
+                        <!-- </table> -->
                         <h5 style="background: #18C4D1; padding:20px;">Drugs Information</h5>
 
                         <table class="table" style="width: 100%;">

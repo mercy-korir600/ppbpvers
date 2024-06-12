@@ -70,20 +70,20 @@ class AggregatesController extends AppController
 				'Aggregate.submitted_date BETWEEN ? and ?' => array(
 					date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 
 					'Aggregate.reference_no !=' => 'new',
-					'Aggregate.report_type !='=>'Followup'
+					// 'Aggregate.report_type !='=>'Followup'
 			)
 		));
 		$count++;
 		$count = ($count < 10) ? "0$count" : $count;
 		$reference = 'PSUR/' . date('Y') . '/' . $count;
 		//ensure that the reference number is unique
-		$exists = $this->Aggregate->find('count',  array(
-			'fields' => 'Aggregate.reference_no',
-			'conditions' => array('Aggregate.reference_no' => $reference)
-		));
-		if ($exists > 0) {
-			$reference = $this->generateReferenceNumber();
-		}
+		// $exists = $this->Aggregate->find('count',  array(
+		// 	'fields' => 'Aggregate.reference_no',
+		// 	'conditions' => array('Aggregate.reference_no' => $reference)
+		// ));
+		// if ($exists > 0) {
+		// 	$reference = $this->generateReferenceNumber();
+		// }
 
 		return $reference;
 	}

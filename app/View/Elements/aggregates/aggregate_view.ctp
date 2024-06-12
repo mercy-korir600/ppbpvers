@@ -25,7 +25,7 @@ $nchecked = "&#x2610;";
                             <h5>PHARMACY AND POISONS BOARD</h5>
                             <h5>P.O. Box 27663-00506 NAIROBI</h5>
                             <h5>Tel: +254795743049</h5>
-                            <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+                            <h5><b>Email:</b> pv@ppb.go.ke</h5>
                             <h5 style="color: red;">PSUR Report</h5>
                         </div>
                     </div>
@@ -79,10 +79,10 @@ $nchecked = "&#x2610;";
                     </div>
                     <div class="row-fluid">
                         <div class="span3">
-                            <p> <strong>Gherapeutic Group Code</strong></p>
+                            <p> <strong>Therapeutic Group Code</strong></p>
                         </div>
                         <div class="span3">
-                            <p><strong>Authorized Indicators</strong></p>
+                            <p><strong>Authorized Indications</strong></p>
                         </div>
                         <div class="span3">
                             <p><strong>Pharmaceutical Forms</strong></p>

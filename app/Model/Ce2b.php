@@ -17,8 +17,71 @@ class Ce2b extends AppModel
 		'reference_no' => array('type' => 'like', 'encode' => true),
 		'start_date' => array('type' => 'query', 'method' => 'dummy'),
 		'end_date' => array('type' => 'query', 'method' => 'dummy'),
+		'reporter_email'=> array('type' => 'like', 'encode' => true),
+		'company_name'=> array('type' => 'like', 'encode' => true),
+        'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Ce2b.reporter_date as DATE) BETWEEN ? AND ?'), 
+        'drug_name' => array('type' => 'query', 'method' => 'findByDrugName', 'encode' => true), 
+        'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
 	);
+	public function findByDrugName($data = array())
+    { 
+        $conditions = array();
 
+        // Check if 'suspected_drug' is supplied
+        if (isset($data['suspected_drug']) && !empty($data['suspected_drug'])) {
+            $conditions[$this->alias . '.id'] = $this->Ce2bListOfDrug->find('list', array(
+                'conditions' => array(
+                    'Ce2bListOfDrug.drug_name LIKE' => '%' . $data['drug_name'] . '%', 
+                ),
+                'fields' => array('ce2b_id', 'ce2b_id')
+            ));
+        } else {
+            // Include only the condition for 'brand_name'
+            $conditions[$this->alias . '.id'] = $this->Ce2bListOfDrug->find('list', array(
+                'conditions' => array(
+                    'Ce2bListOfDrug.drug_name LIKE' => '%' . $data['drug_name'] . '%',
+                ),
+                'fields' => array('ce2b_id', 'ce2b_id')
+            ));
+        }
+
+        return $conditions;
+    }
+
+	public function findByDrugINNName($data = array())
+    { 
+        $conditions = array();
+
+        // Check if 'suspected_drug' is supplied
+        if (isset($data['suspected_drug']) && !empty($data['suspected_drug'])) {
+            $conditions[$this->alias . '.id'] = $this->Ce2bListOfDrug->find('list', array(
+                'conditions' => array(
+                    'Ce2bListOfDrug.brand_name LIKE' => '%' . $data['inn'] . '%', 
+                ),
+                'fields' => array('ce2b_id', 'ce2b_id')
+            ));
+        } else {
+            // Include only the condition for 'drug_name'
+            $conditions[$this->alias . '.id'] = $this->Ce2bListOfDrug->find('list', array(
+                'conditions' => array(
+                    'Ce2bListOfDrug.brand_name LIKE' => '%' . $data['inn'] . '%',
+                ),
+                'fields' => array('ce2b_id', 'ce2b_id')
+            ));
+        }
+
+        return $conditions;
+    }
+	public function makeRangeCondition($data = array())
+    {
+        if (!empty($data['start_date'])) $start_date = date('Y-m-d', strtotime($data['start_date']));
+        else $start_date = date('Y-m-d', strtotime('2012-05-01'));
+
+        if (!empty($data['end_date'])) $end_date = date('Y-m-d', strtotime($data['end_date']));
+        else $end_date = date('Y-m-d');
+
+        return array($start_date, $end_date);
+    }
 	public function dummy($data = array())
 	{
 		return array('1' => '1');

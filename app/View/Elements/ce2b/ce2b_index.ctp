@@ -19,7 +19,7 @@ echo $this->Session->flash();
         }
         ?>
         <h3>E2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
-           
+
         </h3>
         <hr class="soften" style="margin: 7px 0px;">
     </div>
@@ -88,6 +88,28 @@ echo $this->Session->flash();
                                 'label' => false, 'placeHolder' => 'End Date'
                             )
                         );
+                        ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'drug_name',
+                            array(
+                                'div' => false, 'placeholder' => 'drug name',
+                                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Drug Name')
+                            )
+                        );
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'inn',
+                            array('div' => false, 'placeholder' => 'Brand Name', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name'))
+                        ); 
                         ?>
                     </td>
                 </tr>
@@ -189,7 +211,7 @@ echo $this->Session->flash();
                                 // echo "&nbsp;";
                                 // if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'ce2bs', 'action' => 'download', $ce2b['Ce2b']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
                                 echo "&nbsp;";
-                               
+
                                 if ($redir == 'manager') echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                                     array('controller' => 'ce2bs', 'action' => 'vigiflow', $ce2b['Ce2b']['id'], 'manager' => false),
@@ -206,8 +228,9 @@ echo $this->Session->flash();
                                 echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                                     array('controller' => 'ce2bs', 'action' => 'archive', $ce2b['Ce2b']['id']),
-                                    array('escape' => false), __('Are you sure you want to archive the report?')
-                                  );
+                                    array('escape' => false),
+                                    __('Are you sure you want to archive the report?')
+                                );
                             } else {
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
@@ -226,7 +249,6 @@ echo $this->Session->flash();
                                     array('controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id']),
                                     array('escape' => false)
                                 );
-                               
                             }
                             ?>
                         </td>

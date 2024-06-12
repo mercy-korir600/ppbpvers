@@ -109,7 +109,7 @@ echo $this->Session->flash();
             );
             ?>
           </td>
-        </tr>
+        </tr> 
         <tr>
           <td>
             <?php
