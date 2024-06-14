@@ -112,6 +112,21 @@ echo $this->Session->flash();
                         ); 
                         ?>
                     </td>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'sender_unique_identifier',
+                            array('div' => false, 'placeholder' => 'eg KE-xx', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Sender Identifier'))
+                        ); 
+                        ?>
+                    </td>  <td>
+                        <?php
+                        echo $this->Form->input(
+                            'sender_organization',
+                            array('div' => false, 'placeholder' => 'Sender\'s Org', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Sender\'s Organization'))
+                        ); 
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td><label for="PadrPages" class="required">Pages</label></td>

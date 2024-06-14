@@ -29,13 +29,13 @@ class PqmpsController extends AppController
     {
 
         if ($this->request->is('post') || $this->request->is('put')) {
-            $report_id = $this->request->data['report_id']; 
+            $report_id = $this->request->data['report_id'];
             $this->Pqmp->id = $report_id;
             if (!$this->Pqmp->exists()) {
 
                 $this->set([
                     'status' => 'error',
-                    'message' => 'Could not verify the PQHPT report ID provided, please ensure the ID is correct and try again later!', 
+                    'message' => 'Could not verify the PQHPT report ID provided, please ensure the ID is correct and try again later!',
                     '_serialize' => ['status', 'message']
                 ]);
             } else {
@@ -58,18 +58,17 @@ class PqmpsController extends AppController
                 if ($this->Comment->saveAssociated($data, array('deep' => true))) {
                     $this->set([
                         'status' => 'success',
-                        'message' => 'Feedback sent successfully', 
+                        'message' => 'Feedback sent successfully',
                         '_serialize' => ['status', 'message']
                     ]);
                 } else {
                     $errors = $this->Comment->validationErrors;
                     $this->set([
                         'status' => 'error',
-                        'message' => 'Feedback could not be saved' . json_encode($errors),                         
+                        'message' => 'Feedback could not be saved' . json_encode($errors),
                         '_serialize' => ['status', 'message']
                     ]);
                 }
-
             }
         } else {
             throw new MethodNotAllowedException();
@@ -86,28 +85,31 @@ class PqmpsController extends AppController
 
     public function extract_category($pqmp)
     {
-        $category = "";
         if ($pqmp['Pqmp']['medicinal_product']) {
-            $category = "Medicinal product";
+            return "Medicinal product";
         }
         if ($pqmp['Pqmp']['blood_products']) {
-            $category = "Blood and blood products ";
+            return "Blood and blood products";
         }
         if ($pqmp['Pqmp']['herbal_product']) {
-            $category = " Herbal product ";
+            return "Herbal product";
         }
         if ($pqmp['Pqmp']['medical_device']) {
-            $category = "Medical device";
+            return "Medical device";
+        }
+        if ($pqmp['Pqmp']['cosmeceuticals']) {
+            return "Cosmeceuticals";
         }
         if ($pqmp['Pqmp']['product_vaccine']) {
-            $category = "Vaccine";
+            return "Vaccine";
         }
         if ($pqmp['Pqmp']['product_other']) {
-            $category = $pqmp['Pqmp']['product_specify'];
+            return $pqmp['Pqmp']['product_specify'];
         }
-
-        return $category;
+    
+        return "";
     }
+    
 
     function flattenDateArray($dateArray)
     {
@@ -790,7 +792,102 @@ class PqmpsController extends AppController
         //
         return $reference;
     }
+    public  function submit_for_surveilance($id = null)
+    {
+        $pqmp = $this->Pqmp->find('first', array(
+            'conditions' => array('Pqmp.id' => $id),
+            'contain' => array(
+                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',  'ReviewComment'
+            )
+        ));
 
+
+        $flattenedManufactureDate = $this->flattenDateArray($pqmp['Pqmp']['manufacture_date']);
+
+
+        // Convert the given date strings to YYYY-MM-DD format
+        $expiry_date_converted = $this->convertDateFormat($pqmp['Pqmp']['expiry_date']);
+        $receipt_date_converted =  $this->convertDateFormat($pqmp['Pqmp']['receipt_date']);
+        $reporter_date_converted =  $this->convertDateFormat($pqmp['Pqmp']['reporter_date']);
+
+
+
+        // Convert the converted date strings to timestamps
+        $expiry_timestamp = strtotime($expiry_date_converted);
+        $receipt_timestamp = strtotime($receipt_date_converted);
+        $reporter_date__timestamp = strtotime($reporter_date_converted);
+
+        // Format the timestamps to 'Y-m-d'
+        $expiry_date_formatted = date('Y-m-d', $expiry_timestamp);
+        $receipt_date_formatted = date('Y-m-d', $receipt_timestamp);
+        $reporter_date_formatted = date('Y-m-d', $reporter_date__timestamp);
+        // debug($expiry_date_formatted);
+        // exit; 
+
+        $payload = array(
+            "category" => $this->extract_category($pqmp),
+            "facilityName" => $pqmp['Pqmp']['facility_name'],
+            "brandName" => $pqmp['Pqmp']['brand_name'],
+            "genericName" => $pqmp['Pqmp']['generic_name'],
+            "batchNo" => $pqmp['Pqmp']['batch_number'],
+            "manufacturedDate" => $flattenedManufactureDate,
+            "expiryDate" => $expiry_date_formatted,
+            "receiptDate" => $receipt_date_formatted,
+            "manufacturerName" => $pqmp['Pqmp']['name_of_manufacturer'],
+            "manufacturerAddress" => "", //$pqmp['Pqmp'][''],
+            "manufacturerCountryOfOrigin" => $pqmp['Country']['name'],
+            "complaintDescription" => $pqmp['Pqmp']['complaint_description'],
+            "coldChainMaintained" => isset($pqmp['Pqmp']['cold_chain']) && !empty($pqmp['Pqmp']['cold_chain']), // $pqmp['Pqmp']['cold_chain'], //Boolean
+            "productRequiresRefrigeration" => isset($pqmp['Pqmp']['require_refrigeration']) && !empty($pqmp['Pqmp']['require_refrigeration']), //$pqmp['Pqmp']['require_refrigeration'], //Boolean
+            "productAvailableAtFacility" => isset($pqmp['Pqmp']['product_at_facility']) && !empty($pqmp['Pqmp']['product_at_facility']), //$pqmp['Pqmp']['product_at_facility'], //Boolean
+            "productDispensedAndReturnedByClient" => isset($pqmp['Pqmp']['returned_by_client']) && !empty($pqmp['Pqmp']['returned_by_client']), // $pqmp['Pqmp']['returned_by_client'], //Boolean
+            "productStoredByMOHRecommendation" => isset($pqmp['Pqmp']['stored_to_recommendations']) && !empty($pqmp['Pqmp']['stored_to_recommendations']), // $pqmp['Pqmp']['stored_to_recommendations'], //Boolean
+            "initialReporter" => array(
+                "name" => $pqmp['Pqmp']['reporter_name'],
+                "designation" => $pqmp['Designation']['name'],
+                "mobileNo" => $pqmp['Pqmp']['reporter_phone'],
+                "email" => $pqmp['Pqmp']['reporter_email']
+            ),            
+            "personSubmittingToPPB" => array(
+                "name" => !empty($pqmp['Pqmp']['reporter_name_diff']) ? $pqmp['Pqmp']['reporter_name_diff'] : "",
+                "designation" => !empty($pqmp['Pqmp']['reporter_designation_diff']) ? $pqmp['Pqmp']['reporter_designation_diff'] : "",
+                "mobileNo" => !empty($pqmp['Pqmp']['reporter_phone_diff']) ? $pqmp['Pqmp']['reporter_phone_diff'] : "",
+                "email" => !empty($pqmp['Pqmp']['reporter_email_diff']) ? $pqmp['Pqmp']['reporter_email_diff'] : ""
+            ),
+            "reportNo" => $pqmp['Pqmp']['id'],
+            "reportDate" => $reporter_date_formatted, //"String (format=>yyyy-MM-dd)",
+            "facility" => array(
+                "county" => $pqmp['County']['county_name'], //"String (optional)",
+                "subCounty" => $pqmp['SubCounty']['sub_county_name'], //"String (optional)",
+                "address" => $pqmp['Pqmp']['facility_address'], //"String (optional)",
+                "mobileNo" => $pqmp['Pqmp']['facility_phone'], //"String (optional)"
+            ),
+            "referenceNo" => $pqmp['Pqmp']['reference_no'],
+            "supplier" => array(
+                "name" => $pqmp['Pqmp']['supplier_name'], //"String (optional)",
+                "address" => $pqmp['Pqmp']['supplier_address'], // "String (optional)",
+                "telephone" => "", //$pqmp['Pqmp']['name'],//"String (optional)"
+            )
+        );
+
+        $options = array(
+            'ssl_verify_peer' => false
+        );
+        $header_options = array(
+            'header' => array(
+                'Content-Type' => 'application/json'
+            )
+        );
+        $formData = json_encode($payload);
+        // debug($formData);
+        // exit;
+        $HttpSocket = new HttpSocket($options);
+        $url = "https://demo.anchorerp.com/AnchorPMS/app/api/pms/postcomplaint";
+
+
+        //Request Access Token
+        $initiate = $HttpSocket->post($url, $formData, $header_options);
+    }
     public function reporter_edit($id = null)
     {
         $this->Pqmp->id = $id;
@@ -838,6 +935,8 @@ class PqmpsController extends AppController
                     }
                     //bokelo
                     $pqmp = $this->Pqmp->read(null, $id);
+
+                    $this->submit_for_surveilance($id);
 
                     //******************       Send Email and Notifications to Applicant and Managers          *****************************
                     $this->loadModel('Message');

@@ -91,6 +91,8 @@ echo $this->Form->create('Pqmp', array(
 					'after' => 'Medical device </label>',
 				));
 
+				echo $this->Form->input('category', array('type' => 'hidden', 'value' => ''));
+
 				?>
 			</div>
 			<div class="span6">

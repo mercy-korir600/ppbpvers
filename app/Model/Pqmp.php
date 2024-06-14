@@ -221,8 +221,30 @@ class Pqmp extends AppModel
     );
 
     public $validate = array(
-        
+        'category' => array(
+            'atleastOneCategory' => array(
+                'rule'     => 'atleastOneCategory',
+                'required' => true,
+                'message'  => 'Please tick at least one category'
+            ),
+        ),
        
+        
+        'county_id' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please select a county'
+            ),
+        ),
+          
+        'sub_county_id' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please select a sub county'
+            ),
+        ),
         'complaint' => array(
             'atLeastOne' => array(
                 'rule'     => 'atLeastOne',
@@ -263,6 +285,16 @@ class Pqmp extends AppModel
             'exceedManufacture' => array(
                 'rule'     => 'exceedManufacture',
                 'message'  => 'The expiry date must be greater than the date of manufacture'
+            ),
+        ),
+
+        
+
+        'receipt_date' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please select receipt date'
             ),
         ),
         
@@ -331,6 +363,13 @@ class Pqmp extends AppModel
         return $this->data['Pqmp']['colour_change'] + $this->data['Pqmp']['separating'] + $this->data['Pqmp']['caking'] + $this->data['Pqmp']['powdering'] +
             $this->data['Pqmp']['moulding'] +  $this->data['Pqmp']['odour_change'] + $this->data['Pqmp']['mislabeling'] +
             $this->data['Pqmp']['incomplete_pack'] + $this->data['Pqmp']['complaint_other'] + $this->data['Pqmp']['therapeutic_ineffectiveness'] + $this->data['Pqmp']['particulate_matter'] > 0;
+    }
+    public function atleastOneCategory($field=null)
+    {
+
+        return $this->data['Pqmp']['medicinal_product'] + $this->data['Pqmp']['blood_products'] + $this->data['Pqmp']['herbal_product'] + $this->data['Pqmp']['medical_device'] +
+            $this->data['Pqmp']['product_vaccine'] +  $this->data['Pqmp']['cosmeceuticals'] + $this->data['Pqmp']['product_other'] > 0;
+
     }
 
     public function yearMust($field = null)
