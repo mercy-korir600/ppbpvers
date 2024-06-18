@@ -1,7 +1,7 @@
 <?php
 $this->assign('AGGREGATE', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
-$this->Html->script('aggregate', array('inline' => false));
+// $this->Html->script('aggregate', array('inline' => false));
 $this->Html->script('ckeditor/ckeditor', array('inline' => false));
 $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 ?>
@@ -60,53 +60,23 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                     <section id="aefisview">
                         <div style="margin: 10px;">
                             <div class="row-fluid">
-                                <h5 class=" text-success">Do you have the report summary?&nbsp;</h5>
 
-                                <?php
-
-                                
-                                echo $this->Form->input(
-                                    'summary_available',
-                                    array(
-                                        'type' => 'radio',
-                                        'label' => false,
-                                        'legend' => false,
-                                        'div' => false,
-                                        'hiddenField' => false,
-                                        'error' => false,
-                                        'class' => 'summary-available',
-                                        'before' => '<div class="form-inline">
-												<input type="hidden" value="" id="AggregateSummaryAvailable_" name="data[Aggregate][summary_available]">
-												<label class="radio">',
-                                        'after' => '</label>&nbsp;&nbsp;',
-                                        'options' => array('Yes' => 'Yes'),
-                                    )
-                                );
-                                echo $this->Form->input(
-                                    'summary_available',
-                                    array(
-                                        'type' => 'radio',
-                                        'label' => false,
-                                        'legend' => false,
-                                        'div' => false,
-                                        'hiddenField' => false,
-                                        'class' => 'summary-available',
-                                        'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
-                                        'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
-                                        'before' => '<label class="radio"> ',
-                                        'after' => '</label> </div>',
-                                        'options' => array('No' => 'No'),
-                                    )
-                                );
-                                ?>
-                                <br>
-                                <br>
 
                             </div>
                             <div class="" id="basicInformation">
                                 <div class="row-fluid">
                                     <div class="span6">
                                         <?php
+
+                                        echo $this->Form->input(
+                                            'summary_available',
+                                            array(
+                                                'type'=>'hidden',
+                                                'class' => 'span8 ',
+                                                'label' => array('class' => 'control-label ', 'text' => '<span style="color:red;">*</span>'),
+                                                'after' => '<p class="help-block"> </p></div>',
+                                            )
+                                        );
                                         echo $this->Form->input(
                                             'brand_name',
                                             array(
@@ -302,7 +272,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                             </div>
                             <hr>
                         </div>
-                       
+
                         <div class="" id="otherDetails" style="margin: 10px;">
                             <div class="row-fluid">
                                 <div class="span10">
@@ -383,38 +353,11 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
                                 </div>
                             </div>
-                            <hr>
-                        </div>
-                      
-
-                        <!-- Start of Attachments -->
-                        <div style="margin: 10px;">
-                            <div class="row-fluid">
-                                <div class="span8">
-
-                                    <?php
-
-                                    echo $this->Form->input(
-                                        'sample',
-                                        array(
-                                            // create a hidden input with the same name as the input
-                                            'type' => 'hidden',
-                                            'id' => 'sample',
-                                            'value' => 'dammy',
-                                            'class' => 'autosave-ignore',
-                                        )
-                                    );
-                                    echo $this->element('multi/aggregates', ['model' => 'Aggregate', 'group' => 'attachment', 'examples' => '']); ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- End of Attachements -->
 
 
 
                         <!-- Reporter Details -->
-                        <div style="margin: 10px;">
+                        <div style="margin: 10px; " hidden>
                             <div class="row-fluid">
                                 <div class="span6">
                                     <?php
@@ -572,6 +515,8 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
 
                         <!-- End of Reporter Details -->
+                            <hr>
+                        </div>
 
                     </section>
                 </div>

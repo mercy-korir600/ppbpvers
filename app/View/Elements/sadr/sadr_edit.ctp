@@ -48,7 +48,7 @@ $this->Html->css('sadr', false, array('inline' => false));
 						<h5>PHARMACY AND POISONS BOARD</h5>
 						<h5>P.O. Box 27663-00506 NAIROBI</h5>
 						<h5>Tel: +254795743049</h5>
-						<h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+						<h5><b>Email:</b> pv@ppb.go.ke</h5>
 						<h5 style="color: red;">SUSPECTED ADVERSE DRUG REACTION REPORTING FORM</h5>
 					</div>
 				</div>

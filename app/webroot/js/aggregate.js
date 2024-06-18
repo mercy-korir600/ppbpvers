@@ -1,5 +1,10 @@
 $(document).ready(function () {
 
+
+    $('#parentDetails').hide();
+    $('#otherDetails').hide();
+    $('#basicInformation').hide();
+
     var cache3 = {}, lastXhr;
     $("#AggregateCompanyName").autocomplete({
         source: function (request, response) {
@@ -18,63 +23,61 @@ $(document).ready(function () {
         },
         select: function (event, ui) {
             $("#AggregateCompanyName").val(ui.item.label);
-            $("#AggregateCompanyCode").val(ui.item.value); 
+            $("#AggregateCompanyCode").val(ui.item.value);
             return false;
         }
     })
 
 
-
-
     $("#AggregateCountyId").combobox();
 
     if ($('#AggregateReportType').val() == 'Followup') {
-        $('#AggregateReporterEditForm :input').attr('readonly', 'readonly');  
-        $('.editable :input').prop('disabled', false).attr('readonly', false); 
+        $('#AggregateReporterEditForm :input').attr('readonly', 'readonly');
+        $('.editable :input').prop('disabled', false).attr('readonly', false);
         if ($('#AggregateSeriousYes').is(':checked')) {
-            console.log('Yes was selected initially'); 
+            console.log('Yes was selected initially');
             $('#AggregateSeriousNo').prop('disabled', true); // disable the "No" option
             $('#clearButton').prop('disabled', true);
-        } 
+        }
 
         // Handle the scale for severity
         if ($('#AggregateSeverityMild').is(':checked')) {
-            $('#AggregateSeverityMild').prop('disabled', false); 
-            $('#AggregateSeverityModerate').prop('disabled', false); 
+            $('#AggregateSeverityMild').prop('disabled', false);
+            $('#AggregateSeverityModerate').prop('disabled', false);
             $('#AggregateSeveritySevere').prop('disabled', false);
             $('#AggregateSeverityFatal').prop('disabled', false);
             $('#AggregateSeverityUnknown').prop('disabled', true);
         }
         if ($('#AggregateSeverityModerate').is(':checked')) {
-            $('#AggregateSeverityMild').prop('disabled', true); 
-            $('#AggregateSeverityModerate').prop('disabled', false); 
+            $('#AggregateSeverityMild').prop('disabled', true);
+            $('#AggregateSeverityModerate').prop('disabled', false);
             $('#AggregateSeveritySevere').prop('disabled', false);
             $('#AggregateSeverityFatal').prop('disabled', false);
             $('#AggregateSeverityUnknown').prop('disabled', true);
         }
         if ($('#AggregateSeveritySevere').is(':checked')) {
-            $('#AggregateSeverityMild').prop('disabled', true); 
-            $('#AggregateSeverityModerate').prop('disabled', true); 
+            $('#AggregateSeverityMild').prop('disabled', true);
+            $('#AggregateSeverityModerate').prop('disabled', true);
             $('#AggregateSeveritySevere').prop('disabled', false);
             $('#AggregateSeverityFatal').prop('disabled', false);
             $('#AggregateSeverityUnknown').prop('disabled', true);
         }
         if ($('#AggregateSeverityFatal').is(':checked')) {
-            $('#AggregateSeverityMild').prop('disabled', true); 
-            $('#AggregateSeverityModerate').prop('disabled', true); 
+            $('#AggregateSeverityMild').prop('disabled', true);
+            $('#AggregateSeverityModerate').prop('disabled', true);
             $('#AggregateSeveritySevere').prop('disabled', true);
             $('#AggregateSeverityFatal').prop('disabled', false);
             $('#AggregateSeverityUnknown').prop('disabled', true);
         }
         if ($('#AggregateSeverityUnknown').is(':checked')) {
-            $('#AggregateSeverityMild').prop('disabled', false); 
-            $('#AggregateSeverityModerate').prop('disabled', false); 
+            $('#AggregateSeverityMild').prop('disabled', false);
+            $('#AggregateSeverityModerate').prop('disabled', false);
             $('#AggregateSeveritySevere').prop('disabled', false);
             $('#AggregateSeverityFatal').prop('disabled', false);
             $('#AggregateSeverityUnknown').prop('disabled', false);
         }
 
-        
+
 
     }
 
@@ -88,6 +91,30 @@ $(document).ready(function () {
             $('.diff:input').prop('disabled', true);
         }
     });
+
+    $('.summary-available').on('change', function () {
+        var pilih = $(this).val();
+        if (pilih == 'Yes') {
+            $('#parentDetails').show();
+            $('#otherDetails').show();
+            $('#basicInformation').show();
+            $('.available:input').prop('disabled', false);
+        } else {
+            $('#parentDetails').hide();
+            $('#otherDetails').hide();
+            $('#basicInformation').hide();
+            $('.available:input').prop('disabled', true);
+        }
+    });
+
+    if ($("#AggregateSummaryAvailableNo").is(':checked')) { $('.available:input').prop('disabled', true); }
+    if ($("#AggregateSummaryAvailableYes").is(':checked')) { 
+        $('#parentDetails').show();
+        $('#otherDetails').show();
+        $('#basicInformation').show();
+        $('.available:input').prop('disabled', false);
+
+    }
     if ($("#AggregatePersonSubmittingNo").is(':checked')) { $('.diff:input').prop('disabled', true); }
 
     //If Male disable
@@ -166,43 +193,43 @@ $(document).ready(function () {
         }
     })
     // get the id of Aggregate_medicinal_product_ 
-    $('#AggregateMedicinalProduct').change(function () {  
+    $('#AggregateMedicinalProduct').change(function () {
         $('#AggregateHerbalProduct').attr("checked", false);
         $('#AggregateCosmeceuticals').attr("checked", false);
-        $('#AggregateProductOther').attr("checked", false); 
+        $('#AggregateProductOther').attr("checked", false);
 
-        
+
     }
     );
     // get the Aggregate_herbal_product_ 
     $('#AggregateHerbalProduct').change(function () {
         $('#AggregateMedicinalProduct').attr("checked", false);
         $('#AggregateCosmeceuticals').attr("checked", false);
-        $('#AggregateProductOther').attr("checked", false); 
+        $('#AggregateProductOther').attr("checked", false);
     }
     );
     // Aggregate_cosmeceuticals_
     $('#AggregateCosmeceuticals').change(function () {
         $('#AggregateHerbalProduct').attr("checked", false);
         $('#AggregateMedicinalProduct').attr("checked", false);
-        $('#AggregateProductOther').attr("checked", false); 
+        $('#AggregateProductOther').attr("checked", false);
     }
     );
     // Aggregate_product_other_
     $('#AggregateProductOther').change(function () {
         $('#AggregateHerbalProduct').attr("checked", false);
         $('#AggregateCosmeceuticals').attr("checked", false);
-        $('#AggregateMedicinalProduct').attr("checked", false); 
+        $('#AggregateMedicinalProduct').attr("checked", false);
     }
-    
+
     );
     $('.date-pick-field').datepicker({
-        minDate:"-100Y", maxDate:"0", 
-        dateFormat:'yy-mm-dd', 
-        showButtonPanel:true, 
-        changeMonth:true, 
-        changeYear:true, 
-        showAnim:'show'
+        minDate: "-100Y", maxDate: "0",
+        dateFormat: 'yy-mm-dd',
+        showButtonPanel: true,
+        changeMonth: true,
+        changeYear: true,
+        showAnim: 'show'
     });
-   
+
 });

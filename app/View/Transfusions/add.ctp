@@ -51,7 +51,7 @@
 											<abbr title="Post Office Box">P.O. Box</abbr> 27663-00506 NAIROBI<br>
 											<abbr title="Telephone Number">Tel:</abbr> +254795743049
 											<abbr title="Fascimile">Fax:</abbr> (020)-2713431 / 2713409 <br>
-											E-mail: <a href="mailto:#">pv@pharmacyboardkenya.org</a>
+											E-mail: <a href="mailto:#">pv@ppb.go.ke</a>
 
 											
 										  </address>

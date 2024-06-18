@@ -853,9 +853,9 @@ class Ce2bsController extends AppController
             }
         }
     }
-    public function reporter_add()
+
+    public function general_add()
     {
-        # code...
         $user = $this->Auth->User();
         // debug($user);
         // exit;
@@ -877,6 +877,16 @@ class Ce2bsController extends AppController
         ]], false);
         $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+    }
+    public function manager_add() {
+        $this->general_add();
+
+	}
+    public function reporter_add()
+    {
+
+        $this->general_add();
+        
     }
     public function generateReferenceNumber()
     {

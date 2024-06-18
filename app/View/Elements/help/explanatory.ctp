@@ -54,7 +54,7 @@
 									Lenana Road.<br>
 									<abbr title="Post Office Box">P.O. Box</abbr> 27663-00506 NAIROBI<br>
 									<abbr title="Telephone Number">Tel:</abbr> +254795743049
-									E-mail: <a href="mailto:#" name="downloadPDF">pv@pharmacyboardkenya.org</a>
+									E-mail: <a href="mailto:#" name="downloadPDF">pv@ppb.go.ke</a>
 
 
 								  </address>

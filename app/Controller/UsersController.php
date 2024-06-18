@@ -33,7 +33,7 @@ class UsersController extends AppController
         parent::beforeFilter();
         // remove initDb
         // $this->initDB();
-        $this->Auth->allow('register', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder', 'guest');
+        $this->Auth->allow('register','initDb', 'login', 'api_auth', 'api_register', 'api_token', 'api_forgotPassword', 'activate_account', 'forgotPassword', 'resetPassword', 'logout', 'mpublic', 'provider', 'holder', 'guest');
     }
 
     public function guest()
@@ -1430,6 +1430,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Transfusions');
         $this->Acl->allow($group, 'controllers/Padrs');
         $this->Acl->allow($group, 'controllers/Saes');
+        $this->Acl->allow($group, 'controllers/Ce2bs');
         $this->Acl->allow($group, 'controllers/Attachments');
         $this->Acl->allow($group, 'controllers/Counties');
         $this->Acl->allow($group, 'controllers/Countries');

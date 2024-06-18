@@ -56,7 +56,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span11  autosave-ignore',
+                                'class' => 'span11 available autosave-ignore',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                                 'data-items' => '4',
                                 'autocomplete' => 'off',
@@ -74,7 +74,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span12 autosave-ignore',
+                                'class' => 'span12 available autosave-ignore',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                             )
                         );
@@ -90,7 +90,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span12 autosave-ignore',
+                                'class' => 'span12 available autosave-ignore',
                                 'type' => 'select',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                                 'options' => array(
@@ -113,7 +113,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span12 autosave-ignore',
+                                'class' => 'span12 available autosave-ignore',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                             )
                         );
@@ -127,7 +127,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'error' => array('attributes' => array('class' => 'help-block')),
-                                'class' => 'span12 autosave-ignore',
+                                'class' => 'span12 available autosave-ignore',
                             )
                         );
                         ?>
@@ -141,7 +141,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span12 autosave-ignore',
+                                'class' => 'span12 available autosave-ignore',
                                 'type' => 'text',
                                 'error' => array('attributes' => array('class' => 'help-block')),
 
@@ -158,7 +158,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span12 autosave-ignore showHidden',
+                                'class' => 'span12 available autosave-ignore showHidden',
                                 'type' => 'text',
                                 'error' => array('attributes' => array('class' => 'help-block')),
                             )
@@ -173,7 +173,7 @@ $this->Html->css('sadr', false, array('inline' => false));
                                 'label' => false,
                                 'between' => false,
                                 'after' => false,
-                                'class' => 'span11  autosave-ignore',
+                                'class' => 'span11 available autosave-ignore',
                             )
                         );
                         ?>

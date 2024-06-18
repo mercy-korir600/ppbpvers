@@ -14,151 +14,138 @@ class Aggregate extends AppModel
 
 
 	public $actsAs = array('Containable', 'Search.Searchable');
-    public $filterArgs = array(
-        'protocol_no' => array('type' => 'like', 'encode' => true),
+	public $filterArgs = array(
+		'protocol_no' => array('type' => 'like', 'encode' => true),
 	);
+
+	public function dummy($data = array())
+    {
+        return array('1' => '1');
+    }
 	/**
 	 * Validation rules
 	 *
 	 * @var array
 	 */
 	public $validate = array(
-		'brand_name' => array(
+
+		'summary_available' => array(
 			'notBlank' => array(
 				'rule'     => 'notBlank',
 				'required' => true,
-				'message'  => 'Please provide a brand_name'
+				'message'  => 'Please specify if summary is available'
 			),
 		),
+		// 'brand_name' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please provide a brand_name'
+		// 	),
+		// ),
+		'brand_name' => array(
+            'seriousYes' => array(
+                'rule'     => 'seriousYes',
+                'required' => false,
+                'message' => 'Please provide a brand name',
+            ),
+        ),
 		'inn_name' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please provide a inn_name'
+			'conditionalNotBlank' => array(
+                'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				// 'required' => true,
+				'message'  => 'Please provide a INN Name'
 			),
 		),
 		'mah' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
+			'conditionalNotBlank' => array(
+                'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				// 'required' => true,
 				'message'  => 'Please provide a Marketing Authorization Holder'
 			),
 		),
 		'therapeutic_group' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
+			'conditionalNotBlank' => array(
+                'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				// 'required' => true,
 				'message'  => 'Please provide Therapeutic Group Code'
 			),
 		),
 		'authorised_indications' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
+			'conditionalNotBlank' => array(
+                'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				// 'required' => true,
 				'message'  => 'Please provide authorised indications'
 			),
 		),
 		'form_strength' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
+			'conditionalNotBlank' => array(
+                'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				// 'required' => true,
 				'message'  => 'Please provide pharmaceutical form(s)'
 			),
 		),
-		// 'introduction' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide Brief Introduction'
-		// 	),
-		// ),
-		// 'worldwide_marketing' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide worldwide marketing'
-		// 	),
-		// ),
-		// 'action_taken' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide action_taken'
-		// 	),
-		// ),
-		// 'reference_changes' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide reference_changes'
-		// 	),
-		// ),
-		// 'estimated_exposure' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide estimated_exposure'
-		// 	),
-		// ),
-		// 'clinical_findings' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide clinical findings'
-		// 	),
-		// ),
-		// 'efficacy' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide efficacy'
-		// 	),
-		// ),
-		// 'late_breaking' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide late breaking information'
-		// 	),
-		// ),
-		// 'safety_concerns' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide safety concerns'
-		// 	),
-		// ),
 
-
-		// // Handle other signals, atleast one of them should be provided here 
-
-
-		// 'risks_evaluation' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide risks evaluation'
-		// 	),
-		// ),
-		// 'risks_characterisation' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide risks characterisation'
-		// 	),
-		// ),
-
-		// // ENSURE ATLEAST ONE ATTACHMENT PROVIDED
-		// 'sample' => array(
-		// 	'atleastOneAttachment' => array(
-		// 		'rule'     => 'atleastOneAttachment',
-		// 		'required' => false,
-		// 		'message'  => 'Please upload a file'
-		// 	),
-
-		// ),
+		'reporter_name' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please provide the name of the reporter'
+            ),
+        ),
+        'reporter_date' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please provide the date of submission of the report'
+            ),
+        ),
+        'reporter_email' => array(
+            'notBlank' => array(
+                'rule'     => 'email',
+                'required' => true,
+                'message'  => 'Please provide a valid email address'
+            ),
+        ),
+        'reporter_phone' => array(
+            'notBlank' => array(
+                'rule'     => 'notBlank',
+                'required' => true,
+                'message'  => 'Please provide a valid phone number'
+            ),
+        ),
+        //ensure reporter phone is numeric and 10 digits
+        'reporter_phone' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+                'message' => 'Please provide a valid phone number',
+            ),
+            'minLength' => array(
+                'rule' => array('minLength', 10),
+                'message' => 'Please provide a valid phone number',
+            ),
+            'maxLength' => array(
+                'rule' => array('maxLength', 12),
+                'message' => 'Please provide a valid phone number',
+            ),
+        ),
+	 
 	);
 
+	public function seriousYes($field = null)
+    {
+        if ($this->data['Aggregate']['summary_available'] == 'Yes') return !empty($this->data['Aggregate']['brand_name']);
+        else return true;
+    }
+ public function conditionalNotBlank($check, $field, $value) {
+        if (isset($this->data[$this->alias][$field]) && $this->data[$this->alias][$field] === $value) {
+            // Apply notBlank validation rule
+            $key = key($check);
+            return !empty($check[$key]);
+        }
+        // If the condition is not met, return true to bypass validation
+        return true;
+    }
 
 	public function atleastOneAttachment($field = null)
 	{
@@ -179,7 +166,7 @@ class Aggregate extends AppModel
 			'fields' => '',
 			'order' => ''
 		),
-		 
+
 		'County' => array(
 			'className' => 'County',
 			'foreignKey' => 'county_id',

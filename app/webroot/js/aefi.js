@@ -91,7 +91,7 @@ $(function () {
 
 
 
-	//If not serious disable criteria
+	//If not serious disable criteria 
 	if (!$('input[name="data[Aefi][serious]"][value="Yes"]').is(':checked')) { $('input[name="data[Aefi][serious_yes]"]').attr('disabled', true).attr('checked', false); }
 	$('input[name="data[Aefi][serious]"]').click(function () {
 		if ($(this).val() == 'No') {

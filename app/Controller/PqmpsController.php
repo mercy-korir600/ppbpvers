@@ -6,6 +6,7 @@ App::uses('ThemeView', 'View');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('Router', 'Routing');
 App::uses('HtmlHelper', 'View/Helper');
+App::uses('HttpSocket', 'Network/Http');
 /**
  * Pqmps Controller
  *

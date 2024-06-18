@@ -1,17 +1,17 @@
 <?php
-$this->assign('Ce2b', 'active');
+$this->assign('Aggregate', 'active');
 $ichecked = "&#x2611;";
 $nchecked = "&#x2610;";
 ?>
 
-<!-- Ce2b
+<!-- Aggregate
     ================================================== -->
 
 <div class="row-fluid" id="abonokode">
     <div class="span12">
 
         <div id="printAreade">
-            <div class="formbackc">
+            <div class="formbackd">
 
                 <p><b>(FOM001/HPT/VMS/SOP/001)</b></p>
                 <div class="row-fluid">
@@ -25,56 +25,38 @@ $nchecked = "&#x2610;";
                             <h5>PHARMACY AND POISONS BOARD</h5>
                             <h5>P.O. Box 27663-00506 NAIROBI</h5>
                             <h5>Tel: +254795743049</h5>
-                            <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
-                            <h5 style="color: red;">E2B</h5>
+                            <h5><b>Email:</b> pv@ppb.go.ke</h5>
+                            <h5 style="color: red;">PSUR Report</h5>
                         </div>
                     </div>
                 </div>
 
                 <table class="table" style="width: 100%;">
                     <tr>
-                        <td style="width: 10%;"><b>E2B FILE:</b> </td>
                     </tr>
                     <tr>
                         <td style="width: 10%;">COMPANY NAME: </td>
                         <td style="width: 25%;">
-                            <p><strong><?php echo $ce2b['Ce2b']['company_name'] ?></strong></p>
+                            <p><strong><?php echo $aggregate['Aggregate']['company_name'] ?></strong></p>
                         </td>
                         <td style="width: 10%;">REPORT ID: </td>
                         <td style="width: 20%;">
-                            <p><strong><?php echo $ce2b['Ce2b']['reference_no'] ?></strong></p>
-                        </td>
-                        <td style="width: 10%;">COMMENTS: </td>
-                        <td style="width: 25%;">
-                            <p><strong><?php echo $ce2b['Ce2b']['comment'] ?></strong></p>
+                            <p><strong><?php echo $aggregate['Aggregate']['reference_no'] ?></strong></p>
                         </td>
                     </tr>
-                </table>
-                
-                <table class="table" style="width: 100%;">
-                    <tr>
-                        <td style="width: 10%;"><b>E2B Content:</b> </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 10%;">Label </td>
-                        <td style="width: 10%;">Value </td>
-                        <td style="width: 10%;">Help </td>
-                    </tr>
-                    <?php
-
-                    foreach($data as $dt){?>
-                    
-                   
-                    <tr>
-                        <td style="width: 10%;"><?php echo $dt['key'] ?> </td>
-                        <td style="width: 10%;"> <?php echo $dt['value'] ?></td>
-                        <td style="width: 10%;"> </td>
-                    </tr>
-                    <?php } ?>
                 </table>
                 <hr>
+                <div class="row-fluid" style="margin:10px ;">
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <p> <strong>Brand Name</strong></p>
+                        </div>
+                    </div>
+                </div>
+ 
+                <hr>
 
-                <?php if (count($ce2b['Attachment']) > 0) { ?>
+                <?php if (count($aggregate['Attachment']) > 0) { ?>
                     <table class="change_order_items" style="width: 100%;">
                         <tbody>
                             <tr id="attachmentsTableHeader">
@@ -84,11 +66,11 @@ $nchecked = "&#x2610;";
                             </tr>
                             <?php
                             $i = 1;
-                            foreach ($ce2b['Attachment'] as $attachment) : ?>
+                            foreach ($aggregate['Attachment'] as $attachment) : ?>
                                 <tr>
                                     <td style="width: 10%;"><?php echo $i++; ?></td>
-                                    <td>
-                                        <a href="attachments/download/<?php echo $attachment['id']; ?>"><?php echo __($attachment['basename']); ?></a>
+                                    <td style="width : 30%;">
+                                        <a href="/attachments/download/<?php echo $attachment['id']; ?>"><?php echo __($attachment['basename']); ?></a>
                                     </td>
                                     <td><?php echo $attachment['description']; ?></td>
                                 </tr>
@@ -103,19 +85,19 @@ $nchecked = "&#x2610;";
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 25%;">NAME OF PERSON REPORTING:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_name'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_name'] ?></strong></td>
                             <td style="width: 25%;">E-MAIL ADDRESS: </td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_email'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_email'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">DESIGNATION:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Designation']['name'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Designation']['name'] ?></strong></td>
                             <td style="width: 25%;">PHONE NO.</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_phone'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_phone'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">Date:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_date'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_date'] ?></strong></td>
                             <td style="width: 25%;"></td>
                             <td style="width: 25%;"></td>
                         </tr>
@@ -124,26 +106,26 @@ $nchecked = "&#x2610;";
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 50%;">Is the person submitting different from reporter?</td>
-                            <td><strong><?php echo $ce2b['Ce2b']['person_submitting'] ?></strong></td>
+                            <td><strong><?php echo $aggregate['Aggregate']['person_submitting'] ?></strong></td>
                         </tr>
                     </table>
                     <hr>
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 25%;">NAME OF PERSON REPORTING:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_name_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_name_diff'] ?></strong></td>
                             <td style="width: 25%;">E-MAIL ADDRESS: </td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_email_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_email_diff'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">DESIGNATION:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_designation_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_designation_diff'] ?></strong></td>
                             <td style="width: 25%;">PHONE NO.</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_phone_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_phone_diff'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">Date:</td>
-                            <td style="width: 25%;"><strong><?php echo $ce2b['Ce2b']['reporter_date_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_date_diff'] ?></strong></td>
                             <td style="width: 25%;"></td>
                             <td style="width: 25%;"></td>
                         </tr>

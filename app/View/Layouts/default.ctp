@@ -145,7 +145,7 @@ $cakeDescription = __d('cake_dev', 'PvERS: the Pharmacovigilance Electronic Repo
           </dl>
           <dl class="contact-list" style="text-align: center;">
             <dt>EMAIL:</dt>
-            <dd><a href="mailto:#">pv@pharmacyboardkenya.org</a></dd>
+            <dd><a href="mailto:#">pv@ppb.go.ke</a></dd>
             <dd><a href="mailto:#">regulatory@pharmacyboardkenya.org</a></dd>
           </dl>
           <dl class="contact-list" style="text-align: center;">
