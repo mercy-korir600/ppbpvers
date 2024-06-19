@@ -523,11 +523,11 @@ $nchecked = "&#x2610;";
                                 <th>Start Date</th>
                                 <th>MedDRA Code</th>
                                 <!-- <th>MedDRA Version</th> -->
-                                <th>Results in death</th>
+                                <!-- <th>Results in death</th>
                                 <th>Life threatening</th>
                                 <th>Caused / prolonged hospitalization </th>
                                 <th>Disabling / Incapacitating</th>
-                                <th>Congenital anomaly / birth defect</th>
+                                <th>Congenital anomaly / birth defect</th> -->
                                 <th>Occurence Country</th>
                             </tr>
                             <?php
@@ -539,19 +539,16 @@ $nchecked = "&#x2610;";
                                     <td><?php echo $reaction['start_date'] ?></td>
                                     <td><?php echo $reaction['meddra_code'] ?></td>
                                     <!-- <td></td> -->
+                                    <!-- <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td></td> -->
                                     <td><?php echo $reaction['source_country'] ?></td>
                                 </tr>
 
                                 <!-- 
-                              `reaction_name` text DEFAULT NULL,
-   `meddra_code` text DEFAULT NULL,
-    `` text DEFAULT NULL,
-      `` text DEFAULT NULL,    
+                              
                             
                             
                             <tr width="100%">
@@ -584,8 +581,8 @@ $nchecked = "&#x2610;";
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                            </tr>
-                            <tr>
+                            </tr>--->
+                                <!--  <tr>
                                 <td>Results in death</td>
                                 <td>Life threatening</td>
                                 <td>Caused / prolonged hospitalization </td>
@@ -596,11 +593,11 @@ $nchecked = "&#x2610;";
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                            </tr>
-                            <tr>
+                            </tr> -->
+                                <!-- <tr>
                                 <td>Congenital anomaly / birth defect</td>
                                 <td>Other medically important condition</td>
-                            </tr>
+                            </tr> 
                             <tr>
                                 <td></td>
                                 <td></td>
@@ -623,9 +620,33 @@ $nchecked = "&#x2610;";
                             </tr> -->
                             <?php } ?>
                         </table>
+                        <h5 style="background: #18C4D1; padding:20px;">Criteria</h5>
+                        <table class="table" style="width: 20%;">
+
+                            <tr>
+                                <th>Results in death</th>
+                                <th> 
+                                <?php echo ($ce2b['Ce2b']['results_in_detah']   ? $ichecked : $nchecked); ?>
+                            </th>
+                            <tr>
+                                <th>Life threatening</th>
+                                <th> 
+                                <?php echo ($ce2b['Ce2b']['life_threatening']   ? $ichecked : $nchecked); ?></th>
+                            <tr>
+                                <th>Caused / prolonged hospitalization </th>
+                                <th> 
+                                <?php echo ($ce2b['Ce2b']['prolonged_hospitalization']   ? $ichecked : $nchecked); ?></th>
+                            <tr>
+                                <th>Disabling / Incapacitating</th>
+                                <th> 
+                                <?php echo ($ce2b['Ce2b']['incapacitating']   ? $ichecked : $nchecked); ?></th>
+                            </tr>
+                            </tr>
+
+                        </table>
                         <!-- <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
                         <table class="table" style="width: 100%;"> -->
-                            <!-- <tr width="100%">
+                        <!-- <tr width="100%">
                                 <td>Test date</td>
                                 <td>Test name</td>
                                 <td>Test name (free text)</td>

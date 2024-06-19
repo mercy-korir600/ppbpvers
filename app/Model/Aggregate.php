@@ -93,13 +93,13 @@ class Aggregate extends AppModel
                 'message'  => 'Please provide the name of the reporter'
             ),
         ),
-        'reporter_date' => array(
-            'notBlank' => array(
-                'rule'     => 'notBlank',
-                'required' => true,
-                'message'  => 'Please provide the date of submission of the report'
-            ),
-        ),
+        // 'reporter_date' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'notBlank',
+        //         'required' => true,
+        //         'message'  => 'Please provide the date of submission of the report'
+        //     ),
+        // ),
         'reporter_email' => array(
             'notBlank' => array(
                 'rule'     => 'email',
@@ -107,28 +107,28 @@ class Aggregate extends AppModel
                 'message'  => 'Please provide a valid email address'
             ),
         ),
-        'reporter_phone' => array(
-            'notBlank' => array(
-                'rule'     => 'notBlank',
-                'required' => true,
-                'message'  => 'Please provide a valid phone number'
-            ),
-        ),
+        // 'reporter_phone' => array(
+        //     'notBlank' => array(
+        //         'rule'     => 'notBlank',
+        //         'required' => true,
+        //         'message'  => 'Please provide a valid phone number'
+        //     ),
+        // ),
         //ensure reporter phone is numeric and 10 digits
-        'reporter_phone' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'Please provide a valid phone number',
-            ),
-            'minLength' => array(
-                'rule' => array('minLength', 10),
-                'message' => 'Please provide a valid phone number',
-            ),
-            'maxLength' => array(
-                'rule' => array('maxLength', 12),
-                'message' => 'Please provide a valid phone number',
-            ),
-        ),
+        // 'reporter_phone' => array(
+        //     'numeric' => array(
+        //         'rule' => array('numeric'),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        //     'minLength' => array(
+        //         'rule' => array('minLength', 10),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        //     'maxLength' => array(
+        //         'rule' => array('maxLength', 12),
+        //         'message' => 'Please provide a valid phone number',
+        //     ),
+        // ),
 	 
 	);
 

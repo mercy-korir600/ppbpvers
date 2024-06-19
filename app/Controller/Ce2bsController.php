@@ -951,7 +951,7 @@ class Ce2bsController extends AppController
             'contain' => array('Designation', 'Ce2bListOfDrug', 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
-        // debug($ce2b['Ce2b']['e2b_type']);
+        // debug($ce2b);
         // exit;
 
         if ($ce2b['Ce2b']['e2b_type'] === "R2") {

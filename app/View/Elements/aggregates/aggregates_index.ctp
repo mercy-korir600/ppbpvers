@@ -10,7 +10,7 @@ echo $this->Session->flash();
 <div class="row-fluid">
     <div class="span12">
         <?php
-        if ($redir == 'reporter') {
+        if ($redir == 'reporter' || $redir == 'manager') {
             echo $this->Html->link(
                 '<i class="fa fa-file-o" aria-hidden="true"></i> New Report',
                 array('controller' => 'aggregates', 'action' => 'add'),

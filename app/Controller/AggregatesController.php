@@ -343,16 +343,26 @@ class AggregatesController extends AppController
 		$designations = $this->Aggregate->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
 		$this->set(compact('designations'));
 	}
+
 	public function reporter_add()
+	{
+		$this->add(false);
+	}
+	public function manager_add()
+	{
+		$this->add(true);
+	}
+	public function add($intiated = false)
 	{
 
 		$user = $this->Auth->User();
-		// debug($user);
-		// exit;
+
 		$this->Aggregate->create();
 		$this->Aggregate->save(['Aggregate' => [
 			'user_id' => $this->Auth->User('id'),
 			'reference_no' => 'new',
+			'manager_initiated' => $intiated,
+			'person_submitting' => 'No',
 			'reporter_email' => $this->Auth->User('email'),
 			'designation_id' => $this->Auth->User('designation_id'),
 			'reporter_designation' => $this->Auth->User('designation_id'),
@@ -436,7 +446,11 @@ class AggregatesController extends AppController
 		if ($this->request->is('post') || $this->request->is('put')) {
 
 			$validate = false;
-			if (isset($this->request->data['submitReport'])) { 
+			if (isset($this->request->data['submitReport'])) {
+				
+
+				// debug($this->request->data);
+				// exit;
 				$validate = 'first';
 				$isValid = $this->validateEditorData($this->request->data);
 				if ($isValid['valid'] != true) {
@@ -447,12 +461,19 @@ class AggregatesController extends AppController
 
 			if ($this->Aggregate->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
 				if (isset($this->request->data['submitReport'])) {
-					 
-					$aggregate = $this->Aggregate->read(null, $id); 
+
+					$aggregate = $this->Aggregate->read(null, $id);
+
+					if (!empty($aggregate['Aggregate']['reference_no']) && $aggregate['Aggregate']['reference_no'] == 'new') {
+						$reference = $this->generateReferenceNumber();
+						$this->Aggregate->saveField('reference_no', $reference);
+						$this->Aggregate->saveField('submitted', 2);
+						$this->Aggregate->saveField('submitted_date', date("Y-m-d H:i:s"));
+					}
 
 					$this->Session->setFlash(__('The Aggregate report has been submitted'), 'alerts/flash_success');
 					$this->redirect(array('action' => 'view', $this->Aggregate->id));
-				} 
+				}
 
 				if ($isValid['valid'] != true) {
 					$message = 'The application was not successfully submitted. Please correct the errors below...';
@@ -469,8 +490,7 @@ class AggregatesController extends AppController
 				} else {
 					$this->Session->setFlash(__($message), 'alerts/flash_error');
 				}
-				// $this->Session->setFlash(__('The Aggregate report could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
-			}
+			 }
 		} else {
 			$this->request->data = $this->Aggregate->read(null, $id);
 		}
