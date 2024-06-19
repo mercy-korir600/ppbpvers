@@ -641,8 +641,21 @@ $nchecked = "&#x2610;";
                                 <th> 
                                 <?php echo ($ce2b['Ce2b']['incapacitating']   ? $ichecked : $nchecked); ?></th>
                             </tr>
+                            <tr>
+                            <th>Congenital anomaly / birth defect</th>  <th> 
+                            <?php echo ($ce2b['Ce2b']['incapacitating']   ? $ichecked : $nchecked); ?></th>
                             </tr>
 
+                        </table>
+
+                        <h5 style="background: #18C4D1; padding:20px;">Outcome</h5>
+                        <table class="table" style="width: 20%;">
+
+                            <tr> 
+                                <th> 
+                                <?php echo $ce2b['Ce2b']['results_in_detah'];?>
+                            </th>
+                            </tr>
                         </table>
                         <!-- <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
                         <table class="table" style="width: 100%;"> -->
