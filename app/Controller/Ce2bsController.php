@@ -6,6 +6,8 @@ App::uses('ThemeView', 'View');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('Router', 'Routing');
 App::uses('Xml', 'Utility');
+App::uses('Time', 'Utility');
+App::uses('CakeTime', 'Utility');
 
 
 /**
@@ -79,7 +81,41 @@ class Ce2bsController extends AppController
         }
         $this->autoRender = false;
     }
+    public function reporter_followup($id=null) {
+        $this->followup($id);
 
+	}
+
+    public function followup($id=null){
+
+        if ($this->request->is('post')) {
+            $this->Ce2b->id = $id;
+            if (!$this->Ce2b->exists()) {
+                throw new NotFoundException(__('Invalid SADR'));
+            }
+            $ce2b = Hash::remove($this->Ce2b->find(
+                'first',
+                array( 
+                    'conditions' => array('Ce2b.id' => $id)
+                )
+            ), 'Ce2b.id');
+ 
+            $data_save = $ce2b['Ce2b'];  
+            $data_save['ce2b_id'] = $id; 
+            $data_save['reference_no'] = $ce2b['Ce2b']['reference_no'];  
+            $data_save['report_type'] = 'Followup';
+            $data_save['submitted'] = 0;
+
+            if ($this->Ce2b->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+                $this->Session->setFlash(__('Follow up ' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
+                $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+            } else {
+                $this->Session->setFlash(__('The followup could not be saved. Please, try again.'), 'alerts/flash_error');
+                $this->redirect($this->referer());
+            }
+        }
+
+    }
     public function reporter_index()
     {
         # code...
@@ -475,12 +511,21 @@ class Ce2bsController extends AppController
                     $xmlArray = Xml::toArray(Xml::build($filePath));
                     $flattenedData = $this->flattenXml($xmlArray);
                     $reactions = $this->extractObservations($flattenedData);
+                    $criteria = $this->extractCriteria($flattenedData);
                     $this->request->data['Ce2bReaction'] = $reactions;
                     $drugs = $this->extractDrugs($flattenedData, count($reactions));
                     $this->request->data['Ce2bListOfDrug'] = $drugs;
+
+                    $seriousValues = Hash::extract($reactions, '{n}.serious');
+
+                    // Checking if any "serious" value is true
+                    $hasSerious = in_array('true', $seriousValues);
+
+                    $this->request->data['Ce2b']['serious'] = $hasSerious;
+                    // debug($hasSerious);
                     // debug($reactions);
-                    // debug(count($reactions));
-                    // debug($drugs);
+                    // // debug(count($reactions));
+                    // // debug($criteria);
                     // debug($flattenedData);
                     // exit;
 
@@ -552,6 +597,9 @@ class Ce2bsController extends AppController
 
                     //lucian
                     // if(empty($ce2b->reference_no)) {
+
+                    $this->Ce2b->saveField('submitted', 2);
+                    $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
                     if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
                         $count = $this->Ce2b->find('count',  array(
                             'fields' => 'Ce2b.reference_no',
@@ -563,8 +611,6 @@ class Ce2bsController extends AppController
                         $count = ($count < 10) ? "0$count" : $count;
                         $reference = 'E2B/' . date('Y') . '/' . $count;
                         $this->Ce2b->saveField('reference_no', $reference);
-                        $this->Ce2b->saveField('submitted', 2);
-                        $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
                     }
 
                     $ce2b = $this->Ce2b->read(null, $id);
@@ -705,6 +751,62 @@ class Ce2bsController extends AppController
 
         return $observations;
     }
+    function getNestedValueDynamic($array, $keyPath)
+    {
+        $keys = explode('.', $keyPath);
+        return $this->getNestedValueRecursive($array, $keys);
+    }
+
+    function getNestedValueRecursive($array, $keys)
+    {
+        $currentValue = $array;
+
+        foreach ($keys as $index => $key) {
+            if ($key === '*') {
+                // This indicates we need to look at all sub-keys from a specific index onwards
+                $nextKeys = array_slice($keys, $index + 1);
+                $found = false;
+                foreach ($currentValue as $subKey => $subValue) {
+                    if (is_array($subValue)) {
+                        $result = $this->getNestedValueRecursive($subValue, $nextKeys);
+                        if ($result !== null) {
+                            return $result;
+                        }
+                    }
+                }
+                if (!$found) {
+                    return null;
+                }
+            } else {
+                // Normal key handling
+                if (is_array($currentValue) && array_key_exists($key, $currentValue)) {
+                    $currentValue = $currentValue[$key];
+                } else {
+                    // Return null if any key in the path does not exist
+                    return null;
+                }
+            }
+        }
+
+        return $currentValue;
+    }
+    public function extractCriteria($data)
+    {
+
+
+
+        // Using wildcards to represent dynamic keys
+        $keyPath = 'MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.{n}.observation.outboundRelationship2.{n}.observation.value.@nullFlavor';
+
+        $values = Hash::extract($data, $keyPath);
+        $observations = [
+            'value' => $values,
+
+        ];
+
+
+        return $observations;
+    }
 
     private function extractObservations($flattenedData)
     {
@@ -725,6 +827,49 @@ class Ce2bsController extends AppController
                 $meddra_version_key = $observationKey . ".value.@codeSystemVersion";
                 $reaction_name_key = $observationKey . ".outboundRelationship2.0.observation.value.@";
 
+                // Results in Death
+                $criteria_death_code_key = $observationKey . ".outboundRelationship2.1.observation.code.@code";
+                $criteria_death_null_key = $observationKey . ".outboundRelationship2.1.observation.value.@nullFlavor";
+                $criteria_death_value_key = $observationKey . ".outboundRelationship2.1.observation.value";
+
+                // Life Threatening 
+                $life_hreatening_code_key = $observationKey . ".outboundRelationship2.2.observation.code.@code";
+                $life_hreatening_null_key = $observationKey . ".outboundRelationship2.2.observation.value.@nullFlavor";
+                $life_hreatening_value_key = $observationKey . ".outboundRelationship2.2.observation.value";
+
+                //    Caused / Prolonged Hospitalisation 
+                $prolonged_hospitalisation_code_key = $observationKey . ".outboundRelationship2.3.observation.code.@code";
+                $prolonged_hospitalisation_null_key = $observationKey . ".outboundRelationship2.3.observation.value.@nullFlavor";
+                $prolonged_hospitalisation_value_key = $observationKey . ".outboundRelationship2.3.observation.value";
+
+                // Disabling / Incapacitating 
+                $incapacitating_code_key = $observationKey . ".outboundRelationship2.4.observation.code.@code";
+                $incapacitating_null_key = $observationKey . ".outboundRelationship2.4.observation.value.@nullFlavor";
+                $incapacitating_value_key = $observationKey . ".outboundRelationship2.4.observation.value";
+
+
+                // Congenital Anomaly / Birth Defect  birth_defect
+                $birth_defect_code_key = $observationKey . ".outboundRelationship2.5.observation.code.@code";
+                $birth_defect_null_key = $observationKey . ".outboundRelationship2.5.observation.value.@nullFlavor";
+                $birth_defect_value_key = $observationKey . ".outboundRelationship2.5.observation.value";
+
+
+                // Other Medically Important Condition 
+                $other_medical_code_key = $observationKey . ".outboundRelationship2.6.observation.code.@code";
+                $other_medical_null_key = $observationKey . ".outboundRelationship2.6.observation.value.@nullFlavor";
+                $other_medical_value_key = $observationKey . ".outboundRelationship2.6.observation.value";
+
+
+                // Outcome of Reaction
+                $reaction_outcome_code_key = $observationKey . ".outboundRelationship2.7.observation.code.@code";
+                $reaction_outcome_null_key = $observationKey . ".outboundRelationship2.7.observation.value.@nullFlavor";
+                $reaction_outcome_value_key = $observationKey . ".outboundRelationship2.7.observation.value.@code";
+
+
+                // Medical Confirmation medical_confirmation
+                $medical_confirmation_code_key = $observationKey . ".outboundRelationship2.8.observation.code.@code";
+                $medical_confirmation_null_key = $observationKey . ".outboundRelationship2.8.observation.value.@nullFlavor";
+                $medical_confirmation_value_key = $observationKey . ".outboundRelationship2.8.observation.value";
 
 
                 $start_of_reaction = null;
@@ -732,10 +877,101 @@ class Ce2bsController extends AppController
                 $meddra_code = null;
                 $meddra_version = null;
                 $reaction_name = null;
+
+                $criteria_death_code = $medical_confirmation_code = $reaction_outcome_code = $other_medical_code = $life_hreatening_code = $prolonged_hospitalisation_code = $incapacitating_code = $birth_defect_code = null;
+                $criteria_death_null = $medical_confirmation_null = $reaction_outcome_null = $other_medical_null = $life_hreatening_null = $prolonged_hospitalisation_null = $incapacitating_null = $birth_defect_null = null;
+                $criteria_death_value = $medical_confirmation_value = $reaction_outcome_value = $other_medical_value = $life_hreatening_value = $prolonged_hospitalisation_value = $incapacitating_value = $birth_defect_value = null;
+
+                // medical_confirmation
+                if (isset($flattenedData[$medical_confirmation_code_key])) {
+                    $medical_confirmation_code = $flattenedData[$medical_confirmation_code_key];
+                }
+                if (isset($flattenedData[$medical_confirmation_null_key])) {
+                    $medical_confirmation_null = $flattenedData[$medical_confirmation_null_key];
+                }
+                if (isset($flattenedData[$medical_confirmation_value_key])) {
+                    $medical_confirmation_value = $flattenedData[$medical_confirmation_value_key];
+                }
+                // reaction_outcome
+                if (isset($flattenedData[$reaction_outcome_code_key])) {
+                    $reaction_outcome_code = $flattenedData[$reaction_outcome_code_key];
+                }
+                if (isset($flattenedData[$reaction_outcome_null_key])) {
+                    $reaction_outcome_null = $flattenedData[$reaction_outcome_null_key];
+                }
+                if (isset($flattenedData[$reaction_outcome_value_key])) {
+                    $reaction_outcome_value = $flattenedData[$reaction_outcome_value_key];
+                }
+                // other_medical
+                if (isset($flattenedData[$other_medical_code_key])) {
+                    $other_medical_code = $flattenedData[$other_medical_code_key];
+                }
+                if (isset($flattenedData[$other_medical_null_key])) {
+                    $other_medical_null = $flattenedData[$other_medical_null_key];
+                }
+                if (isset($flattenedData[$other_medical_value_key])) {
+                    $other_medical_value = $flattenedData[$other_medical_value_key];
+                }
+                // birth_defect
+                if (isset($flattenedData[$birth_defect_code_key])) {
+                    $birth_defect_code = $flattenedData[$birth_defect_code_key];
+                }
+                if (isset($flattenedData[$birth_defect_null_key])) {
+                    $birth_defect_null = $flattenedData[$birth_defect_null_key];
+                }
+                if (isset($flattenedData[$birth_defect_value_key])) {
+                    $birth_defect_value = $flattenedData[$birth_defect_value_key];
+                }
+
+
+                if (isset($flattenedData[$incapacitating_code_key])) {
+                    $incapacitating_code = $flattenedData[$incapacitating_code_key];
+                }
+                if (isset($flattenedData[$incapacitating_null_key])) {
+                    $incapacitating_null = $flattenedData[$incapacitating_null_key];
+                }
+                if (isset($flattenedData[$incapacitating_value_key])) {
+                    $incapacitating_value = $flattenedData[$incapacitating_value_key];
+                }
+
+                //   Life Threatening  
+                if (isset($flattenedData[$prolonged_hospitalisation_code_key])) {
+                    $prolonged_hospitalisation_code = $flattenedData[$prolonged_hospitalisation_code_key];
+                }
+                if (isset($flattenedData[$prolonged_hospitalisation_null_key])) {
+                    $prolonged_hospitalisation_null = $flattenedData[$prolonged_hospitalisation_null_key];
+                }
+                if (isset($flattenedData[$prolonged_hospitalisation_value_key])) {
+                    $prolonged_hospitalisation_value = $flattenedData[$prolonged_hospitalisation_value_key];
+                }
+
+
+                //   Life Threatening  
+                if (isset($flattenedData[$life_hreatening_code_key])) {
+                    $life_hreatening_code = $flattenedData[$life_hreatening_code_key];
+                }
+                if (isset($flattenedData[$life_hreatening_null_key])) {
+                    $life_hreatening_null = $flattenedData[$life_hreatening_null_key];
+                }
+                if (isset($flattenedData[$life_hreatening_value_key])) {
+                    $life_hreatening_value = $flattenedData[$life_hreatening_value_key];
+                }
+
+
+
+                if (isset($flattenedData[$criteria_death_null_key])) {
+                    $criteria_death_null = $flattenedData[$criteria_death_null_key];
+                }
+                if (isset($flattenedData[$criteria_death_code_key])) {
+                    $criteria_death_code = $flattenedData[$criteria_death_code_key];
+                }
+                if (isset($flattenedData[$criteria_death_value_key])) {
+                    $criteria_death_value = $flattenedData[$criteria_death_value_key];
+                }
+
                 if (isset($flattenedData[$reaction_name_key])) {
                     $reaction_name = $flattenedData[$reaction_name_key];
                 }
-
                 if (isset($flattenedData[$meddra_version_key])) {
                     $meddra_version = $flattenedData[$meddra_version_key];
                 }
@@ -748,15 +984,64 @@ class Ce2bsController extends AppController
                 if (isset($flattenedData[$locatedPlaceKey])) {
                     $country_of_source = $flattenedData[$locatedPlaceKey];
                 }
-                $observations[] = [
-                    'index' => $index,
-                    'reaction_name' => $reaction_name,
-                    'start_date' => $start_of_reaction,
-                    'meddra_code' => $meddra_code,
-                    'meddra_version' => $meddra_version,
-                    'source_country' => $country_of_source
+                if (isset($flattenedData[$criteria_death_code_key])) {
+                    $criteria_death_code = $flattenedData[$criteria_death_code_key];
+                }
 
-                ];
+                if (!empty($reaction_name)) {
+
+                    if (
+                        $criteria_death_value === 'true' ||
+                        $life_hreatening_value === 'true' ||
+                        $prolonged_hospitalisation_value === 'true' ||
+                        $incapacitating_value === 'true' ||
+                        $birth_defect_value === 'true'
+                    ) {
+                        // Add a new field 'serious' with value 'true'
+                        $serious = 'true';
+                    } else {
+                        // Add a new field 'serious' with value 'false'
+                        $serious = 'false';
+                    }
+
+                    if (!empty($start_of_reaction)) {
+                        $start_of_reaction = $this->generateDesiredDate($start_of_reaction);
+                    }
+                    $observations[] = [
+                        'index' => $index,
+                        'reaction_name' => $reaction_name,
+                        'start_date' => $start_of_reaction,
+                        'meddra_code' => $meddra_code,
+                        'meddra_version' => $meddra_version,
+                        'source_country' => $country_of_source,
+                        'criteria_death_code' => $criteria_death_code,
+                        'criteria_death_null' => $criteria_death_null,
+                        'criteria_death_value' => $criteria_death_value,
+                        'life_hreatening_code' => $life_hreatening_code,
+                        'life_hreatening_null' => $life_hreatening_null,
+                        'life_hreatening_value' => $life_hreatening_value,
+                        'prolonged_hospitalisation_code' => $prolonged_hospitalisation_code,
+                        'prolonged_hospitalisation_null' => $prolonged_hospitalisation_null,
+                        'prolonged_hospitalisation_value' => $prolonged_hospitalisation_value,
+                        'incapacitating_code' => $incapacitating_code,
+                        'incapacitating_null' => $incapacitating_null,
+                        'incapacitating_value' => $incapacitating_value,
+                        'birth_defect_code' => $birth_defect_code,
+                        'birth_defect_null' => $birth_defect_null,
+                        'birth_defect_value' => $birth_defect_value,
+                        'other_medical_code' => $other_medical_code,
+                        'other_medical_null' => $other_medical_null,
+                        'other_medical_value' => $other_medical_value,
+                        'reaction_outcome_code' => $reaction_outcome_code,
+                        'reaction_outcome_null' => $reaction_outcome_null,
+                        'reaction_outcome_value' => $reaction_outcome_value,
+                        'medical_confirmation_code' => $medical_confirmation_code,
+                        'medical_confirmation_null' => $medical_confirmation_null,
+                        'medical_confirmation_value' => $medical_confirmation_value,
+                        'serious' => $serious
+
+                    ];
+                }
                 $index++;
             } else {
                 // Break the loop if the key does not exist
@@ -800,32 +1085,7 @@ class Ce2bsController extends AppController
         return $save_data;
     }
 
-    private function extractSubjectOf2Observations($data)
-    {
-        $observations = [];
-        $index = 0;
 
-        while (true) {
-            $baseKey = "MCCI_IN200100UV01.PORR_IN049016UV.controlActProcess.subject.investigationEvent.component.0.adverseEventAssessment.subject1.primaryRole.subjectOf2.$index";
-            $observationKey = "$baseKey.observation";
-
-            if (isset($data[$observationKey])) {
-                $observation = [];
-                foreach ($data as $key => $value) {
-                    if (strpos($key, $baseKey) === 0) {
-                        $subKey = substr($key, strlen($baseKey) + 1);
-                        $observation[$subKey] = $value;
-                    }
-                }
-                $observations[] = $observation;
-                $index++;
-            } else {
-                break;
-            }
-        }
-
-        return $observations;
-    }
     private function flattenXml($xmlArray)
     {
         $data = [];
@@ -846,7 +1106,15 @@ class Ce2bsController extends AppController
                 if (isset($value['@value'])) {
                     $data[$newKey] = $value['@value'];
                 } else {
-                    $this->recursiveFlatten($value, $data, $newKey);
+
+                    foreach ($value as $subKey => $subValue) {
+                        if (is_array($subValue)) {
+                            $this->recursiveFlatten([$subKey => $subValue], $data, $newKey);
+                        } else {
+                            $data[$newKey . '.' . $subKey] = $subValue;
+                        }
+                    }
+                    // $this->recursiveFlatten($value, $data, $newKey);
                 }
             } else {
                 $data[$newKey] = $value;
@@ -878,15 +1146,14 @@ class Ce2bsController extends AppController
         $this->Session->setFlash(__('The E2b has been created'), 'alerts/flash_success');
         $this->redirect(array('action' => 'edit', $this->Ce2b->id));
     }
-    public function manager_add() {
+    public function manager_add()
+    {
         $this->general_add();
-
-	}
+    }
     public function reporter_add()
     {
 
         $this->general_add();
-        
     }
     public function generateReferenceNumber()
     {
@@ -942,6 +1209,23 @@ class Ce2bsController extends AppController
         $this->general_view($id);
     }
 
+    public function generateDesiredDate($input)
+    {
+
+
+        try {
+            // Create a DateTime object from the input
+            $date = new DateTime($input);
+
+            // Format the DateTime object as YYYY-MM-DD HH:MM:SS
+            $formattedDate = $date->format('Y-m-d H:i:s');
+
+            return $formattedDate;
+        } catch (Exception $e) {
+            // Handle exceptions if the input format is invalid
+            return '';
+        }
+    }
     public function general_view($id = null)
     {
         # code...
@@ -951,8 +1235,6 @@ class Ce2bsController extends AppController
             'contain' => array('Designation', 'Ce2bListOfDrug', 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
-        // debug($ce2b);
-        // exit;
 
         if ($ce2b['Ce2b']['e2b_type'] === "R2") {
 
@@ -984,9 +1266,12 @@ class Ce2bsController extends AppController
             $this->set(['e2b' => $e2b]);
         } else {
 
-            // $e2b = Xml::toArray(Xml::build($ce2b['Ce2b']['e2b_content']));
-            // debug($ce2b);
-            // exit;
+            // Manipulate data retrived:
+
+            // Convert to Unix timestamp (optional step)
+
+            $ce2b['Ce2b']['creation_time'] = $this->generateDesiredDate($ce2b['Ce2b']['creation_time']);
+            $ce2b['Ce2b']['date_first_received'] = $this->generateDesiredDate($ce2b['Ce2b']['date_first_received']);
             $this->set(['ce2b' => $ce2b]);
             // $this->set(['e2b' => $e2b]);
             $this->render('ce2b_r3');

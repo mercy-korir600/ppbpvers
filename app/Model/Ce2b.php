@@ -21,6 +21,8 @@ class Ce2b extends AppModel
 		'end_date' => array('type' => 'query', 'method' => 'dummy'),
 		'reporter_email' => array('type' => 'like', 'encode' => true),
 		'company_name' => array('type' => 'like', 'encode' => true),
+		// 'serious' => array('type' => 'like', 'encode' => true),
+		'serious' => array('type' => 'value'),
 		'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Ce2b.reporter_date as DATE) BETWEEN ? AND ?'),
 		'drug_name' => array('type' => 'query', 'method' => 'findByDrugName', 'encode' => true),
 		'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),

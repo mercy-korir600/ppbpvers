@@ -9,7 +9,7 @@
 					<tr>
 						<td>
 						<?php
-							echo($this->Html->image('header-object.png', array('alt' => 'Adverse Event Following Immunization', 'fullBase' => true)));
+							echo($this->Html->image('coa.png', array('alt' => 'AEFIS', 'fullBase' => true)));
 						?>
 					</td>
 					<td style="text-align: center;">

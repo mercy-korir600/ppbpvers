@@ -396,6 +396,8 @@ class AggregatesController extends AppController
 		));
 		$this->set(['aggregate' => $aggregate]);
 		if (strpos($this->request->url, 'pdf') !== false) {
+			// debug($aggregate);
+			// exit;
 			$this->pdfConfig = array('filename' => 'PSUR_' . $id . '.pdf',  'orientation' => 'portrait');
 			$this->response->download('PSUR_' . $aggregate['Aggregate']['id'] . '.pdf');
 		}

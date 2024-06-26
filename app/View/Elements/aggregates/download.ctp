@@ -8,7 +8,7 @@
                 <div class="row-fluid">
                     <div class="span12">
                         <?php
-                        echo ($this->Html->image('header-object.png', array('alt' => 'in confidence', 'style' => 'margin-left: 45%;', 'fullBase' => true, 'class' => 'pull-right')));
+                        echo ($this->Html->image('coa.png', array('alt' => 'in confidence', 'style' => 'margin-left: 45%;', 'fullBase' => true, 'class' => 'pull-right')));
 
                         // echo $this->Html->image('confidence.png', array('alt' => 'in confidence', 'class' => 'pull-right'));
                         // echo $this->Html->image('coa.png', array('alt' => 'COA', 'style' => 'margin-left: 45%;'));
@@ -227,6 +227,48 @@
                             <p><?php echo $aggregate['Aggregate']['risk_balance'] ?></p>
                         </div>
                     </div>
+                    <?php if (count($aggregate['ExternalComment']) > 0) { ?>
+                        <h5>5 Request for supplementary information</h5>
+                        <div class="row-fluid">
+                            <div class="span11">
+                            <?php
+                                $i = 1;
+                                foreach ($aggregate['ExternalComment'] as $data) : ?>
+
+                                    <p><?php echo $data['content'];?></p>
+
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php  }
+                    if (count($aggregate['ReviewerComment']) > 0) { ?>
+                        <h5>6 Conclusion/Reviewer’s comments</h5>
+                        <div class="row-fluid">
+                            <div class="span11">
+                                <?php
+                                $i = 1;
+                                foreach ($aggregate['ReviewerComment'] as $data) : ?>
+
+<p><?php echo $data['content'];?></p>
+
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php  }
+                    if (count($aggregate['Recommendation']) > 0) { ?>
+                        <h5>7 Recommendations</h5>
+                        <div class="row-fluid">
+                            <div class="span11">
+                            <?php
+                                $i = 1;
+                                foreach ($aggregate['Recommendation'] as $data) : ?>
+
+<p><?php echo $data['content'];?></p>
+
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php } ?>
                 </div>
                 <hr>
 

@@ -9,7 +9,7 @@
 					<tr>
 						<td>
 						<?php
-							echo($this->Html->image('header-object.png', array('alt' => 'SAEFI', 'fullBase' => true)));
+							echo($this->Html->image('coa.png', array('alt' => 'SAEFI', 'fullBase' => true)));
 						?>
 					</td>
 					<td style="text-align: center;">

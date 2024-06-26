@@ -54,7 +54,11 @@ $nchecked = "&#x2610;";
                                 <th>Date First Received from source</th>
                             </tr>
                             <tr>
-                                <td><?php echo $ce2b['Ce2b']['creation_time']; ?></td>
+                                <td><?php
+                                    $dateString = $ce2b['Ce2b']['creation_time'];
+                                    echo $dateString;
+
+                                    ?></td>
                                 <td><?php echo $ce2b['Ce2b']['date_first_received']; ?></td>
                             </tr>
                             <!-- <tr>
@@ -523,12 +527,13 @@ $nchecked = "&#x2610;";
                                 <th>Start Date</th>
                                 <th>MedDRA Code</th>
                                 <!-- <th>MedDRA Version</th> -->
-                                <!-- <th>Results in death</th>
+                                <th>Results in death</th>
                                 <th>Life threatening</th>
                                 <th>Caused / prolonged hospitalization </th>
                                 <th>Disabling / Incapacitating</th>
-                                <th>Congenital anomaly / birth defect</th> -->
+                                <th>Congenital anomaly / birth defect</th>
                                 <th>Occurence Country</th>
+                                <th>Outcome</th>
                             </tr>
                             <?php
 
@@ -539,12 +544,43 @@ $nchecked = "&#x2610;";
                                     <td><?php echo $reaction['start_date'] ?></td>
                                     <td><?php echo $reaction['meddra_code'] ?></td>
                                     <!-- <td></td> -->
-                                    <!-- <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td> -->
+                                    <td><?php if (!empty($reaction['criteria_death_value'])) {
+                                            echo $reaction['criteria_death_value'];
+                                        } else {
+                                            echo  $reaction['criteria_death_null'];
+                                        } ?></td>
+                                    <td><?php if (!empty($reaction['life_hreatening_value'])) {
+                                            echo $reaction['life_hreatening_value'];
+                                        } else {
+                                            echo  $reaction['life_hreatening_null'];
+                                        } ?></td>
+                                    <td><?php if (!empty($reaction['prolonged_hospitalisation_value'])) {
+                                            echo $reaction['prolonged_hospitalisation_value'];
+                                        } else {
+                                            echo  $reaction['prolonged_hospitalisation_null'];
+                                        } ?></td>
+                                    <td><?php if (!empty($reaction['incapacitating_value'])) {
+                                            echo $reaction['incapacitating_value'];
+                                        } else {
+                                            echo  $reaction['incapacitating_null'];
+                                        } ?></td>
+                                    <td><?php if (!empty($reaction['birth_defect_value'])) {
+                                            echo $reaction['birth_defect_value'];
+                                        } else {
+                                            echo  $reaction['birth_defect_null'];
+                                        } ?></td>
                                     <td><?php echo $reaction['source_country'] ?></td>
+                                    <td><?php
+                                        $outcomes = array(
+                                            '1' => 'Recovered/Resolved',
+                                            '2' => 'Recovering/Resolving',
+                                            '3' => 'Recovered/Resolved with sequelae',
+                                            '4,' => 'Not recovered/Not resolved',
+                                            '5' => 'Fatal',
+                                            '6' => 'unknown',
+                                        );
+                                        if (!empty($reaction['reaction_outcome_value'])) echo $outcomes[strtolower($reaction['reaction_outcome_value'])];
+                                        ?></td>
                                 </tr>
 
                                 <!-- 
@@ -620,7 +656,7 @@ $nchecked = "&#x2610;";
                             </tr> -->
                             <?php } ?>
                         </table>
-                        <h5 style="background: #18C4D1; padding:20px;">Criteria</h5>
+                        <!-- <h5 style="background: #18C4D1; padding:20px;">Criteria</h5>
                         <table class="table" style="width: 20%;">
 
                             <tr>
@@ -646,17 +682,17 @@ $nchecked = "&#x2610;";
                             <?php echo ($ce2b['Ce2b']['incapacitating']   ? $ichecked : $nchecked); ?></th>
                             </tr>
 
-                        </table>
+                        </table> -->
 
-                        <h5 style="background: #18C4D1; padding:20px;">Outcome</h5>
+                        <!-- <h5 style="background: #18C4D1; padding:20px;">Outcome</h5>
                         <table class="table" style="width: 20%;">
 
                             <tr> 
                                 <th> 
-                                <?php echo $ce2b['Ce2b']['results_in_detah'];?>
+                                <?php echo $ce2b['Ce2b']['results_in_detah']; ?>
                             </th>
                             </tr>
-                        </table>
+                        </table> -->
                         <!-- <h5 style="background: #18C4D1; padding:20px;">Results of Tests and Procedures Relevant to the Investigation of the Patient</h5>
                         <table class="table" style="width: 100%;"> -->
                         <!-- <tr width="100%">
