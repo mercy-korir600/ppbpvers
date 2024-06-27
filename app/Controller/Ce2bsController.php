@@ -81,12 +81,17 @@ class Ce2bsController extends AppController
         }
         $this->autoRender = false;
     }
-    public function reporter_followup($id=null) {
+    public function reporter_followup($id = null)
+    {
         $this->followup($id);
+    }
+    public function manager_followup($id = null)
+    {
+        $this->followup($id);
+    }
 
-	}
-
-    public function followup($id=null){
+    public function followup($id = null)
+    {
 
         if ($this->request->is('post')) {
             $this->Ce2b->id = $id;
@@ -95,14 +100,14 @@ class Ce2bsController extends AppController
             }
             $ce2b = Hash::remove($this->Ce2b->find(
                 'first',
-                array( 
+                array(
                     'conditions' => array('Ce2b.id' => $id)
                 )
             ), 'Ce2b.id');
- 
-            $data_save = $ce2b['Ce2b'];  
-            $data_save['ce2b_id'] = $id; 
-            $data_save['reference_no'] = $ce2b['Ce2b']['reference_no'];  
+
+            $data_save = $ce2b['Ce2b'];
+            $data_save['ce2b_id'] = $id;
+            $data_save['reference_no'] = $ce2b['Ce2b']['reference_no'];
             $data_save['report_type'] = 'Followup';
             $data_save['submitted'] = 0;
 
@@ -114,7 +119,6 @@ class Ce2bsController extends AppController
                 $this->redirect($this->referer());
             }
         }
-
     }
     public function reporter_index()
     {
@@ -478,6 +482,206 @@ class Ce2bsController extends AppController
     }
     public function general_editor($id = null)
     {
+
+        $this->Ce2b->id = $id;
+        if (!$this->Ce2b->exists()) {
+            throw new NotFoundException(__('Invalid E2b'));
+        }
+        $ce2b = $this->Ce2b->read(null, $id);
+        if ($ce2b['Ce2b']['submitted'] > 1) {
+            $this->Session->setFlash(__('The E2b has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Ce2b->id));
+        }
+        if ($ce2b['Ce2b']['user_id'] !== $this->Auth->user('id')) {
+            $this->Session->setFlash(__('You don\'t have permission to edit this E2b!!'), 'alerts/flash_error');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+        }
+
+        // Start of Post 
+        if ($this->request->is('post') || $this->request->is('put')) {
+
+            $flattenedData = null;
+            $xmlString = null;
+            $validate = false;
+            if (isset($this->request->data['submitReport'])) {
+                $validate = 'first';
+                try {
+
+                    // Manipulate R3
+                    $file = $this->request->data['Ce2b']['e2b_file_data'];
+                    $xmlString = file_get_contents($file['tmp_name']);
+                    $xml = Xml::build($xmlString);
+                    $xmlString = $xml->asXML();
+
+                    $filePath = WWW_ROOT . 'files' . DS . $file['name'];
+                    move_uploaded_file($file['tmp_name'], $filePath);
+
+                    $xmlArray = Xml::toArray(Xml::build($filePath));
+
+                    $declaration1 = '<?xml version="1.0" encoding="utf-8"?>';
+                    $rootElement1 = '<MCCI_IN200100UV01 ITSVersion="XML_1.0" xsi:schemaLocation="urn:hl7-org:v3 http://eudravigilance.ema.europa.eu/XSD/multicacheschemas/MCCI_IN200100UV01.xsd" xmlns="urn:hl7-org:v3" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mif="urn:hl7-org:v3/mif">';
+                    $declaration2 = '<?xml version="1.0" encoding="ISO-8859-1"?>';
+                    $doctype = '<!DOCTYPE ichicsr SYSTEM "http://eudravigilance.ema.europa.eu/dtd/icsr21xml.dtd">';
+                    $rootElement2 = '<ichicsr lang="en">';
+
+                    // Check for the first type
+                    // if (strpos($xmlString, $declaration1) === 0 && strpos($xmlString, $rootElement1, strlen($declaration1)) === strlen($declaration1)) {
+                    //     $this->request->data['Ce2b']['e2b_type'] = "R3";
+                    // }
+                    // // Check for the second type
+                    // elseif (strpos($xmlString, $declaration2) === 0 && strpos($xmlString, $doctype, strlen($declaration2)) === strlen($declaration2) && strpos($xmlString, $rootElement2, strlen($declaration2 . $doctype)) === strlen($declaration2 . $doctype)) {
+                    //     $this->request->data['Ce2b']['e2b_type'] = "R2";
+                    // } 
+
+                    if (strpos($xmlString, 'MCCI_IN200100UV01') !== false) {
+                        $this->request->data['Ce2b']['e2b_type'] = "R3";
+                    }else{
+                        $this->request->data['Ce2b']['e2b_type'] = "R2";
+                    }
+
+                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
+                    $flattenedData = $this->flattenXml($xmlArray);
+                    $reactions = $this->extractObservations($flattenedData);
+                    $criteria = $this->extractCriteria($flattenedData);
+                    $this->request->data['Ce2bReaction'] = $reactions;
+                    $drugs = $this->extractDrugs($flattenedData, count($reactions));
+                    $this->request->data['Ce2bListOfDrug'] = $drugs;
+
+                    $seriousValues = Hash::extract($reactions, '{n}.serious');
+
+                    // Checking if any "serious" value is true
+                    $hasSerious = in_array('true', $seriousValues);
+
+                    $this->request->data['Ce2b']['serious'] = $hasSerious;
+                  
+
+                    // Extract other sections as well::::
+
+
+                } catch (Exception $e) {
+
+                    // Handle R2s
+                    $this->request->data['Ce2b']['e2b_type'] = "R2";
+                }
+            }
+
+            if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+                if (isset($this->request->data['submitReport'])) {
+
+                    try {
+                        //populate other parts::::                       
+
+                        $newReportData = $this->extractReportData($flattenedData);
+
+                        foreach ($newReportData as $key => $value) {
+                            $this->Ce2b->saveField($key, $value, false);
+                        }
+                    } catch (Exception $rr) {
+                        //
+                    }
+
+                    $this->Ce2b->saveField('submitted', 2);
+                    $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));
+                    if (!empty($ce2b['Ce2b']['reference_no']) && $ce2b['Ce2b']['reference_no'] == 'new') {
+                        $count = $this->Ce2b->find('count',  array(
+                            'fields' => 'Ce2b.reference_no',
+                            'conditions' => array(
+                                'Ce2b.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Ce2b.reference_no !=' => 'new'
+                            )
+                        ));
+                        $count++;
+                        $count = ($count < 10) ? "0$count" : $count;
+                        $reference = 'E2B/' . date('Y') . '/' . $count;
+                        $this->Ce2b->saveField('reference_no', $reference);
+                    }
+
+                    $ce2b = $this->Ce2b->read(null, $id);
+
+                    //******************       Send Email and Notifications to Reporter and Managers          *****************************
+                    $this->loadModel('Message');
+                    $html = new HtmlHelper(new ThemeView());
+                    $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_ce2b_submit')));
+                    $variables = array(
+                        'name' => $this->Auth->User('name'), 'reference_no' => $ce2b['Ce2b']['reference_no'],
+                        'reference_link' => $html->link(
+                            $ce2b['Ce2b']['reference_no'],
+                            array('controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id'], 'reporter' => true, 'full_base' => true),
+                            array('escape' => false)
+                        ),
+                        'modified' => $ce2b['Ce2b']['modified']
+                    );
+                    $datum = array(
+                        'email' => $ce2b['Ce2b']['reporter_email'],
+                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_ce2b_submit', 'model' => 'Ce2b',
+                        'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                        'message' => CakeText::insert($message['Message']['content'], $variables)
+                    );
+
+                    $this->loadModel('Queue.QueuedTask');
+                    $this->QueuedTask->createJob('GenericEmail', $datum);
+                    $this->QueuedTask->createJob('GenericNotification', $datum);
+
+
+                    //Send SMS
+                    // if (!empty($ce2b['Ce2b']['reporter_phone']) && strlen(substr($ce2b['Ce2b']['reporter_phone'], -9)) == 9 && is_numeric(substr($ce2b['Ce2b']['reporter_phone'], -9))) {
+                    //     $datum['phone'] = '254' . substr($ce2b['Ce2b']['reporter_phone'], -9);
+                    //     $variables['reference_url'] = Router::url(['controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id'], 'reporter' => true, 'full_base' => true]);
+                    //     $datum['sms'] = CakeText::insert($message['Message']['sms'], $variables);
+                    //     $this->QueuedTask->createJob('GenericSms', $datum);
+                    // }
+
+                    //Notify managers
+                    $users = $this->Ce2b->User->find('all', array(
+                        'contain' => array(),
+                        'conditions' => array(
+                            'User.group_id' => 2,
+                            'User.is_active' => '1'
+                        )
+                    ));
+                    foreach ($users as $user) {
+                        $variables = array(
+                            'name' => $user['User']['name'], 'reference_no' => $ce2b['Ce2b']['reference_no'],
+                            'reference_link' => $html->link(
+                                $ce2b['Ce2b']['reference_no'],
+                                array('controller' => 'Ce2bs', 'action' => 'view', $ce2b['Ce2b']['id'], 'manager' => true, 'full_base' => true),
+                                array('escape' => false)
+                            ),
+                            'modified' => $ce2b['Ce2b']['modified']
+                        );
+                        $datum = array(
+                            'email' => $user['User']['email'],
+                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_ce2b_submit', 'model' => 'Ce2b',
+                            'subject' => CakeText::insert($message['Message']['subject'], $variables),
+                            'message' => CakeText::insert($message['Message']['content'], $variables)
+                        );
+
+                        $this->QueuedTask->createJob('GenericEmail', $datum);
+                        $this->QueuedTask->createJob('GenericNotification', $datum);
+                    }
+                    // **********************************    END   *********************************
+
+                    $this->Session->setFlash(__('The E2b has been submitted to PPB'), 'alerts/flash_success');
+                    $this->redirect(array('action' => 'view', $this->Ce2b->id));
+                }
+                $this->Session->setFlash(__('The E2b has been saved'), 'alerts/flash_success');
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('The E2b could not be saved. Please review the error(s) and resubmit and try again.'), 'alerts/flash_error');
+            }
+        } else {
+            $this->request->data = $this->Ce2b->read(null, $id);
+        }
+        // End of Post
+        $counties = $this->Ce2b->County->find('list', array('order' => array('County.county_name' => 'ASC')));
+        $this->set(compact('counties'));
+        $sub_counties = $this->Ce2b->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
+        $this->set(compact('sub_counties'));
+        $designations = $this->Ce2b->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
+        $this->set(compact('designations'));
+    }
+
+    public function general_editor_separate($id = null)
+    {
         # code...
         $this->Ce2b->id = $id;
         if (!$this->Ce2b->exists()) {
@@ -499,7 +703,7 @@ class Ce2bsController extends AppController
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
-                if ($this->request->data['Ce2b']['e2b_type'] == "R3") {
+                try {
                     $file = $this->request->data['Ce2b']['e2b_file_data'];
                     $xmlString = file_get_contents($file['tmp_name']);
                     $xml = Xml::build($xmlString);
@@ -522,20 +726,14 @@ class Ce2bsController extends AppController
                     $hasSerious = in_array('true', $seriousValues);
 
                     $this->request->data['Ce2b']['serious'] = $hasSerious;
-                    // debug($hasSerious);
-                    // debug($reactions);
-                    // // debug(count($reactions));
-                    // // debug($criteria);
-                    // debug($flattenedData);
-                    // exit;
-
-                    // debug($this->request->data);
-                    // exit;
+                    $this->request->data['Ce2b']['e2b_type'] = "R3";
+                } catch (Exception $e) {
+                    $this->request->data['Ce2b']['e2b_type'] = "R2";
                 }
             }
             if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
-                    if ($this->request->data['Ce2b']['e2b_type'] == "R2") {
+                    try {
                         try {
                             $file = $this->request->data['Ce2b']['e2b_file_data'];
                             $xmlString = file_get_contents($file['tmp_name']);
@@ -566,37 +764,37 @@ class Ce2bsController extends AppController
                             $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                             $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                         }
-                    } else {
+                    } catch (Exception $r) {
 
                         /**Dealing with R3 */
+                        try {
 
-                        $file = $this->request->data['Ce2b']['e2b_file_data'];
+                            $file = $this->request->data['Ce2b']['e2b_file_data'];
 
-                        // Check if file was uploaded successfully
-                        if ($file['error'] === UPLOAD_ERR_OK) {
-                            $xmlFilePath = $file['tmp_name']; // Temporary file path
-                            // $data = $this->parseE2BReport($xmlFilePath);
-                            try {
+                            // Check if file was uploaded successfully
+                            if ($file['error'] === UPLOAD_ERR_OK) {
+                                $xmlFilePath = $file['tmp_name']; // Temporary file path
+                                // $data = $this->parseE2BReport($xmlFilePath);
+                                try {
 
-                                $newReportData = $this->extractReportData($flattenedData);
+                                    $newReportData = $this->extractReportData($flattenedData);
 
-                                foreach ($newReportData as $key => $value) {
-                                    $this->Ce2b->saveField($key, $value, false);
+                                    foreach ($newReportData as $key => $value) {
+                                        $this->Ce2b->saveField($key, $value, false);
+                                    }
+                                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
+                                } catch (Exception $e) {
+                                    $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
+                                    $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                                 }
-                                $this->Ce2b->saveField('e2b_content', $xmlString, false);
-                            } catch (Exception $e) {
+                                // }
+                            } else {
                                 $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
                                 $this->redirect(array('action' => 'edit', $this->Ce2b->id));
                             }
-                            // }
-                        } else {
-                            $this->Session->setFlash(__('Whoops! experienced problems uploading file. Please try again later'), 'alerts/flash_error');
-                            $this->redirect(array('action' => 'edit', $this->Ce2b->id));
+                        } catch (Exception $rr) {
                         }
                     }
-
-                    //lucian
-                    // if(empty($ce2b->reference_no)) {
 
                     $this->Ce2b->saveField('submitted', 2);
                     $this->Ce2b->saveField('submitted_date', date("Y-m-d H:i:s"));

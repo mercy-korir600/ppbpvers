@@ -268,6 +268,10 @@ echo $this->Session->flash();
                                     array('controller' => 'ce2bs', 'action' => 'vigiflow', $ce2b['Ce2b']['id'], 'manager' => false),
                                     array('escape' => false)
                                   );
+
+                                  //Create a follow up as a manager
+                                  echo "&nbsp;";
+                                  if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'ce2bs', 'action' => 'followup', $ce2b['Ce2b']['id']), array('escape' => false), __('Add a followup report?'));
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

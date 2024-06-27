@@ -193,12 +193,12 @@ class Ce2b extends AppModel
 				'message'  => 'Please specify the reporter_email'
 			),
 		),
-		'e2b_type' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please specify the Type Format'
-			),
-		),
+		// 'e2b_type' => array(
+		// 	'notBlank' => array(
+		// 		'rule'     => 'notBlank',
+		// 		'required' => true,
+		// 		'message'  => 'Please specify the Type Format'
+		// 	),
+		// ),
 	);
 }

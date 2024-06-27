@@ -72,25 +72,7 @@ $this->Html->script('ce2b', array('inline' => false));
                         )
                     ));
                     
-                    echo $this->Form->input('e2b_type', array(
-                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'error' => false, 'class' => 'serious',
-                        'before' => '<div class="control-group"> <div class="required"> <label class="control-label required">Report Format <span style="color:red;">*</span></label> </div>
-                                            <div class="controls"> <label class="radio inline">',
-                        'after' => '</label>',
-                        'options' => array('R2' => 'R2'),
-                    ));
-                    echo $this->Form->input('e2b_type', array(
-                        'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'serious',
-                        'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
-                        'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
-                        'before' => '<label class="radio inline">',
-                        'after' => '</label> 
-                                        <span class="help-inline" style="padding-top: 5px;"> <a class="tooltipper" data-original-title="Clears the checked value"
-                                        onclick="$(\'.serious,.serious_yes\').removeAttr(\'checked disabled\')">
-                                        <em class="accordion-toggle">clear!</em></a> </span>
-                                        </div> </div>',
-                        'options' => array('R3' => 'R3'),
-                    ));
+            
                    
                     echo $this->Form->input('e2b_file_data', array(
                         'label' => array(
