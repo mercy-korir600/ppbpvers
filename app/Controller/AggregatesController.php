@@ -164,7 +164,46 @@ class AggregatesController extends AppController
 
 		return $response;
 	}
+	public function manager_copy($id = null)
+	{
+		if ($this->request->is('post')) {
+			$this->Aggregate->id = $id;
+			if (!$this->Aggregate->exists()) {
+				throw new NotFoundException(__('Invalid Aggregate Report'));
+			}
+			$this->generate_copy($id);
+		}
+	}
 
+	public function generate_copy($id)
+	{
+		# code...
+		$aggregate = Hash::remove($this->Aggregate->find(
+			'first',
+			array(
+				'conditions' => array('Aggregate.id' => $id)
+			)
+		), 'Aggregate.id');
+
+		if ($aggregate['Aggregate']['copied']) {
+			$this->Session->setFlash(__('A clean copy already exists. Click on edit to update changes.'), 'alerts/flash_error');
+			return $this->redirect(array('action' => 'index'));
+		}
+		$data_save = $aggregate['Aggregate'];
+		$data_save['aggregate_id'] = $id;
+		$data_save['user_id'] = $this->Auth->User('id');
+		$this->Aggregate->saveField('copied', 1);
+		$data_save['copied'] = 2;
+		$data_save['submitted'] = 1;
+
+		if ($this->Aggregate->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
+			$this->Session->setFlash(__('Clean copy of ' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
+			$this->redirect(array('action' => 'edit', $this->Aggregate->id));
+		} else {
+			$this->Session->setFlash(__('The clean copy could not be created. Please, try again.'), 'alerts/flash_error');
+			$this->redirect($this->referer());
+		}
+	}
 	public function reporter_followup($id = null)
 	{
 		if ($this->request->is('post')) {
@@ -191,6 +230,7 @@ class AggregatesController extends AppController
 			$count = ($count < 10) ? "0$count" : $count;
 			$data_save['reference_no'] = $aggregate['Aggregate']['reference_no']; //.'_F'.$count;
 			$data_save['report_type'] = 'Followup';
+			$data_save['copied'] = '0';
 			$data_save['submitted'] = 0;
 
 			if ($this->Aggregate->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
@@ -244,11 +284,12 @@ class AggregatesController extends AppController
 						$this->Session->setFlash(__('Please upload at least one file.'), 'alerts/flash_error');
 						$this->redirect($this->referer());
 					}
+					$this->Aggregate->saveField('submitted', 2);
+					$this->Aggregate->saveField('submitted_date', date("Y-m-d H:i:s"));
+
 					if (!empty($aggregate['Aggregate']['reference_no']) && $aggregate['Aggregate']['reference_no'] == 'new') {
 						$reference = $this->generateReferenceNumber();
 						$this->Aggregate->saveField('reference_no', $reference);
-						$this->Aggregate->saveField('submitted', 2);
-						$this->Aggregate->saveField('submitted_date', date("Y-m-d H:i:s"));
 					}
 
 					$aggregate = $this->Aggregate->read(null, $id);
@@ -392,12 +433,21 @@ class AggregatesController extends AppController
 	{
 		$aggregate = $this->Aggregate->find('first', array(
 			'conditions' => array('Aggregate.id' => $id),
-			'contain' => array('Designation', 'AggregateListOfSignal', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewerComment', 'ReviewerComment.Attachment', 'Recommendation', 'Recommendation.Attachment')
+			'contain' => array('Designation', 'AggregateListOfSignal', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewerComment', 'ReviewerComment.Attachment', 'Recommendation', 'Recommendation.Attachment', 'ReviewerAggregate','ReviewerAggregate.AggregateListOfSignal','ReviewerAggregate.Designation','ReviewerAggregate.Attachment', 'ReviewerAggregate.Recommendation')
 		));
-		$this->set(['aggregate' => $aggregate]);
-		if (strpos($this->request->url, 'pdf') !== false) {
-			// debug($aggregate);
+		// debug($aggregate);
+		// exit;
+		if(!empty($aggregate['ReviewerAggregate'])){
+			$summary= $aggregate['ReviewerAggregate'][0];
+			// debug($summary);
 			// exit;
+			$this->set(['summary' =>$summary]);
+		}
+
+		$this->set(['aggregate' => $aggregate]);
+		
+		if (strpos($this->request->url, 'pdf') !== false) {
+
 			$this->pdfConfig = array('filename' => 'PSUR_' . $id . '.pdf',  'orientation' => 'portrait');
 			$this->response->download('PSUR_' . $aggregate['Aggregate']['id'] . '.pdf');
 		}
@@ -449,7 +499,7 @@ class AggregatesController extends AppController
 
 			$validate = false;
 			if (isset($this->request->data['submitReport'])) {
-				
+
 
 				// debug($this->request->data);
 				// exit;
@@ -492,7 +542,7 @@ class AggregatesController extends AppController
 				} else {
 					$this->Session->setFlash(__($message), 'alerts/flash_error');
 				}
-			 }
+			}
 		} else {
 			$this->request->data = $this->Aggregate->read(null, $id);
 		}

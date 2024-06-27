@@ -178,7 +178,7 @@ class Ce2bsController extends AppController
         $this->paginate['order'] = array('Ce2b.created' => 'desc');
         $this->set('ce2bs', Sanitize::clean($this->paginate(), array('encode' => false)));
         $this->set('page_options', $this->page_options);
-    }
+    } 
     public function download($id = null)
     {
         $this->Ce2b->id = $id;
