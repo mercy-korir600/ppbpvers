@@ -228,18 +228,18 @@ echo $this->Session->flash();
                             }
                             ?>&nbsp;
                         </td>
-                        <td><?php echo h($ce2b['Ce2b']['company_name']); 
-                        if ($ce2b['Ce2b']['report_type'] == 'Followup') {
-                            echo "<br> <b>Initial:</b> "; 
-                            echo $this->Html->link(
-                              '<label class="label label-info">' . $ce2b['Ce2b']['reference_no'] . '</label>',
-                              array('action' => 'view', $ce2b['Ce2b']['ce2b_id']),
-                              array('escape' => false)
-                            );
-                          }
-                        
-                        
-                        ?>&nbsp;</td>
+                        <td><?php echo h($ce2b['Ce2b']['company_name']);
+                            if ($ce2b['Ce2b']['report_type'] == 'Followup') {
+                                echo "<br> <b>Initial:</b> ";
+                                echo $this->Html->link(
+                                    '<label class="label label-info">' . $ce2b['Ce2b']['reference_no'] . '</label>',
+                                    array('action' => 'view', $ce2b['Ce2b']['ce2b_id']),
+                                    array('escape' => false)
+                                );
+                            }
+
+
+                            ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['reporter_email']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['e2b_type']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['created']); ?>&nbsp;</td>
@@ -267,11 +267,11 @@ echo $this->Session->flash();
                                     '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                                     array('controller' => 'ce2bs', 'action' => 'vigiflow', $ce2b['Ce2b']['id'], 'manager' => false),
                                     array('escape' => false)
-                                  );
+                                );
 
-                                  //Create a follow up as a manager
-                                  echo "&nbsp;";
-                                  if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'ce2bs', 'action' => 'followup', $ce2b['Ce2b']['id']), array('escape' => false), __('Add a followup report?'));
+                                //Create a follow up as a manager
+                                echo "&nbsp;";
+                                if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'ce2bs', 'action' => 'followup', $ce2b['Ce2b']['id']), array('escape' => false), __('Add a followup report?'));
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',

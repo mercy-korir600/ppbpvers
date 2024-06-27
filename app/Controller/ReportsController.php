@@ -81,13 +81,154 @@ class ReportsController extends AppController
             'e2b_summary',
             's_summary',
             'd_aefi_analytics',
-            'd_sadr_analytics'
+            'd_sadr_analytics',
+            'general'
         );
         if ($this->RequestHandler->isMobile()) {
             // $this->layout = 'Emails/html/default';
             $this->is_mobile = true;
         }
         $this->set('is_mobile', $this->is_mobile);
+    }
+    public function general()
+    {
+        $this->Prg->commonProcess();
+        $criteria['Sadr.submitted'] = array(1, 2);
+        $criteria['Sadr.copied !='] = '1';
+        $criteria['Sadr.deleted'] = false;
+        $criteria['Sadr.archived'] = false;
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Sadr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+
+        $id_arrays = array();
+
+
+        $sadrsIds = $this->Sadr->find('list', array(
+            'fields' => array('Sadr.id'),
+            'conditions' => $criteria
+        ));
+        $sadrsIds = array_keys($sadrsIds);
+
+        if (!empty($this->request->data['Report']['suspected_drug'])) {
+
+            $ids = $this->generate_reports_per_reaction($this->request->data['Report']['suspected_drug'], $sadrsIds);
+            if (!empty($ids)) {
+                foreach ($ids as $key => $value) {
+                    $id_arrays[] = $key;
+                }
+            }
+            $criteria['Sadr.id'] = $id_arrays;
+        }
+
+        // Get All SADRs by Reaction
+        $criteria['Sadr.reaction !='] = '';
+        if (!empty($this->request->data['Report']['suspected_drug'])) {
+            $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
+                'fields' => array(
+                    'SadrListOfDrug.drug_name as drug_name',
+                    'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'
+                ),
+                'conditions' => array(
+                    'SadrListOfDrug.sadr_id' => $id_arrays,
+                    'SadrListOfDrug.drug_name' => $this->request->data['Report']['suspected_drug']
+                ),
+                'group' => array('SadrListOfDrug.drug_name'),
+                'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
+            ));
+        } else {
+            $suspected = $this->Sadr->SadrListOfDrug->find('all', array(
+                'fields' => array(
+                    'SadrListOfDrug.drug_name as drug_name',
+                    'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'
+                ),
+                'conditions' => array(
+                    'SadrListOfDrug.sadr_id' => $sadrsIds,
+                ),
+                'group' => array('SadrListOfDrug.drug_name'),
+                'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
+            ));
+        }
+
+        $inputData = [];
+        $total_report_count = count($sadrsIds);
+        $reactionLists = $this->generate_reaction_list($sadrsIds);
+
+        foreach ($suspected as $vc) {
+            $current_drug_name = $vc['SadrListOfDrug']['drug_name'];
+            $drug_related_reports = $vc[0]['cnt'];
+            $reactionDetails = [];
+            foreach ($reactionLists as $reactionName) {
+
+                $reactionCount = count($this->get_sadr_reports_with_reaction($reactionName));
+                $drugReactionCount = count($this->get_sadr_reports_with_drug_and_reaction($reactionName, $current_drug_name, $sadrsIds));
+
+
+                // Calculating Expected Counts
+                // $expected_count = (($drug_related_reports +  $drugReactionCount) * ($reactionCount + $drugReactionCount)) / $total_report_count;
+                $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
+                $expected_count = round($expected_count_raw, 5);
+
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
+
+                // Observed vs. Expected -> IC (Information Component):
+
+                $calculated_log_data_raw = log($calculated_data, 2);
+                $calculated_log_data = round($calculated_log_data_raw, 5);
+
+                //Confidence Interval for IC
+
+                /**
+                 * 
+                 * Var(IC)= 1/(AB+0.5) + 1/(A−AB+0.5) + 1/(B−AB+0.5)  + 1/(N−A−B+AB+0.5)​
+
+                 */
+
+                $variance_of_ic_raw = 1 / ($numerator) + 1 / ($drug_related_reports - $drugReactionCount + 0.5) + 1 / ($reactionCount - $drugReactionCount + 0.5) + 1 / ($total_report_count - $drug_related_reports - $reactionCount + $drugReactionCount + 0.5);
+
+                $variance_of_ic = round($variance_of_ic_raw, 5);
+                // $variance_of_ic_first = (1 / $numerator) + (1 / $denominator);
+                // $constant = 0.4804530139182;
+
+                // $variance_of_ic = (1 / $constant) * $variance_of_ic_first;
+                // Standard Error (SE) of IC:
+                /*
+                SE(IC)= Var(IC)
+                */
+                $standard_error = sqrt($variance_of_ic);
+
+                /**
+                 * 95% Confidence Interval: -> Lower Bound(IC025)=IC−1.96×SE(IC)
+                 * */
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
+
+                $reactionDetails[] = array(
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' => $drugReactionCount,
+                    'reaction_at_hand' => $reactionName,
+                    'E_(AB)_expected_count' => $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
+                );
+            }
+
+            $inputData[] = array(
+                'current_drug_name' => $current_drug_name,
+                'N_total_reports' => $total_report_count,
+                'A_reports_with_drug' => $drug_related_reports,
+                'reactionDetails' => $reactionDetails
+            );
+        }
+        // debug($reactionDetails);
+        // exit;
+        $total = $total_report_count;
+        $this->set(compact('inputData'));
+        $this->set(compact('total'));
+        $this->set('_serialize', 'inputData', 'total');
     }
     public function d_aefi_analytics()
     {
@@ -288,8 +429,7 @@ class ReportsController extends AppController
                 'reactionDetails' => $reactionDetails
             );
         }
-        // debug($inputData);
-        // exit;
+
         $total = $total_report_count;
 
 
@@ -371,11 +511,11 @@ class ReportsController extends AppController
             $reactionDetails = [];
             foreach ($reactionLists as $reactionName) {
 
-                $reactionCount= count($this->get_sadr_reports_with_reaction($reactionName));
-                $drugReactionCount= count($this->get_sadr_reports_with_drug_and_reaction($reactionName, $current_drug_name, $sadrsIds));
+                $reactionCount = count($this->get_sadr_reports_with_reaction($reactionName));
+                $drugReactionCount = count($this->get_sadr_reports_with_drug_and_reaction($reactionName, $current_drug_name, $sadrsIds));
 
 
-                 // Calculating Expected Counts
+                // Calculating Expected Counts
                 // $expected_count = (($drug_related_reports +  $drugReactionCount) * ($reactionCount + $drugReactionCount)) / $total_report_count;
                 $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
                 $expected_count = round($expected_count_raw, 5);

@@ -201,7 +201,12 @@ echo $this->Session->flash();
                                     array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id']),
                                     array('escape' => false)
                                 );
+                                echo "&nbsp;";
+                                if ($redir == 'reporter'  and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'aggregates', 'action' => 'followup', $aggregate['Aggregate']['id']), array('escape' => false), __('Add a followup report?'));
+                                
 
+                                echo "&nbsp;";
+                                if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'aggregates', 'action' => 'followup', $aggregate['Aggregate']['id']), array('escape' => false), __('Add a followup report?'));
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
