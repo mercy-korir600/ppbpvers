@@ -304,12 +304,12 @@ echo $this->Session->flash();
                                     array('controller' => 'ce2bs', 'action' => 'edit', $ce2b['Ce2b']['id']),
                                     array('escape' => false)
                                 );
-                                echo "&nbsp;";
-                                if ($redir == 'reporter') echo $this->Html->link(
-                                    '<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
-                                    array('controller' => 'ce2bs', 'action' => 'delete', $ce2b['Ce2b']['id']),
-                                    array('escape' => false)
-                                );
+                                echo "&nbsp;"; 
+                                if (($redir == 'reporter' || $redir == 'manager') && $ce2b['Ce2b']['submitted'] == 0) {
+                                    echo "&nbsp;";
+                                    echo $this->Form->postLink('<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>', array('controller' => 'ce2bs', 'action' => 'delete', $ce2b['Ce2b']['id']), array('escape' => false), __('Are you sure you want to delete this report?
+                                    Note: This action cannot be undone.'));
+                                  }
                                 echo "&nbsp;";
                                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',

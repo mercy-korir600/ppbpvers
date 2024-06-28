@@ -1,7 +1,7 @@
 <?php
 $this->assign('AGGREGATE', 'active');
 $this->Html->script('jquery/combobox', array('inline' => false));
-// $this->Html->script('aggregate', array('inline' => false));
+$this->Html->script('psur', array('inline' => false));
 $this->Html->script('ckeditor/ckeditor', array('inline' => false));
 $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 ?>
@@ -347,6 +347,16 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                             'after' => '<p class="help-block"> </p></div>',
                                         )
                                     );
+
+                                    echo $this->Form->input(
+                                        'recommendation',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label ', 'text' => '5 Conclusions and Recommendations <span style="color:red;">*</span>'),
+                                            'after' => '<p class="help-block"> </p></div>',
+                                        )
+                                    );
                                     ?>
 
 
@@ -359,7 +369,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
                             <?php
                             
-                            if($this->request->data['Aggregate']['manager_initiated']){
+                            // if($this->request->data['Aggregate']['manager_initiated']){
                             
                             ?>
                             <div style="margin: 10px;">
@@ -383,7 +393,8 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                 </div>
                             </div>
 
-                            <?php } ?>
+                            <?php
+                            // } ?>
 
                             <!-- End of Attachements -->
 
@@ -570,17 +581,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                         'div' => false,
                     ));
                     ?>
-                    <?php
-
-
-                    // echo $this->Form->button('<i class="fa fa-paper-plane-o" aria-hidden="true"></i> Submit', array(
-                    //     'name' => 'saveNewChanges',
-                    //     'onclick' => "return confirm('Are you sure you wish to submit the report?');",
-                    //     'class' => 'btn btn-primary btn-block mapop',
-                    //     'id' => 'AggregateSubmitReport', 'title' => 'Save and Submit Report',
-                    //     'data-content' => 'Submit report for peer review and approval.',
-                    //     'div' => false,
-                    // ));
+                    <?php 
                     ?>
                     <br>
                     <hr>
@@ -604,7 +605,9 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                         array('controller' => 'users', 'action' => 'dashboard'),
                         array('escape' => false, 'class' => 'btn btn-danger btn-block')
                     );
-                    ?>
+
+                ?>
+                    
                 </div>
             </div>
         </div>
@@ -626,6 +629,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
     CKEDITOR.replace('data[Aggregate][safety_concerns]');
     CKEDITOR.replace('data[Aggregate][risks_evaluation]');
     CKEDITOR.replace('data[Aggregate][risks_characterisation]');
-    CKEDITOR.replace('data[Aggregate][benefit_evaluation]');
+    CKEDITOR.replace('data[Aggregate][benefit_evaluation]'); 
     CKEDITOR.replace('data[Aggregate][risk_balance]');
+    CKEDITOR.replace('data[Aggregate][recommendation]');
 </script>

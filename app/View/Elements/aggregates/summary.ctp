@@ -240,6 +240,12 @@ $nchecked = "&#x2610;";
                         </div>
                     </div>
 
+                    <h5>5 Recommendation</h5>
+                    <div class="row-fluid">
+                        <div class="span11">
+                            <p><?php echo $summary['recommendation'] ?></p>
+                        </div>
+                    </div>
                 </div>
                 <hr>
 

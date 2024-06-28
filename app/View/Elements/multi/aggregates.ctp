@@ -4,7 +4,7 @@
 <div class="row-fluid">
 	<div class="span12">
 		<h5><i class="fa fa-picture-o" aria-hidden="true"></i> Please upload the complete report here, if you have additional files, click on the button to add them:<br>
-		<?php echo $examples;?> 
+		<p class="help-block" style="font-size:12px"><?php echo $examples;?> </p>
 			<button type="button" class="btn btn-warning btn-mini" id="addAttachment">&nbsp;<i class="icon-plus"></i>&nbsp;</button>
 		</h5>
 	    	<table id="buildattachmentsform" class="table table-bordered table-condensed table-striped" data-model=<?php echo $model;?> data-group=<?php echo $group;?> >

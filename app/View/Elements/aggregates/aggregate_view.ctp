@@ -238,7 +238,12 @@ $nchecked = "&#x2610;";
                             <p><?php echo $aggregate['Aggregate']['risk_balance'] ?></p>
                         </div>
                     </div>
-
+                    <h5>5 Recommendation</h5>
+                    <div class="row-fluid">
+                        <div class="span11">
+                            <p><?php echo $aggregate['Aggregate']['recommendation'] ?></p>
+                        </div>
+                    </div>
                 </div>
                 <hr>
 

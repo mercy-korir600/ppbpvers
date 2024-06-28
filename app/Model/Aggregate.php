@@ -15,7 +15,9 @@ class Aggregate extends AppModel
 
 	public $actsAs = array('Containable', 'Search.Searchable');
 	public $filterArgs = array(
-		'protocol_no' => array('type' => 'like', 'encode' => true),
+		'reference_no' => array('type' => 'like', 'encode' => true),
+		'brand_name' => array('type' => 'like', 'encode' => true),
+		'inn_name' => array('type' => 'like', 'encode' => true),
 	);
 
 	public function dummy($data = array())
@@ -29,20 +31,7 @@ class Aggregate extends AppModel
 	 */
 	public $validate = array(
 
-		'summary_available' => array(
-			'notBlank' => array(
-				'rule'     => 'notBlank',
-				'required' => true,
-				'message'  => 'Please specify if summary is available'
-			),
-		),
-		// 'brand_name' => array(
-		// 	'notBlank' => array(
-		// 		'rule'     => 'notBlank',
-		// 		'required' => true,
-		// 		'message'  => 'Please provide a brand_name'
-		// 	),
-		// ),
+	 
 		'brand_name' => array(
 			'seriousYes' => array(
 				'rule'     => 'seriousYes',
@@ -93,13 +82,13 @@ class Aggregate extends AppModel
 				'message'  => 'Please provide the name of the reporter'
 			),
 		),
-		// 'reporter_date' => array(
-		//     'notBlank' => array(
-		//         'rule'     => 'notBlank',
-		//         'required' => true,
-		//         'message'  => 'Please provide the date of submission of the report'
-		//     ),
-		// ),
+		'reporter_date' => array(
+		    'notBlank' => array(
+		        'rule'     => 'notBlank',
+		        'required' => true,
+		        'message'  => 'Please provide the date of submission of the report'
+		    ),
+		),
 		'reporter_email' => array(
 			'notBlank' => array(
 				'rule'     => 'email',
@@ -107,28 +96,28 @@ class Aggregate extends AppModel
 				'message'  => 'Please provide a valid email address'
 			),
 		),
-		// 'reporter_phone' => array(
-		//     'notBlank' => array(
-		//         'rule'     => 'notBlank',
-		//         'required' => true,
-		//         'message'  => 'Please provide a valid phone number'
-		//     ),
-		// ),
-		//ensure reporter phone is numeric and 10 digits
-		// 'reporter_phone' => array(
-		//     'numeric' => array(
-		//         'rule' => array('numeric'),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		//     'minLength' => array(
-		//         'rule' => array('minLength', 10),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		//     'maxLength' => array(
-		//         'rule' => array('maxLength', 12),
-		//         'message' => 'Please provide a valid phone number',
-		//     ),
-		// ),
+		'reporter_phone' => array(
+		    'notBlank' => array(
+		        'rule'     => 'notBlank',
+		        'required' => true,
+		        'message'  => 'Please provide a valid phone number'
+		    ),
+		),
+		// ensure reporter phone is numeric and 10 digits
+		'reporter_phone' => array(
+		    'numeric' => array(
+		        'rule' => array('numeric'),
+		        'message' => 'Please provide a valid phone number',
+		    ),
+		    'minLength' => array(
+		        'rule' => array('minLength', 10),
+		        'message' => 'Please provide a valid phone number',
+		    ),
+		    'maxLength' => array(
+		        'rule' => array('maxLength', 12),
+		        'message' => 'Please provide a valid phone number',
+		    ),
+		),
 
 	);
 
@@ -185,6 +174,13 @@ class Aggregate extends AppModel
 		'Designation' => array(
 			'className' => 'Designation',
 			'foreignKey' => 'designation_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'ParentAggregate' => array(
+			'className' => 'Aggregate',
+			'foreignKey' => 'aggregate_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

@@ -1,3 +1,12 @@
+<?php
+$this->assign('ParentAggregate', 'active');
+$ichecked = "&#x2611;";
+$nchecked = "&#x2610;";
+?>
+
+<!-- ParentAggregate
+    ================================================== -->
+
 <div class="row-fluid" id="abonokode">
     <div class="span12">
 
@@ -8,10 +17,8 @@
                 <div class="row-fluid">
                     <div class="span12">
                         <?php
-                        echo ($this->Html->image('coa.png', array('alt' => 'in confidence', 'style' => 'margin-left: 45%;', 'fullBase' => true, 'class' => 'pull-right')));
-
-                        // echo $this->Html->image('confidence.png', array('alt' => 'in confidence', 'class' => 'pull-right'));
-                        // echo $this->Html->image('coa.png', array('alt' => 'COA', 'style' => 'margin-left: 45%;'));
+                        echo $this->Html->image('confidence.png', array('alt' => 'in confidence', 'class' => 'pull-right'));
+                        echo $this->Html->image('coa.png', array('alt' => 'COA', 'style' => 'margin-left: 45%;'));
                         ?>
                         <div class="babayao" style="text-align: center;">
                             <h4>MINISTRY OF HEALTH</h4>
@@ -25,121 +32,124 @@
                 </div>
 
                 <table class="table" style="width: 100%;">
-
                     <tr>
+                    </tr>
+                    <tr>
+                        <td style="width: 10%;">COMPANY NAME: </td>
+                        <td style="width: 25%;">
+                            <p><strong><?php echo $aggregate['ParentAggregate']['company_name'] ?></strong></p>
+                        </td>
                         <td style="width: 10%;">REPORT ID: </td>
                         <td style="width: 20%;">
-                            <p><strong><?php echo $aggregate['Aggregate']['reference_no'] ?></strong></p>
+                            <p><strong><?php echo $aggregate['ParentAggregate']['reference_no'] ?></strong></p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <p> <strong>Brand Name</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['brand_name'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p><strong>INN Name</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['inn_name'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p><strong>Market authorization Holder</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['mah'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p><strong>Local Technical Rep</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['local_technical'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p> <strong>Therapeutic Group Code</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['therapeutic_group'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p><strong>Authorized Indicators</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['authorised_indications'] ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p><strong>Pharmaceutical Forms</strong></p>
-                        </td>
-                        <td>
-                            <p><?php echo $aggregate['Aggregate']['form_strength'] ?></p>
-                        </td>
-                    </tr>
-
                 </table>
                 <hr>
                 <div class="row-fluid" style="margin:10px ;">
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <p> <strong>Brand Name</strong></p>
+                        </div>
+                        <div class="span3">
+                            <p><strong>INN Name</strong></p>
+                        </div>
+                        <div class="span3">
+                            <p><strong>Market authorization Holder</strong></p>
+                        </div>
+                        <div class="span3">
+                            <p><strong>Local Technical Rep</strong></p>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <p><?php echo $aggregate['ParentAggregate']['brand_name'] ?></p>
+
+                        </div>
+                        <div class="span3">
+                            <p><?php echo $aggregate['ParentAggregate']['inn_name'] ?></p>
+                        </div>
+                        <div class="span3">
+                            <p><?php echo $aggregate['ParentAggregate']['mah'] ?></p>
+                        </div>
+                        <div class="span3">
+                            <p><?php echo $aggregate['ParentAggregate']['local_technical'] ?></p>
+
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <p> <strong>Therapeutic Group Code</strong></p>
+                        </div>
+                        <div class="span3">
+                            <p><strong>Authorized Indications</strong></p>
+                        </div>
+                        <div class="span3">
+                            <p><strong>Pharmaceutical Forms</strong></p>
+                        </div>
+                        <div class="span3">
+                        </div>
+
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <?php echo $aggregate['ParentAggregate']['therapeutic_group'] ?> </div>
+                        <div class="span3">
+                            <?php echo $aggregate['ParentAggregate']['authorised_indications'] ?> </div>
+                        <div class="span3">
+                            <?php echo $aggregate['ParentAggregate']['form_strength'] ?> </div>
+                        <div class="span3">
+                        </div>
+                    </div>
+                    <hr>
 
                     <h5>1. Introduction</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['introduction'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['introduction'] ?></p>
                         </div>
                     </div>
                     <h5>1.2 Worldwide Marketing Approval Status</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['worldwide_marketing'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['worldwide_marketing'] ?></p>
                         </div>
                     </div>
                     <h5>1.3 Overview of exposure and safety data</h5>
                     <h5>1.3.1 Action Taken</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['action_taken'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['action_taken'] ?></p>
                         </div>
                     </div>
                     <h5>1.3.2 Changes to Reference Safety Information </h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['reference_changes'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['reference_changes'] ?></p>
                         </div>
                     </div>
                     <h5>1.3.3 Estimated Exposure and Use Patterns</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['estimated_exposure'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['estimated_exposure'] ?></p>
                         </div>
                     </div>
                     <h5>1.3.4 Findings from clinical trials and other sources</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['clinical_findings'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['clinical_findings'] ?></p>
                         </div>
                     </div>
                     <h5>1.3.5 Lack of efficacy in controlled clinical trials</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['efficacy'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['efficacy'] ?></p>
                         </div>
                     </div>
                     <h5>1.3.6 Late-breaking information</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['late_breaking'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['late_breaking'] ?></p>
                         </div>
                     </div>
 
@@ -148,7 +158,7 @@
                     <h5>2.1 Summary of safety concerns </h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['safety_concerns'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['safety_concerns'] ?></p>
                         </div>
                     </div>
                     <h5>2.2 Signal evaluation</h5>
@@ -160,17 +170,17 @@
                                     <tr>
                                         <th></th>
                                         <th colspan="" class="required tooltipper" title="This is the signal term" data-content=""> Signal term </th>
-                                        <th style="width: 9%;">Date detected </th>
-                                        <th style="width: 7%;">Status</th>
-                                        <th style="width: 7%;">Data closed (for closed signals)</th>
+                                        <th style="width: 9%;">Date detected <span style="color:red;">*</span></th>
+                                        <th style="width: 7%;">Status<span style="color:red;">*</span></th>
+                                        <th style="width: 7%;">Data closed (for closed signals)<span style="color:red;">*</span></th>
                                         <th colspan="1" style="width: 15%;" class="required" title="Dosage" data-content="">
-                                            <label class="required">Source or trigger of signal </label>
+                                            <label class="required">Source or trigger of signal <span style="color:red;">*</span></label>
                                         </th>
                                         <th colspan="" class="required" style="width: 15%;">
                                             <label class="required">Reason summary</label>
                                         </th>
                                         <th style="width: 28%;" colspan="1">
-                                            <label class="required pull-left">Method of signal valuation</label>
+                                            <label class="required pull-left">Method of signal valuation<span style="color:red;">*</span></label>
                                             <span class="pull-right" style="padding-right: 10px;"></span>
                                         </th>
                                         <th style="width: 3%;">
@@ -202,79 +212,33 @@
                     <h5>2.3 Evaluation of risks and new information</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['risks_evaluation'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['risks_evaluation'] ?></p>
                         </div>
                     </div>
+
 
                     <h5>2.4 Characterisation of risks </h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['risks_characterisation'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['risks_characterisation'] ?></p>
                         </div>
                     </div>
-
                     <hr>
 
                     <h5>3 Benefit evaluation </h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['benefit_evaluation'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['benefit_evaluation'] ?></p>
                         </div>
                     </div>
-                    <h5>4 Benefit-risk balance </h5>
+
+                    <h5>4 Benefit-risk balance</h5>
                     <div class="row-fluid">
                         <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['risk_balance'] ?></p>
+                            <p><?php echo $aggregate['ParentAggregate']['risk_balance'] ?></p>
                         </div>
                     </div>
-                    <h5>5 Recommendation</h5>
-                    <div class="row-fluid">
-                        <div class="span11">
-                            <p><?php echo $aggregate['Aggregate']['recommendation'] ?></p>
-                        </div>
-                    </div>
-                    <?php if (count($aggregate['ExternalComment']) > 0) { ?>
-                        <h5>5 Request for supplementary information</h5>
-                        <div class="row-fluid">
-                            <div class="span11">
-                                <?php
-                                $i = 1;
-                                foreach ($aggregate['ExternalComment'] as $data) : ?>
 
-                                    <p><?php echo $data['content']; ?></p>
-
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php  }
-                    if (count($aggregate['ReviewerComment']) > 0) { ?>
-                        <h5>6 Conclusion/Reviewer’s comments</h5>
-                        <div class="row-fluid">
-                            <div class="span11">
-                                <?php
-                                $i = 1;
-                                foreach ($aggregate['ReviewerComment'] as $data) : ?>
-
-                                    <p><?php echo $data['content']; ?></p>
-
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php  }
-                    if (count($aggregate['Recommendation']) > 0) { ?>
-                        <h5>7 Recommendations</h5>
-                        <div class="row-fluid">
-                            <div class="span11">
-                                <?php
-                                $i = 1;
-                                foreach ($aggregate['Recommendation'] as $data) : ?>
-
-                                    <p><?php echo $data['content']; ?></p>
-
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php } ?>
                 </div>
                 <hr>
 
@@ -307,19 +271,19 @@
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 25%;">NAME OF PERSON REPORTING:</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_name'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_name'] ?></strong></td>
                             <td style="width: 25%;">E-MAIL ADDRESS: </td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_email'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_email'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">DESIGNATION:</td>
                             <td style="width: 25%;"><strong><?php echo $aggregate['Designation']['name'] ?></strong></td>
                             <td style="width: 25%;">PHONE NO.</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_phone'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_phone'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">Date:</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_date'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_date'] ?></strong></td>
                             <td style="width: 25%;"></td>
                             <td style="width: 25%;"></td>
                         </tr>
@@ -328,26 +292,26 @@
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 50%;">Is the person submitting different from reporter?</td>
-                            <td><strong><?php echo $aggregate['Aggregate']['person_submitting'] ?></strong></td>
+                            <td><strong><?php echo $aggregate['ParentAggregate']['person_submitting'] ?></strong></td>
                         </tr>
                     </table>
                     <hr>
                     <table style="width: 100%;">
                         <tr>
                             <td style="width: 25%;">NAME OF PERSON REPORTING:</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_name_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_name_diff'] ?></strong></td>
                             <td style="width: 25%;">E-MAIL ADDRESS: </td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_email_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_email_diff'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">DESIGNATION:</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_designation_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_designation_diff'] ?></strong></td>
                             <td style="width: 25%;">PHONE NO.</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_phone_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_phone_diff'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 25%;">Date:</td>
-                            <td style="width: 25%;"><strong><?php echo $aggregate['Aggregate']['reporter_date_diff'] ?></strong></td>
+                            <td style="width: 25%;"><strong><?php echo $aggregate['ParentAggregate']['reporter_date_diff'] ?></strong></td>
                             <td style="width: 25%;"></td>
                             <td style="width: 25%;"></td>
                         </tr>

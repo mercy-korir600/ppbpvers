@@ -92,6 +92,30 @@ echo $this->Session->flash();
                     </td>
                 </tr>
                 <tr>
+                    <td>
+                        <?php
+                   echo $this->Form->input(
+                    'brand_name',
+                    array(
+                        'div' => false, 'placeholder' => '',
+                        'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name ')
+                    )
+                );
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                   echo $this->Form->input(
+                    'inn_name',
+                    array(
+                        'div' => false, 'placeholder' => '',
+                        'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Inn Name ')
+                    )
+                );
+                        ?>
+                    </td>
+                    </tr>
+                <tr>
                     <td><label for="PadrPages" class="required">Pages</label></td>
                     <td>
                         <?php
@@ -159,6 +183,7 @@ echo $this->Session->flash();
                     <th><?php echo $this->Paginator->sort('id'); ?></th>
                     <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
                     <th><?php echo $this->Paginator->sort('brand_name'); ?></th>
+                    <th><?php echo $this->Paginator->sort('inn_name'); ?></th>
                     <th><?php echo $this->Paginator->sort('reporter_email'); ?></th>
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
                     <th><?php echo $this->Paginator->sort('date_submitted'); ?></th>
@@ -190,6 +215,7 @@ echo $this->Session->flash();
                             }
                             ?>&nbsp;
                         </td>
+                        <td><?php echo h($aggregate['Aggregate']['inn_name']); ?>&nbsp;</td>
                         <td><?php echo h($aggregate['Aggregate']['reporter_email']); ?>&nbsp;</td>
                         <td><?php echo h($aggregate['Aggregate']['created']); ?>&nbsp;</td>
                         <td><?php echo h($aggregate['Aggregate']['submitted_date']); ?>&nbsp;</td>
@@ -214,8 +240,8 @@ echo $this->Session->flash();
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
-                                if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'aggregates', 'action' => 'copy', $aggregate['Aggregate']['id']), array('escape' => false), __('Create a clean copy to edit?'));
-                                echo $this->Html->link(
+                                // if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'aggregates', 'action' => 'copy', $aggregate['Aggregate']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                                if (($redir == 'manager' || $redir == 'reviewer'))echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                                     array('controller' => 'aggregates', 'action' => 'archive', $aggregate['Aggregate']['id']),
                                     array('escape' => false),
@@ -228,11 +254,11 @@ echo $this->Session->flash();
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
-                                if ($redir == 'reporter') echo $this->Html->link(
-                                    '<span class="label label-danger tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
-                                    array('controller' => 'aggregates', 'action' => 'delete', $aggregate['Aggregate']['id']),
-                                    array('escape' => false)
-                                );
+                                if (($redir == 'reporter' || $redir == 'manager') && $aggregate['Aggregate']['submitted'] == 0) {
+                                    echo "&nbsp;";
+                                    echo $this->Form->postLink('<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>', array('controller' => 'aggregates', 'action' => 'delete', $aggregate['Aggregate']['id']), array('escape' => false), __('Are you sure you want to delete this report?
+                                    Note: This action cannot be undone.'));
+                                  }
                                 echo "&nbsp;";
                                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',

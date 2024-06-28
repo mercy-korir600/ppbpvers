@@ -7,7 +7,21 @@ $this->Html->css('summary', null, array('inline' => false));
 <?php $this->start('report'); ?>
 
 <div class="row-fluid">
- 
+    <div class="span12">
+        <p>
+            <?php
+            echo $this->Paginator->counter(array(
+                'format' => __('Page <span class="badge">{:page}</span> of <span class="badge">{:pages}</span>,
+                showing <span class="badge">{:current}</span> Reports out of
+                <span class="badge badge-inverse">{:count}</span> total, starting on record <span class="badge">{:start}</span>,
+                ending on <span class="badge">{:end}</span>')
+            ));
+            ?>
+        </p>
+    </div>
+</div>
+
+<div class="row-fluid">
 
     <div class="span12">
         <table class="table table-condensed table-bordered">
@@ -29,7 +43,7 @@ $this->Html->css('summary', null, array('inline' => false));
             </thead>
             <tbody>
                 <?php
-                foreach ($inputData as $key => $value) {
+                foreach ($disproportionalities as $key => $value) {
                     foreach ($value['reactionDetails'] as $key => $dt) { ?>
                         <?php
 

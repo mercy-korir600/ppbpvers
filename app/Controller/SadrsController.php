@@ -19,7 +19,7 @@ class SadrsController extends AppController
         'Search.Prg',
         // 'RequestHandler'
     );
-    public $paginate = array();
+    public $paginate = array(); 
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 

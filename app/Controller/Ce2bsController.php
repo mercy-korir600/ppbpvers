@@ -49,16 +49,27 @@ class Ce2bsController extends AppController
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
         ));
+
+        if (empty($ce2b['Ce2b']['e2b_content'])) {
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->redirect($this->referer());
+        }
+
+        // Mute for productions
+        // $this->Session->setFlash(__('Only available in production server!!'), 'flash_error');
+        // $this->redirect($this->referer());
+
+
         $html = $ce2b['Ce2b']['e2b_content'];
         $HttpSocket = new HttpSocket();
         // string data
         $results = $HttpSocket->post(
             Configure::read('vigiflow_api'),
-            (string)$html,
-            array('header' => array('umc-client-key' => Configure::read('vigiflow_key')))
+            $html,
+            array('header' => array('umc-vigiflow-web-radr-access-key' => Configure::read('vigiflow_key')))
         );
 
-        // debug($results->code);
+        // debug($results);
         // debug($results->body);
         // exit();
         if ($results->isOk()) {
@@ -178,7 +189,7 @@ class Ce2bsController extends AppController
         $this->paginate['order'] = array('Ce2b.created' => 'desc');
         $this->set('ce2bs', Sanitize::clean($this->paginate(), array('encode' => false)));
         $this->set('page_options', $this->page_options);
-    } 
+    }
     public function download($id = null)
     {
         $this->Ce2b->id = $id;
@@ -535,7 +546,7 @@ class Ce2bsController extends AppController
 
                     if (strpos($xmlString, 'MCCI_IN200100UV01') !== false) {
                         $this->request->data['Ce2b']['e2b_type'] = "R3";
-                    }else{
+                    } else {
                         $this->request->data['Ce2b']['e2b_type'] = "R2";
                     }
 
@@ -553,7 +564,7 @@ class Ce2bsController extends AppController
                     $hasSerious = in_array('true', $seriousValues);
 
                     $this->request->data['Ce2b']['serious'] = $hasSerious;
-                  
+
 
                     // Extract other sections as well::::
 
@@ -1433,6 +1444,10 @@ class Ce2bsController extends AppController
             'contain' => array('Designation', 'Ce2bListOfDrug', 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
         ));
 
+        if (empty($ce2b['Ce2b']['e2b_content'])) {
+            $this->Session->setFlash(__('Could not verify the E2b report ID. Please ensure the ID is correct.'), 'flash_error');
+            $this->redirect($this->referer());
+        }
 
         if ($ce2b['Ce2b']['e2b_type'] === "R2") {
 

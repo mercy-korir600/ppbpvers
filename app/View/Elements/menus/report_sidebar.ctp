@@ -93,8 +93,7 @@
       </li>
       <li class="<?php echo $this->fetch('general'); ?>">
       	<?php
-            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> General',  array('controller' => 'reports', 'action'=>'general', 'admin' => false ),
-                      array('escape' => false));
+            // echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> General',  array('controller' => 'reports', 'action'=>'general', 'admin' => false ),                      array('escape' => false));
         ?>
       </li>
       <li class="divider"></li>

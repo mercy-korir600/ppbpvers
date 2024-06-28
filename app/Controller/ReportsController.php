@@ -4,13 +4,14 @@
 App::uses('Sanitize', 'Utility');
 App::uses('AppController', 'Controller');
 /**
- * PreviousDates Controller
+ * PreviousDates Controller 
  *
  * @property PreviousDate $PreviousDate
+ * @property Disproportionality $Disproportionality
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -91,6 +92,17 @@ class ReportsController extends AppController
         $this->set('is_mobile', $this->is_mobile);
     }
     public function general()
+    {
+        $this->Prg->commonProcess();
+
+        $criteria = $this->Disproportionality->parseCriteria($this->passedArgs);
+        $this->paginate['conditions'] = $criteria;
+        $this->set('page_options', $this->page_options);
+        $this->set('total', 100);
+        $this->set('disproportionalities', Sanitize::clean($this->paginate(), array('encode' => false)));
+    }
+
+    public function general_alt()
     {
         $this->Prg->commonProcess();
         $criteria['Sadr.submitted'] = array(1, 2);
@@ -432,6 +444,35 @@ class ReportsController extends AppController
 
         $total = $total_report_count;
 
+        $this->loadModel('Disproportionality');
+
+        foreach ($inputData as $dt) {
+
+            foreach ($dt['reactionDetails'] as $kk) {
+                // debug($dt);
+                // exit;
+                $drug_name=$dt['current_drug_name'];
+                $reaction_name=$kk['reaction_at_hand'];
+                $data = array(
+                    'Disproportionality' => array(
+                        'drug_name' => $drug_name,
+                        'reaction_name' => $reaction_name,
+                        'model' => 'Aefi'
+                    )
+                );
+                // check if the drug and reaction exists, ignore else create
+                $existing=$this->Disproportionality->find('first',array(
+                    'conditions'=>array('Disproportionality.drug_name'=>$drug_name,'Disproportionality.reaction_name'=>$reaction_name)
+                ));
+                if(!$existing){
+                    $this->Disproportionality->create();
+                    $this->Disproportionality->save($data);
+                }
+
+
+            }
+        }
+
 
 
         $this->set(compact('vaccines'));
@@ -575,8 +616,34 @@ class ReportsController extends AppController
                 'reactionDetails' => $reactionDetails
             );
         }
-        // debug($reactionDetails);
-        // exit;
+        $this->loadModel('Disproportionality');
+
+        foreach ($inputData as $dt) {
+
+            foreach ($dt['reactionDetails'] as $kk) {
+                // debug($dt);
+                // exit;
+                $drug_name=$dt['current_drug_name'];
+                $reaction_name=$kk['reaction_at_hand'];
+                $data = array(
+                    'Disproportionality' => array(
+                        'drug_name' => $drug_name,
+                        'reaction_name' => $reaction_name,
+                        'model' => 'Aefi'
+                    )
+                );
+                // check if the drug and reaction exists, ignore else create
+                $existing=$this->Disproportionality->find('first',array(
+                    'conditions'=>array('Disproportionality.drug_name'=>$drug_name,'Disproportionality.reaction_name'=>$reaction_name)
+                ));
+                if(!$existing){
+                    $this->Disproportionality->create();
+                    $this->Disproportionality->save($data);
+                }
+
+
+            }
+        }
         $total = $total_report_count;
         $this->set(compact('inputData'));
         $this->set(compact('total'));
