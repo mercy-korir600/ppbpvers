@@ -9,7 +9,7 @@ echo $this->Session->flash();
 ?>
 <div class="row-fluid">
   <div class="span12">
-    
+
     <h3>Disproportionality:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
     <hr class="soften" style="margin: 7px 0px;">
   </div>
@@ -48,6 +48,16 @@ echo $this->Session->flash();
                 'class' => 'unauthorized_index span10', 'label' => array('class' => 'required', 'text' => 'Reaction Name')
               )
             );
+            echo $this->Form->input(
+              'inn',
+              array(
+                'div' => false,
+                'placeholder' => 'rash',
+                'class' => 'unauthorized_index span10',
+                'type' => 'hidden',
+                'label' => array('class' => 'required', 'text' => 'Reaction Name')
+              )
+            );
             ?>
           </td>
           <td colspan="2">
@@ -70,9 +80,9 @@ echo $this->Session->flash();
             );
             ?>
           </td>
-        
-        </tr> 
-       
+
+        </tr>
+
         <tr>
           <td><label for="DisproportionalityPages" class="required">Pages</label></td>
           <td>
@@ -105,7 +115,7 @@ echo $this->Session->flash();
             ?>
           </td>
           <td>
-            
+
           </td>
         </tr>
       </tbody>
@@ -135,29 +145,39 @@ echo $this->Session->flash();
     <table class="table  table-bordered table-striped">
       <thead>
         <tr>
+          <th></th>
+          <th>Total Reports: </th>
+          <th><?php echo $total_reports; ?></th>
+        </tr>
+        <tr>
           <th><?php echo $this->Paginator->sort('id'); ?></th>
           <th><?php echo $this->Paginator->sort('drug_/_vaccine_name'); ?></th>
           <th><?php echo $this->Paginator->sort('drug_reaction'); ?></th>
-           <th><?php echo $this->Paginator->sort('observed'); ?></th>
+          <th><?php echo $this->Paginator->sort('observed'); ?></th>
           <th><?php echo $this->Paginator->sort('expected'); ?></th>
           <th><?php echo $this->Paginator->sort('IC025>0'); ?></th>
-          
+          <th><?php echo $this->Paginator->sort('IC'); ?></th>
+
         </tr>
       </thead>
       <tbody>
         <?php
-        $cc=0;
-        foreach ($sadrs as $sadr) : 
-        $cc++;
+        $cc = 0;
+        foreach ($data as $dt) :
+          $cc++;
+          $confidenceInterval = $dt['Disproportionality']['95%_Confidence_Interval'];
+          $color = $confidenceInterval > 0 ? 'red' : 'green';
+          $log = $dt['Disproportionality']['IC_raw_calculated_log_data'];
         ?>
           <tr class="">
-            <td><?php echo $cc; ?>&nbsp;</td> 
-             <td><?php echo h($sadr['Disproportionality']['drug_name']); ?>&nbsp;</td>
-            <td><?php echo h($sadr['Disproportionality']['reaction_name']); ?>&nbsp;</td>
-            <td><?php  ?>&nbsp;</td>
-            <td><?php  ?>&nbsp;</td>
-            <td><?php  ?>&nbsp;</td> 
-            
+            <td><?php echo $cc; ?>&nbsp;</td>
+            <td><?php echo h($dt['Disproportionality']['drug_name']); ?>&nbsp;</td>
+            <td><?php echo h($dt['Disproportionality']['reaction_name']); ?>&nbsp;</td>
+            <td><?php echo h($dt['Disproportionality']['B_reports_with_reaction']); ?>&nbsp;</td>
+            <td><?php echo h((int)$dt['Disproportionality']['E_(AB)_expected_count']); ?> &nbsp;</td>
+            <?php echo "<td style='color: $color;'>" . round($confidenceInterval, 2) . "&nbsp;</td>"; ?>
+            <td><?php echo $log; ?>&nbsp;</td>
+
           </tr>
         <?php endforeach; ?>
       </tbody>

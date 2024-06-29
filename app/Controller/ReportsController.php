@@ -11,7 +11,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Padr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -90,6 +90,209 @@ class ReportsController extends AppController
             $this->is_mobile = true;
         }
         $this->set('is_mobile', $this->is_mobile);
+    }
+
+    public function padr_reports_with_reaction($reportReactions, $reaction)
+    {
+        $reactions = Hash::extract($reportReactions, '{n}.reactions.{n}');
+        $reactionCount = 0;
+        foreach ($reactions as $r) {
+            if ($r === $reaction) {
+                $reactionCount++;
+            }
+        }
+        // Return the count
+        return $reactionCount;
+    }
+    public function padr_reports_with_drug($reportReactions, $med)
+    {
+        $data = Hash::extract($reportReactions, '{n}.medicine_names.{n}');
+        $count = 0;
+        foreach ($data as $r) {
+            if ($r === $med) {
+                $count++;
+            }
+        }
+        // Return the count
+        return $count;
+    }
+    public function padr_reports_with_drug_and_reaction($totalReports, $medication, $reaction)
+    {
+        $medicines = Hash::extract($totalReports, '{n}.medicine_names.{n}');
+        $reactions = Hash::extract($totalReports, '{n}.reactions.{n}');
+        $count = 0;
+        foreach ($totalReports as $report) {
+            // Check if the report contains the specified medication
+            if (in_array($medication, $report['medicine_names'])) {
+                // Check if the report contains the specified reaction
+                if (in_array($reaction, $report['reactions'])) {
+                    // Increment the count if both conditions are met
+                    $count++;
+                }
+            }
+        }
+        return $count;
+    }
+
+
+    public function manager_public_analytics()
+    {
+        $criteria['Padr.copied !='] = '1';
+        $criteria['Padr.deleted'] = false;
+        $criteria['Padr.archived'] = false;
+        $criteria['Padr.report_sadr'] = 'Adverse Reaction';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Padr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+
+        $reportIds = $this->Padr->find('list', array(
+            'fields' => array('Padr.id'),
+            'conditions' => $criteria
+        ));
+        $reportIds = array_keys($reportIds);
+        $reportReaction = array();
+
+        foreach ($reportIds as $id) {
+            $reactions = [];
+            $report = $this->Padr->find('first', array(
+                'conditions' => array('Padr.id' => $id),
+                'contain' => array('PadrListOfMedicine'),
+
+            ));
+            $report = Sanitize::clean($report, array('escape' => true));
+
+            if ($report['Padr']['sadr_vomiting'] == '1') {
+                $reactions[] = "Vomiting or diarrhoea";
+            }
+            if ($report['Padr']['sadr_dizziness'] == '1') {
+                $reactions[] = "Dizziness or drowsiness";
+            }
+            if ($report['Padr']['sadr_headache'] == '1') {
+                $reactions[] = "Headache";
+            }
+            if ($report['Padr']['sadr_joints'] == '1') {
+                $reactions[] = "Joints and muscle pain";
+            }
+            if ($report['Padr']['sadr_rash'] == '1') {
+                $reactions[] = "Rash, itching, swelling on skin";
+            }
+            if ($report['Padr']['sadr_mouth'] == '1') {
+                $reactions[] = "Pain or bleeding in the mouth";
+            }
+            if ($report['Padr']['sadr_stomach'] == '1') {
+                $reactions[] = "Pain in the stomach";
+            }
+            if ($report['Padr']['sadr_urination'] == '1') {
+                $reactions[] = "Abnormal changes with urination";
+            }
+            if ($report['Padr']['sadr_eyes'] == '1') {
+                $reactions[] = "Red, painful eyes";
+            }
+            $reactions = array_unique($reactions);
+            $medicine = Hash::extract($report['PadrListOfMedicine'], '{n}.product_name');
+
+            $reportReaction[] = array(
+                'id' => $id,
+                'medicine_names' => $medicine,
+                'reactions' => $reactions
+            );
+        }
+        $this->loadModel('Disproportionality');
+        $inputData = [];
+        $total_report_count = count($reportReaction);
+        $reactionNames = [];
+        $allMedicineNames = [];
+        foreach ($reportReaction as $repo) {
+            foreach ($repo['medicine_names'] as $med) {
+                if (!empty($med)) {
+                    $allMedicineNames[] = $med;
+                }
+            }
+            foreach ($repo['reactions'] as $rec) {
+                if (!empty($rec)) {
+                    $reactionNames[] = $rec;
+                }
+            }
+        }
+        $allMedicineNames = array_unique($allMedicineNames);
+        $reactionNames = array_unique($reactionNames);
+
+        foreach ($allMedicineNames as $medi) {
+            $reactionDetails = [];
+            $drug_related_reports = $this->padr_reports_with_drug($reportReaction, $med);
+            foreach ($reactionNames as $reaction) {
+
+                $data = array(
+                    'Disproportionality' => array(
+                        'drug_name' => $medi,
+                        'reaction_name' => $reaction,
+                        'model' => 'Padr'
+                    )
+                );
+                // check if the drug and reaction exists, ignore else create
+                $existing = $this->Disproportionality->find('first', array(
+                    'conditions' => array('Disproportionality.drug_name' => $medi, 'Disproportionality.reaction_name' => $reaction)
+                ));
+                if (!$existing) {
+                    $this->Disproportionality->create();
+                    $this->Disproportionality->save($data);
+                }
+
+                $reactionCount = $this->padr_reports_with_reaction($reportReaction, $reaction);
+                $drugReactionCount = $this->padr_reports_with_drug_and_reaction($reportReaction, $medi, $reaction);
+
+                $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
+                $expected_count = round($expected_count_raw, 5);
+
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
+
+                $calculated_log_data_raw = log($calculated_data, 2);
+                $calculated_log_data = round($calculated_log_data_raw, 5);
+
+                $variance_of_ic_raw = 1 / ($numerator) + 1 / ($drug_related_reports - $drugReactionCount + 0.5) + 1 / ($reactionCount - $drugReactionCount + 0.5) + 1 / ($total_report_count - $drug_related_reports - $reactionCount + $drugReactionCount + 0.5);
+
+                $variance_of_ic = round($variance_of_ic_raw, 5);
+                $standard_error = 0;
+                if ($variance_of_ic >= 0) {
+                    $standard_error = sqrt($variance_of_ic);
+                }
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
+
+                $reactionDetails[] = array(
+
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' => $drugReactionCount,
+                    'reaction_at_hand' => $reaction,
+                    'E_(AB)_expected_count' => $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
+                );
+            }
+
+            // foreach
+            $inputData[] = array(
+                'current_drug_name' => $medi,
+                'N_total_reports' => $total_report_count,
+                'A_reports_with_drug' => $drug_related_reports,
+                'reactionDetails' => $reactionDetails
+            );
+        }
+
+        $total = count($reportReaction);
+        $this->set(compact('inputData'));
+        $this->set(compact('total'));
+
+        $this->set('_serialize', 'vaccines', 'total', 'vaccineinputData', '');
+    }
+    public function manager_transfusions_analytics()
+    {
+    }
+    public function manager_medications_analytics()
+    {
     }
     public function general()
     {
@@ -287,8 +490,6 @@ class ReportsController extends AppController
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
         ));
-        // debug($vaccine);
-        // exit;
         //loop through to get specific report:
 
         $data = [];
@@ -451,8 +652,8 @@ class ReportsController extends AppController
             foreach ($dt['reactionDetails'] as $kk) {
                 // debug($dt);
                 // exit;
-                $drug_name=$dt['current_drug_name'];
-                $reaction_name=$kk['reaction_at_hand'];
+                $drug_name = $dt['current_drug_name'];
+                $reaction_name = $kk['reaction_at_hand'];
                 $data = array(
                     'Disproportionality' => array(
                         'drug_name' => $drug_name,
@@ -461,15 +662,13 @@ class ReportsController extends AppController
                     )
                 );
                 // check if the drug and reaction exists, ignore else create
-                $existing=$this->Disproportionality->find('first',array(
-                    'conditions'=>array('Disproportionality.drug_name'=>$drug_name,'Disproportionality.reaction_name'=>$reaction_name)
+                $existing = $this->Disproportionality->find('first', array(
+                    'conditions' => array('Disproportionality.drug_name' => $drug_name, 'Disproportionality.reaction_name' => $reaction_name)
                 ));
-                if(!$existing){
+                if (!$existing) {
                     $this->Disproportionality->create();
                     $this->Disproportionality->save($data);
                 }
-
-
             }
         }
 
@@ -623,25 +822,23 @@ class ReportsController extends AppController
             foreach ($dt['reactionDetails'] as $kk) {
                 // debug($dt);
                 // exit;
-                $drug_name=$dt['current_drug_name'];
-                $reaction_name=$kk['reaction_at_hand'];
+                $drug_name = $dt['current_drug_name'];
+                $reaction_name = $kk['reaction_at_hand'];
                 $data = array(
                     'Disproportionality' => array(
                         'drug_name' => $drug_name,
                         'reaction_name' => $reaction_name,
-                        'model' => 'Aefi'
+                        'model' => 'Sadr'
                     )
                 );
                 // check if the drug and reaction exists, ignore else create
-                $existing=$this->Disproportionality->find('first',array(
-                    'conditions'=>array('Disproportionality.drug_name'=>$drug_name,'Disproportionality.reaction_name'=>$reaction_name)
+                $existing = $this->Disproportionality->find('first', array(
+                    'conditions' => array('Disproportionality.drug_name' => $drug_name, 'Disproportionality.reaction_name' => $reaction_name)
                 ));
-                if(!$existing){
+                if (!$existing) {
                     $this->Disproportionality->create();
                     $this->Disproportionality->save($data);
                 }
-
-
             }
         }
         $total = $total_report_count;
