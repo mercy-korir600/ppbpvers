@@ -28,7 +28,7 @@ class DisproportionalitiesController extends AppController
 
     public function get_total_approved_aefis()
     {
-        $this->loadModel('Aefi'); 
+        $this->loadModel('Aefi');
         $criteria['Aefi.copied !='] = '1';
         $criteria['Aefi.submitted'] = array(2, 3);
         $criteria['Aefi.deleted'] = false;
@@ -44,7 +44,7 @@ class DisproportionalitiesController extends AppController
     }
     public function get_total_approved_sadrs()
     {
-        $this->loadModel('Sadr'); 
+        $this->loadModel('Sadr');
         $criteria['Sadr.copied !='] = '1';
         $criteria['Sadr.submitted'] = array(2, 3);
         $criteria['Sadr.deleted'] = false;
@@ -61,13 +61,43 @@ class DisproportionalitiesController extends AppController
 
     public function  get_total_approved_padrs()
     {
-        $this->loadModel('Padr'); 
+        $this->loadModel('Padr');
         $criteria['Padr.copied !='] = '1';
         $criteria['Padr.deleted'] = false;
         $criteria['Padr.archived'] = false;
         $criteria['Padr.report_sadr'] = 'Adverse Reaction';
 
         $count = $this->Padr->find(
+            'count',
+            array(
+                'conditions' => $criteria
+            )
+        );
+        return $count;
+    }
+    public function  get_total_approved_transfusions()
+    {
+        $this->loadModel('Transfusion');
+        $criteria['Transfusion.copied !='] = '1';
+        $criteria['Transfusion.deleted'] = false;
+        $criteria['Transfusion.archived'] = false;
+
+        $count = $this->Transfusion->find(
+            'count',
+            array(
+                'conditions' => $criteria
+            )
+        );
+        return $count;
+    }
+    public function  get_total_approved_medications()
+    {
+        $this->loadModel('Medication');
+        $criteria['Medication.copied !='] = '1';
+        $criteria['Medication.deleted'] = false;
+        $criteria['Medication.archived'] = false;
+
+        $count = $this->Medication->find(
             'count',
             array(
                 'conditions' => $criteria
@@ -148,99 +178,268 @@ class DisproportionalitiesController extends AppController
     }
 
 
-    public function count_aefis_with_reaction($reaction_name)
+    public function get_aefi_reports()
     {
+        $this->loadModel('Aefi');
+        $criteria['Aefi.submitted'] = array(1, 2);
         $criteria['Aefi.copied !='] = '1';
-        $criteria['Aefi.submitted'] = array(2, 3);
         $criteria['Aefi.deleted'] = false;
         $criteria['Aefi.archived'] = false;
-
-        $reactionFields = [
-            'Aefi.bcg',
-            'Aefi.convulsion',
-            'Aefi.urticaria',
-            'Aefi.high_fever',
-            'Aefi.abscess',
-            'Aefi.local_reaction',
-            'Aefi.anaphylaxis',
-            'Aefi.meningitis',
-            'Aefi.paralysis',
-            'Aefi.toxic_shock',
-            'Aefi.aefi_symptoms',
-            'AefiDescription.description'
-        ];
-
-        $reactionConditions = [];
-        foreach ($reactionFields as $field) {
-            $reactionConditions['OR'][] = ["$field LIKE" => "%$reaction_name%"];
-        }
-
-        $criteria['OR'] = $reactionConditions;
-
-        $this->loadModel('Aefi');
-        $this->loadModel('AefiListOfVaccine');
-
-        // Find count of reactions directly matching the name
-        $count = $this->Aefi->find('count', [
-            'conditions' => $criteria,
-            'joins' => [
-                [
-                    'table' => 'aefi_descriptions',
-                    'alias' => 'AefiDescription',
-                    'type' => 'LEFT',
-                    'conditions' => ['Aefi.id = AefiDescription.aefi_id']
-                ]
-            ]
-        ]);
-
-        return $count;
-    }
-
-    public function count_aefis_with_drug($drug_name)
-    {
-        $criteria['Aefi.copied !='] = '1';
-        $criteria['Aefi.submitted'] = array(2, 3);
-        $criteria['Aefi.deleted'] = false;
-        $criteria['Aefi.archived'] = false;
-
-        $this->loadModel('Aefi');
-        $this->loadModel('AefiListOfVaccine');
-
-
-        $sadrsIds = $this->Aefi->find('list', array(
+        $reportIds = $this->Aefi->find('list', array(
             'fields' => array('Aefi.id'),
             'conditions' => $criteria
         ));
-        $sadrsIds = array_keys($sadrsIds);
-        $cond = array(); // Initialize $cond with an empty array
+        $reportIds = array_keys($reportIds);
+        $reportReaction = array();
+        $reactionLists = Configure::read('analytics');
+        foreach ($reportIds as $id) {
+            $reactions = [];
+            $report = $this->Aefi->find('first', array(
+                'conditions' => array('Aefi.id' => $id),
+                'contain' => array('AefiDescription', 'AefiListOfVaccine.Vaccine'),
 
-        $subquery = $this->Aefi->AefiListOfVaccine->Vaccine->find('list', array(
-            'conditions' => array(
-                'Vaccine.vaccine_name LIKE' => '%' . $drug_name . '%',
-            ),
-            'fields' => array('id'),
-            'recursive' => -1 // To avoid unnecessary recursive queries
-        ));
-
-        if ($subquery) {
-            $cond = $this->Aefi->AefiListOfVaccine->find('list', array(
-                'conditions' => array(
-                    'AefiListOfVaccine.vaccine_id IN' => $subquery,
-                    'AefiListOfVaccine.aefi_id IS NOT NULL' // Exclude null values
-
-                ),
-                'keyField' => 'aefi_id',
-                'valueField' => 'aefi_id'
             ));
+            $aefi = Sanitize::clean($report, array('escape' => true));
+
+            if ($aefi['Aefi']['bcg'] == '1') {
+                $reactions[] = "BCG Lymphadenitis";
+            }
+            if ($aefi['Aefi']['convulsion'] == '1') {
+                $reactions[] = "Convulsion";
+            }
+            if ($aefi['Aefi']['urticaria'] == '1') {
+                $reactions[] = "Generalized urticaria (hives)";
+            }
+            if ($aefi['Aefi']['high_fever'] == '1') {
+                $reactions[] = "High Fever";
+            }
+            if ($aefi['Aefi']['abscess'] == '1') {
+                $reactions[] = "Injection site abscess";
+            }
+            if ($aefi['Aefi']['local_reaction'] == '1') {
+                $reactions[] = "Severe Local Reaction";
+            }
+            if ($aefi['Aefi']['anaphylaxis'] == '1') {
+                $reactions[] = "Anaphylaxis";
+            }
+            if ($aefi['Aefi']['meningitis'] == '1') {
+                $reactions[] = "Encephalopathy, Encephalitis/Meningitis";
+            }
+            if ($aefi['Aefi']['paralysis'] == '1') {
+                $reactions[] = "Paralysis";
+            }
+            if ($aefi['Aefi']['toxic_shock'] == '1') {
+                $reactions[] = "Toxic shock";
+            }
+            $reactions[] = $aefi['Aefi']['aefi_symptoms'];
+            $multiple = $aefi['AefiDescription'];
+            if (!empty($multiple)) {
+                foreach ($multiple as $other) {
+                    $reactions[] = $other['description'];
+                }
+            }
+            $reactions = array_intersect($reactionLists, $reactions);
+            $medicine = Hash::extract($aefi['AefiListOfVaccine'], '{n}.Vaccine.vaccine_name');
+            $reactions = array_values($reactions);
+            $reactions = array_unique($reactions);
+            $reportReaction[] = array(
+                'aefi_id' => $id,
+                'medicine' => $medicine,
+                'reactions' => $reactions
+            );
+        }
+        return $reportReaction;
+    }
+    public function count_aefis_with_reaction($reportReactions, $reaction_name)
+    {
+        $reactions = Hash::extract($reportReactions, '{n}.reactions.{n}');
+
+        $reactionCount = 0;
+        foreach ($reactions as $r) {
+            if ($r === $reaction_name) {
+                $reactionCount++;
+            }
+        }
+        return $reactionCount;
+    }
+
+
+    public function count_aefis_with_drug($reportReactions, $drug_name)
+    {
+        //     debug($reportReactions);
+        //     exit;
+        $reactions = Hash::extract($reportReactions, '{n}.medicine.{n}');
+
+        $reactionCount = 0;
+        foreach ($reactions as $r) {
+            if ($r === $drug_name) {
+                $reactionCount++;
+            }
+        }
+        return $reactionCount;
+    }
+
+    public function count_aefis_with_drug_and_reaction($totalReports, $drug_name, $reaction_name)
+    {
+        $count = 0;
+        foreach ($totalReports as $report) {
+            // Check if the report contains the specified medication
+            if (in_array($drug_name, $report['medicine'])) {
+                // Check if the report contains the specified reaction
+                if (in_array($reaction_name, $report['reactions'])) {
+                    // Increment the count if both conditions are met
+                    $count++;
+                }
+            }
+        }
+        return $count;
+    }
+    public function padr_reports_found()
+    {
+        $criteria['Padr.copied !='] = '1';
+        $criteria['Padr.deleted'] = false;
+        $criteria['Padr.archived'] = false;
+        $criteria['Padr.report_sadr'] = 'Adverse Reaction';
+
+        $reportIds = $this->Padr->find('list', array(
+            'fields' => array('Padr.id'),
+            'conditions' => $criteria
+        ));
+        $reportIds = array_keys($reportIds);
+        $reportReaction = array();
+
+        foreach ($reportIds as $id) {
+            $reactions = [];
+            $report = $this->Padr->find('first', array(
+                'conditions' => array('Padr.id' => $id),
+                'contain' => array('PadrListOfMedicine'),
+
+            ));
+            $report = Sanitize::clean($report, array('escape' => true));
+
+            if ($report['Padr']['sadr_vomiting'] == '1') {
+                $reactions[] = "Vomiting or diarrhoea";
+            }
+            if ($report['Padr']['sadr_dizziness'] == '1') {
+                $reactions[] = "Dizziness or drowsiness";
+            }
+            if ($report['Padr']['sadr_headache'] == '1') {
+                $reactions[] = "Headache";
+            }
+            if ($report['Padr']['sadr_joints'] == '1') {
+                $reactions[] = "Joints and muscle pain";
+            }
+            if ($report['Padr']['sadr_rash'] == '1') {
+                $reactions[] = "Rash, itching, swelling on skin";
+            }
+            if ($report['Padr']['sadr_mouth'] == '1') {
+                $reactions[] = "Pain or bleeding in the mouth";
+            }
+            if ($report['Padr']['sadr_stomach'] == '1') {
+                $reactions[] = "Pain in the stomach";
+            }
+            if ($report['Padr']['sadr_urination'] == '1') {
+                $reactions[] = "Abnormal changes with urination";
+            }
+            if ($report['Padr']['sadr_eyes'] == '1') {
+                $reactions[] = "Red, painful eyes";
+            }
+            $reactions = array_unique($reactions);
+            $medicine = Hash::extract($report['PadrListOfMedicine'], '{n}.product_name');
+
+            $reportReaction[] = array(
+                'id' => $id,
+                'medicine_names' => $medicine,
+                'reactions' => $reactions
+            );
+        }
+        return $reportReaction;
+    }
+
+    public function count_padrs_with_reaction($reportReactions, $reaction_name)
+    {
+        $reactions = Hash::extract($reportReactions, '{n}.reactions.{n}');
+        $reactionCount = 0;
+        foreach ($reactions as $r) {
+            if ($r === $reaction_name) {
+                $reactionCount++;
+            }
+        }
+        // Return the count
+        return $reactionCount;
+    }
+
+    public function count_padrs_with_drug($reportReactions, $drug_name)
+    {
+        $data = Hash::extract($reportReactions, '{n}.medicine_names.{n}');
+        $count = 0;
+        foreach ($data as $r) {
+            if ($r === $drug_name) {
+                $count++;
+            }
+        }
+        // Return the count
+        return $count;
+    }
+
+    public function count_padrs_with_drug_and_reaction($totalReports, $drug_name, $reaction_name)
+    {
+
+        $count = 0;
+        foreach ($totalReports as $report) {
+            // Check if the report contains the specified medication
+            if (in_array($drug_name, $report['medicine_names'])) {
+                // Check if the report contains the specified reaction
+                if (in_array($reaction_name, $report['reactions'])) {
+                    // Increment the count if both conditions are met
+                    $count++;
+                }
+            }
+        }
+        return $count;
+    }
+
+    public function count_reactions_in_the_entire_system($reportReactions, $totalPadrReports, $reaction_name)
+    {
+        $count = 0;
+        $reactionAefiCount = $this->count_aefis_with_reaction($reportReactions, $reaction_name);
+        $reactionPsdrsCount = $this->count_padrs_with_reaction($totalPadrReports, $reaction_name);
+        $reactionSadrsCount = count($this->get_sadr_reports_with_reaction($reaction_name));
+        $count=$reactionAefiCount+$reactionPsdrsCount+$reactionSadrsCount;
+
+        return $count;
+    }
+    public function count_drugs_in_the_entire_system($reportReactions,$totalPadrReports,$drug_name,$model)
+    {
+        $drugCount = 0; 
+        if ($model == "Aefi") { 
+            $drugCount = $this->count_aefis_with_drug($reportReactions,$drug_name);
+        }
+        if ($model == "Padr") { 
+            $drugCount = $this->count_padrs_with_drug($totalPadrReports,$drug_name);
+        }
+        if ($model == "Sadr") { 
+            $drugCount = count($this->get_sadr_reports_with_drug($drug_name)); 
         }
 
-
-        return $cond;
+        return $drugCount;
     }
-
-    public function count_aefis_with_drug_and_reaction($drug_name, $reaction_name)
+    public function count_drugs_and_reactions_in_the_entire_system($reportReactions,$totalPadrReports,$drug_name,$reaction_name,$model)
     {
+        $drugReactionCount = 0; 
+        if ($model == "Aefi") { 
+            $drugReactionCount = $this->count_aefis_with_drug_and_reaction($reportReactions,$drug_name,$reaction_name);
+        }
+        if ($model == "Padr") { 
+            $drugReactionCount = $this->count_padrs_with_drug_and_reaction($totalPadrReports,$drug_name,$reaction_name);
+        }
+        if ($model == "Sadr") { 
+            $drugReactionCount = count($this->get_sadr_reports_with_drug_and_reaction($drug_name,$reaction_name)); 
+        }
+
+        return $drugReactionCount;
     }
+
 
     public function manager_index()
     {
@@ -256,32 +455,26 @@ class DisproportionalitiesController extends AppController
         $aefi_total = $this->get_total_approved_aefis();
         $sadr_total = $this->get_total_approved_sadrs();
         $padr_total = $this->get_total_approved_padrs();
+        $transfusions_total = $this->get_total_approved_transfusions();
+        $medications_total = $this->get_total_approved_medications();
 
-        $total_reports = $aefi_total + $sadr_total + $padr_total;
+        $total_reports = $aefi_total + $sadr_total + $padr_total + $transfusions_total + $medications_total;
 
         $datas = Sanitize::clean($this->paginate(), array('encode' => false));
-
         $data = array();
+
+        $reportReactions = $this->get_aefi_reports();
+        $totalPadrReports = $this->padr_reports_found();
 
         foreach ($datas as $dt) {
             $reaction_name = $dt['Disproportionality']['reaction_name'];
             $drug_name = $dt['Disproportionality']['drug_name'];
             $model = $dt['Disproportionality']['model'];
+
+            $reactionCount = $this->count_reactions_in_the_entire_system($reportReactions, $totalPadrReports, $reaction_name);
+            $drugCount = $this->count_drugs_in_the_entire_system($reportReactions,$totalPadrReports,$drug_name,$model);
+            $drugReactionCount = $this->count_drugs_and_reactions_in_the_entire_system($reportReactions,$totalPadrReports,$drug_name,$reaction_name,$model);
             // exit;
-            if ($model == "Aefi") {
-                $reactionCount = 0; //$this->count_aefis_with_reaction($reaction_name);
-                $drugCount = 0; //count($this->count_aefis_with_drug($drug_name));
-                $drugReactionCount = 0;
-            }
-            if ($model == "Padr") {
-                $reactionCount = 0; //$this->count_aefis_with_reaction($reaction_name);
-                $drugCount = 0; //count($this->count_aefis_with_drug($drug_name));
-                $drugReactionCount = 0;
-            } else if ($model == "Sadr") {
-                $reactionCount = count($this->get_sadr_reports_with_reaction($reaction_name));
-                $drugCount = count($this->get_sadr_reports_with_drug($drug_name));
-                $drugReactionCount = count($this->get_sadr_reports_with_drug_and_reaction($drug_name, $reaction_name));
-            }
 
             $expected_count_raw = ($drugCount * $reactionCount) / $total_reports;
             $expected_count = round($expected_count_raw, 5);

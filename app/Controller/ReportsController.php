@@ -286,13 +286,47 @@ class ReportsController extends AppController
         $this->set(compact('inputData'));
         $this->set(compact('total'));
 
-        $this->set('_serialize', 'vaccines', 'total', 'vaccineinputData', '');
+        $this->set('_serialize', 'total');
     }
     public function manager_transfusions_analytics()
     {
+        $criteria['Padr.copied !='] = '1';
+        $criteria['Padr.deleted'] = false;
+        $criteria['Padr.archived'] = false;
+        $criteria['Padr.report_sadr'] = 'Adverse Reaction';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Padr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+
+        $reportIds = $this->Padr->find('list', array(
+            'fields' => array('Padr.id'),
+            'conditions' => $criteria
+        ));
+        $inputData=[];
+        $reportIds = array_keys($reportIds);
+        $total = count($reportIds);
+        $this->set(compact('inputData'));
+        $this->set(compact('total'));
+        $this->set('_serialize','inputData', 'total');
     }
     public function manager_medications_analytics()
     {
+        $criteria['Padr.copied !='] = '1';
+        $criteria['Padr.deleted'] = false;
+        $criteria['Padr.archived'] = false;
+        $criteria['Padr.report_sadr'] = 'Adverse Reaction';
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
+            $criteria['Padr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+
+        $reportIds = $this->Padr->find('list', array(
+            'fields' => array('Padr.id'),
+            'conditions' => $criteria
+        ));
+        $inputData=[];
+        $reportIds = array_keys($reportIds);
+        $total = count($reportIds);
+        $this->set(compact('inputData'));
+        $this->set(compact('total'));
+        $this->set('_serialize','inputData', 'total');
     }
     public function general()
     {

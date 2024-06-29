@@ -14,7 +14,6 @@
         ?>
       </li>
       
-     
       <li class="nav-header"><i class="fa fa-child" aria-hidden="true"></i> ADVERSE EVENTS FOLLOWING IMMUNIZATION</li>
       <li class="<?php echo $this->fetch('aefi-summary'); ?>">
       	<?php
@@ -102,7 +101,8 @@
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Transfusions Reports',  array('controller' => 'reports', 'action'=>'transfusions_analytics', 'manager' => true ),
                       array('escape' => false));
         ?>
-      </li> <li class="<?php echo $this->fetch('medications_analytics'); ?>">
+      </li> 
+      <li class="<?php echo $this->fetch('medications_analytics'); ?>">
       	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medications Reports',  array('controller' => 'reports', 'action'=>'medications_analytics', 'manager' => true ),
                       array('escape' => false));
