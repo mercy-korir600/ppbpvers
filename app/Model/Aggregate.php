@@ -18,8 +18,21 @@ class Aggregate extends AppModel
 		'reference_no' => array('type' => 'like', 'encode' => true),
 		'brand_name' => array('type' => 'like', 'encode' => true),
 		'inn_name' => array('type' => 'like', 'encode' => true),
+		'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aggregate.submitted_date as DATE) BETWEEN ? AND ?'),
+        'start_date' => array('type' => 'query', 'method' => 'dummy'),
+        'end_date' => array('type' => 'query', 'method' => 'dummy'),
+		'submission_frequency' => array('type' => 'like', 'encode' => true),
 	);
+	public function makeRangeCondition($data = array())
+    {
+        if (!empty($data['start_date'])) $start_date = date('Y-m-d', strtotime($data['start_date']));
+        else $start_date = date('Y-m-d', strtotime('2012-05-01'));
 
+        if (!empty($data['end_date'])) $end_date = date('Y-m-d', strtotime($data['end_date']));
+        else $end_date = date('Y-m-d');
+
+        return array($start_date, $end_date);
+    }
 	public function dummy($data = array())
 	{
 		return array('1' => '1');
@@ -41,37 +54,54 @@ class Aggregate extends AppModel
 		),
 		'inn_name' => array(
 			'conditionalNotBlank' => array(
-				'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				'rule' =>'notBlank',
 				// 'required' => true,
 				'message'  => 'Please provide a INN Name'
 			),
 		),
 		'mah' => array(
 			'conditionalNotBlank' => array(
-				'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				'rule' =>'notBlank',
 				// 'required' => true,
 				'message'  => 'Please provide a Marketing Authorization Holder'
 			),
 		),
 		'therapeutic_group' => array(
 			'conditionalNotBlank' => array(
-				'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
+				'rule' =>'notBlank',
 				// 'required' => true,
 				'message'  => 'Please provide Therapeutic Group Code'
 			),
 		),
 		'authorised_indications' => array(
 			'conditionalNotBlank' => array(
-				'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
-				// 'required' => true,
+				'rule' =>'notBlank',
+				'required' => true,
 				'message'  => 'Please provide authorised indications'
 			),
 		),
 		'form_strength' => array(
-			'conditionalNotBlank' => array(
-				'rule' => array('conditionalNotBlank', 'summary_available', 'Yes'),
-				// 'required' => true,
+			'notBlank' => array(
+				'rule' =>'notBlank',
+				'required' => true,
 				'message'  => 'Please provide pharmaceutical form(s)'
+			),
+		),
+
+
+		// Added section  
+
+		'interval_code' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide interval number'
+			),
+		),'submission_frequency' => array(
+			'notBlank' => array(
+				'rule'     => 'notBlank',
+				'required' => true,
+				'message'  => 'Please provide the submission frequency'
 			),
 		),
 

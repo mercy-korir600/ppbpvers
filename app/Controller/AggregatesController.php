@@ -162,7 +162,7 @@ class AggregatesController extends AppController
 			$response['valid'] = false;
 			$response['message'] .= "Please provide recommendation<br>";
 		}
-		
+
 		// Remove the last newline character if present
 		$response['message'] = rtrim($response['message'], "\n");
 
@@ -210,7 +210,7 @@ class AggregatesController extends AppController
 		$data_save['aggregate_id'] = $id;
 		$data_save['user_id'] = $this->Auth->User('id');
 		$this->Aggregate->saveField('copied', 1);
-		$data_save['copied'] = 2; 
+		$data_save['copied'] = 2;
 
 		if ($this->Aggregate->saveAssociated($data_save, array('deep' => true, 'validate' => false))) {
 			$this->Session->setFlash(__('Clean copy of ' . $data_save['reference_no'] . ' has been created'), 'alerts/flash_info');
@@ -259,6 +259,28 @@ class AggregatesController extends AppController
 			}
 		}
 	}
+
+	public function calculate_remider_date($data=null)
+	{
+		if(empty($data)){
+			return   date("Y-m-d H:i:s");
+		}
+		// get time interval
+		$today = new DateTime();
+
+		if($data['Aggregate']['submission_frequency']==="0")
+		{ 
+			$interval = new DateInterval('P' . $data['Aggregate']['interval_code'] . 'M');
+			$today->add($interval); 
+		}else{
+			$interval = new DateInterval('P' . $data['Aggregate']['interval_code'] . 'Y');
+			$today->add($interval); 
+		}
+		$reminder_date=$today->format("Y-m-d H:i:s");
+		 
+		return $reminder_date;
+	}
+
 	public function reporter_edit($id = null)
 	{
 		$isValid = array(
@@ -281,8 +303,8 @@ class AggregatesController extends AppController
 		if ($this->request->is('post') || $this->request->is('put')) {
 
 			$validate = false;
-			if (isset($this->request->data['submitReport'])) { 
-				$validate = 'first'; 
+			if (isset($this->request->data['submitReport'])) {
+				$validate = 'first';
 			}
 
 			if ($this->Aggregate->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
@@ -293,6 +315,7 @@ class AggregatesController extends AppController
 					}
 					$this->Aggregate->saveField('submitted', 2);
 					$this->Aggregate->saveField('submitted_date', date("Y-m-d H:i:s"));
+					$this->Aggregate->saveField('reminder_date', $this->calculate_remider_date($this->request->data));
 
 					if (!empty($aggregate['Aggregate']['reference_no']) && $aggregate['Aggregate']['reference_no'] == 'new') {
 						$reference = $this->generateReferenceNumber();
@@ -306,20 +329,23 @@ class AggregatesController extends AppController
 					$html = new HtmlHelper(new ThemeView());
 					$message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aggregates_submit')));
 					$variables = array(
-						'name' => $this->Auth->User('name'), 
+						'name' => $this->Auth->User('name'),
 						'reference_no' => $aggregate['Aggregate']['reference_no'],
 						'reference_link' => $html->link(
 							$aggregate['Aggregate']['reference_no'],
-							array('controller' => 'aggregates', 'action' => 'view', $aggregate['Aggregate']['id'], 'reporter' => true, 'full_base' => true),
+							array(
+								'controller' => 'aggregates', 
+								'action' => 'view', $aggregate['Aggregate']['id'], 
+								'reporter' => true, 'full_base' => true),
 							array('escape' => false)
 						),
 						'modified' => $aggregate['Aggregate']['modified']
 					);
 					$datum = array(
 						'email' => $aggregate['Aggregate']['reporter_email'],
-						'id' => $id, 
-						'user_id' => $this->Auth->User('id'), 
-						'type' => 'reporter_aggregates_submit', 
+						'id' => $id,
+						'user_id' => $this->Auth->User('id'),
+						'type' => 'reporter_aggregates_submit',
 						'model' => 'Aggregate',
 						'subject' => CakeText::insert($message['Message']['subject'], $variables),
 						'message' => CakeText::insert($message['Message']['content'], $variables)
@@ -341,17 +367,22 @@ class AggregatesController extends AppController
 					));
 					foreach ($users as $user) {
 						$variables = array(
-							'name' => $user['User']['name'], 'reference_no' => $aggregate['Aggregate']['reference_no'],
+							'name' => $user['User']['name'], 
+							'reference_no' => $aggregate['Aggregate']['reference_no'],
 							'reference_link' => $html->link(
 								$aggregate['Aggregate']['reference_no'],
-								array('controller' => 'Ce2bs', 'action' => 'view', $aggregate['Aggregate']['id'], 'manager' => true, 'full_base' => true),
+								array(
+									'controller' => 'aggregates', 
+									'action' => 'view', $aggregate['Aggregate']['id'], 
+									'manager' => true, 
+									'full_base' => true),
 								array('escape' => false)
 							),
 							'modified' => $aggregate['Aggregate']['modified']
 						);
 						$datum = array(
 							'email' => $user['User']['email'],
-							'id' => $id, 
+							'id' => $id,
 							'user_id' => $user['User']['id'],
 							'type' => 'reporter_aggregates_submit',
 							'model' => 'Aggregate',
@@ -389,12 +420,17 @@ class AggregatesController extends AppController
 			$this->request->data = $this->Aggregate->read(null, $id);
 		}
 
+		$units = array(
+			'0' => 'Month(s)',
+			'1' => 'Year(s)'
+		);
 		$counties = $this->Aggregate->County->find('list', array('order' => array('County.county_name' => 'ASC')));
 		$this->set(compact('counties'));
 		$sub_counties = $this->Aggregate->SubCounty->find('list', array('order' => array('SubCounty.sub_county_name' => 'ASC')));
 		$this->set(compact('sub_counties'));
 		$designations = $this->Aggregate->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
 		$this->set(compact('designations'));
+		$this->set(compact('units'));
 	}
 
 	public function reporter_add()
@@ -445,17 +481,9 @@ class AggregatesController extends AppController
 	{
 		$aggregate = $this->Aggregate->find('first', array(
 			'conditions' => array('Aggregate.id' => $id),
-			'contain' => array('Designation','ParentAggregate', 'AggregateListOfSignal', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewerComment', 'ReviewerComment.Attachment', 'Recommendation', 'Recommendation.Attachment', 'ReviewerAggregate', 'ReviewerAggregate.AggregateListOfSignal', 'ReviewerAggregate.Designation', 'ReviewerAggregate.Attachment', 'ReviewerAggregate.Recommendation')
+			'contain' => array('Designation', 'AggregateListOfSignal', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment')
 		));
-		// debug($aggregate);
-		// exit;
-		if (!empty($aggregate['ReviewerAggregate'])) {
-			$summary = $aggregate['ReviewerAggregate'][0];
-			// debug($summary);
-			// exit;
-			$this->set(['summary' => $summary]);
-		}
-
+		
 		$this->set(['aggregate' => $aggregate]);
 
 		if (strpos($this->request->url, 'pdf') !== false) {
@@ -559,6 +587,10 @@ class AggregatesController extends AppController
 			$aggregate = $this->Aggregate->read(null, $id);
 			$this->request->data = $this->Aggregate->read(null, $id);
 		}
+		$units = array(
+			'0' => 'Month(s)',
+			'1' => 'Year(s)'
+		);
 
 		$counties = $this->Aggregate->County->find('list', array('order' => array('County.county_name' => 'ASC')));
 		$this->set(compact('counties'));
@@ -567,6 +599,7 @@ class AggregatesController extends AppController
 		$designations = $this->Aggregate->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
 		$this->set(compact('designations'));
 		$this->set(compact('aggregate'));
+		$this->set(compact('units'));
 	}
 	public function manager_view($id = null)
 	{
@@ -596,32 +629,32 @@ class AggregatesController extends AppController
 
 
 	public function reporter_delete($id = null)
-    {
-        # code...
-        $this->common_delete($id);
-    }
+	{
+		# code...
+		$this->common_delete($id);
+	}
 
-    public function common_delete($id = null)
-    {
-        # code...
-        $this->Aggregate->id = $id;
-        if (!$this->Aggregate->exists()) {
-            throw new NotFoundException(__('Invalid Aggregate'));
-        }
-        $data = $this->Aggregate->read(null, $id);
-        if ($data['Aggregate']['submitted'] == 2) {
-            $this->Session->setFlash(__('You cannot delete a submitted Aggregate Report'), 'alerts/flash_error');
-            $this->redirect($this->referer());
-        }
-        //update the field deleted to true and deleted_date to current date without validation 
-        $data['Aggregate']['deleted'] = true;
-        $data['Aggregate']['deleted_date'] = date("Y-m-d H:i:s");
-        if ($this->Aggregate->save($data, array('validate' => false))) {
-            //displat message with reference number 
-            $this->Session->setFlash(__('Aggregate Report ' . $data['Aggregate']['reference_no'] . ' has been deleted'), 'alerts/flash_info');
-            $this->redirect($this->referer());
-        }
-        $this->Session->setFlash(__('Aggregate was not deleted'), 'alerts/flash_error');
-        $this->redirect($this->referer());
-    }
+	public function common_delete($id = null)
+	{
+		# code...
+		$this->Aggregate->id = $id;
+		if (!$this->Aggregate->exists()) {
+			throw new NotFoundException(__('Invalid Aggregate'));
+		}
+		$data = $this->Aggregate->read(null, $id);
+		if ($data['Aggregate']['submitted'] == 2) {
+			$this->Session->setFlash(__('You cannot delete a submitted Aggregate Report'), 'alerts/flash_error');
+			$this->redirect($this->referer());
+		}
+		//update the field deleted to true and deleted_date to current date without validation 
+		$data['Aggregate']['deleted'] = true;
+		$data['Aggregate']['deleted_date'] = date("Y-m-d H:i:s");
+		if ($this->Aggregate->save($data, array('validate' => false))) {
+			//displat message with reference number 
+			$this->Session->setFlash(__('Aggregate Report ' . $data['Aggregate']['reference_no'] . ' has been deleted'), 'alerts/flash_info');
+			$this->redirect($this->referer());
+		}
+		$this->Session->setFlash(__('Aggregate was not deleted'), 'alerts/flash_error');
+		$this->redirect($this->referer());
+	}
 }

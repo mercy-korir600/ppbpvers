@@ -59,7 +59,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                 <div class="span12">
                     <section id="aefisview">
                         <div style="margin: 10px;">
-                             
+
                             <div class="">
                                 <div class="row-fluid">
                                     <div class="span6">
@@ -117,6 +117,8 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                             )
                                         );
 
+
+
                                         ?>
                                     </div>
                                 </div>
@@ -165,198 +167,238 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
 
                                         ?>
                                     </div>
+                                    <div class="span6">
+                                        <div class="row-fluid">
+                                            <div class="span6">
+
+                                                <?php
+                                                echo $this->Form->input(
+                                                    'interval_code',
+                                                    array(
+                                                        'class' => 'span12 available',
+                                                        'label' => array('class' => 'control-label ', 'text' => 'Submission Frequency<span style="color:red;">*</span>'),
+                                                        'after' => '<p class="help-block"> </p></div>',
+                                                        'type' => 'number', // Ensure the input is of type 'number'
+                                                        'min' => 1,         // Set minimum value to 1
+                                                        'max' => 11
+                                                    )
+                                                );
+
+                                                ?>
+
+                                            </div>
+                                            <div class="span6">
+                                                <?php
+                                              
+
+                                                echo $this->Form->input(
+                                                    'submission_frequency',
+                                                    array(
+                                                        'class' => 'span4 available',
+                                                        'type' => 'select',
+                                                        'options' => $units,
+                                                        'empty' => true, 
+                                                        'label' => array('class' => 'control-label required', 'text' => 'Unit' . ' <span style="color:red;">*</span>'),
+                                                        'empty' => true
+                                                    )
+                                                );
+
+                                                ?>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <hr>
                                 </div>
-                                <hr>
                             </div>
-                        </div>
- 
-                      
 
-                        <!-- Start of Attachments -->
-                        <div style="margin: 10px;">
-                            <div class="row-fluid">
-                                <div class="span8">
 
-                                    <?php
 
-                                    echo $this->Form->input(
-                                        'sample',
-                                        array(
-                                            // create a hidden input with the same name as the input
-                                            'type' => 'hidden',
-                                            'id' => 'sample',
-                                            'value' => 'dammy',
-                                            'class' => 'autosave-ignore',
-                                        )
-                                    );
-                                    echo $this->element('multi/aggregates', ['model' => 'Aggregate', 'group' => 'attachment', 'examples' => 'This should be a text PDF file of maximum size of 10MB']); ?>
+                            <!-- Start of Attachments -->
+                            <div style="margin: 10px;">
+                                <div class="row-fluid">
+                                    <div class="span8">
+
+                                        <?php
+
+                                        echo $this->Form->input(
+                                            'sample',
+                                            array(
+                                                // create a hidden input with the same name as the input
+                                                'type' => 'hidden',
+                                                'id' => 'sample',
+                                                'value' => 'dammy',
+                                                'class' => 'autosave-ignore',
+                                            )
+                                        );
+                                        echo $this->element('multi/aggregates', ['model' => 'Aggregate', 'group' => 'attachment', 'examples' => 'This should be a text PDF file of maximum size of 10MB']); ?>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- End of Attachements -->
-
+                            <!-- End of Attachements -->
 
 
-                        <!-- Reporter Details -->
-                        <div style="margin: 10px;">
-                            <div class="row-fluid">
-                                <div class="span6">
-                                    <?php
-                                    echo $this->Form->input(
-                                        'reporter_name',
-                                        array(
-                                            'div' => array('class' => 'control-group required'),
-                                            'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
-                                        )
-                                    );
-                                    echo $this->Form->input(
-                                        'reporter_email',
-                                        array(
-                                            'type' => 'email',
-                                            'div' => array('class' => 'control-group required'),
-                                            'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
-                                        )
-                                    );
 
-                                    ?>
+                            <!-- Reporter Details -->
+                            <div style="margin: 10px;">
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <?php
+                                        echo $this->Form->input(
+                                            'reporter_name',
+                                            array(
+                                                'div' => array('class' => 'control-group required'),
+                                                'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
+                                            )
+                                        );
+                                        echo $this->Form->input(
+                                            'reporter_email',
+                                            array(
+                                                'type' => 'email',
+                                                'div' => array('class' => 'control-group required'),
+                                                'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
+                                            )
+                                        );
+
+                                        ?>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="span6">
+                                        <?php
+                                        echo $this->Form->input(
+                                            'designation_id',
+                                            array('label' => array('class' => 'control-label required', 'text' => 'DESIGNATION' . ' <span style="color:red;">*</span>'), 'empty' => true)
+                                        );
+                                        echo $this->Form->input(
+                                            'reporter_phone',
+                                            array(
+                                                'div' => array('class' => 'control-group'),
+                                                'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
+                                            )
+                                        );
+
+                                        echo $this->Form->input(
+                                            'reporter_date',
+                                            array(
+                                                'type' => 'text',
+                                                'class' => 'date-pick-field',
+                                                'label' => array('class' => 'control-label required', 'text' => 'Date <span style="color:red;">*</span>'),
+                                            )
+                                        );
+                                        ?>
+                                    </div>
+                                    <!--/span-->
                                 </div>
-                                <!--/span-->
-                                <div class="span6">
-                                    <?php
-                                    echo $this->Form->input(
-                                        'designation_id',
-                                        array('label' => array('class' => 'control-label required', 'text' => 'DESIGNATION' . ' <span style="color:red;">*</span>'), 'empty' => true)
-                                    );
-                                    echo $this->Form->input(
-                                        'reporter_phone',
-                                        array(
-                                            'div' => array('class' => 'control-group'),
-                                            'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
-                                        )
-                                    );
-
-                                    echo $this->Form->input(
-                                        'reporter_date',
-                                        array(
-                                            'type' => 'text',
-                                            'class' => 'date-pick-field',
-                                            'label' => array('class' => 'control-label required', 'text' => 'Date <span style="color:red;">*</span>'),
-                                        )
-                                    );
-                                    ?>
-                                </div>
-                                <!--/span-->
-                            </div>
-                            <!--/row-->
-                            <table class="table table-bordered  table-condensed table-pvborderless">
-                                <tbody>
-                                    <tr>
-                                        <td width="45%">
-                                            <h5 class="pull-right text-success">Is the person submitting different from
-                                                reporter?&nbsp;</h5>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            echo $this->Form->input(
-                                                'person_submitting',
-                                                array(
-                                                    'type' => 'radio',
-                                                    'label' => false,
-                                                    'legend' => false,
-                                                    'div' => false,
-                                                    'hiddenField' => false,
-                                                    'error' => false,
-                                                    'class' => 'person-submit',
-                                                    'before' => '<div class="form-inline">
+                                <!--/row-->
+                                <table class="table table-bordered  table-condensed table-pvborderless">
+                                    <tbody>
+                                        <tr>
+                                            <td width="45%">
+                                                <h5 class="pull-right text-success">Is the person submitting different from
+                                                    reporter?&nbsp;</h5>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                echo $this->Form->input(
+                                                    'person_submitting',
+                                                    array(
+                                                        'type' => 'radio',
+                                                        'label' => false,
+                                                        'legend' => false,
+                                                        'div' => false,
+                                                        'hiddenField' => false,
+                                                        'error' => false,
+                                                        'class' => 'person-submit',
+                                                        'before' => '<div class="form-inline">
 												<input type="hidden" value="" id="AggregatePersonSubmitting_" name="data[Aggregate][person_submitting]">
 												<label class="radio">',
-                                                    'after' => '</label>&nbsp;&nbsp;',
-                                                    'options' => array('Yes' => 'Yes'),
-                                                )
-                                            );
-                                            echo $this->Form->input(
-                                                'person_submitting',
-                                                array(
-                                                    'type' => 'radio',
-                                                    'label' => false,
-                                                    'legend' => false,
-                                                    'div' => false,
-                                                    'hiddenField' => false,
-                                                    'class' => 'person-submit',
-                                                    'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
-                                                    'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
-                                                    'before' => '<label class="radio">',
-                                                    'after' => '</label> </div>',
-                                                    'options' => array('No' => 'No'),
-                                                )
-                                            );
-                                            ?>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="row-fluid">
-                                <div class="span6">
-                                    <?php
-                                    echo $this->Form->input(
-                                        'reporter_name_diff',
-                                        array(
-                                            'div' => array('class' => 'control-group required'),
-                                            'class' => 'diff',
-                                            'label' => array('class' => 'control-label required', 'text' => 'Name <span style="color:red;">*</span>'),
-                                        )
-                                    );
-                                    echo $this->Form->input(
-                                        'reporter_email_diff',
-                                        array(
-                                            'type' => 'email',
-                                            'div' => array('class' => 'control-group required'),
-                                            'class' => 'diff',
-                                            'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
-                                        )
-                                    );
-                                    ?>
+                                                        'after' => '</label>&nbsp;&nbsp;',
+                                                        'options' => array('Yes' => 'Yes'),
+                                                    )
+                                                );
+                                                echo $this->Form->input(
+                                                    'person_submitting',
+                                                    array(
+                                                        'type' => 'radio',
+                                                        'label' => false,
+                                                        'legend' => false,
+                                                        'div' => false,
+                                                        'hiddenField' => false,
+                                                        'class' => 'person-submit',
+                                                        'format' => array('before', 'label', 'between', 'input', 'error', 'after'),
+                                                        'error' => array('attributes' => array('wrap' => 'p', 'class' => 'required error')),
+                                                        'before' => '<label class="radio">',
+                                                        'after' => '</label> </div>',
+                                                        'options' => array('No' => 'No'),
+                                                    )
+                                                );
+                                                ?>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <?php
+                                        echo $this->Form->input(
+                                            'reporter_name_diff',
+                                            array(
+                                                'div' => array('class' => 'control-group required'),
+                                                'class' => 'diff',
+                                                'label' => array('class' => 'control-label required', 'text' => 'Name <span style="color:red;">*</span>'),
+                                            )
+                                        );
+                                        echo $this->Form->input(
+                                            'reporter_email_diff',
+                                            array(
+                                                'type' => 'email',
+                                                'div' => array('class' => 'control-group required'),
+                                                'class' => 'diff',
+                                                'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
+                                            )
+                                        );
+                                        ?>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="span6">
+                                        <?php
+                                        echo $this->Form->input(
+                                            'reporter_designation_diff',
+                                            array(
+                                                'type' => 'select',
+                                                'options' => $designations,
+                                                'empty' => true,
+                                                'class' => 'diff',
+                                                'label' => array('class' => 'control-label required', 'text' => 'Designation' . ' <span style="color:red;">*</span>'),
+                                                'empty' => true
+                                            )
+                                        );
+                                        echo $this->Form->input(
+                                            'reporter_phone_diff',
+                                            array(
+                                                'div' => array('class' => 'control-group'),
+                                                'class' => 'diff',
+                                                'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
+                                            )
+                                        );
+                                        echo $this->Form->input(
+                                            'reporter_date_diff',
+                                            array(
+                                                'type' => 'text',
+                                                'class' => 'date-pick-field diff',
+                                                'label' => array('class' => 'control-label required', 'text' => 'Date'),
+                                            )
+                                        );
+                                        ?>
+                                    </div>
+                                    <!--/span-->
                                 </div>
-                                <!--/span-->
-                                <div class="span6">
-                                    <?php
-                                    echo $this->Form->input(
-                                        'reporter_designation_diff',
-                                        array(
-                                            'type' => 'select',
-                                            'options' => $designations,
-                                            'empty' => true,
-                                            'class' => 'diff',
-                                            'label' => array('class' => 'control-label required', 'text' => 'Designation' . ' <span style="color:red;">*</span>'),
-                                            'empty' => true
-                                        )
-                                    );
-                                    echo $this->Form->input(
-                                        'reporter_phone_diff',
-                                        array(
-                                            'div' => array('class' => 'control-group'),
-                                            'class' => 'diff',
-                                            'label' => array('class' => 'control-label required', 'text' => 'PHONE NO.' . ' <span style="color:red;">*</span>')
-                                        )
-                                    );
-                                    echo $this->Form->input(
-                                        'reporter_date_diff',
-                                        array(
-                                            'type' => 'text',
-                                            'class' => 'date-pick-field diff',
-                                            'label' => array('class' => 'control-label required', 'text' => 'Date'),
-                                        )
-                                    );
-                                    ?>
-                                </div>
-                                <!--/span-->
+                                <!--/row-->
                             </div>
-                            <!--/row-->
-                        </div>
 
 
-                        <!-- End of Reporter Details -->
+                            <!-- End of Reporter Details -->
 
                     </section>
                 </div>
@@ -406,6 +448,3 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
     </div>
     <?php echo $this->Form->end(); ?>
 </section>
-
-
- 

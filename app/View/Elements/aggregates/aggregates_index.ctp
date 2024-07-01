@@ -94,27 +94,44 @@ echo $this->Session->flash();
                 <tr>
                     <td>
                         <?php
-                   echo $this->Form->input(
-                    'brand_name',
-                    array(
-                        'div' => false, 'placeholder' => '',
-                        'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name ')
-                    )
-                );
+                        echo $this->Form->input(
+                            'brand_name',
+                            array(
+                                'div' => false, 'placeholder' => '',
+                                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name ')
+                            )
+                        );
                         ?>
                     </td>
                     <td>
                         <?php
-                   echo $this->Form->input(
-                    'inn_name',
-                    array(
-                        'div' => false, 'placeholder' => '',
-                        'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Inn Name ')
-                    )
-                );
+                        echo $this->Form->input(
+                            'inn_name',
+                            array(
+                                'div' => false, 'placeholder' => '',
+                                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Inn Name ')
+                            )
+                        );
                         ?>
                     </td>
-                    </tr>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'submission_frequency',
+                            array(
+                                'div' => false, 
+                                'class' => 'span12', 'label' => array('class' => 'required submission_frequency', 'text' => 'Submission Frequency '),
+                                'type'=>'select',
+                                'empty'=>true, 
+                                'options'=>array(
+                                    '0'=>'Monthly',
+                                    '1'=>'Yearly'
+                                )
+                            )
+                        );
+                        ?>
+                    </td>
+                </tr>
                 <tr>
                     <td><label for="PadrPages" class="required">Pages</label></td>
                     <td>
@@ -229,7 +246,7 @@ echo $this->Session->flash();
                                 );
                                 echo "&nbsp;";
                                 if ($redir == 'reporter'  and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'aggregates', 'action' => 'followup', $aggregate['Aggregate']['id']), array('escape' => false), __('Add a followup report?'));
-                                
+
 
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'aggregates', 'action' => 'followup', $aggregate['Aggregate']['id']), array('escape' => false), __('Add a followup report?'));
@@ -241,7 +258,7 @@ echo $this->Session->flash();
                                 );
                                 echo "&nbsp;";
                                 // if (($redir == 'manager' || $redir == 'reviewer') && $aggregate['Aggregate']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'aggregates', 'action' => 'copy', $aggregate['Aggregate']['id']), array('escape' => false), __('Create a clean copy to edit?'));
-                                if (($redir == 'manager' || $redir == 'reviewer'))echo $this->Html->link(
+                                if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                                     array('controller' => 'aggregates', 'action' => 'archive', $aggregate['Aggregate']['id']),
                                     array('escape' => false),
@@ -258,7 +275,7 @@ echo $this->Session->flash();
                                     echo "&nbsp;";
                                     echo $this->Form->postLink('<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>', array('controller' => 'aggregates', 'action' => 'delete', $aggregate['Aggregate']['id']), array('escape' => false), __('Are you sure you want to delete this report?
                                     Note: This action cannot be undone.'));
-                                  }
+                                }
                                 echo "&nbsp;";
                                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',

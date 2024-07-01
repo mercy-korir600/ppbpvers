@@ -353,7 +353,17 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                         array(
                                             'class' => 'span10',
                                             'rows' => '3',
-                                            'label' => array('class' => 'control-label ', 'text' => '5 Conclusions and Recommendations <span style="color:red;">*</span>'),
+                                            'label' => array('class' => 'control-label ', 'text' => '5 Recommendations <span style="color:red;">*</span><p class="help-block">(Include any queries raised)</p>'),
+                                            'after' => '<p class="help-block"></p></div>',
+                                            'before'=>'<p></p>'
+                                        )
+                                    );
+                                    echo $this->Form->input(
+                                        'conclusion',
+                                        array(
+                                            'class' => 'span10',
+                                            'rows' => '3',
+                                            'label' => array('class' => 'control-label ', 'text' => '6 Conclusions <span style="color:red;">*</span>'),
                                             'after' => '<p class="help-block"> </p></div>',
                                         )
                                     );
@@ -630,6 +640,7 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
     CKEDITOR.replace('data[Aggregate][risks_evaluation]');
     CKEDITOR.replace('data[Aggregate][risks_characterisation]');
     CKEDITOR.replace('data[Aggregate][benefit_evaluation]'); 
-    CKEDITOR.replace('data[Aggregate][risk_balance]');
+    CKEDITOR.replace('data[Aggregate][risk_balance]'); 
     CKEDITOR.replace('data[Aggregate][recommendation]');
+    CKEDITOR.replace('data[Aggregate][conclusion]');
 </script>

@@ -103,7 +103,7 @@
             <senderfax>2713409</senderfax>
             <senderfaxextension>20</senderfaxextension>
             <senderfaxcountrycode>254</senderfaxcountrycode>
-            <senderemailaddress>pv@ppb.go.ke</senderemailaddress>
+            <senderemailaddress>pv@pharmacyboardkenya.org</senderemailaddress>
         </sender>
         <receiver>
             <receivertype/>
@@ -183,7 +183,7 @@
 				if($sadr['Sadr']['gender'] == 'Male') echo 1 ;
 				elseif($sadr['Sadr']['gender'] == 'Female') echo 2 ;
 			?></patientsex>
-            <lastmenstrualdateformat/>
+            <lastmenstrualdateformat/> 
             <patientlastmenstrualdate/>
             <patientmedicalhistorytext><?php echo $sadr['Sadr']['medical_history']; ?></patientmedicalhistorytext>
             <resultstestsprocedures><?php echo $sadr['Sadr']['lab_investigation']; ?></resultstestsprocedures>
@@ -195,7 +195,7 @@
             <reaction>
                 <primarysourcereaction><?php echo $sadr['Sadr']['reaction']; ?></primarysourcereaction>
                 <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
-                <reactionmeddrallt><?php echo $sadr['Sadr']['medra']; ?></reactionmeddrallt>
+                <reactionmeddrallt><?php echo $sadr['Sadr']['report_title']; ?></reactionmeddrallt>
                 <reactionmeddraversionpt></reactionmeddraversionpt>
                 <reactionmeddrapt></reactionmeddrapt>
                 <termhighlighted/>

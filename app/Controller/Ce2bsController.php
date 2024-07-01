@@ -55,12 +55,18 @@ class Ce2bsController extends AppController
             $this->redirect($this->referer());
         }
 
-        // Mute for productions
-        // $this->Session->setFlash(__('Only available in production server!!'), 'flash_error');
-        // $this->redirect($this->referer());
+       
 
+        // $html = $ce2b['Ce2b']['e2b_content'];
 
-        $html = $ce2b['Ce2b']['e2b_content'];
+        $view = new View($this, false);
+        $view->viewPath = 'Ce2bs/xml';  // Directory inside view directory to search for .ctp files
+        $view->layout = false; // if you want to disable layout
+        $view->set('ce2b', $ce2b); // set your variables for view here
+        $html = $view->render('download');
+
+        // debug($html);
+        // exit;
         $HttpSocket = new HttpSocket();
         // string data
         $results = $HttpSocket->post(
@@ -68,10 +74,8 @@ class Ce2bsController extends AppController
             $html,
             array('header' => array('umc-vigiflow-web-radr-access-key' => Configure::read('vigiflow_key')))
         );
-
         // debug($results);
-        // debug($results->body);
-        // exit();
+        // exit;
         if ($results->isOk()) {
             $body = $results->body;
             $this->Ce2b->saveField('vigiflow_message', $body);
