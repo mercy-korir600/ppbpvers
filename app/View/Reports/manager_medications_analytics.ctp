@@ -30,6 +30,7 @@ $this->Html->css('summary', null, array('inline' => false));
                             <tr> 
                                 <th>Drug Reaction</th>
                                 <th>Observed</th> 
+                                <!-- <th>Drug vs Reaction</th> -->
                                 <th>Expected</th>
                                 <th>IC025>0</th> 
                                 <th>IC</th> 
@@ -52,6 +53,7 @@ $this->Html->css('summary', null, array('inline' => false));
                                 echo "<tr>";
                                 echo "<td>" . $dt['reaction_at_hand'] . "</td>";
                                 echo "<td>" . $dt['B_reports_with_reaction'] . "</td>"; 
+                                // echo "<td>" . $dt['AB_reports_with_drug_and_reaction'] . "</td>"; 
                                 echo "<td>" . (int)$dt['E_(AB)_expected_count'] . "</td>";
                                 echo "<td style='color: $color;'>" . round($confidenceInterval,2) . "</td>";  
                                 echo "<td>" . $log . "</td>"; 

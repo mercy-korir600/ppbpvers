@@ -96,6 +96,7 @@ class DisproportionalitiesController extends AppController
         $criteria['Medication.copied !='] = '1';
         $criteria['Medication.deleted'] = false;
         $criteria['Medication.archived'] = false;
+        $criteria['Medication.reach_patient']="Yes";
 
         $count = $this->Medication->find(
             'count',

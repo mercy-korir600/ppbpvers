@@ -51,12 +51,24 @@ app/Console/cake acl grant Group.2 controllers/SadrReactions
 app/Console/cake acl grant Group.2 controllers/Saefis
 app/Console/cake acl grant Group.2 controllers/Reviews
 app/Console/cake acl grant Group.2 controllers/Khis
-
+app/Console/cake acl grant Group.2 controllers/Aggregates
+app/Console/cake acl grant Group.2 controllers/Pockets
+app/Console/cake acl grant Group.2 controllers/Disproportionalities
 # Allow reporters to some 
 echo "*************** Assign Reporter Permissions  *******************"
 app/Console/cake acl deny Group.3 controllers
 app/Console/cake acl grant Group.3 controllers/Users/reporter_dashboard
 app/Console/cake acl grant Group.3 controllers/Users/edit
+
+
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_index
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_add  
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_edit
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_view
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_delete 
+app/Console/cake acl grant Group.3 controllers/Aggregates/reporter_followup
+
+
         
 app/Console/cake acl grant Group.3 controllers/Sadrs/sadrIndex
 app/Console/cake acl grant Group.3 controllers/Sadrs/reporter_index
@@ -91,6 +103,7 @@ app/Console/cake acl grant Group.3 controllers/Ce2bs/reporter_add
 app/Console/cake acl grant Group.3 controllers/Ce2bs/reporter_edit
 app/Console/cake acl grant Group.3 controllers/Ce2bs/reporter_view
 app/Console/cake acl grant Group.3 controllers/Ce2bs/reporter_delete 
+app/Console/cake acl grant Group.3 controllers/Ce2bs/reporter_followup
 
 app/Console/cake acl grant Group.3 controllers/Devices/reporter_index
 app/Console/cake acl grant Group.3 controllers/Devices/reporter_add
@@ -135,6 +148,7 @@ app/Console/cake acl grant Group.3 controllers/AefiDescriptions
 app/Console/cake acl grant Group.3 controllers/SadrReactions
 app/Console/cake acl grant Group.3 controllers/Saefis
 app/Console/cake acl grant Group.3 controllers/Reviews
+app/Console/cake acl grant Group.3 controllers/Pockets
 
 # Allow institution administrators to some 
 echo "*************** Assign Institution Managers Permissions  *******************"

@@ -301,32 +301,155 @@ class ReportsController extends AppController
             'fields' => array('Padr.id'),
             'conditions' => $criteria
         ));
-        $inputData=[];
+        $inputData = [];
         $reportIds = array_keys($reportIds);
         $total = count($reportIds);
         $this->set(compact('inputData'));
         $this->set(compact('total'));
-        $this->set('_serialize','inputData', 'total');
+        $this->set('_serialize', 'inputData', 'total');
+    }
+
+    public function medication_count_specific_reaction($reportIds, $reaction)
+    {
+        $criteria['Medication.direct_result'] = $reaction;
+        $criteria['Medication.id IN'] = $reportIds;
+        $allreactions = $this->Medication->find('list', array(
+            'fields' => array('Medication.direct_result'),
+            'conditions' => $criteria
+        ));
+
+        return count($allreactions);
+
+    }
+    public function medication_count_specific_drug_reaction($reportIds,$drug_name, $reaction)
+    {
+
+        $criteria['Medication.direct_result'] = $reaction;
+        $criteria['Medication.id IN'] = $reportIds;
+        $allreactions = $this->Medication->find('list', array(
+            'fields' => array('Medication.id'),
+            'conditions' => $criteria
+        ));
+
+
+        $vaccines = $this->Medication->MedicationProduct->find('list', array(
+            'fields' => array(
+                'MedicationProduct.medication_id', 
+            ),
+            'contain' => array(),
+            'conditions' => array(
+                'MedicationProduct.medication_id' => $reportIds,
+                'MedicationProduct.generic_name_ii IS NOT NULL',
+                'MedicationProduct.generic_name_ii !=' => '',
+                  'MedicationProduct.generic_name_ii ' => $drug_name
+            ), 
+        ));
+        $commonMedications = array_intersect($allreactions, $vaccines);
+
+        // debug($allreactions);
+        // debug($vaccines);
+        // exit;
+
+        return count($commonMedications);
+
     }
     public function manager_medications_analytics()
     {
-        $criteria['Padr.copied !='] = '1';
-        $criteria['Padr.deleted'] = false;
-        $criteria['Padr.archived'] = false;
-        $criteria['Padr.report_sadr'] = 'Adverse Reaction';
+        $criteria['Medication.copied !='] = '1';
+        $criteria['Medication.deleted'] = false;
+        $criteria['Medication.archived'] = false;
+        $criteria['Medication.reach_patient'] = 'Yes';
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
-            $criteria['Padr.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
+            $criteria['Medication.submitted_date between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
 
-        $reportIds = $this->Padr->find('list', array(
-            'fields' => array('Padr.id'),
+        $reportIds = $this->Medication->find('list', array(
+            'fields' => array('Medication.id'),
             'conditions' => $criteria
         ));
-        $inputData=[];
+        $inputData = [];
         $reportIds = array_keys($reportIds);
-        $total = count($reportIds);
+        $total_report_count = count($reportIds);
+        $total = $total_report_count;
+
+
+        $vaccines = $this->Medication->MedicationProduct->find('all', array(
+            'fields' => array(
+                'MedicationProduct.generic_name_ii',
+                'COUNT(DISTINCT MedicationProduct.medication_id) as cnt'
+            ),
+            'contain' => array(),
+            'conditions' => array(
+                'MedicationProduct.medication_id' => $reportIds,
+                'MedicationProduct.generic_name_ii IS NOT NULL',
+                'MedicationProduct.generic_name_ii !=' => ''
+            ),
+            'group' => array('MedicationProduct.generic_name_ii'),
+            // 'having' => array('cnt >' => 0),
+        ));
+        // get list of all reactions
+
+        $criteria['Medication.direct_result !='] = '';
+        $allreactions = $this->Medication->find('list', array(
+            'fields' => array('Medication.direct_result'),
+            'conditions' => $criteria
+        ));
+        //  debug($allreactions);
+        // exit;
+
+        foreach ($vaccines as $vc) {
+            $drug_related_reports = $vc[0]['cnt'];
+            $drug_name=$vc['MedicationProduct']['generic_name_ii'];
+
+
+            $reactionDetails = [];
+            foreach ($allreactions as $reaction) {
+
+                $reactionCount = $this->medication_count_specific_reaction($reportIds, $reaction); // B
+                $drugReactionCount = $this->medication_count_specific_drug_reaction($reportIds,$drug_name, $reaction); //AB
+
+                $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
+                $expected_count = round($expected_count_raw, 5);
+
+                $numerator = $drugReactionCount + 0.5;
+                $denominator = $expected_count + 0.5;
+                $calculated_data = $numerator / $denominator;
+
+                // Observed vs. Expected -> IC (Information Component):
+
+                $calculated_log_data_raw = log($calculated_data, 2);
+                $calculated_log_data = round($calculated_log_data_raw, 5);
+                $variance_of_ic_raw = 1 / ($numerator) + 1 / ($drug_related_reports - $drugReactionCount + 0.5) + 1 / ($reactionCount - $drugReactionCount + 0.5) + 1 / ($total_report_count - $drug_related_reports - $reactionCount + $drugReactionCount + 0.5);
+
+                $variance_of_ic = round($variance_of_ic_raw, 5);
+
+                $standard_error = sqrt($variance_of_ic);
+
+                $lower_bound = $calculated_log_data - 1.96 * $standard_error;
+
+                $reactionDetails[] = array(
+
+                    'B_reports_with_reaction' => $reactionCount,
+                    'AB_reports_with_drug_and_reaction' =>  $drugReactionCount,
+                    'reaction_at_hand' => $reaction,
+                    'E_(AB)_expected_count' =>  $expected_count,
+                    'IC_raw_calculated_data' => $calculated_data,
+                    'IC_raw_calculated_log_data' => $calculated_log_data,
+                    'Var(IC)_Variance_of_IC' => $variance_of_ic,
+                    'Standard_Error_(SE)_of_IC' => $standard_error,
+                    '95%_Confidence_Interval' => $lower_bound
+                );
+            }
+
+            $inputData[] = array(
+                'current_drug_name' => $drug_name,
+                'N_total_reports' => $total_report_count,
+                'A_reports_with_drug' => $drug_related_reports,
+                'reactionDetails' => $reactionDetails
+            );
+        }
         $this->set(compact('inputData'));
         $this->set(compact('total'));
-        $this->set('_serialize','inputData', 'total');
+        $this->set('_serialize', 'inputData', 'total');
     }
     public function general()
     {
@@ -2536,6 +2659,9 @@ class ReportsController extends AppController
         // Load Data for Counties
         $criteria['Medication.submitted'] = array(1, 2);
         $criteria['Medication.copied !='] = '1';
+        $criteria['Medication.deleted'] = false;
+        $criteria['Medication.archived'] = false;
+        $criteria['Medication.reach_patient'] = "Yes";
         if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date']))
             $criteria['Medication.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
