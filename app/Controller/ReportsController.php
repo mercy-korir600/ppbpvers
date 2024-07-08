@@ -721,8 +721,22 @@ class ReportsController extends AppController
         }
 
         // Target Vaccine
-        $reactionLists = Configure::read('analytics');
+        // $reactionLists = Configure::read('analytics');
         // debug($reactionName); 
+        $config['analytics'] = [
+            'anaphylaxis' => 'Anaphylaxis', 
+            'bcg' => 'BCG Lymphadenitis',
+            'convulsion' => 'Convulsion',
+            'urticaria' => 'Generalized urticaria (hives)',
+            'fever' => 'High Fever',
+            'abscess' => 'Injection site abscess',
+            'local_reaction' => 'Severe Local Reaction',
+            'meningitis' => 'Encephalopathy, Encephalitis/Meningitis',
+            'paralysis' => 'Paralysis',
+            'toxic_shock' => 'Toxic shock'
+        ];
+        
+        $reactionLists = array_keys($config['analytics']);
 
         // loop through to get all target reaction key => name
 
