@@ -9,9 +9,9 @@ $this->Html->script('comments/reviews', array('inline' => false));
   <ul id="reviewer_tab" class="nav nav-tabs">
     <li class="active"><a href="#formview" data-toggle="tab"><?php echo $saefi['Saefi']['reference_no']; ?></a></li>
     <li><a href="#external_report_comments" data-toggle="tab">Feedback (<?php echo count($saefi['ExternalComment']); ?>)</a></li>
-    <?php if ($this->Session->read('Auth.User.user_type') == 'County Pharmacist') { ?>
+    <?php if ($this->Session->read('Auth.User.group_id') == '2') { ?>
       <li><a href="#committee_review" data-toggle="tab">Committee Review (<?php echo count($saefi['Review']); ?>)</a></li>
-    <?php } ?>
+    <?php } ?> 
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="formview">

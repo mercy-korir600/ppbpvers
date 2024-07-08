@@ -103,7 +103,7 @@ echo $this->Form->create('Aefi', array(
                     ));
                     echo $this->Form->input('sub_county_id', array(
                         'options' => $sub_counties,
-                        'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY'),
+                        'label' => array('class' => 'control-label required', 'text' => 'SUB-COUNTY <span style="color:red;">*</span>'),
                         'empty' => true, 'between' => '<div class="controls ui-widget">',
                     ));
                     ?>
@@ -209,6 +209,75 @@ echo $this->Form->create('Aefi', array(
                                         </div> </div>',
                     'options' => array('Unknown' => 'Unknown'),
                 ));
+
+
+                echo $this->Form->input('pregnancy_status', array(
+                    'type' => 'radio',
+                    'label' => false,
+                    'legend' => false,
+                    'div' => false,
+                    'hiddenField' => false,
+                    'class' => 'pregnancy_status',
+                    'before' => '<div class="control-group"> <label class="control-label">PREGNANCY STATUS</label>
+                                    <div class="controls" id="pregnancy_stati">  <input type="hidden" value="" id="SadrPregnancyStatus_" name="data[Sadr][pregnancy_status]"> <label class="radio inline">',
+                    'after' => '</label>',
+                    // 'onclick' => '$(\'#pstati\').show();',
+                    'options' => array('Not Applicable' => 'Not Applicable'),
+                )
+                );
+                echo $this->Form->input('pregnancy_status', array(
+                    'type' => 'radio',
+                    'label' => false,
+                    'legend' => false,
+                    'div' => false,
+                    'hiddenField' => false,
+                    'class' => 'pregnancy_status',
+                    'before' => '<label class="radio inline">',
+                    'after' => '</label>',
+                    // 'onclick' => '$(\'#pstati\').hide(); $(\'#pstati input:radio\').removeAttr(\'checked\');',
+                    'options' => array('Not pregnant' => 'Not pregnant'),
+                )
+                );
+                echo $this->Form->input('pregnancy_status', array(
+                    'type' => 'radio',
+                    'label' => false,
+                    'legend' => false,
+                    'div' => false,
+                    'hiddenField' => false,
+                    'class' => 'pregnancy_status',
+                    'before' => '<br><div><label class="radio inline">',
+                    'after' => '</label>',
+                    'options' => array('1st Trimester' => '1st Trimester'),
+                )
+                );
+                echo $this->Form->input('pregnancy_status', array(
+                    'type' => 'radio',
+                    'label' => false,
+                    'legend' => false,
+                    'div' => false,
+                    'hiddenField' => false,
+                    'class' => 'pregnancy_status',
+                    'before' => '<label class="radio inline">',
+                    'after' => '</label>',
+                    'options' => array('2nd Trimester' => '2nd Trimester'),
+                )
+                );
+                echo $this->Form->input('pregnancy_status', array(
+                    'type' => 'radio',
+                    'label' => false,
+                    'legend' => false,
+                    'div' => false,
+                    'hiddenField' => false,
+                    'class' => 'pregnancy_status',
+                    'before' => '<label class="radio inline">',
+                    'after' => '</label> <label>
+                    <a class="button"
+                                onclick="$(\'.pregnancy_status\').removeAttr(\'checked\')" >
+                                <em class="accordion-toggle">clear!</em></a> </label>
+                    </div> </div> </div>',
+                    'options' => array('3rd Trimester' => '3rd Trimester'),
+                )
+                );
 
                 echo $this->Form->input('vaccination_county', array(
                     'options' => $counties,

@@ -144,8 +144,6 @@ echo "\n"; ?>
             <patientinvestigationnumb />
             <?php
             if (!empty($aefi['Aefi']['date_of_birth'])) {
-                // $a = explode('-', $aefi['Aefi']['date_of_birth']);
-                // $aefi['Aefi']['date_of_birth'] = array('day'=> $a[0],'month'=> $a[1],'year'=> $a[2]);
                 $birthdatef = 102;
                 if (empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
                     $birthdatef = 602;
@@ -201,59 +199,47 @@ echo "\n"; ?>
                 <patientdeathdate />
                 <patientautopsyyesno />
             </patientdeath>
-            <reaction>
-                <primarysourcereaction>
+            <?php foreach ($aefi['Aefi']['reactions'] as $num => $reaction) : ?>
+                <reaction>
+                    <primarysourcereaction><?php echo $reaction['llt_name']; ?></primarysourcereaction>
+                    <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
+                    <reactionmeddrallt><?php echo $reaction['pt_code']; ?></reactionmeddrallt>
+                    <reactionmeddraversionpt />
+                    <reactionmeddrapt />
+                    <termhighlighted />
                     <?php
-                    if ($aefi['Aefi']['local_reaction']) echo 'Severe, ';
-                    if ($aefi['Aefi']['convulsion']) echo 'Seizures, ';
-                    if ($aefi['Aefi']['abscess']) echo 'Abscess, ';
-                    if ($aefi['Aefi']['bcg']) echo 'BCG Lymphadenitis, ';
-                    if ($aefi['Aefi']['meningitis']) echo 'Encephalopathy, ';
-                    if ($aefi['Aefi']['toxic_shock']) echo 'Toxic, ';
-                    if ($aefi['Aefi']['anaphylaxis']) echo 'Anaphylaxis, ';
-                    if ($aefi['Aefi']['high_fever']) echo 'Fever, ';
-                    if ($aefi['Aefi']['paralysis']) echo 'Paralysis, ';
-                    if ($aefi['Aefi']['urticaria']) echo 'Generalized urticaria, ';
-                    ?>
-                </primarysourcereaction>
-                <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
-                <reactionmeddrallt><?php echo $aefi['Aefi']['aefi_symptoms']; ?></reactionmeddrallt>
-                <reactionmeddraversionpt />
-                <reactionmeddrapt />
-                <termhighlighted />
-                <?php
 
-                if (!empty($aefi['Aefi']['date_aefi_started'])) {
-                    echo "<reactionstartdateformat>102</reactionstartdateformat>";
-                    echo "<reactionstartdate>" . date('Ymd', strtotime($aefi['Aefi']['date_aefi_started'])) . "</reactionstartdate>";
-                } else {
-                    echo "<reactionstartdateformat/>
+                    if (!empty($aefi['Aefi']['date_aefi_started'])) {
+                        echo "<reactionstartdateformat>102</reactionstartdateformat>";
+                        echo "<reactionstartdate>" . date('Ymd', strtotime($aefi['Aefi']['date_aefi_started'])) . "</reactionstartdate>";
+                    } else {
+                        echo "<reactionstartdateformat/>
                               <reactionstartdate/>";
-                }
+                    }
 
-                ?>
+                    ?>
 
-                <reactionenddateformat />
-                <reactionenddate />
-                <reactionduration />
-                <reactiondurationunit />
-                <reactionfirsttime />
-                <reactionfirsttimeunit />
-                <reactionlasttime />
-                <reactionlasttimeunit />
-                <reactionoutcome><?php
-                                    $outcomes =  [
-                                        'Recovered/Resolved' => 1,
-                                        'Recovering/Resolving' => 2,
-                                        'Recovered/Resolved with sequelae' => 3,
-                                        'Not recovered/Not resolved/Ongoing' => 4,
-                                        'Fatal' => 5,
-                                        'Unknown' => 6
-                                    ];
-                                    if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];
-                                    ?></reactionoutcome>
-            </reaction>
-            <?php foreach ($aefi['AefiListOfVaccine'] as $num => $listOfVaccine) : ?>
+                    <reactionenddateformat />
+                    <reactionenddate />
+                    <reactionduration />
+                    <reactiondurationunit />
+                    <reactionfirsttime />
+                    <reactionfirsttimeunit />
+                    <reactionlasttime />
+                    <reactionlasttimeunit />
+                    <reactionoutcome><?php
+                                        $outcomes =  [
+                                            'Recovered/Resolved' => 1,
+                                            'Recovering/Resolving' => 2,
+                                            'Recovered/Resolved with sequelae' => 3,
+                                            'Not recovered/Not resolved/Ongoing' => 4,
+                                            'Fatal' => 5,
+                                            'Unknown' => 6
+                                        ];
+                                        if (!empty($aefi['Aefi']['outcome']) && isset($outcomes[$aefi['Aefi']['outcome']])) echo $outcomes[$aefi['Aefi']['outcome']];
+                                        ?></reactionoutcome>
+                </reaction>
+                <?php endforeach; ?><?php foreach ($aefi['AefiListOfVaccine'] as $num => $listOfVaccine) : ?>
                 <drug>
                     <drugcharacterization><?php
                                             if ($num == 0) echo 1;
@@ -267,7 +253,7 @@ echo "\n"; ?>
                     <drugauthorizationholder />
                     <drugstructuredosagenumb><?php echo $listOfVaccine['dosage']; ?></drugstructuredosagenumb>
                     <drugstructuredosageunit><?php
-                                                echo $sadrListOfDrug['Dose']['icsr_code'];
+                                                echo $listOfVaccine['icsr_code'];
                                                 ?></drugstructuredosageunit>
                     <drugseparatedosagenumb />
                     <drugintervaldosageunitnumb />
@@ -307,11 +293,7 @@ echo "\n"; ?>
                     </drugreactionrelatedness>
                 </drug>
             <?php endforeach; ?><summary>
-                <narrativeincludeclinical><?php
-                                            $input = $aefi['Aefi']['description_of_reaction'];
-                                            $output = html_entity_decode($input, ENT_NOQUOTES, 'UTF-8');
-                                            echo $output;
-                                            ?></narrativeincludeclinical>
+                <narrativeincludeclinical><?php echo $aefi['Aefi']['description_of_reaction']; ?></narrativeincludeclinical>
                 <reportercomment />
                 <senderdiagnosismeddraversion>23.0</senderdiagnosismeddraversion>
                 <senderdiagnosis><?php echo $aefi['Aefi']['medical_history']; ?></senderdiagnosis>

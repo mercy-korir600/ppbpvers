@@ -724,7 +724,7 @@
 
             $this->paginate['conditions'] = $criteria;
             $this->paginate['order'] = array('Aefi.created' => 'desc');
-            $this->paginate['contain'] = array('County', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
+            $this->paginate['contain'] = array('County','SubCounty', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
 
             //in case of csv export
             if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -826,14 +826,14 @@
                 $criteria['Aefi.submitted'] = array(2, 3);
             }
             $this->paginate['conditions'] = $criteria;
-            $this->paginate['order'] = array('Aefi.created' => 'desc');
+            $this->paginate['order'] = array('Aefi.submitted_date' => 'desc');
             $this->paginate['contain'] = array('County', 'SubCounty', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
 
             //in case of csv export
             if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
                 $this->csv_export($this->Aefi->find(
                     'all',
-                    array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 1000)
+                    array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 10000)
                 ));
             }
             //end pdf export

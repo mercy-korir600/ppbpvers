@@ -222,7 +222,7 @@ class SadrsController extends AppController
 
         // if (!isset($this->passedArgs['submit'])) $criteria['Sadr.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
-        $this->paginate['order'] = array('Sadr.created' => 'desc');
+        $this->paginate['order'] = array('Sadr.submitted_date' => 'desc');
         $this->paginate['contain'] = array('County', 'SadrListOfDrug', 'SadrListOfMedicine', 'SadrDescription', 'Designation', 'User');
 
         //in case of csv export

@@ -201,7 +201,7 @@ class PqmpsController extends AppController
 
         // if (!isset($this->passedArgs['submit'])) $criteria['Pqmp.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
-        $this->paginate['order'] = array('Pqmp.created' => 'desc');
+        $this->paginate['order'] = array('Pqmp.submitted_date' => 'desc'); 
         $this->paginate['contain'] = array('County', 'Country', 'Designation');
 
         //in case of csv export
@@ -598,7 +598,7 @@ class PqmpsController extends AppController
                     //lucian
                     if (!empty($pqmp['Pqmp']['reference_no']) && $pqmp['Pqmp']['reference_no'] == 'new') {
 
-                        $count = $this->Pqmp->find('count',  array(
+                        $count = $this->Pqmp->find('count',  array( 
                             'fields' => 'Pqmp.reference_no',
                             'conditions' => array(
                                 'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
@@ -816,12 +816,14 @@ class PqmpsController extends AppController
         $save_data = $this->request->data;
         $save_data['Pqmp']['user_id'] = $this->Auth->user('id');
         $save_data['Pqmp']['submitted'] = 2;
+        $save_data['Pqmp']['submitted_date'] = date("Y-m-d H:i:s");
+ 
         //lucian
         if (empty($save_data['Pqmp']['reference_no'])) {
             $count = $this->Pqmp->find('count',  array(
                 'fields' => 'Pqmp.reference_no',
                 'conditions' => array(
-                    'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                    'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
                 )
             ));
             $count++;

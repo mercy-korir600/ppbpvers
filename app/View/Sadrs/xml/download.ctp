@@ -183,7 +183,7 @@
 				if($sadr['Sadr']['gender'] == 'Male') echo 1 ;
 				elseif($sadr['Sadr']['gender'] == 'Female') echo 2 ;
 			?></patientsex>
-            <lastmenstrualdateformat/>
+            <lastmenstrualdateformat/> 
             <patientlastmenstrualdate/>
             <patientmedicalhistorytext><?php echo $sadr['Sadr']['medical_history']; ?></patientmedicalhistorytext>
             <resultstestsprocedures><?php echo $sadr['Sadr']['lab_investigation']; ?></resultstestsprocedures>

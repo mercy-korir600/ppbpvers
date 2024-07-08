@@ -95,12 +95,13 @@
 					<tr>
 						<td style="width: 25%;">TYPE OF VACCINATION SERVICE </td>
 						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['vaccination_type'] ?>	</strong></td>
-						<td style="width: 25%;">SUB-COUNTY</td>
-						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['patient_sub_county'] ?>	</strong></td>
+						<td style="width: 25%;">PREGNANCY STATUS:</td>
+						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['pregnancy_status'] ?>	</strong></td>
 					</tr>
 					<tr>
-						<td style="width: 25%;"> </td>
-						<td style="width: 25%;"> </td>
+						
+					<td style="width: 25%;">SUB-COUNTY</td>
+						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['patient_sub_county'] ?>	</strong></td>
 						<td style="width: 25%;">COUNTY OF VACCINATION CENTRE</td>
 						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['vaccination_county'] ?>	</strong></td>
 					</tr>
