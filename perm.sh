@@ -187,49 +187,49 @@ app/Console/cake acl grant Group.4 controllers/SadrReactions
  
 
 # Allow mini managers to some controllers
-echo "*************** Assign Mini Managers Permissions  *******************"
-app/Console/cake acl deny Group.5 controllers
-app/Console/cake acl grant Group.5 controllers/Users/reviewer_dashboard
-app/Console/cake acl grant Group.5 controllers/Sadrs
-app/Console/cake acl grant Group.5 controllers/Aefis
-app/Console/cake acl grant Group.5 controllers/SadrFollowups
-app/Console/cake acl grant Group.5 controllers/Pqmps
-app/Console/cake acl grant Group.5 controllers/Devices
-app/Console/cake acl grant Group.5 controllers/Medications
-app/Console/cake acl grant Group.5 controllers/Transfusions
-app/Console/cake acl grant Group.5 controllers/Padrs
-app/Console/cake acl grant Group.5 controllers/Ce2bs
-app/Console/cake acl grant Group.5 controllers/Saes
-app/Console/cake acl grant Group.5 controllers/Attachments
-app/Console/cake acl grant Group.5 controllers/Counties
-app/Console/cake acl grant Group.5 controllers/Countries
-app/Console/cake acl grant Group.5 controllers/Designations
-app/Console/cake acl grant Group.5 controllers/Doses
-app/Console/cake acl grant Group.5 controllers/DrugDictionaries
-app/Console/cake acl grant Group.5 controllers/FacilityCodes
-app/Console/cake acl grant Group.5 controllers/Feedbacks
-app/Console/cake acl grant Group.5 controllers/Frequencies
-app/Console/cake acl grant Group.5 controllers/HelpInfos
-app/Console/cake acl grant Group.5 controllers/Messages
-app/Console/cake acl grant Group.5 controllers/Routes
-app/Console/cake acl grant Group.5 controllers/SadrListOfDrugs
-app/Console/cake acl grant Group.5 controllers/SadrListOfMedicines
-app/Console/cake acl grant Group.5 controllers/AefiListOfVaccines
-app/Console/cake acl grant Group.5 controllers/ListOfDevices
-app/Console/cake acl grant Group.5 controllers/MedicationProducts
-app/Console/cake acl grant Group.5 controllers/Pints
-app/Console/cake acl grant Group.5 controllers/WhoDrugs
-app/Console/cake acl grant Group.5 controllers/Pages
-app/Console/cake acl grant Group.5 controllers/Users/changePassword
-app/Console/cake acl grant Group.5 controllers/Users/edit
-app/Console/cake acl grant Group.5 controllers/Users/admin_index
-app/Console/cake acl grant Group.5 controllers/Users/admin_add
-app/Console/cake acl grant Group.5 controllers/Notifications
-app/Console/cake acl grant Group.5 controllers/Comments 
-app/Console/cake acl grant Group.5 controllers/Reports
-app/Console/cake acl grant Group.5 controllers/AefiDescriptions
-app/Console/cake acl grant Group.5 controllers/SadrReactions
-app/Console/cake acl grant Group.5 controllers/Saefis
+# echo "*************** Assign Mini Managers Permissions  *******************"
+# app/Console/cake acl deny Group.5 controllers
+# app/Console/cake acl grant Group.5 controllers/Users/reviewer_dashboard
+# app/Console/cake acl grant Group.5 controllers/Sadrs
+# app/Console/cake acl grant Group.5 controllers/Aefis
+# app/Console/cake acl grant Group.5 controllers/SadrFollowups
+# app/Console/cake acl grant Group.5 controllers/Pqmps
+# app/Console/cake acl grant Group.5 controllers/Devices
+# app/Console/cake acl grant Group.5 controllers/Medications
+# app/Console/cake acl grant Group.5 controllers/Transfusions
+# app/Console/cake acl grant Group.5 controllers/Padrs
+# app/Console/cake acl grant Group.5 controllers/Ce2bs
+# app/Console/cake acl grant Group.5 controllers/Saes
+# app/Console/cake acl grant Group.5 controllers/Attachments
+# app/Console/cake acl grant Group.5 controllers/Counties
+# app/Console/cake acl grant Group.5 controllers/Countries
+# app/Console/cake acl grant Group.5 controllers/Designations
+# app/Console/cake acl grant Group.5 controllers/Doses
+# app/Console/cake acl grant Group.5 controllers/DrugDictionaries
+# app/Console/cake acl grant Group.5 controllers/FacilityCodes
+# app/Console/cake acl grant Group.5 controllers/Feedbacks
+# app/Console/cake acl grant Group.5 controllers/Frequencies
+# app/Console/cake acl grant Group.5 controllers/HelpInfos
+# app/Console/cake acl grant Group.5 controllers/Messages
+# app/Console/cake acl grant Group.5 controllers/Routes
+# app/Console/cake acl grant Group.5 controllers/SadrListOfDrugs
+# app/Console/cake acl grant Group.5 controllers/SadrListOfMedicines
+# app/Console/cake acl grant Group.5 controllers/AefiListOfVaccines
+# app/Console/cake acl grant Group.5 controllers/ListOfDevices
+# app/Console/cake acl grant Group.5 controllers/MedicationProducts
+# app/Console/cake acl grant Group.5 controllers/Pints
+# app/Console/cake acl grant Group.5 controllers/WhoDrugs
+# app/Console/cake acl grant Group.5 controllers/Pages
+# app/Console/cake acl grant Group.5 controllers/Users/changePassword
+# app/Console/cake acl grant Group.5 controllers/Users/edit
+# app/Console/cake acl grant Group.5 controllers/Users/admin_index
+# app/Console/cake acl grant Group.5 controllers/Users/admin_add
+# app/Console/cake acl grant Group.5 controllers/Notifications
+# app/Console/cake acl grant Group.5 controllers/Comments 
+# app/Console/cake acl grant Group.5 controllers/Reports
+# app/Console/cake acl grant Group.5 controllers/AefiDescriptions
+# app/Console/cake acl grant Group.5 controllers/SadrReactions
+# app/Console/cake acl grant Group.5 controllers/Saefis
 
 
 echo "*************** Completed  *******************"

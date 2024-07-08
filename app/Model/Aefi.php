@@ -353,11 +353,7 @@ class Aefi extends AppModel
                 'rule' => array('numeric'),
                 'message' => 'Please select a sub county',
                 //'allowEmpty' => false,
-<<<<<<< HEAD
-                // 'required' => true,
-=======
                 'required' => true,
->>>>>>> 40129c1a24e5871626b2bcf124cbed1805ee6d92
                 //'last' => false, // Stop validation after this rule
                 //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),

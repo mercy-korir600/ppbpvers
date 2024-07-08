@@ -896,10 +896,10 @@ class PqmpsController extends AppController
             throw new NotFoundException(__('Invalid Poor-Quality Health Products and Technologies'));
         }
         $pqmp = $this->Pqmp->read(null, $id);
-        // if ($pqmp['Pqmp']['submitted'] > 1) {
-        //     $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
-        //     $this->redirect(array('action' => 'view', $this->Pqmp->id));
-        // }
+        if ($pqmp['Pqmp']['submitted'] > 1) {
+            $this->Session->setFlash(__('The pqmp has been submitted'), 'alerts/flash_info');
+            $this->redirect(array('action' => 'view', $this->Pqmp->id));
+        }
         if ($pqmp['Pqmp']['user_id'] !== $this->Auth->user('id')) {
             $this->Session->setFlash(__('You don\'t have permission to edit this Poor-Quality Health Products and Technologies!!'), 'alerts/flash_error');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
