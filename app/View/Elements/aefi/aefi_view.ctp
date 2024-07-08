@@ -9,7 +9,7 @@
 					<tr>
 						<td>
 						<?php
-							echo($this->Html->image('header-object.png', array('alt' => 'Adverse Event Following Immunization', 'fullBase' => true)));
+							echo($this->Html->image('coa.png', array('alt' => 'AEFIS', 'fullBase' => true)));
 						?>
 					</td>
 					<td style="text-align: center;">
@@ -99,9 +99,8 @@
 						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['pregnancy_status'] ?>	</strong></td>
 					</tr>
 					<tr>
-						
 					<td style="width: 25%;">SUB-COUNTY</td>
-						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['patient_sub_county'] ?>	</strong></td>
+					<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['patient_sub_county'] ?>	</strong></td>
 						<td style="width: 25%;">COUNTY OF VACCINATION CENTRE</td>
 						<td style="width: 25%;"><strong><?php echo $aefi['Aefi']['vaccination_county'] ?>	</strong></td>
 					</tr>
@@ -132,7 +131,7 @@
 							<table>
 								<tbody>
 								<tr>
-									<td style="width: 50%;">DATE Adverse Event Following Immunization STARTED </td>
+									<td style="width: 50%;">DATE AEFI STARTED </td>
 									<td><strong><?php echo $aefi['Aefi']['date_aefi_started'] ?>	</strong></td>
 								</tr>
 								<tr>
@@ -146,7 +145,7 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-									  Describe Adverse Event Following Immunization (Signs & Symptoms) <br>
+									  Describe AEFI (Signs & Symptoms) <br>
 									  <strong><?php echo $aefi['Aefi']['aefi_symptoms'] ?>	</strong><br>
 									  <?php
 					                     foreach ($aefi['AefiDescription'] as $aefiDescription): 

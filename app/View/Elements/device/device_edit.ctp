@@ -34,7 +34,7 @@
                         <h5>PHARMACY AND POISONS BOARD</h5>
                         <h5>P.O. Box 27663-00506 NAIROBI</h5>
                         <h5>Tel: +254795743049</h5>
-                        <h5><b>Email:</b> pv@pharmacyboardkenya.org/medicaldevices@pharmacyboardkenya.org</h5>
+                        <h5><b>Email:</b> pv@ppb.go.ke/medicaldevices@pharmacyboardkenya.org</h5>
                         <h5 style="color: red;">MEDICAL DEVICES INCIDENT REPORTING FORM</h5>
                     </div>
                 </div>

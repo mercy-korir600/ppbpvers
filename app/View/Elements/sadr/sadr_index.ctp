@@ -109,7 +109,7 @@ echo $this->Session->flash();
             );
             ?>
           </td>
-        </tr>
+        </tr> 
         <tr>
           <td>
             <?php
@@ -414,7 +414,7 @@ echo $this->Session->flash();
             <td><?php
                 echo $this->Text->truncate($sadr['Sadr']['report_title'], 42);
                 if ($sadr['Sadr']['report_type'] == 'Followup') {
-                  echo "<br> Initial: ";
+                  echo "<br> Initial: "; 
                   echo $this->Html->link(
                     '<label class="label label-info">' . $sadr['Sadr']['reference_no'] . '</label>',
                     array('action' => 'view', $sadr['Sadr']['sadr_id']),

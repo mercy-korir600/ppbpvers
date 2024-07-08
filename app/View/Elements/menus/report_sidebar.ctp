@@ -14,7 +14,6 @@
         ?>
       </li>
       
-     
       <li class="nav-header"><i class="fa fa-child" aria-hidden="true"></i> ADVERSE EVENTS FOLLOWING IMMUNIZATION</li>
       <li class="<?php echo $this->fetch('aefi-summary'); ?>">
       	<?php
@@ -75,6 +74,43 @@
       	<?php
             echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Serious Reports',  array('controller' => 'reports', 'action'=>'s_summary', 'admin' => false ),
                       array('escape' => false));
+        ?>
+      </li>
+      <li class="divider"></li>
+      <li class="nav-header"><i class="fa fa-thermometer-full" aria-hidden="true"></i> Disproportionality Analysis</li>
+      <li class="<?php echo $this->fetch('d-aefi-analysis'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> AEFI Reports',  array('controller' => 'reports', 'action'=>'d_aefi_analytics', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('d-sadr-analysis'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> SADR Reports',  array('controller' => 'reports', 'action'=>'d_sadr_analytics', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('public_analytics'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Public Reports',  array('controller' => 'reports', 'action'=>'public_analytics', 'manager' => true ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('transfusions_analytics'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Transfusions Reports',  array('controller' => 'reports', 'action'=>'transfusions_analytics', 'manager' => true ),
+                      array('escape' => false));
+        ?>
+      </li> 
+      <li class="<?php echo $this->fetch('medications_analytics'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Medications Reports',  array('controller' => 'reports', 'action'=>'medications_analytics', 'manager' => true ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="<?php echo $this->fetch('general'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> General',  array('controller' => 'disproportionalities', 'action'=>'index', 'manager' => true ),                      array('escape' => false));
         ?>
       </li>
       <li class="divider"></li>

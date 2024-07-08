@@ -19,25 +19,32 @@ body {
 .blank {
   min-height: 218px;
 }
-.blank_public{
+
+.blank_public {
   min-height: 0px;
 }
-.blank_faq{
+
+.blank_faq {
   min-height: 545px;
 }
-.blank_contact{
+
+.blank_contact {
   min-height: 146px;
 }
-.blank_report{
+
+.blank_report {
   min-height: 140px;
 }
-.blank_report_landing{
+
+.blank_report_landing {
   min-height: 100px;
 }
 
 .close {
-  margin-left: 10px; /* Adjust this value to control the spacing between the title and the close icon */
+  margin-left: 10px;
+  /* Adjust this value to control the spacing between the title and the close icon */
 }
+
 .dark-line {
   border: none;
   border-top: 2px solid #333;
@@ -57,11 +64,13 @@ body {
   #footer .container-fluid {
     padding: 20px;
   }
+
   #footer .row-fluid {
     flex-direction: column;
     align-items: center;
   }
 }
+
 /* End Making Footer Responsive */
 
 .footer-default {
@@ -323,6 +332,7 @@ body {
   border-radius: 7px;
 }
 
+
 .pformback {
   background-color: #f5f8f9;
   border: 2px solid #3E58A7;
@@ -345,6 +355,8 @@ body {
 .formbackd {
   background-color: #CCFFCC;
   border: 2px solid #3E58A7;
+  /* margin: 10px; */
+  padding: 1px;
   border-radius: 7px;
 }
 

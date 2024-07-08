@@ -195,7 +195,7 @@
             <reaction>
                 <primarysourcereaction><?php echo $sadr['Sadr']['reaction']; ?></primarysourcereaction>
                 <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
-                <reactionmeddrallt><?php echo $sadr['Sadr']['medra']; ?></reactionmeddrallt>
+                <reactionmeddrallt><?php echo $sadr['Sadr']['report_title']; ?></reactionmeddrallt>
                 <reactionmeddraversionpt></reactionmeddraversionpt>
                 <reactionmeddrapt></reactionmeddrapt>
                 <termhighlighted/>

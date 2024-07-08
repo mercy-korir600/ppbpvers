@@ -4,7 +4,7 @@
         <div class="span12">
 
             <div id="printAreade">
-                <div class="formbackc">
+                <div class="formbackd">
 
                     <p><b>(FOM001/HPT/VMS/SOP/001)</b></p>
                     <div class="row-fluid">
@@ -16,7 +16,7 @@
                                 <h5>PHARMACY AND POISONS BOARD</h5>
                                 <h5>P.O. Box 27663-00506 NAIROBI</h5>
                                 <h5>Tel: +254795743049</h5>
-                                <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+                                <h5><b>Email:</b> pv@ppb.go.ke</h5>
                                 <h5 style="color: red;">E2B</h5>
                             </div>
                         </div>

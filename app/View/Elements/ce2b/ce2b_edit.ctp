@@ -44,7 +44,7 @@ $this->Html->script('ce2b', array('inline' => false));
                         <h5>PHARMACY AND POISONS BOARD</h5>
                         <h5>P.O. Box 27663-00506 NAIROBI</h5>
                         <h5>Tel: +254795743049</h5>
-                        <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+                        <h5><b>Email:</b> pv@ppb.go.ke</h5>
                         <h5 style="color: red;">E2B FORM</h5>
                     </div>
                 </div>
@@ -66,11 +66,14 @@ $this->Html->script('ce2b', array('inline' => false));
                     echo $this->Form->input('comment', array(
                         'class' => 'span9',
                         'rows' => '2', 
-                        'label' => array(
+                        'label' => array( 
                             'class' => 'control-label',
                             'text' => 'COMMENT(s)'
                         )
                     ));
+                    
+            
+                   
                     echo $this->Form->input('e2b_file_data', array(
                         'label' => array(
                             'class' => 'control-label required', 
@@ -215,14 +218,11 @@ $this->Html->script('ce2b', array('inline' => false));
                     <br>
                     <hr>
                     <?php
-                    echo $this->Html->link(
-                        '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
-                        array('action' => 'view', 'ext' => 'pdf', $this->request->data['Ce2b']['id']),
-                        array(
-                            'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
-                            'data-content' => 'Download the pdf version of the report',
-                        )
-                    );
+                    // echo $this->Html->link(                        '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',array('action' => 'view', 'ext' => 'pdf', $this->request->data['Ce2b']['id']),                        array(
+                            // 'escape' => false, 'class' => 'btn btn-info btn-block mapop', 'title' => 'Download PDF',
+                            // 'data-content' => 'Download the pdf version of the report',
+                        // )
+                    // );
                     ?>
                     <br>
                     <hr>

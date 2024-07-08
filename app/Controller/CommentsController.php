@@ -4,6 +4,7 @@ App::uses('Sanitize', 'Utility');
 App::uses('CakeText', 'Utility');
 App::uses('ThemeView', 'View');
 App::uses('HtmlHelper', 'View/Helper');
+App::uses('HttpSocket', 'Network/Http');
 /**
  * Comments Controller
  */
@@ -15,6 +16,31 @@ class CommentsController extends AppController
    *
    * @var mixed
    */
+
+  public function submit_surveilance_feedback($data)
+  {
+    $payload = array(
+      "reportId" => $data['Comment']['model_id'],
+      "subject" => $data['Comment']['subject'],
+      "content" => $data['Comment']['content']
+    );
+
+    $options = array(
+      'ssl_verify_peer' => false
+    );
+    $header_options = array(
+      'header' => array(
+        'Content-Type' => 'application/json'
+      )
+    );
+    $formData = json_encode($payload);
+    // debug($formData);
+    // exit;
+    $HttpSocket = new HttpSocket($options);
+    $url = "https://demo.anchorerp.com/AnchorPMS/app/api/pms/postfeedback";
+    //Request Access Token
+    $initiate = $HttpSocket->post($url, $formData, $header_options);
+  }
 
   public function report_feedback()
   {
@@ -36,6 +62,11 @@ class CommentsController extends AppController
       // exit;
       if ($model) {
         if ($this->Comment->saveAssociated($this->request->data, array('deep' => true))) {
+
+          // CHECK IF PQHPT
+          if ($data['Comment']['model'] == "Pqmp") {
+            $this->submit_surveilance_feedback($data);
+          }
 
           //******************       Send Email and Notifications to Reporter and Managers          *****************************
           $this->loadModel('Message');
@@ -93,7 +124,7 @@ class CommentsController extends AppController
           $this->redirect($this->referer());
         } else {
           $errors = $this->Comment->validationErrors;
-          $this->Session->setFlash(__('The comment could not be saved. Errors: ') . json_encode($errors), 'alerts/flash_error');      
+          $this->Session->setFlash(__('The comment could not be saved. Errors: ') . json_encode($errors), 'alerts/flash_error');
           $this->Session->setFlash(__('The comment could not be saved. Please, try again.'), 'alerts/flash_error');
           $this->redirect($this->referer());
         }
@@ -221,7 +252,7 @@ class CommentsController extends AppController
 
     $filename = $attachment['Attachment']['basename'];
     $dirname = $attachment['Attachment']['dirname'];
-    $file = WWW_ROOT . 'media/transfer'.DS. $dirname . DS . $filename; // Assuming your files are in the "files" folder under the webroot directory.
+    $file = WWW_ROOT . 'media/transfer' . DS . $dirname . DS . $filename; // Assuming your files are in the "files" folder under the webroot directory.
 
     $this->response->file($file, array(
       'download' => true,

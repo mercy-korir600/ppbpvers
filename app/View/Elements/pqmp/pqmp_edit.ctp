@@ -46,7 +46,7 @@ echo $this->Form->create('Pqmp', array(
 					<h5>PHARMACY AND POISONS BOARD</h5>
 					<h5>P.O. Box 27663-00506 NAIROBI</h5>
 					<h5>Tel: +254795743049</h5>
-					<h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+					<h5><b>Email:</b> pv@ppb.go.ke</h5>
 					<h5 style="background-color: #F7A3D8;">FORM FOR REPORTING SUSPECTED POOR-QUALITY HEALTH PRODUCTS AND TECHNOLOGIES</h5>
 				</div>
 			</div>
@@ -90,6 +90,8 @@ echo $this->Form->create('Pqmp', array(
                                                                     <label class="checkbox">',
 					'after' => 'Medical device </label>',
 				));
+
+				echo $this->Form->input('category', array('type' => 'hidden', 'value' => ''));
 
 				?>
 			</div>

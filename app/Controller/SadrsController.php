@@ -19,7 +19,7 @@ class SadrsController extends AppController
         'Search.Prg',
         // 'RequestHandler'
     );
-    public $paginate = array();
+    public $paginate = array(); 
     public $presetVars = true;
     public $page_options = array('25' => '25', '50' => '50', '100' => '100');
 
@@ -770,6 +770,8 @@ class SadrsController extends AppController
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }
+            // debug($this->request->data);
+            // exit;
             if ($this->Sadr->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
                     $this->Sadr->saveField('submitted', 2);
@@ -968,6 +970,8 @@ class SadrsController extends AppController
                 )
             ));
             $count++;
+            // debug($count);
+            // exit;
             $count = ($count < 10) ? "0$count" : $count;
             $save_data['Sadr']['reference_no'] = 'SADR/' . date('Y') . '/' . $count;
         }
@@ -980,6 +984,7 @@ class SadrsController extends AppController
 
                 $sadr = $this->Sadr->read(null, $this->Sadr->id);
                 $id = $this->Sadr->id;
+                $this->Sadr->saveField('submitted_date', date("Y-m-d H:i:s"));
 
                 //******************       Send Email and Notifications to Reporter and Managers          *****************************
                 $this->loadModel('Message');

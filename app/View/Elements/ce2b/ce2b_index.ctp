@@ -10,7 +10,7 @@ echo $this->Session->flash();
 <div class="row-fluid">
     <div class="span12">
         <?php
-        if ($redir == 'reporter') {
+        if ($redir == 'reporter' || $redir == 'manager') {
             echo $this->Html->link(
                 '<i class="fa fa-file-o" aria-hidden="true"></i> New E2b',
                 array('controller' => 'ce2bs', 'action' => 'add'),
@@ -19,7 +19,7 @@ echo $this->Session->flash();
         }
         ?>
         <h3>E2b Reports:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small>
-           
+
         </h3>
         <hr class="soften" style="margin: 7px 0px;">
     </div>
@@ -91,6 +91,54 @@ echo $this->Session->flash();
                         ?>
                     </td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'drug_name',
+                            array(
+                                'div' => false, 'placeholder' => 'drug name',
+                                'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Drug Name')
+                            )
+                        );
+                        ?>
+
+                        <h5>Serious?</h5>
+                        <?php
+                        echo $this->Form->input('serious', array(
+                            'options' => array('1' => 'Yes', '0' => 'No'), 'legend' => false,
+                            'type' => 'radio'
+                        ));
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'inn',
+                            array('div' => false, 'placeholder' => 'Brand Name', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Brand Name'))
+                        );
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'sender_unique_identifier',
+                            array('div' => false, 'placeholder' => 'eg KE-xx', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Sender Identifier'))
+                        );
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        echo $this->Form->input(
+                            'sender_organization',
+                            array('div' => false, 'placeholder' => 'Sender\'s Org', 'class' => 'span12 unauthorized_index', 'label' => array('class' => 'required', 'text' => 'Sender\'s Organization'))
+                        );
+                        ?>
+
+
+                    </td>
+                </tr>
                 <tr>
                     <td><label for="PadrPages" class="required">Pages</label></td>
                     <td>
@@ -160,8 +208,9 @@ echo $this->Session->flash();
                     <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
                     <th><?php echo $this->Paginator->sort('company_name'); ?></th>
                     <th><?php echo $this->Paginator->sort('reporter_email'); ?></th>
-                    <th><?php echo $this->Paginator->sort('e2b_file'); ?></th>
+                    <th><?php echo $this->Paginator->sort('e2b_file_type'); ?></th>
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
+                    <th><?php echo $this->Paginator->sort('submitted_date', 'Date Submitted'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
                 </tr>
             </thead>
@@ -172,12 +221,29 @@ echo $this->Session->flash();
                         <td><?php echo h($ce2b['Ce2b']['id']); ?>&nbsp;</td>
                         <td>
                             <?php
-                            echo $this->Html->link($ce2b['Ce2b']['reference_no'], array('action' => 'view', $ce2b['Ce2b']['id']), array('escape' => false));
+                            if ($ce2b['Ce2b']['submitted'] > 1) {
+                                echo $this->Html->link($ce2b['Ce2b']['reference_no'], array('action' => 'view', $ce2b['Ce2b']['id']), array('escape' => false, 'class' => 'text-' . ((isset($ce2b['Ce2b']['serious']) && $ce2b['Ce2b']['serious'] == '1') ? 'error' : 'success')));
+                            } else {
+                                echo $this->Html->link($ce2b['Ce2b']['reference_no'], array('action' => (($redir == 'reporter') ? 'edit' : 'view'), $ce2b['Ce2b']['id']), array('escape' => false, 'class' => 'text-' . ((isset($ce2b['Ce2b']['serious']) && $ce2b['Ce2b']['serious'] == '1') ? 'error' : 'success')));
+                            }
+                            ?>&nbsp;
+                        </td>
+                        <td><?php echo h($ce2b['Ce2b']['company_name']);
+                            if ($ce2b['Ce2b']['report_type'] == 'Followup') {
+                                echo "<br> <b>Initial:</b> ";
+                                echo $this->Html->link(
+                                    '<label class="label label-info">' . $ce2b['Ce2b']['reference_no'] . '</label>',
+                                    array('action' => 'view', $ce2b['Ce2b']['ce2b_id']),
+                                    array('escape' => false)
+                                );
+                            }
+
+
                             ?>&nbsp;</td>
-                        <td><?php echo h($ce2b['Ce2b']['company_name']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['reporter_email']); ?>&nbsp;</td>
-                        <td></td>
+                        <td><?php echo h($ce2b['Ce2b']['e2b_type']); ?>&nbsp;</td>
                         <td><?php echo h($ce2b['Ce2b']['created']); ?>&nbsp;</td>
+                        <td><?php echo h($ce2b['Ce2b']['submitted_date']); ?>&nbsp;</td>
                         <td class="actions">
                             <?php
                             if ($ce2b['Ce2b']['submitted'] > 1) {
@@ -187,14 +253,25 @@ echo $this->Session->flash();
                                     array('escape' => false)
                                 );
                                 echo "&nbsp;";
+                                if ($redir == 'reporter'  and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'ce2bs', 'action' => 'followup', $ce2b['Ce2b']['id']), array('escape' => false), __('Add a followup report?'));
+                                echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer')) echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'ce2bs', 'action' => 'download', $ce2b['Ce2b']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
                                 echo "&nbsp;";
-                               
-                                if ($redir == 'manager') echo $this->Html->link(
+
+                                // if ($redir == 'manager') echo $this->Html->link(
+                                //     '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
+                                //     array('controller' => 'ce2bs', 'action' => 'vigiflow', $ce2b['Ce2b']['id'], 'manager' => false),
+                                //     array('escape' => false)
+                                // );
+                                if (($redir == 'manager' || $redir == 'reviewer') && empty($ce2b['Ce2b']['vigiflow_ref']) && $ce2b['Ce2b']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
                                     array('controller' => 'ce2bs', 'action' => 'vigiflow', $ce2b['Ce2b']['id'], 'manager' => false),
                                     array('escape' => false)
                                 );
+
+                                //Create a follow up as a manager
+                                echo "&nbsp;";
+                                if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['user_id'] == $this->Session->read('Auth.User.id'))  echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'ce2bs', 'action' => 'followup', $ce2b['Ce2b']['id']), array('escape' => false), __('Add a followup report?'));
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['copied'] == 2) echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
@@ -203,30 +280,42 @@ echo $this->Session->flash();
                                 );
                                 echo "&nbsp;";
                                 if (($redir == 'manager' || $redir == 'reviewer') && $ce2b['Ce2b']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'ce2bs', 'action' => 'copy', $ce2b['Ce2b']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+
+                                echo "&nbsp;";
                                 echo $this->Html->link(
-                                    '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
-                                    array('controller' => 'ce2bs', 'action' => 'archive', $ce2b['Ce2b']['id']),
-                                    array('escape' => false), __('Are you sure you want to archive the report?')
-                                  );
+                                    '<span class="label label-default tooltipper" title="View"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF </span>',
+                                    array('controller' => 'ce2bs', 'action' => 'view', 'ext' => 'pdf', $ce2b['Ce2b']['id']),
+                                    array('escape' => false)
+                                );
+                                if (($redir == 'manager' || $redir == 'reviewer')) {
+                                    echo $this->Html->link(
+                                        '<span class="label label-warning tooltipper" title="View"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
+                                        array('controller' => 'ce2bs', 'action' => 'archive', $ce2b['Ce2b']['id']),
+                                        array('escape' => false),
+                                        __('Are you sure you want to archive the report?')
+                                    );
+                                }
+
+                                // PDF Download
+
                             } else {
                                 if ($redir == 'reporter') echo $this->Html->link(
                                     '<span class="label label-success tooltipper" title="Edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </span>',
                                     array('controller' => 'ce2bs', 'action' => 'edit', $ce2b['Ce2b']['id']),
                                     array('escape' => false)
                                 );
-                                echo "&nbsp;";
-                                if ($redir == 'reporter') echo $this->Html->link(
-                                    '<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>',
-                                    array('controller' => 'ce2bs', 'action' => 'delete', $ce2b['Ce2b']['id']),
-                                    array('escape' => false)
-                                );
+                                echo "&nbsp;"; 
+                                if (($redir == 'reporter' || $redir == 'manager') && $ce2b['Ce2b']['submitted'] == 0) {
+                                    echo "&nbsp;";
+                                    echo $this->Form->postLink('<span class="label label-warning tooltipper" title="Delete"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete </span>', array('controller' => 'ce2bs', 'action' => 'delete', $ce2b['Ce2b']['id']), array('escape' => false), __('Are you sure you want to delete this report?
+                                    Note: This action cannot be undone.'));
+                                  }
                                 echo "&nbsp;";
                                 if ($redir == 'manager' || $redir == 'reviewer') echo $this->Html->link(
                                     '<span class="label label-info tooltipper" title="View"><i class="fa fa-eye" aria-hidden="true"></i> View </span>',
                                     array('controller' => 'ce2bs', 'action' => 'view', $ce2b['Ce2b']['id']),
                                     array('escape' => false)
                                 );
-                               
                             }
                             ?>
                         </td>

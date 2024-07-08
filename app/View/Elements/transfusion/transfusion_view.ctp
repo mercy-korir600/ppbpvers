@@ -16,7 +16,7 @@
 		                    <h5>PHARMACY AND POISONS BOARD</h5>
 		                    <h5>P.O. Box 27663-00506 NAIROBI</h5>
 		                    <h5>Tel: +254795743049</h5>
-		                    <h5><b>Email:</b> pv@pharmacyboardkenya.org</h5>
+		                    <h5><b>Email:</b> pv@ppb.go.ke</h5>
 		                    <h5 style="color: red;">ADVERSE TRANSFUSION REACTION FORM </h5>
 		                    </div>
 						</td>
@@ -26,7 +26,7 @@
 
 				<table style="width: 100%;">
 					<tr>
-						<td><p style="text-warning">In the event of a severe reaction following transfusion of blood or blood products please complete this form and send it to the laboratory with the specimens listed below.</p></td>
+						<td><p style="text-warning;">In the event of a severe reaction following transfusion of blood or blood products please complete this form and send it to the laboratory with the specimens listed below.</p></td>
 					</tr>
 				</table>
 				<hr>

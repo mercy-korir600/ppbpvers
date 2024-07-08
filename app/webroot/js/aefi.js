@@ -88,6 +88,14 @@ $(function () {
 	});
 
 
+	$('input[name="data[Aefi][gender]"]').click(function () {
+        if ($(this).val() == 'Male') {
+            $('input[name="data[Aefi][pregnancy_status]"]').attr('disabled', this.checked).attr('checked', !this.checked);
+        } else {
+            $('input[name="data[Aefi][pregnancy_status]"]').attr('disabled', false);
+        }
+    });
+    if ($('input[name="data[Aefi][gender]"][value="Male"]').is(':checked')) { $('input[name="data[Aefi][pregnancy_status]"]').attr('disabled', true).attr('checked', false); }
 
 	$('input[name="data[Aefi][gender]"]').click(function () {
         if ($(this).val() == 'Male') {
@@ -101,7 +109,7 @@ $(function () {
 
 
 
-	//If not serious disable criteria
+	//If not serious disable criteria 
 	if (!$('input[name="data[Aefi][serious]"][value="Yes"]').is(':checked')) { $('input[name="data[Aefi][serious_yes]"]').attr('disabled', true).attr('checked', false); }
 	$('input[name="data[Aefi][serious]"]').click(function () {
 		if ($(this).val() == 'No') {

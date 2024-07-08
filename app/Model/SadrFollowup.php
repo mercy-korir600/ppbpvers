@@ -197,7 +197,7 @@ class SadrFollowup extends AppModel {
 				$email->template('new_sadr_followup');
 				$email->emailFormat('html');
 				$email->to($val);
-				$email->cc(array('pv@pharmacyboardkenya.org', 'info@pharmacyboardkenya.org'));
+				$email->cc(array('pv@ppb.go.ke', 'info@pharmacyboardkenya.org'));
 				$email->subject(Configure::read('Emails.new_sadrfollowup.subject').$key);
 				$email->viewVars(array('ID' => $key, 'root' => Configure::read('Domain.root')));
 				if(!$email->send()) {
@@ -223,7 +223,7 @@ class SadrFollowup extends AppModel {
 				$email->template('submitted_sadr_followup');
 				$email->emailFormat('html');
 				$email->to($val);
-				$email->cc(array('pv@pharmacyboardkenya.org', 'info@pharmacyboardkenya.org'));
+				$email->cc(array('pv@ppb.go.ke', 'info@pharmacyboardkenya.org'));
 				$email->subject(Configure::read('Emails.submitted_sadrfollowup.subject').$key);
 				$email->viewVars(array('ID' => $key, 'root' => Configure::read('Domain.root')));
 				if(!$email->send()) {

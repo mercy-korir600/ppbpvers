@@ -113,7 +113,7 @@ echo "\n"; ?>
             <senderfax>2713409</senderfax>
             <senderfaxextension>20</senderfaxextension>
             <senderfaxcountrycode>254</senderfaxcountrycode>
-            <senderemailaddress>pv@pharmacyboardkenya.org</senderemailaddress>
+            <senderemailaddress>pv@ppb.go.ke</senderemailaddress>
         </sender>
         <receiver>
             <receivertype />

@@ -210,7 +210,6 @@ echo $this->Form->create('Aefi', array(
                     'options' => array('Unknown' => 'Unknown'),
                 ));
 
-
                 echo $this->Form->input('pregnancy_status', array(
                     'type' => 'radio',
                     'label' => false,
@@ -653,7 +652,8 @@ echo $this->Form->create('Aefi', array(
             <div class="span6">
                 <?php
                 echo $this->Form->input('reporter_name_diff', array(
-                    'div' => array('class' => 'control-group required'), 'class' => 'diff',
+                    'div' => array('class' => 'control-group required'), 
+                    'class' => 'diff',
                     'label' => array('class' => 'control-label required', 'text' => 'Name <span style="color:red;">*</span>'),
                 ));
                 echo $this->Form->input('reporter_email_diff', array(

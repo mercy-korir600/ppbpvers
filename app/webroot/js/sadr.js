@@ -65,6 +65,8 @@ $(document).ready(function () {
     if ($("#SadrPersonSubmittingNo").is(':checked')) { $('.diff:input').prop('disabled', true); }
 
     //If Male disable
+
+    
     $('input[name="data[Sadr][gender]"]').click(function () {
         if ($(this).val() == 'Male') {
             $('input[name="data[Sadr][pregnancy_status]"]').attr('disabled', this.checked).attr('checked', !this.checked);

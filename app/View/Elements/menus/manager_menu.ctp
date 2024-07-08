@@ -65,6 +65,12 @@
             );
             ?>
         </li>
+        <li class="<?php echo $this->fetch('AGGREGATE') ?>">
+        <?php 
+            echo $this->Html->link('<i class="fa fa-paperclip" aria-hidden="true"></i> AGGREGATEs',
+                array('controller' => 'aggregates', 'action'=>'index', 'manager' => true ), array('escape' => false ));
+          ?>
+     </li>
         <li class="<?php echo $this->fetch('DEV') ?>">
             <?php
             echo $this->Html->link(
@@ -110,6 +116,15 @@
             );
             ?>
         </li>
+        <!-- <li class="<?php echo $this->fetch('Disproportionality Analysis') ?>">
+            <?php
+            echo $this->Html->link(
+                '<i class="fa fa-bar-chart" aria-hidden="true"></i> Disproportionality Analysis',
+                array('controller' => 'reports', 'action' => 'index', 'manager' => false),
+                array('escape' => false)
+            );
+            ?>
+        </li> -->
 
         <li class="<?php echo $this->fetch('NT') ?>">
             <?php
