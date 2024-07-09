@@ -736,7 +736,7 @@ class ReportsController extends AppController
             'toxic_shock' => 'Toxic shock'
         ];
         
-        $reactionLists = array_keys($config['analytics']);
+        $reactionLists = array_values($config['analytics']);
 
         // loop through to get all target reaction key => name
 
