@@ -204,15 +204,18 @@ class Ce2bsController extends AppController
 
         $ce2b = $this->Ce2b->find('first', array(
             'conditions' => array('Ce2b.id' => $id),
-        ));
+        )); 
         $e2b_content = $ce2b['Ce2b']['e2b_content'];
-        $filename = 'E2B.xml'; //$ce2b['Ce2b']['id'] . ".xml";
-        // Set the HTTP headers for file download
+        $filename = 'CE2B_'.$ce2b['Ce2b']['id'] . ".xml";
+        // // Set the HTTP headers for file download
         header('Content-Type: application/xml');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
 
-        // Output the XML content
+        // // Output the XML content
         echo $e2b_content;
+        // $ce2b = Sanitize::clean($ce2b, array('escape' => true));
+        // $this->set('ce2b', $ce2b);
+        // $this->response->download('CE2B_' . $ce2b['Ce2b']['id'] . '.xml');
     }
     public function manager_copy($id = null)
     {

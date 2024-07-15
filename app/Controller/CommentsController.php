@@ -36,8 +36,11 @@ class CommentsController extends AppController
     $formData = json_encode($payload);
     // debug($formData);
     // exit;
-    $HttpSocket = new HttpSocket($options);
-    $url = "https://demo.anchorerp.com/AnchorPMS/app/api/pms/postfeedback";
+    $HttpSocket = new HttpSocket($options); 
+    $baseUrl = Configure::read('pms_api');
+    $complaint = Configure::read('pms_feedback_api');
+    $auth = Configure::read('pms_api_auth');
+    $url = "{$baseUrl}{$complaint}{$auth}";
     //Request Access Token
     $initiate = $HttpSocket->post($url, $formData, $header_options);
   }
