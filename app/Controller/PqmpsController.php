@@ -107,10 +107,10 @@ class PqmpsController extends AppController
         if ($pqmp['Pqmp']['product_other']) {
             return $pqmp['Pqmp']['product_specify'];
         }
-    
+
         return "";
     }
-    
+
 
     function flattenDateArray($dateArray)
     {
@@ -231,11 +231,12 @@ class PqmpsController extends AppController
             )
         );
         $formData = json_encode($payload);
-        // debug($formData);
-        // exit;
+        $baseUrl = Configure::read('pms_api');
+        $complaint = Configure::read('pms_complaint_api');
+        $auth = Configure::read('pms_api_auth');
+        $url = "{$baseUrl}{$complaint}{$auth}";
         $HttpSocket = new HttpSocket($options);
-        $url = "https://demo.anchorerp.com/AnchorPMS/app/api/pms/postcomplaint";
-
+       
 
         //Request Access Token
         $initiate = $HttpSocket->post($url, $formData, $header_options);
@@ -431,7 +432,7 @@ class PqmpsController extends AppController
 
         // if (!isset($this->passedArgs['submit'])) $criteria['Pqmp.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
-        $this->paginate['order'] = array('Pqmp.submitted_date' => 'desc'); 
+        $this->paginate['order'] = array('Pqmp.submitted_date' => 'desc');
         $this->paginate['contain'] = array('County', 'Country', 'Designation');
 
         //in case of csv export
@@ -848,7 +849,7 @@ class PqmpsController extends AppController
                 "designation" => $pqmp['Designation']['name'],
                 "mobileNo" => $pqmp['Pqmp']['reporter_phone'],
                 "email" => $pqmp['Pqmp']['reporter_email']
-            ),            
+            ),
             "personSubmittingToPPB" => array(
                 "name" => !empty($pqmp['Pqmp']['reporter_name_diff']) ? $pqmp['Pqmp']['reporter_name_diff'] : "",
                 "designation" => !empty($pqmp['Pqmp']['reporter_designation_diff']) ? $pqmp['Pqmp']['reporter_designation_diff'] : "",
@@ -880,12 +881,12 @@ class PqmpsController extends AppController
             )
         );
         $formData = json_encode($payload);
-        // debug($formData);
-        // exit;
+        $baseUrl = Configure::read('pms_api');
+        $complaint = Configure::read('pms_complaint_api');
+        $auth = Configure::read('pms_api_auth');
+        $url = "{$baseUrl}{$complaint}{$auth}";
         $HttpSocket = new HttpSocket($options);
-        $url = "https://demo.anchorerp.com/AnchorPMS/app/api/pms/postcomplaint";
-
-
+       
         //Request Access Token
         $initiate = $HttpSocket->post($url, $formData, $header_options);
     }
@@ -923,7 +924,7 @@ class PqmpsController extends AppController
                     //lucian
                     if (!empty($pqmp['Pqmp']['reference_no']) && $pqmp['Pqmp']['reference_no'] == 'new') {
 
-                        $count = $this->Pqmp->find('count',  array( 
+                        $count = $this->Pqmp->find('count',  array(
                             'fields' => 'Pqmp.reference_no',
                             'conditions' => array(
                                 'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
@@ -1144,7 +1145,7 @@ class PqmpsController extends AppController
         $save_data['Pqmp']['user_id'] = $this->Auth->user('id');
         $save_data['Pqmp']['submitted'] = 2;
         $save_data['Pqmp']['submitted_date'] = date("Y-m-d H:i:s");
- 
+
         //lucian
         if (empty($save_data['Pqmp']['reference_no'])) {
             $count = $this->Pqmp->find('count',  array(

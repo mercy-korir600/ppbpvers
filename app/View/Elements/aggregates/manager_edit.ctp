@@ -78,6 +78,15 @@ $this->Html->script('ckeditor/adapters/jquery', array('inline' => false));
                                             )
                                         );
                                         echo $this->Form->input(
+                                            'manager_initiated',
+                                            array(
+                                                'type' => 'hidden',
+                                                'class' => 'span8 ',
+                                                'label' => array('class' => 'control-label ', 'text' => '<span style="color:red;">*</span>'),
+                                                'after' => '<p class="help-block"> </p></div>',
+                                            )
+                                        );
+                                        echo $this->Form->input(
                                             'brand_name',
                                             array(
                                                 'class' => 'span8 available',
