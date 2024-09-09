@@ -2988,13 +2988,17 @@ class ReportsController extends AppController
         // Populate $pi_counts with product_name_i counts
         foreach ($pi as $item) {
             $productNameI = $item['MedicationProduct']['product_name_i'];
+            if (!empty($productNameI)) {
             $pi_counts[$productNameI] = $item[0]['cnt'];
+            }
         }
 
         // Populate $pe_counts with product_name_ii counts
         foreach ($pe as $item) {
             $productNameII = $item['MedicationProduct']['product_name_ii'];
+            if (!empty($productNameII)) {
             $pe_counts[$productNameII] = $item[0]['cnt'];
+            }
         }
 
         // Combine $pi_counts and $pe_counts
@@ -3002,6 +3006,7 @@ class ReportsController extends AppController
         $index = 0;
         // Compare $pi_counts and $pe_counts
         foreach ($pi_counts as $name => $pi_count) {
+            // if (!empty($name)) {
             $pe_count = isset($pe_counts[$name]) ? $pe_counts[$name] : 0;
             $comparison[$name] = array(
                 'product_name' => $name,
@@ -3009,9 +3014,11 @@ class ReportsController extends AppController
                 'pe_count' => $pe_count
             );
             $index++;
+            // }
         }
         // Include product names from $pe_counts that are not in $pi_counts
         foreach ($pe_counts as $name => $pe_count) {
+            // if (!empty($name)) {
             if (!isset($comparison[$name])) {
                 $comparison[$name] = array(
                     'product_name' => $name,
@@ -3020,7 +3027,8 @@ class ReportsController extends AppController
                 );
                 $index++;
             }
-          
+            // }
+
         }
 
         // Print or use the combined counts array
@@ -3036,16 +3044,20 @@ class ReportsController extends AppController
         $ge_counts = array();
         // debug($ge);
         // exit;
- 
+
         foreach ($gi as $item) {
             $productNameI = $item['MedicationProduct']['generic_name_i'];
+            if (!empty($productNameI)) {
             $gi_counts[$productNameI] = $item[0]['cnt'];
+            }
         }
 
         // Populate $pe_counts with product_name_ii counts
         foreach ($ge as $item) {
             $productNameII = $item['MedicationProduct']['generic_name_ii'];
+            if (!empty($productNameII)) {
             $ge_counts[$productNameII] = $item[0]['cnt'];
+            }
         }
 
         // Combine $pi_counts and $pe_counts
@@ -3053,6 +3065,7 @@ class ReportsController extends AppController
         $index = 0;
         // Compare $pi_counts and $pe_counts
         foreach ($gi_counts as $name => $gi_count) {
+            // if (!empty($name)) {
             $ge_count = isset($ge_counts[$name]) ? $ge_counts[$name] : 0;
             $gecomparison[$name] = array(
                 'generic_name' => $name,
@@ -3060,9 +3073,11 @@ class ReportsController extends AppController
                 'ge_count' => $ge_count
             );
             $index++;
+            // }
         }
         // Include product names from $pe_counts that are not in $pi_counts
         foreach ($ge_counts as $name => $ge_count) {
+            // if (!empty($name)) {
             if (!isset($gecomparison[$name])) {
                 $gecomparison[$name] = array(
                     'generic_name' => $name,
@@ -3071,7 +3086,8 @@ class ReportsController extends AppController
                 );
                 $index++;
             }
-          
+            // }
+
         }
         // debug($gecomparison);
         // exit;
@@ -3093,7 +3109,7 @@ class ReportsController extends AppController
         $this->set(compact('comparison'));
         $this->set(compact('gecomparison'));
 
-        $this->set('_serialize','comparison','gecomparison', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
+        $this->set('_serialize', 'comparison', 'gecomparison', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
 
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
