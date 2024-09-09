@@ -319,9 +319,8 @@ class ReportsController extends AppController
         ));
 
         return count($allreactions);
-
     }
-    public function medication_count_specific_drug_reaction($reportIds,$drug_name, $reaction)
+    public function medication_count_specific_drug_reaction($reportIds, $drug_name, $reaction)
     {
 
         $criteria['Medication.direct_result'] = $reaction;
@@ -334,15 +333,15 @@ class ReportsController extends AppController
 
         $vaccines = $this->Medication->MedicationProduct->find('list', array(
             'fields' => array(
-                'MedicationProduct.medication_id', 
+                'MedicationProduct.medication_id',
             ),
             'contain' => array(),
             'conditions' => array(
                 'MedicationProduct.medication_id' => $reportIds,
                 'MedicationProduct.generic_name_ii IS NOT NULL',
                 'MedicationProduct.generic_name_ii !=' => '',
-                  'MedicationProduct.generic_name_ii ' => $drug_name
-            ), 
+                'MedicationProduct.generic_name_ii ' => $drug_name
+            ),
         ));
         $commonMedications = array_intersect($allreactions, $vaccines);
 
@@ -351,7 +350,6 @@ class ReportsController extends AppController
         // exit;
 
         return count($commonMedications);
-
     }
     public function manager_medications_analytics()
     {
@@ -398,14 +396,14 @@ class ReportsController extends AppController
 
         foreach ($vaccines as $vc) {
             $drug_related_reports = $vc[0]['cnt'];
-            $drug_name=$vc['MedicationProduct']['generic_name_ii'];
+            $drug_name = $vc['MedicationProduct']['generic_name_ii'];
 
 
             $reactionDetails = [];
             foreach ($allreactions as $reaction) {
 
                 $reactionCount = $this->medication_count_specific_reaction($reportIds, $reaction); // B
-                $drugReactionCount = $this->medication_count_specific_drug_reaction($reportIds,$drug_name, $reaction); //AB
+                $drugReactionCount = $this->medication_count_specific_drug_reaction($reportIds, $drug_name, $reaction); //AB
 
                 $expected_count_raw = ($drug_related_reports * $reactionCount) / $total_report_count;
                 $expected_count = round($expected_count_raw, 5);
@@ -724,7 +722,7 @@ class ReportsController extends AppController
         // $reactionLists = Configure::read('analytics');
         // debug($reactionName); 
         $config['analytics'] = [
-            'anaphylaxis' => 'Anaphylaxis', 
+            'anaphylaxis' => 'Anaphylaxis',
             'bcg' => 'BCG Lymphadenitis',
             'convulsion' => 'Convulsion',
             'urticaria' => 'Generalized urticaria (hives)',
@@ -735,7 +733,7 @@ class ReportsController extends AppController
             'paralysis' => 'Paralysis',
             'toxic_shock' => 'Toxic shock'
         ];
-        
+
         $reactionLists = array_values($config['analytics']);
 
         // loop through to get all target reaction key => name
@@ -1269,7 +1267,8 @@ class ReportsController extends AppController
 
         $facility_data = $this->Ce2b->find('all', array(
             'fields' => array('company_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('company_name'),
             'order' => array('COUNT(*) DESC'),
@@ -1277,7 +1276,8 @@ class ReportsController extends AppController
         ));
         $year = $this->Ce2b->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -1285,7 +1285,8 @@ class ReportsController extends AppController
         ));
         $months = $this->Ce2b->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -1363,7 +1364,8 @@ class ReportsController extends AppController
         // SEX
         $sex = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -1372,7 +1374,8 @@ class ReportsController extends AppController
         // YEAR
         $year = $this->Sadr->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -1593,7 +1596,8 @@ class ReportsController extends AppController
 
         $monthly = $this->Sadr->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -1607,7 +1611,8 @@ class ReportsController extends AppController
         // Get All SADRs by Gender 
         $sex = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -1617,7 +1622,8 @@ class ReportsController extends AppController
         // Get All SADRs by Report Title 
         $report_title = $this->Sadr->find('all', array(
             'fields' => array('report_title', 'COUNT(*) as rep'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('report_title'),
             'having' => array('COUNT(*) >' => 0),
@@ -1646,7 +1652,8 @@ class ReportsController extends AppController
         // SADRs per Year
         $year = $this->Sadr->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -1656,7 +1663,8 @@ class ReportsController extends AppController
         // Get All SADRs by Reaction
         $reaction = $this->Sadr->find('all', array(
             'fields' => array('reaction as reaction', 'COUNT(*) as rea'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('reaction'),
             'having' => array('COUNT(*) >' => 0),
@@ -1676,7 +1684,8 @@ class ReportsController extends AppController
 
         $seriousness = $this->Sadr->find('all', array(
             'fields' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious) as serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious)'),
             'having' => array('COUNT(*) >' => 0),
@@ -1685,7 +1694,8 @@ class ReportsController extends AppController
         // Outcome
         $outcome_data = $this->Sadr->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
@@ -1695,7 +1705,8 @@ class ReportsController extends AppController
         // Facility
         $facility_data = $this->Sadr->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -1707,7 +1718,8 @@ class ReportsController extends AppController
         $criteria['Sadr.serious_reason !='] = '';
         $seriousness_reason = $this->Sadr->find('all', array(
             'fields' => array('serious_reason', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('serious_reason'),
             'having' => array('COUNT(*) >' => 0),
@@ -1831,7 +1843,8 @@ class ReportsController extends AppController
         // Get All AEFIs by Gender
         $sex = $this->Aefi->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -1867,7 +1880,8 @@ class ReportsController extends AppController
         // SADRs per Year
         $year = $this->Aefi->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -1883,14 +1897,16 @@ class ReportsController extends AppController
         ));
         $serious = $this->Aefi->find('all', array(
             'fields' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious) as serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious)'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $outcome = $this->Aefi->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
@@ -1898,7 +1914,8 @@ class ReportsController extends AppController
 
         $facilities = $this->Aefi->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -1909,7 +1926,8 @@ class ReportsController extends AppController
 
         $months = $this->Aefi->find('all', array(
             'fields' => array('DATE_FORMAT(reporter_date, "%b %Y")  as month', 'month(ifnull(reporter_date, reporter_date)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(reporter_date, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -1922,7 +1940,8 @@ class ReportsController extends AppController
 
         $reason = $this->Aefi->find('all', array(
             'fields' => array('serious_yes', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' =>  array(
                 'Aefi.id IN' => $aefiIds,
                 // 'Aefi.serious_yes IS NOT NULL',
@@ -2054,7 +2073,8 @@ class ReportsController extends AppController
         // PQHPTs per Year
         $year = $this->Pqmp->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -2073,7 +2093,8 @@ class ReportsController extends AppController
 
         $facility = $this->Pqmp->find('all', array(
             'fields' => array('facility_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('facility_name'),
             'order' => array('COUNT(*) DESC'),
@@ -2084,7 +2105,8 @@ class ReportsController extends AppController
 
         $formulation = $this->Pqmp->find('all', array(
             'fields' => array('product_formulation', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('product_formulation'),
             'order' => array('COUNT(*) DESC'),
@@ -2165,7 +2187,8 @@ class ReportsController extends AppController
 
         $brands = $this->Pqmp->find('all', array(
             'fields' => array('brand_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('brand_name'),
             'order' => array('COUNT(*) DESC'),
@@ -2176,7 +2199,8 @@ class ReportsController extends AppController
 
         $manufacturer = $this->Pqmp->find('all', array(
             'fields' => array('name_of_manufacturer', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_manufacturer'),
             'order' => array('COUNT(*) DESC'),
@@ -2187,7 +2211,8 @@ class ReportsController extends AppController
 
         $supplier = $this->Pqmp->find('all', array(
             'fields' => array('supplier_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('supplier_name'),
             'order' => array('COUNT(*) DESC'),
@@ -2199,7 +2224,8 @@ class ReportsController extends AppController
 
         $generic_name = $this->Pqmp->find('all', array(
             'fields' => array('generic_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('generic_name'),
             'order' => array('COUNT(*) DESC'),
@@ -2222,7 +2248,8 @@ class ReportsController extends AppController
 
         $monthly = $this->Pqmp->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -2302,7 +2329,8 @@ class ReportsController extends AppController
         // Get All Devices by Gender 
         $sex = $this->Device->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -2336,7 +2364,8 @@ class ReportsController extends AppController
         // Devices per Year
         $year = $this->Device->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -2344,35 +2373,40 @@ class ReportsController extends AppController
         ));
         $serious = $this->Device->find('all', array(
             'fields' => array('Device.serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('Device.serious'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $reason = $this->Device->find('all', array(
             'fields' => array('serious_yes', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('submitted' => array(1, 2)),
             'group' => array('serious_yes'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $brands = $this->Device->ListOfDevice->find('all', array(
             'fields' => array('ListOfDevice.brand_name as brand_name', 'COUNT(distinct ListOfDevice.device_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('ListOfDevice.created >' => '2020-04-01 08:08:08'),
             'group' => array('ListOfDevice.brand_name'),
             'having' => array('COUNT(distinct ListOfDevice.device_id) >' => 0),
         ));
         $outcome = $this->Device->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $facilities = $this->Device->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -2380,7 +2414,8 @@ class ReportsController extends AppController
         ));
         $months = $this->Device->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -2465,7 +2500,8 @@ class ReportsController extends AppController
         // Get All SADRs by Gender  
         $sex = $this->Transfusion->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -2494,7 +2530,8 @@ class ReportsController extends AppController
         // Transfusions per Year
         $year = $this->Transfusion->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -2520,7 +2557,8 @@ class ReportsController extends AppController
 
         $outcome = $this->Transfusion->find('all', array(
             'fields' => array($case . ' as rtype', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -2528,14 +2566,16 @@ class ReportsController extends AppController
 
         $previous_reactions = $this->Transfusion->find('all', array(
             'fields' => array('previous_reactions', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_reactions !=' => ''),
             'group' => array('previous_reactions'),
             'having' => array('COUNT(*) >' => 0),
         ));
         $previous_transfusion = $this->Transfusion->find('all', array(
             'fields' => array('previous_transfusion', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_transfusion !=' => ''),
             'group' => array('previous_transfusion'),
             'having' => array('COUNT(*) >' => 0),
@@ -2555,7 +2595,8 @@ class ReportsController extends AppController
         // ));
         $months = $this->Transfusion->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -2607,7 +2648,8 @@ class ReportsController extends AppController
         // Get All SADRs by Gender 
         $sex = $this->Sae->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -2635,7 +2677,8 @@ class ReportsController extends AppController
 
         $months = $this->Sae->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Sae.id'),
             'order' => array('salit'),
@@ -2644,7 +2687,8 @@ class ReportsController extends AppController
         // SADRs per Year
         $year = $this->Sae->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -2706,7 +2750,8 @@ class ReportsController extends AppController
         // Get All SADRs by Gender  
         $sex = $this->Medication->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -2735,7 +2780,8 @@ class ReportsController extends AppController
         // Medications per Year
         $year = $this->Medication->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -2744,7 +2790,8 @@ class ReportsController extends AppController
 
         $months = $this->Medication->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y")', 'salit'), // Include 'salit' in the GROUP BY clause
             'order' => array('salit'),
@@ -2752,7 +2799,8 @@ class ReportsController extends AppController
         ));
         $facilities = $this->Medication->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -2761,7 +2809,8 @@ class ReportsController extends AppController
         // Japhee
         $process = $this->Medication->find('all', array(
             'fields' => array('process_occur', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('process_occur'),
             'order' => array('COUNT(*) DESC'),
@@ -2777,7 +2826,8 @@ class ReportsController extends AppController
 
         $error = $this->Medication->find('all', array(
             'fields' => array($case . ' as error', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -2800,7 +2850,8 @@ class ReportsController extends AppController
 
         $factor = $this->Medication->find('all', array(
             'fields' => array($case . ' as factor', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -2814,7 +2865,8 @@ class ReportsController extends AppController
         }
         $pi = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.product_name_i as product_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $pic,
             'group' => array('MedicationProduct.product_name_i'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -2829,7 +2881,8 @@ class ReportsController extends AppController
 
         $pe = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.product_name_ii as product_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $pec,
             'group' => array('MedicationProduct.product_name_ii'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -2870,7 +2923,8 @@ class ReportsController extends AppController
         }
         $gi = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.generic_name_i as generic_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $gec,
             'group' => array('MedicationProduct.generic_name_i'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -2910,11 +2964,117 @@ class ReportsController extends AppController
         }
         $ge = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.generic_name_ii as generic_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $git,
             'group' => array('MedicationProduct.generic_name_ii'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
         ));
+
+
+
+
+        /**
+         * Combine both Intended and Error Products
+         * 
+         * **/
+
+        // Initialize arrays to store counts
+        $pi_counts = array();
+        $pe_counts = array();
+        // debug($pi);
+        // exit;
+
+        // Populate $pi_counts with product_name_i counts
+        foreach ($pi as $item) {
+            $productNameI = $item['MedicationProduct']['product_name_i'];
+            $pi_counts[$productNameI] = $item[0]['cnt'];
+        }
+
+        // Populate $pe_counts with product_name_ii counts
+        foreach ($pe as $item) {
+            $productNameII = $item['MedicationProduct']['product_name_ii'];
+            $pe_counts[$productNameII] = $item[0]['cnt'];
+        }
+
+        // Combine $pi_counts and $pe_counts
+        $comparison = array();
+        $index = 0;
+        // Compare $pi_counts and $pe_counts
+        foreach ($pi_counts as $name => $pi_count) {
+            $pe_count = isset($pe_counts[$name]) ? $pe_counts[$name] : 0;
+            $comparison[$name] = array(
+                'product_name' => $name,
+                'pi_count' => $pi_count,
+                'pe_count' => $pe_count
+            );
+            $index++;
+        }
+        // Include product names from $pe_counts that are not in $pi_counts
+        foreach ($pe_counts as $name => $pe_count) {
+            if (!isset($comparison[$name])) {
+                $comparison[$name] = array(
+                    'product_name' => $name,
+                    'pi_count' => 0,
+                    'pe_count' => $pe_count
+                );
+                $index++;
+            }
+          
+        }
+
+        // Print or use the combined counts array
+        // debug($comparison);
+        // exit;
+
+
+
+
+        // Combining the Generics Intended vs Error
+        $gecomparison = array();
+        $gi_counts = array();
+        $ge_counts = array();
+        // debug($ge);
+        // exit;
+ 
+        foreach ($gi as $item) {
+            $productNameI = $item['MedicationProduct']['generic_name_i'];
+            $gi_counts[$productNameI] = $item[0]['cnt'];
+        }
+
+        // Populate $pe_counts with product_name_ii counts
+        foreach ($ge as $item) {
+            $productNameII = $item['MedicationProduct']['generic_name_ii'];
+            $ge_counts[$productNameII] = $item[0]['cnt'];
+        }
+
+        // Combine $pi_counts and $pe_counts
+        $combined_counts = array();
+        $index = 0;
+        // Compare $pi_counts and $pe_counts
+        foreach ($gi_counts as $name => $gi_count) {
+            $ge_count = isset($ge_counts[$name]) ? $ge_counts[$name] : 0;
+            $gecomparison[$name] = array(
+                'generic_name' => $name,
+                'gi_count' => $gi_count,
+                'ge_count' => $ge_count
+            );
+            $index++;
+        }
+        // Include product names from $pe_counts that are not in $pi_counts
+        foreach ($ge_counts as $name => $ge_count) {
+            if (!isset($gecomparison[$name])) {
+                $gecomparison[$name] = array(
+                    'generic_name' => $name,
+                    'gi_count' => 0,
+                    'ge_count' => $ge_count
+                );
+                $index++;
+            }
+          
+        }
+        // debug($gecomparison);
+        // exit;
         $this->set(compact('counties'));
         $this->set(compact('geo'));
         $this->set(compact('sex'));
@@ -2930,8 +3090,10 @@ class ReportsController extends AppController
         $this->set(compact('pe'));
         $this->set(compact('gi'));
         $this->set(compact('ge'));
+        $this->set(compact('comparison'));
+        $this->set(compact('gecomparison'));
 
-        $this->set('_serialize', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
+        $this->set('_serialize','comparison','gecomparison', 'geo', 'counties', 'sex', 'age', 'year', 'months', 'facilities', 'process', 'error', 'designation', 'factor', 'pi', 'pe', 'gi', 'ge');
 
 
         if ($this->Session->read('Auth.User.group_id') == 2) {
@@ -2984,7 +3146,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious) as serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('IF(Sadr.serious IS NULL or Sadr.serious = "", "No", Sadr.serious)'),
             'having' => array('COUNT(*) >' => 0),
@@ -3005,7 +3168,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('serious_reason', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('serious_reason'),
             'having' => array('COUNT(*) >' => 0),
@@ -3054,7 +3218,8 @@ class ReportsController extends AppController
         }
         $data = $this->Sadr->SadrListOfDrug->find('all', array(
             'fields' => array('SadrListOfDrug.drug_name as drug_name', 'COUNT(distinct SadrListOfDrug.sadr_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('SadrListOfDrug.drug_name'),
             'having' => array('COUNT(distinct SadrListOfDrug.sadr_id) >' => 0),
@@ -3073,7 +3238,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -3093,7 +3259,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
@@ -3112,7 +3279,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -3152,7 +3320,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Sadr.id'),
             'order' => array('salit'),
@@ -3173,7 +3342,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Sadr.county_id'] = $this->Auth->User('county_id');
         $data = $this->Sadr->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -3230,7 +3400,8 @@ class ReportsController extends AppController
 
         $data = $this->Aefi->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -3251,7 +3422,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious) as serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('IF(Aefi.serious IS NULL or Aefi.serious = "", "No", Aefi.serious)'),
             'having' => array('COUNT(*) >' => 0),
@@ -3271,7 +3443,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('serious_yes', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('serious_yes'),
             'having' => array('COUNT(*) >' => 0),
@@ -3297,7 +3470,8 @@ class ReportsController extends AppController
         }
         $data = $this->Aefi->AefiListOfVaccine->find('all', array(
             'fields' => array('Vaccine.vaccine_name as vaccine_name', 'COUNT(distinct AefiListOfVaccine.aefi_id) as cnt'),
-            'contain' => array('Vaccine'), 'recursive' => -1,
+            'contain' => array('Vaccine'),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('Vaccine.vaccine_name', 'Vaccine.id'),
             'having' => array('COUNT(distinct AefiListOfVaccine.aefi_id) >' => 0),
@@ -3317,7 +3491,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -3337,7 +3512,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
@@ -3356,7 +3532,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -3396,7 +3573,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y") as month', 'month(created) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('monthname(created)', 'Aefi.id'),
             'order' => array('salit'),
@@ -3417,7 +3595,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Aefi.county_id'] = $this->Auth->User('county_id');
         $data = $this->Aefi->find('all', array(
             'fields' => array('year(created) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(created)'),
             'order' => array('year'),
@@ -3464,7 +3643,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('facility_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('facility_name'),
             'order' => array('COUNT(*) DESC'),
@@ -3486,7 +3666,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('product_formulation', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('product_formulation'),
             'order' => array('COUNT(*) DESC'),
@@ -3507,7 +3688,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('brand_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('brand_name'),
             'order' => array('COUNT(*) DESC'),
@@ -3553,7 +3735,8 @@ class ReportsController extends AppController
         }
         $data = $this->Pqmp->find('all', array(
             'fields' => array('generic_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('generic_name'),
             'order' => array('COUNT(*) DESC'),
@@ -3574,7 +3757,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('name_of_manufacturer', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_manufacturer'),
             'order' => array('COUNT(*) DESC'),
@@ -3596,7 +3780,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('supplier_name', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('supplier_name'),
             'order' => array('COUNT(*) DESC'),
@@ -3657,7 +3842,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") ', 'Pqmp.id'),
             'order' => array('salit'),
@@ -3678,7 +3864,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Pqmp.county_id'] = $this->Auth->User('county_id');
         $data = $this->Pqmp->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -3835,7 +4022,8 @@ class ReportsController extends AppController
 
         $data = $this->Device->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -3856,7 +4044,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('Device.serious', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('Device.serious'),
             'having' => array('COUNT(*) >' => 0),
@@ -3876,7 +4065,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('serious_yes', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('submitted' => array(1, 2)),
             'group' => array('serious_yes'),
             'having' => array('COUNT(*) >' => 0),
@@ -3896,7 +4086,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->ListOfDevice->find('all', array(
             'fields' => array('ListOfDevice.brand_name as brand_name', 'COUNT(distinct ListOfDevice.device_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('ListOfDevice.created >' => '2020-04-01 08:08:08'),
             'group' => array('ListOfDevice.brand_name'),
             'having' => array('COUNT(distinct ListOfDevice.device_id) >' => 0),
@@ -3916,7 +4107,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -3936,7 +4128,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('outcome'),
             'having' => array('COUNT(*) >' => 0),
@@ -3956,7 +4149,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -3997,7 +4191,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") '),
             'order' => array('salit'),
@@ -4018,7 +4213,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Device.county_id'] = $this->Auth->User('county_id');
         $data = $this->Device->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -4075,7 +4271,8 @@ class ReportsController extends AppController
 
         $data = $this->Medication->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4097,7 +4294,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
         $data = $this->Medication->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -4117,7 +4315,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
         $data = $this->Medication->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -4138,7 +4337,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
         $data = $this->Medication->find('all', array(
             'fields' => array('process_occur', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('process_occur'),
             'order' => array('COUNT(*) DESC'),
@@ -4165,7 +4365,8 @@ class ReportsController extends AppController
         }
         $data = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.product_name_i as product_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('MedicationProduct.product_name_i'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -4190,7 +4391,8 @@ class ReportsController extends AppController
         }
         $data = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.product_name_ii as product_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('MedicationProduct.product_name_ii'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -4236,7 +4438,8 @@ class ReportsController extends AppController
         }
         $data = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.generic_name_i as generic_name_i', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('MedicationProduct.generic_name_i'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -4282,7 +4485,8 @@ class ReportsController extends AppController
         }
         $data = $this->Medication->MedicationProduct->find('all', array(
             'fields' => array('MedicationProduct.generic_name_ii as generic_name_ii', 'COUNT(distinct MedicationProduct.medication_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('MedicationProduct.generic_name_ii'),
             'having' => array('COUNT(distinct MedicationProduct.medication_id) >' => 0),
@@ -4322,7 +4526,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
         $data = $this->Medication->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") '),
             'order' => array('salit'),
@@ -4343,7 +4548,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Medication.county_id'] = $this->Auth->User('county_id');
         $data = $this->Medication->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -4372,7 +4578,8 @@ class ReportsController extends AppController
 
         $data = $this->Medication->find('all', array(
             'fields' => array($case . ' as error', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4400,7 +4607,8 @@ class ReportsController extends AppController
 
         $data = $this->Medication->find('all', array(
             'fields' => array($case . ' as factor', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4456,7 +4664,8 @@ class ReportsController extends AppController
 
         $data = $this->Transfusion->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4478,7 +4687,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
@@ -4498,7 +4708,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('adverse_reaction', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('adverse_reaction'),
             'having' => array('COUNT(*) >' => 0),
@@ -4538,7 +4749,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('DATE_FORMAT(created, "%b %Y")  as month', 'month(ifnull(created, created)) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('DATE_FORMAT(created, "%b %Y") '),
             'order' => array('salit'),
@@ -4559,7 +4771,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('year(ifnull(created, created)) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(ifnull(created, created))'),
             'order' => array('year'),
@@ -4599,7 +4812,8 @@ class ReportsController extends AppController
 
         $data = $this->Transfusion->find('all', array(
             'fields' => array($case . ' as rtype', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4620,7 +4834,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('previous_transfusion', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_transfusion !=' => ''),
             'group' => array('previous_transfusion'),
             'having' => array('COUNT(*) >' => 0),
@@ -4641,7 +4856,8 @@ class ReportsController extends AppController
         if ($this->Auth->User('user_type') == 'County Pharmacist') $criteria['Transfusion.county_id'] = $this->Auth->User('county_id');
         $data = $this->Transfusion->find('all', array(
             'fields' => array('previous_reactions', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => array('Transfusion.submitted' => array(1, 2), 'Transfusion.previous_reactions !=' => ''),
             'group' => array('previous_reactions'),
             'having' => array('COUNT(*) >' => 0),
@@ -4673,7 +4889,8 @@ class ReportsController extends AppController
 
         $data = $this->Sae->find('all', array(
             'fields' => array($case . ' as ager', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4692,7 +4909,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('monthname(created) as month', 'month(created) as salit', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('monthname(created)'),
             'order' => array('salit'),
@@ -4711,7 +4929,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('year(created) as year', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('year(created)'),
             'order' => array('year'),
@@ -4738,7 +4957,8 @@ class ReportsController extends AppController
 
         $data = $this->Sae->find('all', array(
             'fields' => array($case . ' as outcome', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array($case),
             'having' => array('COUNT(*) >' => 0),
@@ -4756,7 +4976,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('causality', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'group' => array('causality'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -4773,7 +4994,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('gender', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'group' => array('gender'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -4790,7 +5012,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('manufacturer_name as manufacturer', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'group' => array('manufacturer_name'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -4807,7 +5030,8 @@ class ReportsController extends AppController
             $criteria['Sae.created between ? and ?'] = array(date('Y-m-d', strtotime($this->request->data['Report']['start_date'])), date('Y-m-d', strtotime($this->request->data['Report']['end_date'])));
         $data = $this->Sae->find('all', array(
             'fields' => array('application_id as application', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'group' => array('application_id'),
             'having' => array('COUNT(*) >' => 0),
         ));
@@ -4821,7 +5045,8 @@ class ReportsController extends AppController
     {
         $data = $this->Sae->SuspectedDrug->find('all', array(
             'fields' => array('SuspectedDrug.generic_name as generic_name', 'COUNT(distinct SuspectedDrug.sae_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             // 'conditions' => array('SuspectedDrug.created >' => '2020-04-01 08:08:08'),
             'group' => array('SuspectedDrug.generic_name'),
             'having' => array('COUNT(distinct SuspectedDrug.sae_id) >' => 0),
@@ -4836,7 +5061,8 @@ class ReportsController extends AppController
     {
         $data = $this->Sae->ConcomittantDrug->find('all', array(
             'fields' => array('ConcomittantDrug.generic_name as generic_name', 'COUNT(distinct ConcomittantDrug.sae_id) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             // 'conditions' => array('ConcomittantDrug.created >' => '2020-04-01 08:08:08'),
             'group' => array('ConcomittantDrug.generic_name'),
             'having' => array('COUNT(distinct ConcomittantDrug.sae_id) >' => 0),

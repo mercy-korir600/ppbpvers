@@ -24,7 +24,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="geoTable" class="tabcontentgeo">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegeo">
                 <thead>
                     <tr>
@@ -74,7 +74,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="sexTable" class="tabcontentsex">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablesex">
                 <thead>
                     <tr>
@@ -128,7 +128,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="ageTable" class="tabcontentage">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableage">
                 <thead>
                     <tr>
@@ -178,7 +178,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="yearTable" class="tabcontentyear">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatableyear">
                 <thead>
                     <tr>
@@ -232,7 +232,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="monthTable" class="tabcontentmonth">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablemonth">
                 <thead>
                     <tr>
@@ -265,8 +265,8 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr> 
-<div class="row-fluid">
+<hr>
+<!-- <div class="row-fluid">
     <div class="span12">
         <h4>Product (Intended)</h4>
         <div class="tab">
@@ -285,7 +285,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="piTable" class="tabcontentpi">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablepi">
                 <thead>
                     <tr>
@@ -338,7 +338,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="peTable" class="tabcontentpe">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablepe">
                 <thead>
                     <tr>
@@ -352,8 +352,65 @@ $this->Html->css('summary', null, array('inline' => false));
                         $count = $value[0]['cnt'];
                         $c += $count;
                         echo "<tr>";
-                        echo "<th>".$value['MedicationProduct']['product_name_ii']."</th>";
-                echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['MedicationProduct']['product_name_ii'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> -->
+<hr>
+
+<!-- Display Both Product Indented vs Product Error -->
+<div class="row-fluid">
+    <div class="span12">
+        <h4>Product Intended vs Error</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="pepiTab(event, 'pepiChart')" id="pepiOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinkspepi" onclick="pepiTab(event, 'pepiTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="pepiChart" class="tabcontentpepi">
+            <div id="sadrs-pepi"></div>
+
+        </div>
+
+        <div id="pepiTable" class="tabcontentpepi">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablepepi">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Intended</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($comparison as $key => $value) {
+                        $count = $value['pi_count'] + $value['pe_count'];
+                        $c += $count;
+                        echo "<tr>";
+                        echo "<th>" . $value['product_name'] . "</th>";
+                        echo "<td>" . $value['pi_count'] . "</td>";
+                        echo "<td>" . $value['pe_count'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -372,7 +429,7 @@ $this->Html->css('summary', null, array('inline' => false));
     </div>
 </div>
 <hr>
-<div class="row-fluid">
+<!-- <div class="row-fluid">
     <div class="span12">
         <h4>Generic (Intended)</h4>
         <div class="tab">
@@ -391,7 +448,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="giTable" class="tabcontentgi">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablegi">
                 <thead>
                     <tr>
@@ -405,8 +462,8 @@ $this->Html->css('summary', null, array('inline' => false));
                         $count = $value[0]['cnt'];
                         $c += $count;
                         echo "<tr>";
-                        echo "<th>".$value['MedicationProduct']['generic_name_i']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['MedicationProduct']['generic_name_i'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -424,8 +481,8 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
-<div class="row-fluid">
+<hr> -->
+<!-- <div class="row-fluid">
     <div class="span12">
         <h4>Generic (Error)</h4>
         <div class="tab">
@@ -444,7 +501,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
 
         <div id="geTable" class="tabcontentge">
-        <?php $c = 0; ?>
+            <?php $c = 0; ?>
             <table class="table table-condensed table-bordered" id="datatablege">
                 <thead>
                     <tr>
@@ -458,8 +515,63 @@ $this->Html->css('summary', null, array('inline' => false));
                         $count = $value[0]['cnt'];
                         $c += $count;
                         echo "<tr>";
-                        echo "<th>".$value['MedicationProduct']['generic_name_ii']."</th>";
-                        echo "<td>".$value[0]['cnt']."</td>";
+                        echo "<th>" . $value['MedicationProduct']['generic_name_ii'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> -->
+<hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>Generic Intended vs Error</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="gegiTab(event, 'gegiChart')" id="gegiOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksgegi" onclick="gegiTab(event, 'gegiTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="gegiChart" class="tabcontentgegi">
+            <div id="sadrs-gegi"></div>
+
+        </div>
+
+        <div id="gegiTable" class="tabcontentgegi">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablegegi">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Intended</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($gecomparison as $key => $value) {
+                        $count = $value['gi_count'] + $value['ge_count'];
+                        $c += $count;
+                        echo "<tr>";
+                        echo "<th>" . $value['generic_name'] . "</th>";
+                        echo "<td>" . $value['gi_count'] . "</td>";
+                        echo "<td>" . $value['ge_count'] . "</td>";
                         echo "</tr>";
                     }
                     ?>
@@ -477,10 +589,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
 <script type="text/javascript">
-     
-
     function geoTab(evt, geotabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentgeo");
@@ -550,7 +659,7 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(monthtabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
- 
+
     function piTab(evt, pitabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontentpi");
@@ -576,6 +685,20 @@ $this->Html->css('summary', null, array('inline' => false));
             tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
         document.getElementById(petabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function pepiTab(evt, pepitabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentpepi");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinkspepi");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(pepitabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
 
@@ -606,19 +729,84 @@ $this->Html->css('summary', null, array('inline' => false));
         document.getElementById(getabName).style.display = "block";
         evt.currentTarget.className += " active";
     }
+
+    function gegiTab(evt, gegitabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontentgegi");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinksgegi");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(gegitabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
     // Get the element with id="defaultOpen" and click on it designation
     document.getElementById("geoOpen").click();
     document.getElementById("sexOpen").click();
     document.getElementById("ageOpen").click();
     document.getElementById("yearOpen").click();
-    document.getElementById("monthOpen").click(); 
-    document.getElementById("piOpen").click();
-    document.getElementById("peOpen").click();
-    document.getElementById("giOpen").click();
-    document.getElementById("geOpen").click();
-    Highcharts.chart('sadrs-ge', {
+    document.getElementById("monthOpen").click();
+    // document.getElementById("piOpen").click();
+    // document.getElementById("peOpen").click();
+    document.getElementById("pepiOpen").click();
+    // document.getElementById("giOpen").click();
+    // document.getElementById("geOpen").click();
+    document.getElementById("gegiOpen").click();
+
+    // Highcharts.chart('sadrs-ge', {
+    //     data: {
+    //         table: 'datatablege'
+    //     },
+    //     chart: {
+    //         type: 'column'
+    //     },
+    //     title: {
+    //         text: '',
+
+    //     },
+    //     yAxis: {
+    //         allowDecimals: false,
+    //         title: {
+    //             text: 'Units'
+    //         }
+    //     },
+    //     tooltip: {
+    //         formatter: function() {
+    //             return '<b>' + this.series.name + '</b><br/>' +
+    //                 this.point.y + ' ' + this.point.name.toLowerCase();
+    //         }
+    //     }
+    // });
+    // Highcharts.chart('sadrs-gi', {
+    //     data: {
+    //         table: 'datatablegi'
+    //     },
+    //     chart: {
+    //         type: 'column'
+    //     },
+    //     title: {
+    //         text: '',
+
+    //     },
+    //     yAxis: {
+    //         allowDecimals: false,
+    //         title: {
+    //             text: 'Units'
+    //         }
+    //     },
+    //     tooltip: {
+    //         formatter: function() {
+    //             return '<b>' + this.series.name + '</b><br/>' +
+    //                 this.point.y + ' ' + this.point.name.toLowerCase();
+    //         }
+    //     }
+    // });
+    Highcharts.chart('sadrs-gegi', {
         data: {
-            table: 'datatablege'
+            table: 'datatablegegi'
         },
         chart: {
             type: 'column'
@@ -640,9 +828,57 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    Highcharts.chart('sadrs-gi', {
+    // Highcharts.chart('sadrs-pe', {
+    //     data: {
+    //         table: 'datatablepe'
+    //     },
+    //     chart: {
+    //         type: 'column'
+    //     },
+    //     title: {
+    //         text: '',
+
+    //     },
+    //     yAxis: {
+    //         allowDecimals: false,
+    //         title: {
+    //             text: 'Units'
+    //         }
+    //     },
+    //     tooltip: {
+    //         formatter: function() {
+    //             return '<b>' + this.series.name + '</b><br/>' +
+    //                 this.point.y + ' ' + this.point.name.toLowerCase();
+    //         }
+    //     }
+    // });
+    // Highcharts.chart('sadrs-pi', {
+    //     data: {
+    //         table: 'datatablepi'
+    //     },
+    //     chart: {
+    //         type: 'column'
+    //     },
+    //     title: {
+    //         text: '',
+
+    //     },
+    //     yAxis: {
+    //         allowDecimals: false,
+    //         title: {
+    //             text: 'Units'
+    //         }
+    //     },
+    //     tooltip: {
+    //         formatter: function() {
+    //             return '<b>' + this.series.name + '</b><br/>' +
+    //                 this.point.y + ' ' + this.point.name.toLowerCase();
+    //         }
+    //     }
+    // });
+    Highcharts.chart('sadrs-pepi', {
         data: {
-            table: 'datatablegi'
+            table: 'datatablepepi'
         },
         chart: {
             type: 'column'
@@ -664,54 +900,6 @@ $this->Html->css('summary', null, array('inline' => false));
             }
         }
     });
-    Highcharts.chart('sadrs-pe', {
-        data: {
-            table: 'datatablepe'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
-    Highcharts.chart('sadrs-pi', {
-        data: {
-            table: 'datatablepi'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
-
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });  
     Highcharts.chart('sadrs-month', {
         data: {
             table: 'datatablemonth'
