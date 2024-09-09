@@ -350,6 +350,7 @@ $this->assign('MED', 'active');
         <tr>
           <th><?php echo $this->Paginator->sort('id'); ?></th>
           <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
+          <th><?php echo $this->Paginator->sort('report_type'); ?></th>
           <th><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? $this->Paginator->sort('patient_name') : $this->Paginator->sort('gender'); ?></th>
           <th><?php echo $this->Paginator->sort('reporter_date', 'Date reported'); ?></th>
           <th><?php echo $this->Paginator->sort('created', 'Date created'); ?></th>
@@ -383,6 +384,16 @@ $this->assign('MED', 'active');
               }
               ?>&nbsp;
             </td>
+            <td><?php echo h($medication['Medication']['report_type']);
+                if ($medication['Medication']['report_type'] == 'Followup') {
+                  echo "<br> Initial: ";
+                  echo $this->Html->link(
+                    '<label class="label label-info">' . $medication['Medication']['reference_no'] . '</label>',
+                    array('action' => 'view', $medication['Medication']['medication_id']),
+                    array('escape' => false)
+                  );
+                }
+                ?>&nbsp;</td>
             <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($medication['Medication']['patient_name']) : h($medication['Medication']['gender']); ?>&nbsp;</td>
             <td><?php echo h($medication['Medication']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($medication['Medication']['created']); ?>&nbsp;</td>

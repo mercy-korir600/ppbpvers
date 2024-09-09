@@ -1,3 +1,4 @@
+<?php header('Content-Type: text/html; charset=iso-8859-15'); ?>
 <?php echo '<?xml version="1.0" encoding="ISO-8859-1"?>'; echo "\n"; ?>
 <!DOCTYPE ichicsr SYSTEM "http://eudravigilance.ema.europa.eu/dtd/icsr21xml.dtd">
 <ichicsr lang="en">
@@ -185,8 +186,8 @@
 			?></patientsex>
             <lastmenstrualdateformat/> 
             <patientlastmenstrualdate/>
-            <patientmedicalhistorytext><?php echo $sadr['Sadr']['medical_history']; ?></patientmedicalhistorytext>
-            <resultstestsprocedures><?php echo $sadr['Sadr']['lab_investigation']; ?></resultstestsprocedures>
+            <patientmedicalhistorytext><?php echo html_entity_decode($sadr['Sadr']['medical_history']); ?></patientmedicalhistorytext>
+            <resultstestsprocedures><?php echo html_entity_decode($sadr['Sadr']['lab_investigation']); ?></resultstestsprocedures>
             <patientdeath>
                 <patientdeathdateformat/>
                 <patientdeathdate/>
@@ -309,7 +310,7 @@
 			<?php  endforeach; ?>
             <summary>
                 <narrativeincludeclinical><?php echo $sadr['Sadr']['description_of_reaction']; ?></narrativeincludeclinical>
-                <reportercomment><?php echo $sadr['Sadr']['any_other_comment']; ?></reportercomment>
+                <reportercomment><?php echo html_entity_decode($sadr['Sadr']['any_other_comment']); ?></reportercomment>
                 <senderdiagnosismeddraversion />
                 <senderdiagnosis />
                 <sendercomment/>
