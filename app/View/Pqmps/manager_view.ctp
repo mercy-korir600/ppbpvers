@@ -75,7 +75,7 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
             )
           );
           echo $this->Html->link(
-            'PRIMS Integration',
+            'PMSIM Submission',
             array('controller' => 'pqmps', 'action' => 'prims', $pqmp['Pqmp']['id']),
             array(
               'class' => 'btn btn-success btn-block mapop', 'title' => 'PRIMS Integration',
