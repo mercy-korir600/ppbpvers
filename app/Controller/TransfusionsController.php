@@ -721,6 +721,7 @@ class TransfusionsController extends AppController
         $save_data = $this->request->data;
         $save_data['Transfusion']['user_id'] = $this->Auth->user('id');
         $save_data['Transfusion']['submitted'] = 2;
+        $save_data['Transfusion']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
 
         if (empty($save_data['Transfusion']['reference_no'])) {

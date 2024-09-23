@@ -32,7 +32,7 @@ class AefisController extends AppController
         parent::beforeFilter();
         $this->Auth->allow('yellowcard', 'manager_reset_reference', 'guest_add', 'guest_edit', 'dhis2');
     }
-    
+
     public function manager_dhis2()
     {
         $data = array();
@@ -84,8 +84,18 @@ class AefisController extends AppController
             }
         }
         $months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ];
 
         $currentYear = date('Y');
@@ -107,7 +117,8 @@ class AefisController extends AppController
         $data = array();
         $facilities = $this->Aefi->find('all', array(
             'fields' => array('name_of_institution', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('name_of_institution'),
             'order' => array('COUNT(*) DESC'),
@@ -153,7 +164,8 @@ class AefisController extends AppController
         $data = array();
         $facilities = $this->Aefi->find('all', array(
             'fields' => array('patient_ward', 'sub_county_id', 'COUNT(*) as cnt'),
-            'contain' => array(), 'recursive' => -1,
+            'contain' => array(),
+            'recursive' => -1,
             'conditions' => $criteria,
             'group' => array('patient_ward', 'sub_county_id'),
             'order' => array('COUNT(*) DESC'),
@@ -725,7 +737,7 @@ class AefisController extends AppController
 
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Aefi.created' => 'desc');
-        $this->paginate['contain'] = array('County','SubCounty', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
+        $this->paginate['contain'] = array('County', 'SubCounty', 'AefiListOfVaccine', 'AefiDescription', 'AefiListOfVaccine.Vaccine', 'Designation');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -767,7 +779,8 @@ class AefisController extends AppController
         }
         //end csv export
         $this->set([
-            'page_options', $page_options,
+            'page_options',
+            $page_options,
             'aefis' => Sanitize::clean($this->paginate(), array('encode' => false)),
             'paging' => $this->request->params['paging'],
             '_serialize' => ['aefis', 'page_options', 'paging']
@@ -832,7 +845,7 @@ class AefisController extends AppController
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
-           $csv_export=$this->Aefi->find(
+            $csv_export = $this->Aefi->find(
                 'all',
                 array('conditions' => $this->paginate['conditions'], 'order' => $this->paginate['order'], 'contain' => $this->paginate['contain'], 'limit' => 1000)
             );
@@ -952,8 +965,23 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+                'AefiListOfVaccine',
+                'AefiListOfVaccine.Vaccine',
+                'AefiDescription',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'AefiOriginal',
+                'AefiOriginal.AefiListOfVaccine',
+                'AefiOriginal.AefiDescription',
+                'AefiOriginal.AefiListOfVaccine.Vaccine',
+                'AefiOriginal.County',
+                'AefiOriginal.SubCounty',
+                'AefiOriginal.Attachment',
+                'AefiOriginal.Designation',
+                'AefiOriginal.ExternalComment'
             )
         ));
         $this->set('aefi', $aefi);
@@ -979,8 +1007,23 @@ class AefisController extends AppController
             $aefi = $this->Aefi->find('first', array(
                 'conditions' => array('Aefi.id' => $id),
                 'contain' => array(
-                    'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                    'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+                    'AefiListOfVaccine',
+                    'AefiListOfVaccine.Vaccine',
+                    'AefiDescription',
+                    'County',
+                    'SubCounty',
+                    'Attachment',
+                    'Designation',
+                    'ExternalComment',
+                    'AefiOriginal',
+                    'AefiOriginal.AefiListOfVaccine',
+                    'AefiOriginal.AefiDescription',
+                    'AefiOriginal.AefiListOfVaccine.Vaccine',
+                    'AefiOriginal.County',
+                    'AefiOriginal.SubCounty',
+                    'AefiOriginal.Attachment',
+                    'AefiOriginal.Designation',
+                    'AefiOriginal.ExternalComment'
                 )
             ));
             $this->set([
@@ -1026,8 +1069,23 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+                'AefiListOfVaccine',
+                'AefiListOfVaccine.Vaccine',
+                'AefiDescription',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'AefiOriginal',
+                'AefiOriginal.AefiListOfVaccine',
+                'AefiOriginal.AefiDescription',
+                'AefiOriginal.AefiListOfVaccine.Vaccine',
+                'AefiOriginal.County',
+                'AefiOriginal.SubCounty',
+                'AefiOriginal.Attachment',
+                'AefiOriginal.Designation',
+                'AefiOriginal.ExternalComment'
             )
         ));
         $this->set('aefi', $aefi);
@@ -1097,8 +1155,27 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment',
-                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment', 'AefiOriginal.ReviewComment'
+                'AefiListOfVaccine',
+                'AefiListOfVaccine.Vaccine',
+                'AefiDescription',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'ExternalComment.Attachment',
+                'ReviewComment',
+                'ReviewComment.Attachment',
+                'AefiOriginal',
+                'AefiOriginal.AefiListOfVaccine',
+                'AefiOriginal.AefiDescription',
+                'AefiOriginal.AefiListOfVaccine.Vaccine',
+                'AefiOriginal.County',
+                'AefiOriginal.SubCounty',
+                'AefiOriginal.Attachment',
+                'AefiOriginal.Designation',
+                'AefiOriginal.ExternalComment',
+                'AefiOriginal.ReviewComment'
             )
         ));
         $managers = $this->Aefi->User->find('list', array(
@@ -1186,8 +1263,23 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+                'AefiListOfVaccine',
+                'AefiListOfVaccine.Vaccine',
+                'AefiDescription',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'AefiOriginal',
+                'AefiOriginal.AefiListOfVaccine',
+                'AefiOriginal.AefiDescription',
+                'AefiOriginal.AefiListOfVaccine.Vaccine',
+                'AefiOriginal.County',
+                'AefiOriginal.SubCounty',
+                'AefiOriginal.Attachment',
+                'AefiOriginal.Designation',
+                'AefiOriginal.ExternalComment'
             )
         ));
         $this->set('aefi', $aefi);
@@ -1247,8 +1339,23 @@ class AefisController extends AppController
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
             'contain' => array(
-                'AefiListOfVaccine', 'AefiListOfVaccine.Vaccine', 'AefiDescription', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'AefiOriginal', 'AefiOriginal.AefiListOfVaccine', 'AefiOriginal.AefiDescription', 'AefiOriginal.AefiListOfVaccine.Vaccine', 'AefiOriginal.County', 'AefiOriginal.SubCounty', 'AefiOriginal.Attachment', 'AefiOriginal.Designation', 'AefiOriginal.ExternalComment'
+                'AefiListOfVaccine',
+                'AefiListOfVaccine.Vaccine',
+                'AefiDescription',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'AefiOriginal',
+                'AefiOriginal.AefiListOfVaccine',
+                'AefiOriginal.AefiDescription',
+                'AefiOriginal.AefiListOfVaccine.Vaccine',
+                'AefiOriginal.County',
+                'AefiOriginal.SubCounty',
+                'AefiOriginal.Attachment',
+                'AefiOriginal.Designation',
+                'AefiOriginal.ExternalComment'
             )
         ));
 
@@ -1377,7 +1484,7 @@ class AefisController extends AppController
         $this->set('aefi', $aefi);
 
         $this->response->type('xml');
-        $this->response->download('AEFI_R'.$type.'_' . $aefi['Aefi']['id'] . '.xml'); // Set filename for download
+        $this->response->download('AEFI_R' . $type . '_' . $aefi['Aefi']['id'] . '.xml'); // Set filename for download
         if ($type == 2) {
             // Render the XML view
             $this->render('download_r2', 'xml'); // Render the 'download_xml.ctp' view as XML
@@ -1544,7 +1651,8 @@ class AefisController extends AppController
         $count = $this->Aefi->find('count',  array(
             'fields' => 'Aefi.reference_no',
             'conditions' => array(
-                'Aefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                'Aefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                'Aefi.reference_no !=' => 'new'
             )
         ));
         $count++;
@@ -1618,7 +1726,8 @@ class AefisController extends AppController
                         $count = $this->Aefi->find('count',  array(
                             'fields' => 'Aefi.reference_no',
                             'conditions' => array(
-                                'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                                'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                                'Aefi.reference_no !=' => 'new'
                             )
                         ));
                         $count++;
@@ -1634,7 +1743,8 @@ class AefisController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
                     $variables = array(
-                        'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
+                        'name' => $this->Auth->User('name'),
+                        'reference_no' => $aefi['Aefi']['reference_no'],
                         'reference_link' => $html->link(
                             $aefi['Aefi']['reference_no'],
                             array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
@@ -1644,7 +1754,10 @@ class AefisController extends AppController
                     );
                     $datum = array(
                         'email' => $aefi['Aefi']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_aefi_submit',
+                        'model' => 'Aefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -1669,7 +1782,8 @@ class AefisController extends AppController
                     ));
                     foreach ($users as $user) {
                         $variables = array(
-                            'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
+                            'name' => $user['User']['name'],
+                            'reference_no' => $aefi['Aefi']['reference_no'],
                             'reference_link' => $html->link(
                                 $aefi['Aefi']['reference_no'],
                                 array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),
@@ -1679,7 +1793,10 @@ class AefisController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                            'id' => $id,
+                            'user_id' => $user['User']['id'],
+                            'type' => 'reporter_aefi_submit',
+                            'model' => 'Aefi',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
@@ -1727,7 +1844,8 @@ class AefisController extends AppController
         $count = $this->Saefi->find('count',  array(
             'fields' => 'Saefi.reference_no',
             'conditions' => array(
-                'Saefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Saefi.reference_no !=' => 'new'
+                'Saefi.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                'Saefi.reference_no !=' => 'new'
             )
         ));
         $count++;
@@ -1791,7 +1909,8 @@ class AefisController extends AppController
                     $aefi['Aefi']['reference_no'],
                     array(
                         'controller' => 'aefis',
-                        'action' => 'view', $aefi['Aefi']['id'],
+                        'action' => 'view',
+                        $aefi['Aefi']['id'],
                         $model => true,
                         'full_base' => true
                     ),
@@ -1856,7 +1975,8 @@ class AefisController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
                     $variables = array(
-                        'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Saefi']['reference_no'],
+                        'name' => $this->Auth->User('name'),
+                        'reference_no' => $aefi['Saefi']['reference_no'],
                         'reference_link' => $html->link(
                             $aefi['Saefi']['reference_no'],
                             array('controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id'], 'reporter' => true, 'full_base' => true),
@@ -1866,7 +1986,10 @@ class AefisController extends AppController
                     );
                     $datum = array(
                         'email' => $aefi['Saefi']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_aefi_submit',
+                        'model' => 'Saefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -1879,7 +2002,8 @@ class AefisController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
                     $variables = array(
-                        'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
+                        'name' => $this->Auth->User('name'),
+                        'reference_no' => $aefi['Aefi']['reference_no'],
                         'reference_link' => $html->link(
                             $aefi['Aefi']['reference_no'],
                             array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
@@ -1889,7 +2013,10 @@ class AefisController extends AppController
                     );
                     $datum = array(
                         'email' => $aefi['Aefi']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_aefi_submit',
+                        'model' => 'Aefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -1923,7 +2050,8 @@ class AefisController extends AppController
                     ));
                     foreach ($users as $user) {
                         $variables = array(
-                            'name' => $user['User']['name'], 'reference_no' => $aefi['Saefi']['reference_no'],
+                            'name' => $user['User']['name'],
+                            'reference_no' => $aefi['Saefi']['reference_no'],
                             'reference_link' => $html->link(
                                 $aefi['Saefi']['reference_no'],
                                 array('controller' => 'saefis', 'action' => 'view', $aefi['Saefi']['id'], 'manager' => true, 'full_base' => true),
@@ -1933,7 +2061,10 @@ class AefisController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Saefi',
+                            'id' => $id,
+                            'user_id' => $user['User']['id'],
+                            'type' => 'reporter_aefi_submit',
+                            'model' => 'Saefi',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
@@ -1973,12 +2104,14 @@ class AefisController extends AppController
         $save_data = $this->request->data;
         $save_data['Aefi']['user_id'] = $this->Auth->user('id');
         $save_data['Aefi']['submitted'] = 2;
+        $save_data['Aefi']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
         if (empty($save_data['Aefi']['reference_no'])) {
             $count = $this->Aefi->find('count',  array(
                 'fields' => 'Aefi.reference_no',
                 'conditions' => array(
-                    'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                    'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                    'Aefi.reference_no !=' => 'new'
                 )
             ));
             $count++;
@@ -2002,7 +2135,8 @@ class AefisController extends AppController
                 $html = new HtmlHelper(new ThemeView());
                 $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_aefi_submit')));
                 $variables = array(
-                    'name' => $this->Auth->User('name'), 'reference_no' => $aefi['Aefi']['reference_no'],
+                    'name' => $this->Auth->User('name'),
+                    'reference_no' => $aefi['Aefi']['reference_no'],
                     'reference_link' => $html->link(
                         $aefi['Aefi']['reference_no'],
                         array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'reporter' => true, 'full_base' => true),
@@ -2012,7 +2146,10 @@ class AefisController extends AppController
                 );
                 $datum = array(
                     'email' => $aefi['Aefi']['reporter_email'],
-                    'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                    'id' => $id,
+                    'user_id' => $this->Auth->User('id'),
+                    'type' => 'reporter_aefi_submit',
+                    'model' => 'Aefi',
                     'subject' => CakeText::insert($message['Message']['subject'], $variables),
                     'message' => CakeText::insert($message['Message']['content'], $variables)
                 );
@@ -2037,7 +2174,8 @@ class AefisController extends AppController
                 ));
                 foreach ($users as $user) {
                     $variables = array(
-                        'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
+                        'name' => $user['User']['name'],
+                        'reference_no' => $aefi['Aefi']['reference_no'],
                         'reference_link' => $html->link(
                             $aefi['Aefi']['reference_no'],
                             array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),
@@ -2047,7 +2185,10 @@ class AefisController extends AppController
                     );
                     $datum = array(
                         'email' => $user['User']['email'],
-                        'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                        'id' => $id,
+                        'user_id' => $user['User']['id'],
+                        'type' => 'reporter_aefi_submit',
+                        'model' => 'Aefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -2217,7 +2358,8 @@ class AefisController extends AppController
                         $count = $this->Aefi->find('count',  array(
                             'fields' => 'Aefi.reference_no',
                             'conditions' => array(
-                                'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Aefi.reference_no !=' => 'new'
+                                'Aefi.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                                'Aefi.reference_no !=' => 'new'
                             )
                         ));
                         $count++;
@@ -2244,7 +2386,10 @@ class AefisController extends AppController
                     );
                     $datum = array(
                         'email' => $aefi['Aefi']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_aefi_submit',
+                        'model' => 'Aefi',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -2269,7 +2414,8 @@ class AefisController extends AppController
                     ));
                     foreach ($users as $user) {
                         $variables = array(
-                            'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
+                            'name' => $user['User']['name'],
+                            'reference_no' => $aefi['Aefi']['reference_no'],
                             'reference_link' => $html->link(
                                 $aefi['Aefi']['reference_no'],
                                 array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),
@@ -2279,7 +2425,10 @@ class AefisController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_aefi_submit', 'model' => 'Aefi',
+                            'id' => $id,
+                            'user_id' => $user['User']['id'],
+                            'type' => 'reporter_aefi_submit',
+                            'model' => 'Aefi',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
@@ -2297,7 +2446,8 @@ class AefisController extends AppController
                             'contain' => array(),
                             'conditions' => array(
                                 'OR' => array(
-                                    'User.group_id' => 2, 'User.is_active' => '1',
+                                    'User.group_id' => 2,
+                                    'User.is_active' => '1',
                                     array(
                                         'User.county_id' => $county_id,
                                         'User.user_type' => 'County Pharmacist'
@@ -2320,7 +2470,8 @@ class AefisController extends AppController
                         foreach ($users1 as $user) {
                             $user_phone = $user['User']['phone_no'];
                             $variables = array(
-                                'name' => $user['User']['name'], 'reference_no' => $aefi['Aefi']['reference_no'],
+                                'name' => $user['User']['name'],
+                                'reference_no' => $aefi['Aefi']['reference_no'],
                                 'reference_link' => $html->link(
                                     $aefi['Aefi']['reference_no'],
                                     array('controller' => 'aefis', 'action' => 'view', $aefi['Aefi']['id'], 'manager' => true, 'full_base' => true),

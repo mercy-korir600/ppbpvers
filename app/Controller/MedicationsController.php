@@ -815,6 +815,7 @@ class MedicationsController extends AppController
         $save_data = $this->request->data;
         $save_data['Medication']['user_id'] = $this->Auth->user('id');
         $save_data['Medication']['submitted'] = 2;
+        $save_data['Medication']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
         if (empty($save_data['Medication']['reference_no'])) {
             $count = $this->Medication->find('count',  array(
