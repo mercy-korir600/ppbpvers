@@ -110,8 +110,71 @@ class PqmpsController extends AppController
 
         return "";
     }
-
-
+    public function extract_complaints($pqmp)
+    {
+        $complaints = [];
+    
+        if ($pqmp['Pqmp']['colour_change']) {
+            $complaints[] = "Colour change";
+        }
+        if ($pqmp['Pqmp']['separating']) {
+            $complaints[] = "Separating";
+        }
+        if ($pqmp['Pqmp']['powdering']) {
+            $complaints[] = "Powdering / crumbling";
+        }
+        if ($pqmp['Pqmp']['caking']) {
+            $complaints[] = "Caking";
+        }
+        if ($pqmp['Pqmp']['moulding']) {
+            $complaints[] = "Moulding";
+        }
+        if ($pqmp['Pqmp']['odour_change']) {
+            $complaints[] = "Change of odour";
+        }
+        if ($pqmp['Pqmp']['mislabeling']) {
+            $complaints[] = "Mislabeling";
+        }
+        if ($pqmp['Pqmp']['incomplete_pack']) {
+            $complaints[] = "Incomplete pack";
+        }
+        if ($pqmp['Pqmp']['therapeutic_ineffectiveness']) {
+            $complaints[] = "Therapeutic ineffectiveness";
+        }
+        if ($pqmp['Pqmp']['particulate_matter']) {
+            $complaints[] = "Particulate matter in infusions/injectables";
+        }
+        // if ($pqmp['Pqmp']['complaint_other']) {
+        //     $complaints[] = "Other: " . $pqmp['Pqmp']['complaint_other'];
+        // }
+    
+        return $complaints;
+    }
+    public function extract_device_complaints($pqmp)
+    {
+        $deviceComplaints = [];
+    
+        if ($pqmp['Pqmp']['packaging']) {
+            $deviceComplaints[] = "Packaging";
+        }
+        if ($pqmp['Pqmp']['labelling']) {
+            $deviceComplaints[] = "Labelling";
+        }
+        if ($pqmp['Pqmp']['sampling']) {
+            $deviceComplaints[] = "Sampling";
+        }
+        if ($pqmp['Pqmp']['mechanism']) {
+            $deviceComplaints[] = "Mechanism";
+        }
+        if ($pqmp['Pqmp']['electrical']) {
+            $deviceComplaints[] = "Electrical";
+        }
+        if ($pqmp['Pqmp']['device_data']) {
+            $deviceComplaints[] = "Device data";
+        }
+    
+        return $deviceComplaints;
+    }
     function flattenDateArray($dateArray)
     {
         // Extract day, month, and year from the array
@@ -137,6 +200,34 @@ class PqmpsController extends AppController
         }
     }
 
+    public function convertAttachmentToBase64($attachments)
+    {
+        $photolist = array();
+        foreach ($attachments as $attach) {
+            $filePath = $attach['file'];
+            $description = $attach['description'];
+
+            if (file_exists($filePath)) {
+                // Read the image file contents
+                $imageData = file_get_contents($filePath);
+
+                // Convert the image data to a Base64-encoded string
+                $base64Image = base64_encode($imageData);
+
+                // Optionally include the MIME type for embedding in HTML
+                $fileMimeType = mime_content_type($filePath);
+                $base64ImageWithType = 'data:' . $fileMimeType . ';base64,' . $base64Image;
+
+                // Return the Base64-encoded image with MIME type
+                // return $base64ImageWithType;
+                $photolist[] = array(
+                    "filename" => $description,
+                    "attachment" => $base64Image
+                );
+            }
+        }
+        return $photolist;
+    }
     public function manager_prims($id = null)
     {
         $this->Pqmp->id = $id;
@@ -149,10 +240,31 @@ class PqmpsController extends AppController
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',  'ReviewComment'
+                'Country',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'ReviewComment'
             )
         ));
 
+        // if the report has some attachments, convert to base64strins
+
+        // try {
+        $photolist = $this->convertAttachmentToBase64($pqmp['Attachment']);
+
+        // You can now use $base64Image to display the image or save it
+        //     debug($base64Image);
+        // } catch (\Exception $e) {
+        //     // Handle any errors (e.g., file not found)
+        //     debug($e->getMessage());
+        // }
+
+
+        // debug($pqmp);
+        // exit;
 
         $flattenedManufactureDate = $this->flattenDateArray($pqmp['Pqmp']['manufacture_date']);
 
@@ -175,6 +287,9 @@ class PqmpsController extends AppController
         $reporter_date_formatted = date('Y-m-d', $reporter_date__timestamp);
         // debug($expiry_date_formatted);
         // exit; 
+
+        $productComplaints = $this->extract_complaints($pqmp);
+        $deviceComplaints = $this->extract_device_complaints($pqmp);
 
         $payload = array(
             "category" => $this->extract_category($pqmp),
@@ -206,7 +321,7 @@ class PqmpsController extends AppController
                 "mobileNo" => "", //"String (optional)",
                 "email" => "", // "String (optional)"
             ),
-            "reportNo" => $pqmp['Pqmp']['id'],
+            "reportNo" =>$pqmp['Pqmp']['id'],
             "reportDate" => $reporter_date_formatted, //"String (format=>yyyy-MM-dd)",
             "facility" => array(
                 "county" => $pqmp['County']['county_name'], //"String (optional)",
@@ -219,8 +334,15 @@ class PqmpsController extends AppController
                 "name" => $pqmp['Pqmp']['supplier_name'], //"String (optional)",
                 "address" => $pqmp['Pqmp']['supplier_address'], // "String (optional)",
                 "telephone" => "", //$pqmp['Pqmp']['name'],//"String (optional)"
-            )
+            ),
+            "photolist" => $photolist,
+            "productcomplaint" => $productComplaints,
+            "devicecomplaint" => $deviceComplaints,
+            "otherdetails" => $pqmp['Pqmp']['complaint_other_specify'],
         );
+
+        //    debug($payload);
+        // exit;
 
         $options = array(
             'ssl_verify_peer' => false
@@ -236,7 +358,7 @@ class PqmpsController extends AppController
         $auth = Configure::read('pms_api_auth');
         $url = "{$baseUrl}{$complaint}{$auth}";
         $HttpSocket = new HttpSocket($options);
-       
+
 
         //Request Access Token
         $initiate = $HttpSocket->post($url, $formData, $header_options);
@@ -371,7 +493,8 @@ class PqmpsController extends AppController
         //end csv export
 
         $this->set([
-            'page_options', $page_options,
+            'page_options',
+            $page_options,
             'pqmps' => Sanitize::clean($this->paginate(), array('encode' => false)),
             'paging' => $this->request->params['paging'],
             '_serialize' => ['pqmps', 'page_options', 'paging']
@@ -551,8 +674,21 @@ class PqmpsController extends AppController
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment', 'ReviewComment', 'PqmpOriginal.ReviewComment'
+                'Country',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'PqmpOriginal',
+                'PqmpOriginal.Country',
+                'PqmpOriginal.County',
+                'PqmpOriginal.SubCounty',
+                'PqmpOriginal.Attachment',
+                'PqmpOriginal.Designation',
+                'PqmpOriginal.ExternalComment',
+                'ReviewComment',
+                'PqmpOriginal.ReviewComment'
             )
         ));
         $this->set('pqmp', $pqmp);
@@ -581,8 +717,19 @@ class PqmpsController extends AppController
             $pqmp = $this->Pqmp->find('first', array(
                 'conditions' => array('Pqmp.id' => $id),
                 'contain' => array(
-                    'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                    'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment'
+                    'Country',
+                    'County',
+                    'SubCounty',
+                    'Attachment',
+                    'Designation',
+                    'ExternalComment',
+                    'PqmpOriginal',
+                    'PqmpOriginal.Country',
+                    'PqmpOriginal.County',
+                    'PqmpOriginal.SubCounty',
+                    'PqmpOriginal.Attachment',
+                    'PqmpOriginal.Designation',
+                    'PqmpOriginal.ExternalComment'
                 )
             ));
 
@@ -623,8 +770,19 @@ class PqmpsController extends AppController
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment'
+                'Country',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'PqmpOriginal',
+                'PqmpOriginal.Country',
+                'PqmpOriginal.County',
+                'PqmpOriginal.SubCounty',
+                'PqmpOriginal.Attachment',
+                'PqmpOriginal.Designation',
+                'PqmpOriginal.ExternalComment'
             )
         ));
         $this->set('pqmp', $pqmp);
@@ -656,8 +814,24 @@ class PqmpsController extends AppController
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment', 'ReviewComment', 'ExternalComment.Attachment', 'ReviewComment.Attachment',
-                'PqmpOriginal', 'PqmpOriginal.Country', 'PqmpOriginal.County', 'PqmpOriginal.SubCounty', 'PqmpOriginal.Attachment', 'PqmpOriginal.Designation', 'PqmpOriginal.ExternalComment', 'PqmpOriginal.ReviewComment', 'PqmpOriginal.ReviewComment.Attachment'
+                'Country',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'ReviewComment',
+                'ExternalComment.Attachment',
+                'ReviewComment.Attachment',
+                'PqmpOriginal',
+                'PqmpOriginal.Country',
+                'PqmpOriginal.County',
+                'PqmpOriginal.SubCounty',
+                'PqmpOriginal.Attachment',
+                'PqmpOriginal.Designation',
+                'PqmpOriginal.ExternalComment',
+                'PqmpOriginal.ReviewComment',
+                'PqmpOriginal.ReviewComment.Attachment'
             )
         ));
         $managers = $this->Pqmp->User->find('list', array(
@@ -778,7 +952,8 @@ class PqmpsController extends AppController
         $count = $this->Pqmp->find('count',  array(
             'fields' => 'Pqmp.reference_no',
             'conditions' => array(
-                'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                'Pqmp.created BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                'Pqmp.reference_no !=' => 'new'
             )
         ));
         $count++;
@@ -799,7 +974,13 @@ class PqmpsController extends AppController
         $pqmp = $this->Pqmp->find('first', array(
             'conditions' => array('Pqmp.id' => $id),
             'contain' => array(
-                'Country', 'County', 'SubCounty', 'Attachment', 'Designation', 'ExternalComment',  'ReviewComment'
+                'Country',
+                'County',
+                'SubCounty',
+                'Attachment',
+                'Designation',
+                'ExternalComment',
+                'ReviewComment'
             )
         ));
 
@@ -825,6 +1006,12 @@ class PqmpsController extends AppController
         $reporter_date_formatted = date('Y-m-d', $reporter_date__timestamp);
         // debug($expiry_date_formatted);
         // exit; 
+        $photolist = $this->convertAttachmentToBase64($pqmp['Attachment']);
+
+        $productComplaints = $this->extract_complaints($pqmp);
+        $deviceComplaints = $this->extract_device_complaints($pqmp);
+
+
 
         $payload = array(
             "category" => $this->extract_category($pqmp),
@@ -869,7 +1056,11 @@ class PqmpsController extends AppController
                 "name" => $pqmp['Pqmp']['supplier_name'], //"String (optional)",
                 "address" => $pqmp['Pqmp']['supplier_address'], // "String (optional)",
                 "telephone" => "", //$pqmp['Pqmp']['name'],//"String (optional)"
-            )
+            ),
+            "photolist" => $photolist,
+            "productcomplaint" => $productComplaints,
+            "devicecomplaint" => $deviceComplaints,
+            "otherdetails" => $pqmp['Pqmp']['complaint_other_specify'],
         );
 
         $options = array(
@@ -886,7 +1077,7 @@ class PqmpsController extends AppController
         $auth = Configure::read('pms_api_auth');
         $url = "{$baseUrl}{$complaint}{$auth}";
         $HttpSocket = new HttpSocket($options);
-       
+
         //Request Access Token
         $initiate = $HttpSocket->post($url, $formData, $header_options);
     }
@@ -927,7 +1118,8 @@ class PqmpsController extends AppController
                         $count = $this->Pqmp->find('count',  array(
                             'fields' => 'Pqmp.reference_no',
                             'conditions' => array(
-                                'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                                'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                                'Pqmp.reference_no !=' => 'new'
                             )
                         ));
                         $count++;
@@ -945,7 +1137,8 @@ class PqmpsController extends AppController
                     $html = new HtmlHelper(new ThemeView());
                     $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_pqmp_submit')));
                     $variables = array(
-                        'name' => $this->Auth->User('name'), 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                        'name' => $this->Auth->User('name'),
+                        'reference_no' => $pqmp['Pqmp']['reference_no'],
                         'reference_link' => $html->link(
                             $pqmp['Pqmp']['reference_no'],
                             array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id'], 'reporter' => true, 'full_base' => true),
@@ -955,7 +1148,10 @@ class PqmpsController extends AppController
                     );
                     $datum = array(
                         'email' => $pqmp['Pqmp']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_pqmp_submit',
+                        'model' => 'Pqmp',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -979,7 +1175,8 @@ class PqmpsController extends AppController
                     ));
                     foreach ($users as $user) {
                         $variables = array(
-                            'name' => $user['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                            'name' => $user['User']['name'],
+                            'reference_no' => $pqmp['Pqmp']['reference_no'],
                             'reference_link' => $html->link(
                                 $pqmp['Pqmp']['reference_no'],
                                 array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id'], 'manager' => true, 'full_base' => true),
@@ -989,7 +1186,10 @@ class PqmpsController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                            'id' => $id,
+                            'user_id' => $user['User']['id'],
+                            'type' => 'reporter_pqmp_submit',
+                            'model' => 'Pqmp',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
@@ -1108,12 +1308,14 @@ class PqmpsController extends AppController
             }
 
             $variables = array(
-                'name' => $user['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                'name' => $user['User']['name'],
+                'reference_no' => $pqmp['Pqmp']['reference_no'],
                 'reference_link' => $html->link(
                     $pqmp['Pqmp']['reference_no'],
                     array(
                         'controller' => 'pqmps',
-                        'action' => 'view', $pqmp['Pqmp']['id'],
+                        'action' => 'view',
+                        $pqmp['Pqmp']['id'],
                         $model => true,
                         'full_base' => true
                     ),
@@ -1151,7 +1353,8 @@ class PqmpsController extends AppController
             $count = $this->Pqmp->find('count',  array(
                 'fields' => 'Pqmp.reference_no',
                 'conditions' => array(
-                    'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")), 'Pqmp.reference_no !=' => 'new'
+                    'Pqmp.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                    'Pqmp.reference_no !=' => 'new'
                 )
             ));
             $count++;
@@ -1173,7 +1376,8 @@ class PqmpsController extends AppController
                 $html = new HtmlHelper(new ThemeView());
                 $message = $this->Message->find('first', array('conditions' => array('name' => 'reporter_pqmp_submit')));
                 $variables = array(
-                    'name' => $this->Auth->User('name'), 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                    'name' => $this->Auth->User('name'),
+                    'reference_no' => $pqmp['Pqmp']['reference_no'],
                     'reference_link' => $html->link(
                         $pqmp['Pqmp']['reference_no'],
                         array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id'], 'reporter' => true, 'full_base' => true),
@@ -1183,7 +1387,10 @@ class PqmpsController extends AppController
                 );
                 $datum = array(
                     'email' => $pqmp['Pqmp']['reporter_email'],
-                    'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                    'id' => $id,
+                    'user_id' => $this->Auth->User('id'),
+                    'type' => 'reporter_pqmp_submit',
+                    'model' => 'Pqmp',
                     'subject' => CakeText::insert($message['Message']['subject'], $variables),
                     'message' => CakeText::insert($message['Message']['content'], $variables)
                 );
@@ -1207,7 +1414,8 @@ class PqmpsController extends AppController
                 ));
                 foreach ($users as $user) {
                     $variables = array(
-                        'name' => $user['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                        'name' => $user['User']['name'],
+                        'reference_no' => $pqmp['Pqmp']['reference_no'],
                         'reference_link' => $html->link(
                             $pqmp['Pqmp']['reference_no'],
                             array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id'], 'manager' => true, 'full_base' => true),
@@ -1217,7 +1425,10 @@ class PqmpsController extends AppController
                     );
                     $datum = array(
                         'email' => $user['User']['email'],
-                        'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                        'id' => $id,
+                        'user_id' => $user['User']['id'],
+                        'type' => 'reporter_pqmp_submit',
+                        'model' => 'Pqmp',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -1586,7 +1797,10 @@ class PqmpsController extends AppController
                     );
                     $datum = array(
                         'email' => $pqmp['Pqmp']['reporter_email'],
-                        'id' => $id, 'user_id' => $this->Auth->User('id'), 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                        'id' => $id,
+                        'user_id' => $this->Auth->User('id'),
+                        'type' => 'reporter_pqmp_submit',
+                        'model' => 'Pqmp',
                         'subject' => CakeText::insert($message['Message']['subject'], $variables),
                         'message' => CakeText::insert($message['Message']['content'], $variables)
                     );
@@ -1610,7 +1824,8 @@ class PqmpsController extends AppController
                     ));
                     foreach ($users as $user) {
                         $variables = array(
-                            'name' => $user['User']['name'], 'reference_no' => $pqmp['Pqmp']['reference_no'],
+                            'name' => $user['User']['name'],
+                            'reference_no' => $pqmp['Pqmp']['reference_no'],
                             'reference_link' => $html->link(
                                 $pqmp['Pqmp']['reference_no'],
                                 array('controller' => 'pqmps', 'action' => 'view', $pqmp['Pqmp']['id'], 'manager' => true, 'full_base' => true),
@@ -1620,7 +1835,10 @@ class PqmpsController extends AppController
                         );
                         $datum = array(
                             'email' => $user['User']['email'],
-                            'id' => $id, 'user_id' => $user['User']['id'], 'type' => 'reporter_pqmp_submit', 'model' => 'Pqmp',
+                            'id' => $id,
+                            'user_id' => $user['User']['id'],
+                            'type' => 'reporter_pqmp_submit',
+                            'model' => 'Pqmp',
                             'subject' => CakeText::insert($message['Message']['subject'], $variables),
                             'message' => CakeText::insert($message['Message']['content'], $variables)
                         );
