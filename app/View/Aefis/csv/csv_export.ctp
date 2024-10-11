@@ -7,6 +7,8 @@
 		'bcg' => 'BCG Lymphadenitis', 'convulsion' => 'Convulsion','urticaria' => 'Generalized urticaria', 'high_fever' => 'High Fever',
 		'abscess' => 'Injection site abscess', 'local_reaction' => 'Severe Local Reaction','anaphylaxis' => 'Anaphylaxis', 'meningitis' => 'Encephalopathy',
 		'paralysis' => 'Paralysis', 'toxic_shock' => 'Toxic shock','complaint_other' => 'Other', 'complaint_other_specify' => 'Specify',
+		'aefi_symptoms'=>'Reaction','reactions'=>'Other Reactions',
+		
 		'date_aefi_started' => 'Date Adverse Event Following Immunization started','times_aefi_started' => 'Time Adverse Event Following Immunization started','vaccines' => 'Vaccines','vaccination_doses' => 'Vaccination doses',
 		'vaccination_dates' => 'Vaccination dates','vaccination_times' => 'Vaccination times','vaccination_routes' => 'Vaccination routes',
 		'vaccination_sites' => 'Vaccination sites','vaccination_batch' => 'Batch/Lot No.','manufacturers' => 'Vaccine Manufacturers',
@@ -93,7 +95,7 @@
 					$tas.=$sat['hour'].':';
 					$tas.=$sat['min'];
 				}				
-				($tas) ? $row[$key] = $tas : $row[$key] = '""';
+				($tas) ? $row[$key] = $tas : $row[$key] = '""'; 
 			} elseif ($key == 'vaccines') {
 				foreach ($caefi['AefiListOfVaccine'] as $aefiListOfVaccine) {
 					// display other if there's no vaccine name::::
@@ -102,7 +104,14 @@
 					(isset($row[$key])) ? $row[$key] .= '; '.$val : $row[$key] = $val;
 				}
 				(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/','""',$row[$key]) . '"' : $row[$key] = '""';
-			} elseif ($key == 'vaccination_doses') {
+			} elseif ($key == 'reactions') {
+				foreach ($caefi['AefiDescription'] as $desc) {
+				 
+					$val= $desc['description']; 
+					(isset($row[$key])) ? $row[$key] .= '; '.$val : $row[$key] = $val;
+				}
+				(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/','""',$row[$key]) . '"' : $row[$key] = '""';
+			}  elseif ($key == 'vaccination_doses') {
 				foreach ($caefi['AefiListOfVaccine'] as $aefiListOfVaccine) {
 					(isset($row[$key])) ? $row[$key] .= '; '.$aefiListOfVaccine['dosage'] : $row[$key] = $aefiListOfVaccine['dosage'];
 				}
