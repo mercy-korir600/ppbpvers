@@ -961,6 +961,7 @@ class SadrsController extends AppController
         $save_data = $this->request->data;
         $save_data['Sadr']['user_id'] = $this->Auth->user('id');
         $save_data['Sadr']['submitted'] = 2;
+        $save_data['Sadr']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
         if (empty($save_data['Sadr']['reference_no'])) {
             $count = $this->Sadr->find('count',  array(

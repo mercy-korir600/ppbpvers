@@ -2104,7 +2104,7 @@ class AefisController extends AppController
         $save_data = $this->request->data;
         $save_data['Aefi']['user_id'] = $this->Auth->user('id');
         $save_data['Aefi']['submitted'] = 2;
-        $save_data['Aefi']['submitted_date'] =  date("Y-m-d H:i:s");
+        $save_data['Aefi']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
         if (empty($save_data['Aefi']['reference_no'])) {
             $count = $this->Aefi->find('count',  array(

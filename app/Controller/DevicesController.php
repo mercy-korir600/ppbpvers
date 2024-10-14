@@ -729,6 +729,7 @@ class DevicesController extends AppController
         $save_data = $this->request->data;
         $save_data['Device']['user_id'] = $this->Auth->user('id');
         $save_data['Device']['submitted'] = 2;
+        $save_data['Device']['submitted_date'] = date("Y-m-d H:i:s");
         //lucian
         if (empty($save_data['Device']['reference_no'])) {
             $count = $this->Device->find('count',  array(
