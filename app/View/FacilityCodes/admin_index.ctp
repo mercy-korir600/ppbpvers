@@ -35,6 +35,13 @@
 							'data-target' => '#uploadModal'
 						));
 						
+						echo $this->Html->link('<i class="icon-upload icon-white"></i> Upload Pharmacies', "#", array(
+							'class' => 'btn btn-warning',
+							'data-toggle' => 'modal',
+							'data-target' => '#uploadModalFacility',
+							'escapeTitle'=>false
+						));
+						
 					?>
 					</div>
 					<div class="span3 columns">
@@ -125,7 +132,7 @@
 	   </div> <!-- /row-fluid -->
 
 
-	   <!-- Add this code wherever you want the modal to appear in your view -->
+	   <!-- Add this code wherever you want the modal to appear in your view --> 
 <!-- Add this code wherever you want the modal to appear in your view -->
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -138,6 +145,28 @@
             </div>
             <div class="modal-body"> 
 				<?php echo $this->Form->create('Upload', array('type' => 'file', 'url' => array('controller' => 'facility_codes', 'action' => 'upload'))); ?>
+
+                <?php echo $this->Form->input('csv_file', array('type' => 'file')); ?>
+            </div>
+            <div class="modal-footer">
+                <?php echo $this->Form->button('Upload', array('class' => 'btn btn-primary')); ?>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <?php echo $this->Form->end(); ?>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="uploadModalFacility" tabindex="-1" role="dialog" aria-labelledby="uploadModalFacilityLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload CSV</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"> 
+				<?php echo $this->Form->create('Upload', array('type' => 'file', 'url' => array('controller' => 'facility_codes', 'action' => 'upload_pharmacy'))); ?>
 
                 <?php echo $this->Form->input('csv_file', array('type' => 'file')); ?>
             </div>

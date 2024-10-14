@@ -19,9 +19,72 @@ class FacilityCodesController extends AppController
 	public function beforeFilter()
 	{
 		parent::beforeFilter();
-		$this->Auth->allow('index', 'autocomplete', 'api_autocomplete', 'api_index', 'wards');
+		$this->Auth->allow('index','admin_upload_pharmacy', 'autocomplete', 'api_autocomplete', 'api_index', 'wards');
 	}
 
+	public function admin_upload_pharmacy() {
+		if ($this->request->is('post')) {
+			// Handle form submission
+			$file = $this->request->data['Upload']['csv_file'];
+
+			if (!empty($file['tmp_name'])) {
+				$csvData = array_map('str_getcsv', file($file['tmp_name']));
+				$header = array_shift($csvData);
+				set_time_limit(600);
+
+				// Validate and save each row
+				foreach ($csvData as $row) {
+
+					// $existingRecord = $this->FacilityCode->findByFacilityCode($this->verify_code($row[0]));
+
+					$data = array(
+						'facility_code' => null,//$this->verify_code($row[0]),
+						'facility_name' => $row[0],
+						'keph_level' => null,//$row[4],
+						'type' => $row[0],
+						'owner' => null,//$row[7],
+						'beds' => null,//$row[10],
+						'cots' =>null,// $row[11],
+						'province' => $this->get_province_by_county($row[2]),
+						'county' => $row[2],
+						'constituency' => null,//$row[13],
+						'sub_county' => $row[3],
+						'ward' => null,//$row[15],
+						'operational_status' => null,//$row[16],
+						'open_weekends' => null,//$row[20],
+						'open_24hrs' => null,//$this->determine_24_hour($row[18], $row[21]),
+
+						// Add more columns as needed
+					);
+					// if ($existingRecord) {
+					// 	// Update the existing record
+					// 	$this->FacilityCode->id = $existingRecord['FacilityCode']['id'];
+					// } else {
+						// Create a new record
+						$this->FacilityCode->create();
+					// }
+					$this->FacilityCode->set($data);
+
+					if ($this->FacilityCode->save($data,['validate'=>false])) {
+						// Record saved successfully
+					} else {
+						$errors = $this->FacilityCode->validationErrors;
+						// Handle validation errors
+						$this->Session->setFlash(__('Experienced problems uploading data' . $errors), 'flash_error');
+						$this->redirect(array('action' => 'index'));
+					}
+				}
+				$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_success');
+				$this->redirect(array('action' => 'index'));
+			} else {
+				// Handle file upload error
+				$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_error');
+				$this->redirect(array('action' => 'index'));
+			}
+		}
+		$this->Session->setFlash(__('Facilities uploaded successfully'), 'flash_success');
+		$this->redirect(array('action' => 'index'));
+	}
 	public function autocomplete($query = null)
 	{
 		$this->RequestHandler->setContent('json', 'application/json');
