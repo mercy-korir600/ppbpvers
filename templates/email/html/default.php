@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -10,53 +9,39 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
+ * @package       app.View.Emails.html
+ * @since         CakePHP(tm) v 0.10.0.1076
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Email</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .email-container {
-            width: 100%;
-            max-width: 780px;
-            margin: auto;
-            background: #ffffff;
-            border: 10px solid #2F1F50;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .header {
-            background-color: #2F1F50;
-            color: #ffffff;
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            font-size: 24px;
-            padding: 10px;
-            text-align: center;
-        }
-        .content {
-            font-size: 12px;
-            color: #333333;
-        }
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        <div class="header">
-            The Pharmacy and Poisons Board
-        </div>
-        <div class="content">
-            <?= $content ?> 
-        </div>
-    </div>
-</body>
-</html>
+
+
+<div align="center">
+	<br />
+	<table align="center" bgcolor="#FFFFFF" border="0" cellpadding="10" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; width: 100%; border: 10px solid #488E48;">
+		<tbody>
+			<tr>
+				<td bgcolor="488E48">
+					<h3 style="font-family: Georgia, &quot;Times New Roman&quot;, Times, serif; font-size: 24px; color: rgb(255, 255, 255);">
+						The Pharmacy and Poisons Board</h3>
+					<p style="color: #fff;">
+						<strong>PvERS</strong>: Pharmacovigilance Electronic Reporting System</p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php
+						/*$content = explode("\n", $content);
+
+						foreach ($content as $line):
+							echo '<p> ' . $line . "</p>\n";
+						endforeach;*/
+						echo $content;
+					?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+

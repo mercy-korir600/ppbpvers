@@ -111,7 +111,7 @@
             <?php
             echo $this->Html->link(
                 '<i class="fa fa-bar-chart" aria-hidden="true"></i> Reports',
-                array('controller' => 'reports', 'action' => 'index', 'manager' => false),
+                array('controller' => 'reports', 'action' => 'index', 'prefix' => null),
                 array('escape' => false)
             );
             ?>

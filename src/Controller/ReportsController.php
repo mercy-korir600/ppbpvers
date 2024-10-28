@@ -1,16 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Manager;
+namespace App\Controller;
 
-use App\Controller\AppController;
+use Cake\Event\EventInterface;
 
-/**
- *  
- * 
- */
 class ReportsController extends AppController
 {
+
+    public function beforeFilter(EventInterface $event): void
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow([
+            'index', 
+        ]);
+    }
+
     /**
      * Index method
      *
@@ -31,8 +36,11 @@ class ReportsController extends AppController
      */
     public function view($id = null)
     {
-        debug("Sample");
-        exit;
+        $report = $this->Reports->get($id, [
+            'contain' => [],
+        ]);
+
+        $this->set(compact('report'));
     }
 
     /**

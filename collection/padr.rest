@@ -1,0 +1,19 @@
+
+#API:::: Create a PADR report
+POST http://localhost:8765/api/padrs/add
+Accept: application/json
+Content-Type: application/json
+
+{
+    "reporter_name":"Japheth Kiprotich",
+    "county_id":27,
+    "sub_county_id":89,
+    "patient_name":"Patient 254",
+    "reporter_email":"itsjkiprotich@gmail.com",
+    "reporter_phone":"",
+    "report_sadr":"Side Effects",
+    "outcome":"recovering/resolving",
+    "consent":"No"
+   
+}
+ 

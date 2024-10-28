@@ -301,6 +301,7 @@ ending on <span class="badge">{{end}}</span>')
                     <th><?php echo $this->Paginator->sort('patient_name'); ?></th>
                     <?php if ($prefix == 'manager' || $prefix == 'reviewer') { ?><th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th> <?php } ?>
                     <th><?php echo $this->Paginator->sort('created'); ?></th>
+                    <th><?php echo $this->Paginator->sort('submitted_date'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
                 </tr>
             </thead>
@@ -331,6 +332,7 @@ ending on <span class="badge">{{end}}</span>')
                                 echo "\n" . $padr['vigiflow_date']; ?></td>
                         <?php } ?>
                         <td><?php echo h($padr['created']); ?>&nbsp;</td>
+                        <td><?php echo h($padr['submitted_date']); ?>&nbsp;</td>
                         <td class="actions">
                             <?php
                             if ($padr['submitted'] >= 0) {

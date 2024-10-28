@@ -39,6 +39,8 @@ use Cake\Validation\Validator;
  */
 class PadrsTable extends Table
 {
+
+
     /**
      * Initialize method
      *
@@ -97,226 +99,200 @@ class PadrsTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
-        $validator
-            ->integer('padr_id')
-            ->allowEmptyString('padr_id');
 
         $validator
-            ->integer('user_id')
-            ->allowEmptyString('user_id');
-
-
-        $validator
-            ->scalar('reporter_name')
-            ->maxLength('reporter_name', 100)
-            ->notEmptyString('reporter_name', 'Please provide reporter name');
+            ->requirePresence('reporter_name', 'create')
+            ->notEmptyString('reporter_name', 'Name cannot be empty')
+            ->maxLength('reporter_name', 255, 'Name cannot be longer than 255 characters');
 
         $validator
-            ->integer('county_id')
-            ->notEmptyString('county_id', 'Please provide county');
-
-        $validator
-            ->integer('sub_county_id')
-            ->notEmptyString('sub_county_id', 'Please select a sub county');
-
-        $validator
-            ->integer('designation_id')
-            ->allowEmptyString('designation_id');
+            ->requirePresence('county_id', 'create')
+            ->notEmptyString('county_id', 'County cannot be empty');
 
 
         $validator
-            ->scalar('relation')
-            ->maxLength('relation', 55)
-            ->allowEmptyString('relation');
+            ->requirePresence('sub_county_id', 'create')
+            ->notEmptyString('sub_county_id', 'Please provide sub county');
+
+
+        $validator->allowEmptyString('reporter_email', 'Please provide either a phone number or an email address', function ($context) {
+            return !empty($context['data']['reporter_phone']);
+        });
+        $validator->allowEmptyString('date_of_birth', 'Date of birth OR age at onset required', function ($context) {
+            return !empty($context['data']['age_group']);
+        });
+
+        $validator
+            ->requirePresence('patient_name', 'create')
+            ->notEmptyString('patient_name', 'Patient Name cannot be empty')
+            ->maxLength('patient_name', 255, 'Patient Name cannot be longer than 255 characters');
+
+        $validator
+            ->requirePresence('report_sadr', 'create')
+            ->notEmptyString('report_sadr', 'Please select report type');
+
+        $validator->add('sadr_vomiting', 'atLeastOne', [
+            'rule' => function ($value, $context) {
+                return !empty($context['data']['sadr_vomiting']) ||
+                    !empty($context['data']['sadr_dizziness']) ||
+                    !empty($context['data']['sadr_headache']) ||
+                    !empty($context['data']['sadr_rash']) ||
+                    !empty($context['data']['sadr_mouth']) ||
+                    !empty($context['data']['sadr_stomach']) ||
+                    !empty($context['data']['sadr_urination']) ||
+                    !empty($context['data']['sadr_eyes']) ||
+                    !empty($context['data']['sadr_died']) ||
+                    !empty($context['data']['sadr_joints']);
+            },
+            'message' => 'Please select at least one side effect experienced'
+        ]);
 
 
 
         $validator
-            ->scalar('report_sadr')
-            ->maxLength('report_sadr', 55)
-            ->allowEmptyString('report_sadr');
-
+            ->requirePresence('outcome', 'create')
+            ->notEmptyString('outcome', 'Please provide outcome');
         $validator
-            ->boolean('sadr_vomiting')
-            ->allowEmptyString('sadr_vomiting');
+            ->requirePresence('consent', 'create')
+            ->notEmptyString('consent', 'Please provide consent');
 
-        $validator
-            ->boolean('sadr_dizziness')
-            ->allowEmptyString('sadr_dizziness');
+        // $validator
+        //     ->scalar('')
+        //     ->maxLength('patient_name', 100)
+        //     ->allowEmptyString('patient_name');
 
-        $validator
-            ->boolean('sadr_headache')
-            ->allowEmptyString('sadr_headache');
+        // $validator
+        //     ->boolean('pqmp_material')
+        //     ->allowEmptyString('pqmp_material');
 
-        $validator
-            ->boolean('sadr_joints')
-            ->allowEmptyString('sadr_joints');
+        // $validator
+        //     ->scalar('date_of_birth')
+        //     ->maxLength('date_of_birth', 20)
+        //     ->allowEmptyString('date_of_birth');
 
-        $validator
-            ->boolean('sadr_rash')
-            ->allowEmptyString('sadr_rash');
+        // $validator
+        //     ->scalar('age_group')
+        //     ->maxLength('age_group', 40)
+        //     ->allowEmptyString('age_group');
 
-        $validator
-            ->boolean('sadr_mouth')
-            ->allowEmptyString('sadr_mouth');
+        // $validator
+        //     ->scalar('patient_address')
+        //     ->maxLength('patient_address', 100)
+        //     ->allowEmptyString('patient_address');
 
-        $validator
-            ->boolean('sadr_stomach')
-            ->allowEmptyString('sadr_stomach');
+        // $validator
+        //     ->boolean('pqmp_color')
+        //     ->allowEmptyString('pqmp_color');
 
-        $validator
-            ->boolean('sadr_urination')
-            ->allowEmptyString('sadr_urination');
+        // $validator
+        //     ->scalar('gender')
+        //     ->maxLength('gender', 7)
+        //     ->allowEmptyString('gender');
 
-        $validator
-            ->boolean('sadr_eyes')
-            ->allowEmptyString('sadr_eyes');
+        // $validator
+        //     ->boolean('pqmp_smell')
+        //     ->allowEmptyString('pqmp_smell');
 
-        $validator
-            ->boolean('sadr_died')
-            ->allowEmptyString('sadr_died');
+        // $validator
+        //     ->boolean('pqmp_working')
+        //     ->allowEmptyString('pqmp_working');
 
-        $validator
-            ->boolean('pqmp_label')
-            ->allowEmptyString('pqmp_label');
+        // $validator
+        //     ->boolean('pqmp_bottle')
+        //     ->allowEmptyString('pqmp_bottle');
 
-        $validator
-            ->scalar('patient_name')
-            ->maxLength('patient_name', 100)
-            ->allowEmptyString('patient_name');
+        // $validator
+        //     ->scalar('pregnancy_status')
+        //     ->maxLength('pregnancy_status', 20)
+        //     ->allowEmptyString('pregnancy_status');
 
-        $validator
-            ->boolean('pqmp_material')
-            ->allowEmptyString('pqmp_material');
+        // $validator
+        //     ->scalar('weight')
+        //     ->maxLength('weight', 10)
+        //     ->allowEmptyString('weight');
 
-        $validator
-            ->scalar('date_of_birth')
-            ->maxLength('date_of_birth', 20)
-            ->allowEmptyString('date_of_birth');
+        // $validator
+        //     ->scalar('height')
+        //     ->maxLength('height', 10)
+        //     ->allowEmptyString('height');
 
-        $validator
-            ->scalar('age_group')
-            ->maxLength('age_group', 40)
-            ->allowEmptyString('age_group');
+        // $validator
+        //     ->scalar('diagnosis')
+        //     ->allowEmptyString('diagnosis');
 
-        $validator
-            ->scalar('patient_address')
-            ->maxLength('patient_address', 100)
-            ->allowEmptyString('patient_address');
+        // $validator
+        //     ->scalar('medical_history')
+        //     ->allowEmptyString('medical_history');
 
-        $validator
-            ->boolean('pqmp_color')
-            ->allowEmptyString('pqmp_color');
+        // $validator
+        //     ->scalar('date_of_onset_of_reaction')
+        //     ->maxLength('date_of_onset_of_reaction', 20)
+        //     ->allowEmptyString('date_of_onset_of_reaction');
 
-        $validator
-            ->scalar('gender')
-            ->maxLength('gender', 7)
-            ->allowEmptyString('gender');
+        // $validator
+        //     ->scalar('date_of_end_of_reaction')
+        //     ->maxLength('date_of_end_of_reaction', 25)
+        //     ->allowEmptyString('date_of_end_of_reaction');
 
-        $validator
-            ->boolean('pqmp_smell')
-            ->allowEmptyString('pqmp_smell');
+        // $validator
+        //     ->scalar('description_of_reaction')
+        //     ->allowEmptyString('description_of_reaction');
 
-        $validator
-            ->boolean('pqmp_working')
-            ->allowEmptyString('pqmp_working');
+        // $validator
+        //     ->scalar('reaction_resolve')
+        //     ->maxLength('reaction_resolve', 55)
+        //     ->allowEmptyString('reaction_resolve');
 
-        $validator
-            ->boolean('pqmp_bottle')
-            ->allowEmptyString('pqmp_bottle');
+        // $validator
+        //     ->scalar('reaction_reappear')
+        //     ->maxLength('reaction_reappear', 55)
+        //     ->allowEmptyString('reaction_reappear');
 
-        $validator
-            ->scalar('pregnancy_status')
-            ->maxLength('pregnancy_status', 20)
-            ->allowEmptyString('pregnancy_status');
+        // $validator
+        //     ->scalar('lab_investigation')
+        //     ->allowEmptyString('lab_investigation');
 
-        $validator
-            ->scalar('weight')
-            ->maxLength('weight', 10)
-            ->allowEmptyString('weight');
+        // $validator
+        //     ->scalar('severity')
+        //     ->maxLength('severity', 100)
+        //     ->allowEmptyString('severity');
 
-        $validator
-            ->scalar('height')
-            ->maxLength('height', 10)
-            ->allowEmptyString('height');
+        // $validator
+        //     ->scalar('serious')
+        //     ->maxLength('serious', 255)
+        //     ->allowEmptyString('serious');
 
-        $validator
-            ->scalar('diagnosis')
-            ->allowEmptyString('diagnosis');
+        // $validator
+        //     ->scalar('serious_reason')
+        //     ->maxLength('serious_reason', 255)
+        //     ->allowEmptyString('serious_reason');
 
-        $validator
-            ->scalar('medical_history')
-            ->allowEmptyString('medical_history');
+        // $validator
+        //     ->scalar('action_taken')
+        //     ->maxLength('action_taken', 100)
+        //     ->allowEmptyString('action_taken');
 
-        $validator
-            ->scalar('date_of_onset_of_reaction')
-            ->maxLength('date_of_onset_of_reaction', 20)
-            ->allowEmptyString('date_of_onset_of_reaction');
+        // $validator
+        //     ->scalar('outcome')
+        //     ->maxLength('outcome', 100)
+        //     ->allowEmptyString('outcome');
 
-        $validator
-            ->scalar('date_of_end_of_reaction')
-            ->maxLength('date_of_end_of_reaction', 25)
-            ->allowEmptyString('date_of_end_of_reaction');
+        // $validator
+        //     ->scalar('causality')
+        //     ->maxLength('causality', 100)
+        //     ->allowEmptyString('causality');
 
-        $validator
-            ->scalar('description_of_reaction')
-            ->allowEmptyString('description_of_reaction');
-
-        $validator
-            ->scalar('reaction_resolve')
-            ->maxLength('reaction_resolve', 55)
-            ->allowEmptyString('reaction_resolve');
-
-        $validator
-            ->scalar('reaction_reappear')
-            ->maxLength('reaction_reappear', 55)
-            ->allowEmptyString('reaction_reappear');
-
-        $validator
-            ->scalar('lab_investigation')
-            ->allowEmptyString('lab_investigation');
-
-        $validator
-            ->scalar('severity')
-            ->maxLength('severity', 100)
-            ->allowEmptyString('severity');
-
-        $validator
-            ->scalar('serious')
-            ->maxLength('serious', 255)
-            ->allowEmptyString('serious');
-
-        $validator
-            ->scalar('serious_reason')
-            ->maxLength('serious_reason', 255)
-            ->allowEmptyString('serious_reason');
-
-        $validator
-            ->scalar('action_taken')
-            ->maxLength('action_taken', 100)
-            ->allowEmptyString('action_taken');
-
-        $validator
-            ->scalar('outcome')
-            ->maxLength('outcome', 100)
-            ->allowEmptyString('outcome');
-
-        $validator
-            ->scalar('causality')
-            ->maxLength('causality', 100)
-            ->allowEmptyString('causality');
-
-        $validator
-            ->scalar('any_other_comment')
-            ->allowEmptyString('any_other_comment');
+        // $validator
+        //     ->scalar('any_other_comment')
+        //     ->allowEmptyString('any_other_comment');
 
 
-        $validator
-            ->scalar('reporter_email')
-            ->maxLength('reporter_email', 100)
-            ->allowEmptyString('reporter_email', 'This field is required', function ($context) {
-                return !$context['data']['reporter_phone'];
-            });
+        // $validator
+        //     ->scalar('reporter_email')
+        //     ->maxLength('reporter_email', 100)
+        //     ->allowEmptyString('reporter_email', 'This field is required', function ($context) {
+        //         return !$context['data']['reporter_phone'];
+        //     });
 
 
         // $validator
@@ -328,43 +304,43 @@ class PadrsTable extends Table
 
 
 
-        $validator
-            ->scalar('reporter_name_diff')
-            ->maxLength('reporter_name_diff', 255)
-            ->allowEmptyString('reporter_name_diff');
+        // $validator
+        //     ->scalar('reporter_name_diff')
+        //     ->maxLength('reporter_name_diff', 255)
+        //     ->allowEmptyString('reporter_name_diff');
 
-        $validator
-            ->integer('reporter_designation_diff')
-            ->allowEmptyString('reporter_designation_diff');
+        // $validator
+        //     ->integer('reporter_designation_diff')
+        //     ->allowEmptyString('reporter_designation_diff');
 
-        $validator
-            ->scalar('reporter_email_diff')
-            ->maxLength('reporter_email_diff', 255)
-            ->allowEmptyString('reporter_email_diff');
+        // $validator
+        //     ->scalar('reporter_email_diff')
+        //     ->maxLength('reporter_email_diff', 255)
+        //     ->allowEmptyString('reporter_email_diff');
 
-        $validator
-            ->scalar('reporter_phone_diff')
-            ->maxLength('reporter_phone_diff', 255)
-            ->allowEmptyString('reporter_phone_diff');
+        // $validator
+        //     ->scalar('reporter_phone_diff')
+        //     ->maxLength('reporter_phone_diff', 255)
+        //     ->allowEmptyString('reporter_phone_diff');
 
-        $validator
-            ->date('reporter_date_diff')
-            ->allowEmptyDate('reporter_date_diff');
+        // $validator
+        //     ->date('reporter_date_diff')
+        //     ->allowEmptyDate('reporter_date_diff');
 
 
-        $validator
-            ->dateTime('assigned_date')
-            ->allowEmptyDateTime('assigned_date');
+        // $validator
+        //     ->dateTime('assigned_date')
+        //     ->allowEmptyDateTime('assigned_date');
 
-        $validator
-            ->scalar('reaction_on')
-            ->maxLength('reaction_on', 25)
-            ->allowEmptyString('reaction_on');
+        // $validator
+        //     ->scalar('reaction_on')
+        //     ->maxLength('reaction_on', 25)
+        //     ->allowEmptyString('reaction_on');
 
-        $validator
-            ->scalar('consent')
-            ->maxLength('consent', 255)
-            ->allowEmptyString('consent');
+        // $validator
+        //     ->scalar('consent')
+        //     ->maxLength('consent', 255)
+        //     ->allowEmptyString('consent');
         return $validator;
     }
 

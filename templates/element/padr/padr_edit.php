@@ -91,8 +91,7 @@ echo $this->Html->css('padr', array('inline' => false));
                         <?php
                         echo $this->Form->control('reporter_email', array(
                             'class' => 'set-control',
-                            'type' => 'email',
-                            // 'div' => array('class' => 'control-group'),
+                            'type' => 'email', 
                             'required' => false,
                             'label' => array('class' => 'control-label', 'text' => 'Email Address')
                         ));
@@ -171,13 +170,8 @@ echo $this->Html->css('padr', array('inline' => false));
                     <?php
 
                     echo $this->Form->control('date_of_birth', array(
-                        'type' => 'text', 
-                    
-                        'empty' => array('day' => '(day)', 'month' => '(month)', 'year' => '(year)'),
-                        'label' => array('class' => 'control-label required', 'text' => 'Date of Birth'),
-                        'title' => 'select beginning of the month if unsure',
-                        'data-content' => 'If selected, year is mandatory.',
-
+                        'type' => 'text',                      
+                        'label' => array('class' => 'control-label required', 'text' => 'Date of Birth'), 
                         'class' => 'tooltipper set-control date-pick-from',
                     ));
 

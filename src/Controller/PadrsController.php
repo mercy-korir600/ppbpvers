@@ -54,7 +54,7 @@ class PadrsController extends AppController
         $this->set(compact('padrs'));
     }
 
-    /**
+    /** 
      * View method
      *
      * @param string|null $id Padr id.
@@ -140,14 +140,21 @@ class PadrsController extends AppController
      */
     public function add()
     {
+
+
+        $this->Padrs->addBehavior('Captcha.Captcha');
         $padr = $this->Padrs->newEmptyEntity();
         if ($this->request->is('post')) {
 
 
             $padr = $this->Padrs->patchEntity($padr, $this->request->getData(), [
+                'validate'=>true,
                 'associated' => ['PadrListOfMedicines', 'Attachments']
             ]);
-            if ($this->Padrs->save($padr)) {
+
+            // debug($padr);
+            // exit;
+            if ($this->Padrs->save($padr,['validate'=>true])) {
 
 
                 $startDate = new FrozenTime(date("Y-01-01 00:00:00"));
