@@ -45,7 +45,7 @@ $(document).ready(function () {
     dateFormat: 'dd-mm-yy'
   });
 
-  //If SADR disable Poor-Quality Health Products and Technologies and vice versa
+  //If SADR disable PQHPT and vice versa
   $('.pqmp').hide();
   $('.sadr').hide();
   $('.end').hide();

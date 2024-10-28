@@ -47,7 +47,7 @@
             );
             ?>
         </li>
-        <li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
+        <li class="<?php echo $this->fetch('PQHPT') ?>">
             <?php
             echo $this->Html->link(
                 '<i class="fa fa-medkit" aria-hidden="true"></i> PQHPTs',

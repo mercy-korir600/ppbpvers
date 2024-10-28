@@ -220,7 +220,7 @@ $(document).ready(function () {
             $(".diff:input").prop("disabled", true);
         }
     });
-    if ($("#person-submitting-no").is(":checked")) {
+    if ($(".PersonSubmittingNo").is(":checked")) {
         $(".diff:input").prop("disabled", true);
     }
 

@@ -48,17 +48,17 @@
         	$('.diff:input').prop('disabled',true);
         }
     });
-    if($("#PqmpPersonSubmittingNo").is(':checked')){ $('.diff:input').prop('disabled',true); }
+    if($(".subNo").is(':checked')){ $('.diff:input').prop('disabled',true); }
 
     $("#PqmpComplaintOther").click(function(){   
 	    $("#PqmpComplaintOtherSpecify").attr('disabled', !this.checked)
 	});
 	if($("#PqmpComplaintOther").is(':checked')){ $("#PqmpComplaintOtherSpecify").attr('disabled', false); }
 
-    $("#PqmpProductOther").click(function(){   
-	    $("#PqmpProductSpecify").attr('disabled', !this.checked)
+    $(".ppo").click(function(){   
+	    $(".pposp").attr('disabled', !this.checked)
 	});
-	if($("#PqmpProductOther").is(':checked')){ $("#PqmpProductSpecify").attr('disabled', false); }
+	if($(".ppo").is(':checked')){ $(".pposp").attr('disabled', false); }
 
     var cache2 = {},	lastXhr;
 	$( "#PqmpFacilityCode" ).autocomplete({

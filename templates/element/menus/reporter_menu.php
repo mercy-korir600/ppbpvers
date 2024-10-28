@@ -22,7 +22,7 @@
                 array('controller' => 'aefis', 'action'=>'index', 'prefix'=>'Reporter'  ), array('escape' => false ));
          } ?>
      </li>
-     <li class="<?php echo $this->fetch('Poor-Quality Health Products and Technologies') ?>">
+     <li class="<?php echo $this->fetch('PQHPT') ?>">
         <?php
          if($this->request->getSession()->read('Auth.User.health_program')!="Cancer/Oncology program"){
             echo $this->Html->link('<i class="fa fa-medkit" aria-hidden="true"></i> PQHPTs',

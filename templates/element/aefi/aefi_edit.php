@@ -23,7 +23,7 @@ echo $this->Form->create($aefi);
 // ));
 ?>
 <div class="row-fluid">
-    <div class="span10 formbacka">
+    <div class="span10 formbacka" style="padding: 10px;">
 
         <?php
         echo $this->Form->control('id', array());

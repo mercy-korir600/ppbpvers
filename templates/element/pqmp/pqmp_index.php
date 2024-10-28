@@ -2,7 +2,7 @@
 
 
 echo $this->Html->script('sadrs_index', array('inline' => false));
-$this->assign('Poor-Quality Health Products and Technologies', 'active');
+$this->assign('PQHPT', 'active');
 ?>
 
 <div class="row-fluid">
@@ -29,7 +29,7 @@ $this->assign('Poor-Quality Health Products and Technologies', 'active');
         <div class="marketing">
             <div class="row-fluid">
                 <div class="span12">
-                    <h3>Poor-Quality Health Products and Technologies:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
+                    <h3>PQHPT:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
                     <hr class="soften" style="margin: 7px 0px;">
                 </div>
             </div>

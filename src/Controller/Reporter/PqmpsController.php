@@ -83,7 +83,7 @@ class PqmpsController extends AppController
         ];
         $report = $this->Pqmps->patchEntity($report, $data);
         if ($this->Pqmps->save($report)) {
-        $this->Flash->success(__('The Poor-Quality Health Products and Technologies has been created'));
+        $this->Flash->success(__('The PQHPT has been created'));
         $this->redirect(array('action' => 'edit', $report->id));
         }
     }

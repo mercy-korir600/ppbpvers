@@ -141,10 +141,10 @@ class SadrsController extends AppController
             $sadr = $this->Sadrs->patchEntity($sadr, $this->request->getData(), [
                 'validate' => $validate,
                 'associated' => [
-                    'Attachments',
-                    'SadrReaction',
-                    'SadrListOfDrugs',
-                    'SadrListOfMedicines'
+                    'Attachments'=>[ 'validate' => $validate],
+                    'SadrReaction'=>[ 'validate' => $validate],
+                    'SadrListOfDrugs'=>[ 'validate' => $validate],
+                    'SadrListOfMedicines'=>[ 'validate' => $validate]
                 ]
             ]);
 
