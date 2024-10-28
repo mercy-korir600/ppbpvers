@@ -73,12 +73,12 @@ $(function () {
 			$('.diff:input').prop('disabled', true);
 		}
 	});
-	if ($("#AefiPersonSubmittingNo").is(':checked')) { $('.diff:input').prop('disabled', true); }
+	if ($(".AefiPersonSubmittingNo").is(':checked')) { $('.diff:input').prop('disabled', true); }
 
-	$("#AefiComplaintOther").click(function () {
-		$("#AefiComplaintOtherSpecify").attr('disabled', !this.checked)
+	$(".cpo").click(function () {
+		$(".cposp").attr('disabled', !this.checked)
 	});
-	if ($("#AefiComplaintOther").is(':checked')) { $("#AefiComplaintOtherSpecify").attr('disabled', false); }
+	if ($(".cpo").is(':checked')) { $(".cposp").attr('disabled', false); }
 
 	$("#AefiAefiSymptoms").autocomplete({
 		source: "/meddras/autocomplete.json"

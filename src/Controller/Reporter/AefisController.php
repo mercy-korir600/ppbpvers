@@ -67,7 +67,7 @@ class AefisController extends AppController
         $aefi = $this->Aefis->newEmptyEntity();
         $data = [
             'user_id' => $this->Auth->User('id'),
-            'reference_no' => 'new', //'Adverse Event Following Immunization/'.date('Y').'/'.$count,
+            'reference_no' => 'new', //'AEFI/'.date('Y').'/'.$count,
             'report_type' => 'Initial',
             'pqmp_id' => $id,
             'designation_id' => $this->Auth->User('designation_id'),
@@ -82,7 +82,7 @@ class AefisController extends AppController
         ];
         $aefi = $this->Aefis->patchEntity($aefi, $data);
         if ($this->Aefis->save($aefi)) {
-            $this->Flash->success(__('The Adverse Event Following Immunization has been created'));
+            $this->Flash->success(__('The AEFI has been created'));
             $this->redirect(array('action' => 'edit', $aefi->id));
         }
     }
@@ -107,13 +107,22 @@ class AefisController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The aefi could not be saved. Please, try again.'));
-        }
+        } 
+        $this->request = $this->request->withParsedBody($aefi->toArray());
+
+        // debug($this->request);
+        // exit;
+
         $users = $this->Aefis->Users->find('list', ['limit' => 200])->all();
         $pqmps = $this->Aefis->Pqmps->find('list', ['limit' => 200])->all();
         $counties = $this->Aefis->Counties->find('list', ['limit' => 200])->all();
         $subCounties = $this->Aefis->SubCounties->find('list', ['limit' => 200])->all();
-        $designations = $this->Aefis->Designations->find('list', ['limit' => 200])->all();
-        $this->set(compact('aefi', 'users', 'pqmps', 'counties', 'subCounties', 'designations'));
+        $designations = $this->Aefis->Designations->find('list', ['limit' => 200])->all();     
+        $vaccines = $this->Aefis->AefiListOfVaccines->Vaccines->find('list')->all();  
+        // debug($vaccines);
+        // debug($designations);
+        // exit; 
+        $this->set(compact('aefi', 'vaccines','users', 'pqmps', 'counties', 'subCounties', 'designations'));
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-    $this->assign('Adverse Event Following Immunization', 'active');
+    $this->assign('AEFI', 'active');
 ?>
 
 

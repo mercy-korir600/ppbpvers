@@ -18,7 +18,7 @@ $this->assign('SAEFI', 'active');
         <div class="marketing">
             <div class="row-fluid">
                 <div class="span12">
-                    <h3>Serious Adverse Event Following Immunization:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
+                    <h3>Serious AEFI:<small> <i class="icon-glass"></i> Filter, <i class="icon-search"></i> Search, and <i class="icon-eye-open"></i> view reports</small></h3>
                     <hr class="soften" style="margin: 7px 0px;">
                 </div>
             </div>

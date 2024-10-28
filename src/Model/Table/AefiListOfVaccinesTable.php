@@ -44,7 +44,7 @@ class AefiListOfVaccinesTable extends Table
         parent::initialize($config);
 
         $this->setTable('aefi_list_of_vaccines');
-        $this->setDisplayField('id');
+        $this->setDisplayField('vaccine_name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');

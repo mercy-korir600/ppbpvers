@@ -29,7 +29,7 @@
             );
             ?>
         </li>
-        <li class="<?php echo $this->fetch('Adverse Event Following Immunization') ?>">
+        <li class="<?php echo $this->fetch('AEFI') ?>">
             <?php
             echo $this->Html->link(
                 '<i class="fa fa-child" aria-hidden="true"></i> AEFIs',
@@ -38,7 +38,7 @@
             );
             ?>
         </li>
-        <li class="<?php echo $this->fetch('Serious Adverse Event Following Immunization') ?>">
+        <li class="<?php echo $this->fetch('Serious AEFI') ?>">
             <?php
             echo $this->Html->link(
                 '<i class="fa fa-child" aria-hidden="true"></i> SAEFIs',

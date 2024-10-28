@@ -15,7 +15,7 @@
                 array('controller' => 'sadrs', 'action'=>'index', 'prefix'=>'Reporter'  ), array('escape' => false ));
             ?>
      </li>             
-     <li class="<?php echo $this->fetch('Adverse Event Following Immunization') ?>">
+     <li class="<?php echo $this->fetch('AEFI') ?>">
         <?php
         if($this->request->getSession()->read('Auth.User.health_program')!="Cancer/Oncology program"){
             echo $this->Html->link('<i class="fa fa-child" aria-hidden="true"></i> AEFIs',

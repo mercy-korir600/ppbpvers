@@ -42,7 +42,7 @@ class VaccinesTable extends Table
         parent::initialize($config);
 
         $this->setTable('vaccines');
-        $this->setDisplayField('id');
+        $this->setDisplayField('vaccine_name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');

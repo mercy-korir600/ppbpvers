@@ -113,7 +113,7 @@ echo $this->Html->script('dashboard', array('inline' => false));
           </div>
 
           <div class="span4 formbacka" style="padding: 4px;">
-            <h5>Adverse Event Following Immunization </h5>
+            <h5>AEFI </h5>
             <?php
             echo '<ol>';
             foreach ($aefis as $aefi) {
