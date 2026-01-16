@@ -27,7 +27,24 @@ class Aggregate extends AppModel
 		'end_date' => array('type' => 'query', 'method' => 'dummy'),
 		'submission_frequency' => array('type' => 'like', 'encode' => true),
 		'has_review' => array('type' => 'query', 'method' => 'findByHasReview', 'encode' => true),
+		'reviewed' => array('type' => 'query', 'method' => 'filterReviewed', 'encode' => true),
 	);
+	public function filterReviewed()
+	{
+		// List of columns to check
+		$columnsToCheck = [
+			'introduction', 'recommendation','conclusion'
+		];
+
+		$conditions = [];
+
+		foreach ($columnsToCheck as $column) {
+			// Add a condition that the column is NOT NULL
+			   $conditions[] = $this->alias . '.' . $column . ' IS NOT NULL';
+		}
+
+		return $conditions;
+	}
 
 	public function findByHasReview($data = [])
 	{

@@ -217,6 +217,18 @@ echo $this->Session->flash();
                         );
                         ?>
                     </td>
+                    <td>
+
+                      <h6>Reviewed Reports</h6>
+
+                         <?php
+                            echo $this->Form->input('reviewed', [
+                                'type' => 'checkbox',
+                                'hiddenField' => false,
+                                'label' => 'Show',
+                            ]);
+                         ?>
+                    </td>
                 </tr>
                 <tr>
                     <td><label for="PadrPages" class="required">Pages</label></td>
