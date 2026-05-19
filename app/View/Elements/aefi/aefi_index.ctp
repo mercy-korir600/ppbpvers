@@ -72,6 +72,19 @@ $this->assign('Adverse Event Following Immunization', 'active');
             );
             ?>
           </td>
+          <td>
+              <?php
+            echo $this->Form->input(
+              'report_title',
+              array(
+                'div' => false,
+                'placeholder' => 'rash',
+                'class' => 'unauthorized_index span10',
+                'label' => array('class' => 'required', 'text' => 'Report Title')
+              )
+            );
+            ?>
+          </td>
           <td colspan="2">
             <?php
             echo $this->Form->input(

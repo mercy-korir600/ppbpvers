@@ -90,6 +90,18 @@ echo $this->Form->create('Aefi', array(
                     ));
 
                     ?>
+
+                    	<?php
+						echo $this->Form->input('report_title', array(
+							'label' => array('class' => 'control-label required', 'text' => 'REPORT TITLE<span style="color:red;">*</span>'),
+							'placeholder' => 'this content title..',
+							'title' => 'Report Title',
+							'data-content' => 'Appropriate title for the report e.g Nevirapine related Rash',
+							'after' => '<p class="help-block"> e.g Nevirapine related rash </p></div>',
+							'class' => 'span9',
+						)
+						);
+						?>
                 </div>
                 <!--/span-->
                 <div class="span6">

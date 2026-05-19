@@ -1593,10 +1593,11 @@ class AefisController extends AppController
 
         $aefi = $this->Aefi->find('first', array(
             'conditions' => array('Aefi.id' => $id),
-            'contain' => array('AefiListOfVaccine', 'AefiDescription', 'County', 'Attachment', 'Designation')
+            'contain' => array('AefiListOfVaccine' => array('Vaccine'), 'AefiDescription', 'County', 'Attachment', 'Designation')
         ));
         $aefi = Sanitize::clean($aefi, array('escape' => true));
-
+        //    debug($aefi);
+        //         exit;
         $view = new View($this, false);
         $view->viewPath = 'Aefis/xml';  // Directory inside view directory to search for .ctp files
         $view->layout = false; // if you want to disable layout
@@ -1612,7 +1613,8 @@ class AefisController extends AppController
             $html,
             array('header' => array(
                 'umc-vigiflow-web-radr-access-key' => Configure::read('vigiflow_key'),
-                'Content-Type' => 'application/xml'
+                'Content-Type' => 'application/xml',
+                'Accept' => 'application/json'
             ))
         );
 

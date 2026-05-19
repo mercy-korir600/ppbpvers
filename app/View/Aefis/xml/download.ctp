@@ -1,5 +1,50 @@
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>';
-echo "\n"; ?>
+echo "\n";
+
+function cleanForICSR($text) {
+    if (empty($text)) return '';
+    
+    // Step 1: Decode any HTML entities to actual characters
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_XML1 | ENT_HTML5, 'UTF-8');
+    
+    // Step 2: Replace problematic symbols with text
+    $text = str_replace('°', ' degrees ', $text);
+    $text = str_replace('×', ' x ', $text);
+    $text = str_replace('÷', ' divided by ', $text);
+    $text = str_replace('™', ' (TM) ', $text);
+    $text = str_replace('®', ' (R) ', $text);
+    $text = str_replace('©', ' (C) ', $text);
+    $text = str_replace('€', ' Euros ', $text);
+    $text = str_replace('£', ' Pounds ', $text);
+    $text = str_replace('•', '-', $text);
+    $text = str_replace('…', '...', $text);
+    $text = str_replace('—', '-', $text);
+    $text = str_replace('–', '-', $text);
+    
+    // Step 3: Handle ampersands FIRST (critical for XML)
+    // But preserve already escaped entities temporarily
+    $text = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;|#[0-9]+;|#x[0-9A-Fa-f]+;)/', '&amp;', $text);
+    
+    // Step 4: Escape remaining XML special characters
+    $text = str_replace('<', '&lt;', $text);
+    $text = str_replace('>', '&gt;', $text);
+    $text = str_replace('"', '&quot;', $text);
+    $text = str_replace("'", '&apos;', $text);
+    
+    // Step 5: Remove any remaining HTML entities (safety net)
+    $text = preg_replace('/&[a-zA-Z]+;[^\s]/', ' ', $text);
+    
+    // Step 6: Remove any non-ASCII characters (keep only printable ASCII)
+    $text = preg_replace('/[^\x20-\x7E\t]/', ' ', $text);
+    
+    // Step 7: Clean up whitespace
+    $text = preg_replace('/\s+/', ' ', $text);
+    
+    // Step 8: Trim and ensure we don't start/end with spaces
+    return trim($text);
+}
+
+?>
 <!DOCTYPE ichicsr SYSTEM "http://eudravigilance.ema.europa.eu/dtd/icsr21xml.dtd">
 <ichicsr lang="en">
     <ichicsrmessageheader lang="en">
@@ -21,8 +66,8 @@ echo "\n"; ?>
                                 ?></safetyreportid>
         <primarysourcecountry>KE</primarysourcecountry>
         <occurcountry>KE</occurcountry>
-        <transmissiondateformat />
-        <transmissiondate />
+        <transmissiondateformat>204</transmissiondateformat>
+        <transmissiondate><?php echo date('YmdHis'); ?></transmissiondate>
         <reporttype>1</reporttype>
         <serious><?php
                     if ($aefi['Aefi']['serious'] == 'Yes') {
@@ -141,11 +186,8 @@ echo "\n"; ?>
             <patientgpmedicalrecordnumb><?php echo $aefi['Aefi']['ip_no']; ?></patientgpmedicalrecordnumb>
             <patientspecialistrecordnumb><?php echo $aefi['Aefi']['ip_no']; ?></patientspecialistrecordnumb>
             <patienthospitalrecordnumb><?php echo $aefi['Aefi']['ip_no']; ?></patienthospitalrecordnumb>
-            <patientinvestigationnumb />
-            <?php
-            if (!empty($aefi['Aefi']['date_of_birth'])) {
-                // $a = explode('-', $aefi['Aefi']['date_of_birth']);
-                // $aefi['Aefi']['date_of_birth'] = array('day'=> $a[0],'month'=> $a[1],'year'=> $a[2]);
+            <patientinvestigationnumb /><?php
+            if (!empty($aefi['Aefi']['date_of_birth'])) { 
                 $birthdatef = 102;
                 if (empty($aefi['Aefi']['date_of_birth']['day']) && empty($aefi['Aefi']['date_of_birth']['month'])) {
                     $birthdatef = 602;
@@ -157,10 +199,9 @@ echo "\n"; ?>
                 echo '<patientbirthdateformat>' . $birthdatef . '</patientbirthdateformat>';
                 echo "\n";
             } else {
-                echo '<patientbirthdateformat/>';
+                echo '<patientbirthdateformat></patientbirthdateformat>';
                 echo "\n";
             }
-
             if (isset($birthdatef)) {
                 echo '<patientbirthdate>';
                 if ($birthdatef == 102) echo date('Ymd', strtotime(implode('-', $aefi['Aefi']['date_of_birth'])));
@@ -173,17 +214,17 @@ echo "\n"; ?>
                 echo "\n";
             }
             ?>
-
             <?php
             if (!empty($aefi['Aefi']['age_months'])) {
                 echo "<patientonsetage>" . $aefi['Aefi']['age_months'] . "</patientonsetage>";
                 echo "<patientonsetageunit>802</patientonsetageunit>";
+                echo "\n";
             } else {
                 echo "<patientonsetage/>";
                 echo "<patientonsetageunit/>";
+                echo "\n";
             }
-            ?>
-            <gestationperiod />
+            ?><gestationperiod />
             <gestationperiodunit />
             <patientagegroup />
             <patientweight />
@@ -194,7 +235,7 @@ echo "\n"; ?>
                         ?></patientsex>
             <lastmenstrualdateformat />
             <patientlastmenstrualdate />
-            <patientmedicalhistorytext><?php echo $aefi['Aefi']['medical_history']; ?></patientmedicalhistorytext>
+            <patientmedicalhistorytext><?php echo cleanForICSR($aefi['Aefi']['medical_history']); ?></patientmedicalhistorytext>
             <resultstestsprocedures />
             <patientdeath>
                 <patientdeathdateformat />
@@ -202,8 +243,7 @@ echo "\n"; ?>
                 <patientautopsyyesno />
             </patientdeath>
             <reaction>
-                <primarysourcereaction>
-                    <?php
+                <primarysourcereaction><?php
                     if ($aefi['Aefi']['local_reaction']) echo 'Severe, ';
                     if ($aefi['Aefi']['convulsion']) echo 'Seizures, ';
                     if ($aefi['Aefi']['abscess']) echo 'Abscess, ';
@@ -214,8 +254,7 @@ echo "\n"; ?>
                     if ($aefi['Aefi']['high_fever']) echo 'Fever, ';
                     if ($aefi['Aefi']['paralysis']) echo 'Paralysis, ';
                     if ($aefi['Aefi']['urticaria']) echo 'Generalized urticaria, ';
-                    ?>
-                </primarysourcereaction>
+                    ?></primarysourcereaction>
                 <reactionmeddraversionllt>23.0</reactionmeddraversionllt>
                 <reactionmeddrallt><?php echo $aefi['Aefi']['aefi_symptoms']; ?></reactionmeddrallt>
                 <reactionmeddraversionpt />
@@ -254,6 +293,7 @@ echo "\n"; ?>
                                     ?></reactionoutcome>
             </reaction>
             <?php foreach ($aefi['AefiListOfVaccine'] as $num => $listOfVaccine) : ?>
+
                 <drug>
                     <drugcharacterization><?php
                                             if ($num == 0) echo 1;
@@ -267,7 +307,7 @@ echo "\n"; ?>
                     <drugauthorizationholder />
                     <drugstructuredosagenumb><?php echo $listOfVaccine['dosage']; ?></drugstructuredosagenumb>
                     <drugstructuredosageunit><?php
-                                                echo $sadrListOfDrug['Dose']['icsr_code'];
+                                                // echo $listOfVaccine['Vaccine']['icsr_code'];
                                                 ?></drugstructuredosageunit>
                     <drugseparatedosagenumb />
                     <drugintervaldosageunitnumb />
@@ -307,14 +347,10 @@ echo "\n"; ?>
                     </drugreactionrelatedness>
                 </drug>
             <?php endforeach; ?><summary>
-                <narrativeincludeclinical><?php
-                                            $input = $aefi['Aefi']['description_of_reaction'];
-                                            $output = html_entity_decode($input, ENT_NOQUOTES, 'UTF-8');
-                                            echo $output;
-                                            ?></narrativeincludeclinical>
+                <narrativeincludeclinical><?php echo cleanForICSR($aefi['Aefi']['description_of_reaction']);?></narrativeincludeclinical>
                 <reportercomment />
                 <senderdiagnosismeddraversion>23.0</senderdiagnosismeddraversion>
-                <senderdiagnosis><?php echo $aefi['Aefi']['medical_history']; ?></senderdiagnosis>
+                <senderdiagnosis><?php echo cleanForICSR($aefi['Aefi']['medical_history']); ?></senderdiagnosis>
                 <sendercomment />
             </summary>
         </patient>

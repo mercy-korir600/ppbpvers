@@ -75,7 +75,7 @@
 					(!empty($bod['year'])) ? $dob.=$bod['year'] : $dob.='1970';
 				}				
 				($dob) ? $row[$key] = $dob : $row[$key] = '""';
-			} elseif ($key == 'devices') {
+			} elseif ($key == 'devices') { 
 				foreach ($cdevice['ListOfDevice'] as $listofDeviCe) {
 					(isset($row[$key])) ? $row[$key] .= '; '.$listofDeviCe['brand_name'] : $row[$key] = $listofDeviCe['brand_name'];
 				}

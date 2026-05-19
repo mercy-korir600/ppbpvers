@@ -197,7 +197,7 @@ class DevicesController extends AppController
         // if (!isset($this->passedArgs['submit'])) $criteria['Device.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Device.submitted_date' => 'desc');
-        $this->paginate['contain'] = array('County', 'Designation');
+        $this->paginate['contain'] = array('County', 'Designation','ListOfDevice');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {

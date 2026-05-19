@@ -9,7 +9,7 @@ App::uses('HtmlHelper', 'View/Helper');
 App::uses('HttpSocket', 'Network/Http');
 /**
  * Pqmps Controller
- *
+ *edit()
  * @property Pqmp $Pqmp
  */
 class PqmpsController extends AppController
@@ -23,7 +23,25 @@ class PqmpsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('guest_add', 'guest_edit', 'manager_prims', 'pms_feedback');
+        $this->Auth->allow('guest_add','manager_reset_reference', 'guest_edit', 'manager_prims', 'pms_feedback');
+    }
+
+      public function manager_reset_reference($id = null)
+    {
+        $this->Pqmp->id = $id;
+        if (!$this->Pqmp->exists()) {
+            throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
+        }
+        $aefi = $this->Pqmp->read(null, $id);
+        if ($aefi['Pqmp']['submitted'] > 1) {
+            if (!empty($aefi['Pqmp']['reference_no']) && $aefi['Pqmp']['reference_no'] == 'new') {
+                $reference = $this->generateReferenceNumber();
+                $this->Pqmp->saveField('reference_no', $reference);
+            }
+            $aefi = $this->Pqmp->read(null, $id);
+            return $aefi;
+        }
+        return "Not Done";
     }
 
 
@@ -1443,7 +1461,7 @@ class PqmpsController extends AppController
         $this->set(compact('sub_counties'));
         $designations = $this->Pqmp->Designation->find('list', array('order' => array('Designation.name' => 'ASC')));
         $this->set(compact('designations'));
-        $countries = $this->Pqmp->Country->find('list');
+        $countries = $this->Pqmp->Country->find('list', array('order' => array('Country.name' => 'ASC')));
         $this->set('countries', $countries);
     }
 

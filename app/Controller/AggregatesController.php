@@ -311,6 +311,10 @@ class AggregatesController extends AppController
 			}
 
 			if ($this->Aggregate->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
+
+
+			// debug($this->request->data);
+			// exit;
 				if (isset($this->request->data['submitReport'])) {
 					if (!isset($this->request->data['Attachment']) || empty($this->request->data['Attachment'])) {
 						$this->Session->setFlash(__('Please upload at least one file.'), 'alerts/flash_error');

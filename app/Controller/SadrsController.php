@@ -971,9 +971,11 @@ $this->manager_index();
             $html,
             array('header' => array(
                 'umc-vigiflow-web-radr-access-key' => Configure::read('vigiflow_key'),
-                'Content-Type' => 'application/xml'
+                'Content-Type' => 'application/xml',
+                'Accept' => 'application/json'
             ))
         );
+            
 
         if ($results->isOk()) {
             $body = $results->body;
