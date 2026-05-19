@@ -55,6 +55,7 @@ $this->assign('MED', 'active');
             );
             ?>
           </td>
+
           <td>
             <?php
             echo $this->Form->input(
@@ -220,8 +221,18 @@ $this->assign('MED', 'active');
             ?>
           </td>
           <td>
+            <h5>Vigiflow status:</h5>
             <?php
-
+            echo $this->Form->input('vigiflow', array(
+              'type' => 'select',
+              'options' => [
+                '0' => 'Uploaded',
+                '1' => 'Pending',
+              ],
+              'empty' => true,
+              'label' => array('class' => 'control-label', 'text' => ''),
+              'class' => 'input-xlarge'
+            ));
             ?>
           </td>
           <td>
@@ -415,6 +426,11 @@ $this->assign('MED', 'active');
           <th><?php echo $this->Paginator->sort('reference_no'); ?></th>
           <th><?php echo $this->Paginator->sort('report_type'); ?></th>
           <th><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? $this->Paginator->sort('patient_name') : $this->Paginator->sort('gender'); ?></th>
+           <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
+
+            <th><?php echo $this->Paginator->sort('vigiflow_ref'); ?></th> 
+
+          <?php } ?>
           <th><?php echo $this->Paginator->sort('reporter_date', 'Date reported'); ?></th>
           <th><?php echo $this->Paginator->sort('created', 'Date created'); ?></th>
           <th><?php echo $this->Paginator->sort('submitted_date', 'Date Submitted'); ?></th>
@@ -458,6 +474,10 @@ $this->assign('MED', 'active');
                 }
                 ?>&nbsp;</td>
             <td><?php echo ($this->Session->read('Auth.User.user_type') != 'Public Health Program') ? h($medication['Medication']['patient_name']) : h($medication['Medication']['gender']); ?>&nbsp;</td>
+            <?php if ($redir == 'manager' || $redir == 'reviewer') { ?>
+              <td><?php echo h($medication['Medication']['vigiflow_ref']);
+                  echo "\n" . $medication['Medication']['vigiflow_date']; ?></td> 
+            <?php } ?>
             <td><?php echo h($medication['Medication']['reporter_date']); ?>&nbsp;</td>
             <td><?php echo h($medication['Medication']['created']); ?>&nbsp;</td>
             <td><?php echo h($medication['Medication']['submitted_date']); ?>&nbsp;</td>

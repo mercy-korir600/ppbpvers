@@ -55,7 +55,7 @@ class Aefi extends AppModel
         'designation_id' => array('type' => 'value'),
         'gender' => array('type' => 'value'),
         'submitted' => array('type' => 'value'),
-        'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true),
+        'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true), 
         'vigiflow' => array('type' => 'query', 'method' => 'findByVigiflowStatus', 'encode' => true),
         'has_review' => array('type' => 'query', 'method' => 'findByHasReview', 'encode' => true),
     );

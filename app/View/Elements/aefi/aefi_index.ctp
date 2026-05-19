@@ -305,7 +305,7 @@ $this->assign('Adverse Event Following Immunization', 'active');
                 'label' => array('class' => 'control-label', 'text' => 'Reporter Role'),
                 'class' => 'input-xlarge'
               ));  ?></td>
-          <td>
+          <td> 
             <h5>Vigiflow status:</h5>
             <?php
             echo $this->Form->input('vigiflow', array(

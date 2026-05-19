@@ -51,8 +51,25 @@ class Medication extends AppModel
         'submitted' => array('type' => 'value'),
         'submit' => array('type' => 'query', 'method' => 'orConditions', 'encode' => true),
 		'has_review' => array('type' => 'query', 'method' => 'findByHasReview', 'encode' => true),
+        'vigiflow' => array('type' => 'query', 'method' => 'findByVigiflowStatus', 'encode' => true),
     );
 
+       public function findByVigiflowStatus($data = array())
+    {
+        $cond = array();
+        if (isset($data['vigiflow'])) {
+            if ($data['vigiflow'] == 0) {
+                $cond = array(
+                    $this->alias . '.vigiflow_ref IS NOT NULL'
+                );
+            } else {
+                $cond = array(
+                    $this->alias . '.vigiflow_ref IS NULL'
+                );
+            }
+        }
+        return $cond;
+    }
     public function findByHasReview($data = [])
 	{
 		$conditions = [];
