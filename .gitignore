@@ -34,3 +34,6 @@ Thumbs.db
 
 # Some Plugins #
 ######################
+app/dbs/*.sql
+app/dbs/ctr.sql
+app/dbs/pvers.sql
