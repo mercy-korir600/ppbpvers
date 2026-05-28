@@ -237,8 +237,8 @@ function cleanForICSR($text) {
                         ?></patientsex>
             <lastmenstrualdateformat />
             <patientlastmenstrualdate />
-            <patientmedicalhistorytext><?php echo html_entity_decode($sadr['Sadr']['medical_history']); ?></patientmedicalhistorytext>
-            <resultstestsprocedures><?php echo html_entity_decode($sadr['Sadr']['lab_investigation']); ?></resultstestsprocedures>
+            <patientmedicalhistorytext><?php echo cleanForICSR($sadr['Sadr']['medical_history']); ?></patientmedicalhistorytext>
+            <resultstestsprocedures><?php echo cleanForICSR($sadr['Sadr']['lab_investigation']); ?></resultstestsprocedures>
             <patientdeath>
                 <patientdeathdateformat />
                 <patientdeathdate />
