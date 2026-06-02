@@ -183,9 +183,11 @@
 							<?php if ($pqmp['Pqmp']['failure_to_calibrate'] == 1) echo "<p>&#x2611; Failure to calibrate </p>" ?>
 							<?php if ($pqmp['Pqmp']['results'] == 1) echo  "<p>&#x2611; Results </p>"  ?>
 							<?php if ($pqmp['Pqmp']['readings'] == 1) echo "<p>&#x2611; Readings </p>"  ?>
+							<?php if (!empty($pqmp['Pqmp']['device_other'])) echo "<p>&#x2611; Other </p>"  ?>
+							<?php if (!empty($pqmp['Pqmp']['device_other_specify'])) echo "<p>" . h($pqmp['Pqmp']['device_other_specify']) . "</p>"  ?>
 						</td>
-					</tr>
-				</table>
+						</tr>
+					</table>
 				 <hr>
 
 				<table>

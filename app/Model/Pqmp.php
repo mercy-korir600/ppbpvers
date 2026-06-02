@@ -58,6 +58,8 @@ class Pqmp extends AppModel
         'environmental' => array('type' => 'value'),
         'results' => array('type' => 'value'),
         'readings' => array('type' => 'value'),
+        'device_other' => array('type' => 'value'),
+        'device_other_specify' => array('type' => 'like', 'encode' => true),
         'reporter' => array('type' => 'query', 'method' => 'reporterFilter', 'encode' => true),
         'designation_id' => array('type' => 'value'),
         'submitted' => array('type' => 'value'),
