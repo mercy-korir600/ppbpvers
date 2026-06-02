@@ -692,6 +692,14 @@ echo $this->Form->create('Pqmp', array(
 					'after' => '</label>',
 					'options' => array('No' => 'No'),
 				));
+				echo $this->Form->input('adverse_reaction', array(
+					'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'cold_chain',
+					'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
+					'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
+					'before' => '<label class="radio inline">',
+					'after' => '</label>',
+					'options' => array('Unknown' => 'Unknown'),
+				));
 				?>
 
 				<?php
@@ -719,6 +727,14 @@ echo $this->Form->create('Pqmp', array(
 					'before' => '<label class="radio inline">',
 					'after' => '</label>',
 					'options' => array('No' => 'No'),
+				));
+				echo $this->Form->input('medication_error', array(
+					'type' => 'radio',  'label' => false, 'legend' => false, 'div' => false, 'hiddenField' => false, 'class' => 'cold_chain',
+					'format' => array('before', 'label', 'between', 'input', 'after', 'error'),
+					'error' => array('attributes' => array('wrap' => 'p', 'class' => 'controls required error')),
+					'before' => '<label class="radio inline">',
+					'after' => '</label>',
+					'options' => array('Unknown' => 'Unknown'),
 				));
 				?>
 			</div>
