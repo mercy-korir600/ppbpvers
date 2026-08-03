@@ -943,35 +943,45 @@ class UsersController extends AppController {
         }
     }
 
-    public function admin_edit($id = null) {
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            $this->Session->setFlash(__('The user '.$id.' does not exist.'), 'flash_error');
-            $this->redirect('/', null, false);
+    public function admin_edit($id = null) {                                                                                                                             
+            $this->User->id = $id;                                                                                                                                           
+            if (!$this->User->exists()) {                                                                                                                                    
+                $this->Session->setFlash(__('The user '.$id.' does not exist.'), 'flash_error');                                                                             
+                $this->redirect('/', null, false);                                                                                                                           
+            }                                                                                                                                                                
+                    if ($this->request->is('post') || $this->request->is('put')) {                                                                              
+                if (empty($this->request->data['User']['password'])) {                                                                                                       
+                    unset($this->User->validate['password']);                                                                                                                
+                    unset($this->User->validate['confirm_password']);                                                                                                        
+                    unset($this->request->data['User']['password']);                                                                                                         
+                    unset($this->request->data['User']['confirm_password']);                                                                                                 
+                }                                                                                                                                                            
+                                                                                                                                                                             
+                 if ($this->User->save($this->request->data)) {                                                                                                                           
+        $this->Session->setFlash(__('User details updated successfully'), 'flash_success');                                                                                     
+        $this->redirect(array('action' => 'admin_edit', $id));                                                                                                               
+    } else {                                                                                                                                                                                                                                                                        
+        $errors = $this->User->validationErrors;                                                                                                                             
+        $errorMessage = 'Changes could not be saved.';
+        
+        if (!empty($errors['confirm_password'])) {
+            $errorMessage = is_array($errors['confirm_password']) ? implode(', ', $errors['confirm_password']) : $errors['confirm_password'];
+        } elseif (!empty($errors['password'])) {
+            $errorMessage = is_array($errors['password']) ? implode(', ', $errors['password']) : $errors['password'];
         }
-
-        if ($this->request->is('post') || $this->request->is('put')) {
-            // unset($this->User->validate['username']);
-            // unset($this->User->validate['password']);
-            // unset($this->User->validate['confirm_password']);
-            if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash(__('Your details have been updated'), 'flash_success');
-                $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'flash_error');
-            }
-        } else {
-            $this->request->data = $this->User->read(null, $id);
-            unset($this->request->data['User']['password']);
-            unset($this->request->data['User']['confirm_password']);
-        }
-        $groups = $this->User->Group->find('list');
-        $this->set(compact('groups'));
-        $designations = $this->User->Designation->find('list');
-        $this->set(compact('designations'));
-        $counties = $this->User->County->find('list');
-        $this->set(compact('counties'));
-    }
+  
+        $this->Session->setFlash(__($errorMessage), 'flash_error');
+    }                                                                                                                                                          
+            }                                                                                                
+            $this->request->data = $this->User->read(null, $id);                                                                                                             
+            unset($this->request->data['User']['password']);                                                                                                                 
+            unset($this->request->data['User']['confirm_password']);                                                                                                         
+                                                                                                                                                                             
+            $groups = $this->User->Group->find('list');                                                                                                                      
+            $designations = $this->User->Designation->find('list');                                                                                                          
+            $counties = $this->User->County->find('list');                                                                                                                   
+            $this->set(compact('groups', 'designations', 'counties'));                                                                                                       
+        }                    
 
 /**
  * delete method
