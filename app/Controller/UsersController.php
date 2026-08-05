@@ -868,8 +868,22 @@ class UsersController extends AppController
     }
 
     // Dashboard Methods
-    public function reporter_dashboard()
-    {
+      public function reporter_dashboard()                                                                                                                                 
+        {                                                                                                                                                                    
+            $sfms = $this->User->Sfm->find('all', array(                                                                                                                     
+                'limit' => 7,                                                                                                                                                
+                'conditions' => array(                                                                                                                                       
+                    'Sfm.user_id' => $this->Auth->User('id'),                                                                                                                
+                    'OR' => array(                                                                                                                                           
+                        'Sfm.deleted' => 0,                                                                                                                                  
+                        'Sfm.deleted IS NULL'                                                                                                                                
+                    )                                                                                                                                                        
+                ),                                                                                                                                                           
+                'order' => array('Sfm.created' => 'desc')                                                                                                                    
+            ));                                                                                                                                                              
+                                                                                                                                                                             
+            $this->set('sfms', $sfms);  
+
         $sadrs = $this->User->Sadr->find('all', array(
             'limit' => 7,
             'contain' => array(),
@@ -1737,6 +1751,7 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Reports');
         $this->Acl->allow($group, 'controllers/Saefis');
         $this->Acl->allow($group, 'controllers/Khis');
+          $this->Acl->allow($group, 'controllers/Sfms');
 
         //Allow reporters to some
         $group->id = 3;
@@ -1807,6 +1822,18 @@ class UsersController extends AppController
         $this->Acl->allow($group, 'controllers/Comments');
         $this->Acl->allow($group, 'controllers/Reports');
         $this->Acl->allow($group, 'controllers/Saefis');
+
+        $this->Acl->allow($group, 'controllers/Sfms/index');                                                                                                                     
+    $this->Acl->allow($group, 'controllers/Sfms/add');                                                                                                                       
+    $this->Acl->allow($group, 'controllers/Sfms/edit');                                                                                                                      
+    $this->Acl->allow($group, 'controllers/Sfms/view');                                                                                                                      
+    $this->Acl->allow($group, 'controllers/Sfms/delete');                                                                                                                    
+    $this->Acl->allow($group, 'controllers/Sfms/export_pdf');                                                                                                                
+    $this->Acl->allow($group, 'controllers/Sfms/reporter_index');                                                                                                            
+    $this->Acl->allow($group, 'controllers/Sfms/reporter_add');                                                                                                              
+    $this->Acl->allow($group, 'controllers/Sfms/reporter_edit');                                                                                                             
+    $this->Acl->allow($group, 'controllers/Sfms/reporter_view');                                                                                                             
+    $this->Acl->allow($group, 'controllers/Sfms/reporter_delete'); 
 
         //Allow institution administrators to some
         $group->id = 4;

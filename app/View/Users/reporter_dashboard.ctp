@@ -3,6 +3,30 @@ $this->assign('Dashboard', 'active');
 $this->Html->script('dashboard', array('inline' => false));
 ?>
 
+<style>
+  .sfm-card {                                                                                                                                                              
+      background-color: #EBF3FA !important;                                                                                                                                  
+      border: 1px solid #B9D5ED !important;                                                                                                                                  
+      border-radius: 8px !important;                                                                                                                                         
+    }    
+  @media (max-width: 767px) {
+    .dashboard-modern .row-fluid [class*="span"] {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-bottom: 15px !important;
+      float: none !important;
+      box-sizing: border-box !important;
+    }
+  }
+  .formbackp, .formback, .formbacka, .formbackd, .formbackm, .formbackt {
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 15px;
+    
+  }
+</style>
+
 <section class="dashboard-modern">
   <div class="row-fluid">
     <div class="span8">
@@ -81,10 +105,10 @@ $this->Html->script('dashboard', array('inline' => false));
 
           <div class="span4 formback" style="padding: 4px;">
             <h5>Suspected Adverse Drug Reaction</h5>
-            <?php
+         <?php
             echo '<ol>';
             foreach ($sadrs as $sadr) {
-              if ($sadr['Sadr']['submitted'] > 1) {
+              if ($sadr['Sadr']['submitted'] >= 1) {
                 echo "<li>";
                 echo $this->Html->link(
                   $sadr['Sadr']['report_title'] . ' <small class="muted">(' . $sadr['Sadr']['reference_no'] . ')</small>',
@@ -284,6 +308,52 @@ $this->Html->script('dashboard', array('inline' => false));
         </div>
         <hr>
         <div class="row-fluid">
+         <div class="span4 formbackp sfm-card" style="padding: 10px;">                                                                                                            
+      <h5>Suspected Falsified Medicine</h5>                                                                                                                                  
+     <?php                                                                                                                                                                  
+      if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {                                                                                          
+        echo '<ol>';                                                                                                                                                         
+        if (isset($sfms) && is_array($sfms)) {                                                                                                                               
+          foreach ($sfms as $sfm) {                                                                                                                                          
+            $submitted = isset($sfm['Sfm']['submitted']) ? $sfm['Sfm']['submitted'] : 0;                                                                                     
+                                                                                                                                                                             
+             if ($submitted >= 1) {                                                                                                                   
+      $brand = !empty($sfm['Sfm']['brand_name']) ? $sfm['Sfm']['brand_name'] : $sfm['Sfm']['reference_no'];                                                                  
+      echo "<li>";                                                                                                                                                           
+      echo $this->Html->link(                                                                                                                                                
+        $brand . ' <small class="muted">(' . $sfm['Sfm']['reference_no'] . ')</small>',                                                                                      
+        array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']),                                                                                                
+        array('escape' => false, 'class' => 'text-success')                                                                                                                  
+      );                                                                                                                                                                     
+                                                                                                                                                                             
+      echo "&nbsp;";                                                                                                                         
+      echo $this->Html->link(                                                                                                                                                
+        '<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> </span>',        
+        array('controller' => 'sfms', 'action' => 'followup', $sfm['Sfm']['id']),                                                                                            
+        array('escape' => false)                                                                                                                                             
+      );                                                                                                                                                                     
+      echo "</li>";                                                                                                                                                          
+    } else {                                                                                                                          
+      $ref = (!empty($sfm['Sfm']['reference_no']) && $sfm['Sfm']['reference_no'] !== 'new') ? $sfm['Sfm']['reference_no'] : 'new';                                           
+      echo "<li>";                                                                                                                                                           
+      echo $this->Html->link(                                                                                                                                                
+        $ref . ' <small class="muted">(unsubmitted)</small>',                                                                                                                
+        array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']),                                                                                                
+        array('escape' => false)                                                                                                                                             
+      );
+      echo "</li>";
+    }                                                                                                                                                              
+          }                                                                                                                                                                  
+        }                                                                                                                                                                    
+        echo '</ol>';                                                                                                                                                        
+         echo $this->Html->link('All SFMs >>', array('controller' => 'sfms', 'action' => 'index', 'reporter' => true), array('escape' => false, 'class' => 'btn btn-link'));                     
+          if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('Report SFM', array('controller' => 'sfms', 'action' => 'add'), array('class' => 'btn btn-success pull-right btn-mini pull-right'), __('Report New SFM?'));                   
+      }                                                                                                                                                                      
+      ?>                                                                                                                                                                   
+    </div>
+        </div>
+        <hr>
+        <div class="row-fluid">
         <?php
           if ($this->Session->read('Auth.User.user_type') == "Market Authority") { ?>
             <div class="span4 formbacka" style="padding: 4px;">
@@ -440,6 +510,43 @@ $this->Html->script('dashboard', array('inline' => false));
               echo $this->Html->link('All Incidents >>', array('controller' => 'devices', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-link'));
 
               ?>
+                <div class="span4 formbackp" style="padding: 4px;">                                                                                                                                                                                                           
+      <h5>Suspected Falsified Medicine</h5>                                                                                                                                                                                                                       
+      <?php                                                                                                                                                                                                                                                       
+      echo '<ol>';                                                                                                                                                                                                                                                
+      foreach ($sfms as $sfm) {                                                                                                                                                                                                                                   
+        if ($sfm['Sfm']['submitted'] > 1) {                                                                                                                                                                                                                       
+          echo "<li>";                                                                                                                                                                                                                                            
+          echo $this->Html->link(                                                                                                                                                                                                                                 
+            $sfm['Sfm']['brand_name'] . ' <small class="muted">(' . $sfm['Sfm']['reference_no'] . ')</small>',                                                                                                                                                    
+            array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']),                                                                                                                                                                                 
+            array('escape' => false, 'class' => 'text-success')                                                                                                                                                                                                   
+          );                                                                                                                                                                                                                                                      
+          echo "</li>";                                                                                                                                                                                                                                           
+        } else {                                                                                                                                                                                                                                                  
+          echo "<li>";                                                                                                                                                                                                                                            
+          echo $this->Html->link(                                                                                                                                                                                                                                 
+            $sfm['Sfm']['reference_no'] . ' <small class="muted">(unsubmitted)</small>',                                                                                                                                                                          
+            array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']),                                                                                                                                                                                 
+            array('escape' => false)                                                                                                                                                                                                                              
+          );                                                                                                                                                                                                                                                      
+          echo "</li>";                                                                                                                                                                                                                                           
+        }                                                                                                                                                                                                                                                         
+      }                                                                                                                                                                                                                                                           
+      echo '</ol>';                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                  
+       echo $this->Html->link('All SFMs >>', array('controller' => 'sfms', 'action' => 'index', 'reporter' => true), array('escape' => false, 'class' => 'btn btn-link'));                                                                                                            
+                                                                                                                                                                                                                                                                  
+      if ($this->Session->read('Auth.User.user_type') != 'Public Health Program') {
+        echo $this->Form->postLink(
+          'Report SFM', 
+          array('controller' => 'sfms', 'action' => 'add'), 
+          array('class' => 'btn btn-success pull-right btn-mini'), 
+          __('Report New Suspected Falsified Medicine?')
+        );
+      }
+      ?>
+    </div>
               <h6>Medication Errors </h6>
               <?php
               echo ' <ol>';

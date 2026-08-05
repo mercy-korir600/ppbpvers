@@ -29,6 +29,13 @@
                 array('controller' => 'pqmps', 'action'=>'index', 'reporter' => true ), array('escape' => false ));
           } ?>
      </li>
+     <li class="<?php echo $this->fetch('SFM') ?>">                                                                                                                           
+        <?php                                                                                                                                                                
+        echo $this->Html->link(                                                                                                                                              
+            '<i class="fa fa-shield" aria-hidden="true"></i> SFMs',                                                                                                          
+            array('controller' => 'sfms', 'action' => 'index', 'reporter' => true ), array('escape' => false)  );                                                                                                                                                                   
+        ?>                                                                                                                                                                   
+    </li>           
      <li class="<?php echo $this->fetch('E2B') ?>">
         <?php
          if($this->Session->read('Auth.User.user_type')=="Market Authority"){

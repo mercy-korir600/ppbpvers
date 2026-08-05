@@ -123,6 +123,11 @@ class User extends AppModel {
 			'foreignKey' => 'user_id',
 			'dependent' => false,
 		),
+		  'Sfm' => array(                                                                                                                                                                                                                                           
+            'className' => 'Sfm',                                                                                                                                                                                                                                 
+            'foreignKey' => 'user_id',                                                                                                                                                                                                                            
+            'dependent' => false,                                                                                                                                                                                                                                 
+        ), 
 		'Sae' => array(
 			'className' => 'Sae',
 			'foreignKey' => 'user_id',
