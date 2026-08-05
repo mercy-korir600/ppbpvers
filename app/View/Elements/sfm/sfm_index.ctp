@@ -87,7 +87,10 @@
                   'label' => array('class' => 'required', 'text' => 'Brand Name')                                                                                                                                                                                 
                 ));                                                                                                                                                                                                                                               
                 ?>                                                                                                                                                                                                                                                
-              </td>                                                                                                                                                                                                                                               
+              </td>   
+              <td>                                                                                                                                                               
+            <?php echo $this->Form->input('generic_name', array('div' => false, 'placeholder' => 'Generic Name (INN)', 'class' => 'span12', 'label' => 'Generic Name')); ?>
+          </td>                                                                                                                                                                                                                                                                                                                                                                                                          
               <td>                                                                                                                                                                                                                                                
                 <?php                                                                                                                                                                                                                                             
                 echo $this->Form->input('batch_number', array(                                                                                                                                                                                                    
@@ -97,42 +100,26 @@
                   'label' => array('class' => 'required', 'text' => 'Batch No.')                                                                                                                                                                                  
                 ));                                                                                                                                                                                                                                               
                 ?>                                                                                                                                                                                                                                                
-              </td>                                                                                                                                                                                                                                               
-              <td>                                                                                                                                                                                                                                                
-                <?php                                                                                                                                                                                                                                             
-                echo $this->Form->input('start_date', array(                                                                                                                                                                                                      
-                  'div' => false,                                                                                                                                                                                                                                 
-                  'type' => 'text',                                                                                                                                                                                                                               
-                  'class' => 'input-small datepicker',                                                                                                                                                                                                            
-                  'placeholder' => 'Start Date',                                                                                                                                                                                                                  
-                  'label' => array('class' => 'required', 'text' => 'Start Date')                                                                                                                                                                                 
-                ));                                                                                                                                                                                                                                               
-                ?>                                                                                                                                                                                                                                                
-              </td>                                                                                                                                                                                                                                               
-              <td>                                                                                                                                                                                                                                                
-                <?php                                                                                                                                                                                                                                             
-                echo $this->Form->input('end_date', array(                                                                                                                                                                                                        
-                  'div' => false,                                                                                                                                                                                                                                 
-                  'type' => 'text',                                                                                                                                                                                                                               
-                  'class' => 'input-small datepicker',                                                                                                                                                                                                            
-                  'placeholder' => 'End Date',                                                                                                                                                                                                                    
-                  'label' => array('class' => 'required', 'text' => 'End Date')                                                                                                                                                                                   
-                ));                                                                                                                                                                                                                                               
-                ?>                                                                                                                                                                                                                                                
-              </td>                                                                                                                                                                                                                                               
-                   <td>
-            <?php
-            echo $this->Form->input(
-              'county_id',
-              array(
-                'div' => false,
-                'empty' => true,
-                'class' => 'input-small',
-                'label' => array('class' => 'required', 'text' => 'County')
-              )
-            );
-            ?>
-          </td>  
+              </td>  
+              <td>                                                                                                                                                               
+            <?php                                                                                                                                                            
+            echo $this->Form->input('dosage_form', array(                                                                                                                    
+              'div' => false,                                                                                                                                                
+              'empty' => '--- Select ---',                                                                                                                                   
+              'class' => 'span12',                                                                                                                                           
+              'label' => 'Dosage Form',                                                                                                                                      
+              'options' => array(                                                                                                                                            
+                'Tablet' => 'Tablet',                                                                                                                                        
+                'Capsule' => 'Capsule',                                                                                                                                      
+                'Syrup/Suspension' => 'Syrup/Suspension',                                                                                                                    
+                'Injection' => 'Injection',                                                                                                                                  
+                'Ointment/Cream' => 'Ointment/Cream',                                                                                                                        
+                'Eye Drops' => 'Eye Drops',                                                                                                                                  
+                'Other' => 'Other'                                                                                                                                           
+              )                                                                                                                                                              
+            ));                                                                                                                                                              
+            ?>                                                                                                                                                               
+          </td>    
            <td>
             <?php
             echo $this->Form->input(
@@ -147,7 +134,139 @@
             ?>
 
           </td>                                                                                                                                                                                                                                      
-            </tr>   
+            </tr>
+            <tr>
+               <td>                                                                                                                                                               
+            <?php echo $this->Form->input('manufacturer_name', array('div' => false, 'placeholder' => 'Manufacturer Name', 'class' => 'span12', 'label' => 'Manufacturer')); 
+  ?>                                                                                                                                                                         
+          </td>                                                                                                                                                              
+          <td>                                                                                                                                                               
+            <?php echo $this->Form->input('country_of_origin', array('div' => false, 'placeholder' => 'Country of Origin', 'class' => 'span12', 'label' => 'Country of       
+  Origin')); ?>                                                                                                                                                              
+          </td>                                                                                                                                                              
+          <td>                                                                                                                                                               
+            <?php echo $this->Form->input('supplier_name', array('div' => false, 'placeholder' => 'Supplier / Distributor', 'class' => 'span12', 'label' => 'Supplier')); ?> 
+          </td>                                                                                                                                                              
+          <td>                                                                                                                                                               
+            <?php echo $this->Form->input('facility_name', array('div' => false, 'placeholder' => 'Facility / Shop Name', 'class' => 'span12', 'label' => 'Facility Name')); 
+  ?>                                                                                                                                                                         
+          </td>                                                                                                                                                              
+          <td>                                                                                                                                                               
+            <?php                                                                                                                                                            
+            echo $this->Form->input('source', array(                                                                                                                         
+              'div' => false,                                                                                                                                                
+              'empty' => '--- Select ---',                                                                                                                                   
+              'class' => 'span12',                                                                                                                                           
+              'label' => 'Outlet Type',                                                                                                                                      
+              'options' => array(                                                                                                                                            
+                'Hospital/Clinic' => 'Hospital/Clinic',                                                                                                                      
+                'Pharmacy/Chemist' => 'Pharmacy/Chemist',                                                                                                                    
+                'Wholesaler/Distributor' => 'Wholesaler/Distributor',                                                                                                        
+                'Street Vendor' => 'Street Vendor',                                                                                                                          
+                'Online/Internet' => 'Online/Internet',                                                                                                                      
+                'Other' => 'Other'                                                                                                                                           
+              )                                                                                                                                                              
+            ));                                                                                                                                                              
+            ?>                                                                                                                                                               
+          </td> 
+            </tr>  
+
+            <tr>
+              <td>                                                                                                                                                               
+            <?php echo $this->Form->input('county_id', array('div' => false, 'empty' => '--- Select ---', 'class' => 'span12', 'label' => 'County')); ?>                     
+          </td>                                                                                                                                                 
+          <td>                                                                                                                                                               
+            <?php echo $this->Form->input('start_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'Start Date', 'label' =>    
+  'Start Date')); ?>                                                                                                                                                         
+          </td>
+          <td>
+            <?php echo $this->Form->input('end_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'End Date', 'label' => 'End   
+  Date')); ?>
+          </td>
+ <td>                                                                                                                                                                     
+      <?php                                                                                                                                                                  
+      echo $this->Form->input('reporter_name', array(                                                                                                                        
+        'div' => false,                                                                                                                                                      
+        'placeholder' => ' Name or Email',                                                                                                                                    
+        'class' => 'span12',                                                                                                                                                 
+        'label' => 'Reporter'                                                                                                                                                
+      ));                                                                                                                                                                    
+      ?>                                                                                                                                                                     
+    </td>  
+            </tr>
+ <td>
+            <h5>Report Type?</h5>
+            <?php
+            echo $this->Form->input('report_type', array(
+              'options' => array('Initial' => 'Initial', 'Followup' => 'Followup'),
+              'legend' => false,
+              'type' => 'radio'
+            ));
+            ?>
+          </td>                                                                                                                                                                  
+        <td>
+            <h5>Report Status</h5>
+            <?php
+
+            echo $this->Form->input('submitted', array(
+              'options' => array('1' => 'UnSubmitted', '2' => 'Submitted'),
+              'legend' => false,
+              'type' => 'radio'
+            ));
+            ?>
+          </td>                                                                                                                                                                      
+            <td>
+    <h5>Report on:</h5>
+
+    <?php
+    echo $this->Form->input('packaging_anomaly', array(
+        'label' => 'Packaging anomaly / Altered box / Poor print quality',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+
+    echo $this->Form->input('labeling_discrepancy', array(
+        'label' => 'Labeling discrepancy / Spelling errors / Wrong text',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+
+    echo $this->Form->input('appearance_change', array(
+        'label' => 'Abnormal appearance, color change, texture, or odor',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+
+    echo $this->Form->input('fake_hologram', array(
+        'label' => 'Fake or missing security seal / hologram',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+     echo $this->Form->input('unregistered_product', array(
+        'label' => 'Unregistered / Unapproved product in market',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+
+    echo $this->Form->input('therapeutic_failure', array(
+        'label' => 'Total therapeutic failure / Unexpected adverse reaction',
+        'hiddenField' => false,
+        'type' => 'checkbox'
+    ));
+    ?>
+</td>                                                                                                                              
+    <td>                                                                                                                                                                     
+      <?php                                                                                                                                                                  
+      echo $this->Form->input('designation_id', array(                                                                                                                       
+        'div' => false,                                                                                                                                                      
+        'empty' => '--- Select Role ---',                                                                                                                                    
+        'class' => 'span12',                                                                                                                                                 
+        'label' => 'Reporter Role'                                                                                                                                           
+      ));                                                                                                                                                                    
+      ?>                                                                                                                                                                     
+    </td>                                                                                                                                                                                                                                                                                                                                      
+<tr>
+</tr>
              <tr>
           <td><label for="SadrPages" class="required">Pages</label>
 
