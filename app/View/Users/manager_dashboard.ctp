@@ -232,6 +232,28 @@ $this->Html->script('dashboard', array('inline' => false));
           echo '</ol>';
           ?>
         </div>
+        <div class="span4 formbackp sfm-card" style="padding: 4px; background-color: #EBF3FA; border: 1px solid #B9D5ED; border-radius: 8px;">                                   
+      <h5>Suspected Falsified Medicine</h5>                                                                                                                                  
+      <?php                                                                                                                                                                    
+    echo '<ol>';                                                                                                                                                             
+    if (isset($sfms) && is_array($sfms)) {                                                                                                                                   
+      foreach ($sfms as $sfm) {                                                                                                                                              
+        // 👈 CHANGE THIS LINE (Use >= 1)                                                                                                                                    
+        if (!empty($sfm['Sfm']['submitted']) && $sfm['Sfm']['submitted'] >= 1) {                                                                                             
+          $brand = !empty($sfm['Sfm']['brand_name']) ? $sfm['Sfm']['brand_name'] : $sfm['Sfm']['reference_no'];                                                              
+          echo "<li>";                                                                                                                                                       
+          echo $this->Html->link(                                                                                                                                            
+            h($brand) . ' <small class="muted">(' . h($sfm['Sfm']['reference_no']) . ')</small>',                                                                            
+            array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']),                                                                                            
+            array('escape' => false, 'class' => 'text-success')                                                                                                              
+          );
+          echo "</li>";
+        }
+      }
+    }
+    echo '</ol>';
+    ?>                                                                                                                                                                
+    </div>                                
         <div class="span4"></div>
       </div>
     </div>

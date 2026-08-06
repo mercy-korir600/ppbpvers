@@ -28,7 +28,7 @@
       }
     </style>                                                                                                            
         <div class="row-fluid">                                                                                                                    
-          <div class="span10">                                                                                                                                               
+           <div class="<?php echo ($this->Session->read('Auth.User.group_id') == '3') ? 'span10' : 'span12'; ?>">                                                                                                                                              
             <div id="printArea" class="formbackp" style="padding: 20px;">                                                                                                                                                                                                                                
           <p><b>(FOM002/SFM/VMS/SOP/001)</b></p>                                                                                                                                                                                                                  
           <div class="row-fluid">                                                                                                                                                                                                                                 
@@ -187,46 +187,51 @@
           <?php endif; ?>
    </div>
         </div>                                                                                                     
-          <div class="span2 hide-from-print">                                                                                                                                
-            <div class="my-sidebar" data-spy="affix">                                                                                                                        
-              <div class="awell">                                                                                                                                                                                                                                                                                        
-          <?php                                                                                                                                                              
-          echo $this->Html->link(                                                                                                                                            
-            '<i class="icon-plus icon-white"></i> Follow Up',                                                                                                                
-            array('controller' => 'sfms', 'action' => 'followup', $sfm['Sfm']['id']),                                                                                        
-            array('escape' => false, 'class' => 'btn btn-primary btn-block', 'title' => 'Add Follow-up Report')                                                              
-          );                                                                                                                                                                 
-          ?>                                                                                                                                                                 
-          <br><hr>                                                                                                                                                    
-                                                                                                                                                       
-                <?php                                                                                                                                                        
-                echo $this->Html->link(                                                                                                                                      
-                  '<i class="icon-download-alt icon-white"></i> Download PDF',                                                                                                 
-                  array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']),                                                                                
-                  array('escape' => false, 'class' => 'btn btn-success btn-block')                                                                                           
-                );                                                                                                                                                           
-                ?>                                                                                                                                                           
-                <br><hr>                                                                                                         
-                <?php                                                                                                                                                        
-                if (isset($sfm['Sfm']['submitted']) && $sfm['Sfm']['submitted'] <= 1) {                                                                                      
-                  echo $this->Html->link(                                                                                                                                    
-                    '<i class="icon-pencil icon-white"></i> Edit Report',                                                                                                    
-                    array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']),                                                                                    
-                    array('escape' => false, 'class' => 'btn btn-warning btn-block')                                                                                         
-                  );                                                                                                                                                         
-                  echo '<br><hr>';                                                                                                                                           
-                }                                                                                                                                                            
-                ?>                                                                                                                                          
-                <?php                                                                                                                                                        
-                echo $this->Html->link(                                                                                                                                      
-                  '<i class="icon-arrow-left"></i> Back to List',
-                  array('controller' => 'sfms', 'action' => 'index'),
-                  array('escape' => false, 'class' => 'btn btn-block')
-                );
-                ?> 
-              </div>
-            </div>  
-          </div>  
-                
+        <?php                                                                                  
+    if ($this->Session->read('Auth.User.group_id') == '3'):                                                                                                                  
+    ?>                                                                                                                                                                       
+      <div class="span2 hide-from-print">                                                                                                                                    
+        <div class="my-sidebar" data-spy="affix">                                                                                                                            
+          <div class="awell">                                                                                                                                                
+            <!-- 1. Follow Up Button -->                                                                                                                                     
+            <?php                                                                                                                                                            
+            echo $this->Html->link(                                                                                                                                          
+              '<i class="icon-plus icon-white"></i> Follow Up',                                                                                                              
+              array('controller' => 'sfms', 'action' => 'followup', $sfm['Sfm']['id']),                                                                                      
+              array('escape' => false, 'class' => 'btn btn-primary btn-block', 'title' => 'Add Follow-up Report')                                                            
+            );                                                                                                                                                               
+            ?>                                                                                                                                                               
+            <br><hr>                                                                                                                                 
+            <?php                                                                                                                                                            
+            echo $this->Html->link(                                                                                                                                          
+              '<i class="icon-download-alt icon-white"></i> Download PDF',                                                                                                   
+              array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']),                                                                                    
+              array('escape' => false, 'class' => 'btn btn-success btn-block')                                                                                               
+            );                                                                                                                                                               
+            ?>                                                                                                                                                               
+            <br><hr>                                                                                                                                                         
+                                                                                                                             
+            <?php                                                                                                                                                            
+            if (isset($sfm['Sfm']['submitted']) && $sfm['Sfm']['submitted'] <= 1) {                                                                                          
+              echo $this->Html->link(                                                                                                                                        
+                '<i class="icon-pencil icon-white"></i> Edit Report',                                                                                                        
+                array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']),                                                                                        
+                array('escape' => false, 'class' => 'btn btn-warning btn-block')                                                                                             
+              );                                                                                                                                                             
+              echo '<br><hr>';                                                                                                                                               
+            }                                                                                                                                                                
+            ?>                                                                                                                                                               
+                                                                                                                                              
+            <?php                                                                                                                                                            
+            echo $this->Html->link(                                                                                                                                          
+              '<i class="icon-arrow-left"></i> Back to List',                                                                                                                
+              array('controller' => 'sfms', 'action' => 'index'),                                                                                                            
+              array('escape' => false, 'class' => 'btn btn-block')                                                                                                           
+            );
+            ?> 
+          </div>
+        </div>  
+      </div>  
+    <?php endif; ?>   
         </div> 
     
