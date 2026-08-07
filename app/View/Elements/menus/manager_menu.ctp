@@ -56,6 +56,15 @@
             );
             ?>
         </li>
+        <li class="<?php echo $this->fetch('SFM') ?>">                                                                                                                           
+        <?php                                                                                                                                                                
+        echo $this->Html->link(                                                                                                                                              
+            '<i class="fa fa-shield" aria-hidden="true"></i> SFMs',                                                                                                           
+            array('controller' => 'sfms', 'action' => 'index'),                                                                                                              
+            array('escape' => false)                                                                                                                                         
+        );                                                                                                                                                                   
+        ?>                                                                                                                                                                   
+    </li>  
         <li class="<?php echo $this->fetch('E2B') ?>">
             <?php
             echo $this->Html->link(

@@ -186,8 +186,6 @@ App::uses('AppController', 'Controller');
             }
 
             $sfm = $this->Sfm->read(null, $id);
-
-            // Ownership Protection
             if ($sfm['Sfm']['user_id'] != $userId) {
                 $this->Session->setFlash(__('You are not authorized to edit this report.'), 'alerts/flash_error');
                 return $this->redirect(array('controller' => 'sfms', 'action' => 'index', 'reporter' => true));
@@ -367,6 +365,9 @@ App::uses('AppController', 'Controller');
             $page_options = $this->page_options;
 
             $conditions = array('Sfm.deleted' => 0, 'Sfm.submitted >=' => 1);
+             if (!isset($this->passedArgs['archived']) || $this->passedArgs['archived'] != 1) {
+        $conditions['Sfm.archived'] = 0;
+    }
             $parsedConditions = $this->Sfm->parseCriteria($this->passedArgs);
             $conditions = array_merge($conditions, $parsedConditions);
 
@@ -378,9 +379,12 @@ App::uses('AppController', 'Controller');
                 'contain' => array('User', 'County', 'SubCounty')
             );
 
-            $sfms = $this->paginate('Sfm');
-            $users = $this->Sfm->User->find('list', array('conditions' => array('User.group_id' => array(2, 4))));
-            $this->set(compact('sfms', 'users', 'page_options'));
+            $sfms = $this->paginate('Sfm');                                                                                                                                          
+    $users = $this->Sfm->User->find('list', array('conditions' => array('User.group_id' => array(2, 4))));                                                                   
+    $designations = $this->Sfm->Designation->find('list');                                                                                                                   
+    $counties = $this->Sfm->County->find('list', array('order' => array('County.county_name' => 'ASC')));                                                                    
+                                                                                                                                                                             
+    $this->set(compact('sfms', 'users', 'designations', 'counties', 'page_options'));  
         }
 
         public function manager_view($id = null)

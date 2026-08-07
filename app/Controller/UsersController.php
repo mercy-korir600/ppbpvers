@@ -1189,6 +1189,22 @@ class UsersController extends AppController
 
     public function manager_dashboard()
     {
+        $this->loadModel('Sfm');                                                                                                                                         
+            $sfms = $this->Sfm->find('all', array(                                                                                                                           
+                'limit' => 7,                                                                                                                                                
+                'contain' => array(),                                                                                                                                        
+                'fields' => array('Sfm.id', 'Sfm.user_id', 'Sfm.submitted', 'Sfm.brand_name', 'Sfm.reference_no', 'Sfm.created'),                                            
+                'order' => array('Sfm.created' => 'desc'),                                                                                                                   
+                'conditions' => array(                                                                                                                                       
+                    'Sfm.submitted >=' => 1,                                                                                                                                 
+                    'OR' => array(                                                                                                                                           
+                        'Sfm.deleted' => 0,                                                                                                                                  
+                        'Sfm.deleted IS NULL'                                                                                                                                
+                    )                                                                                                                                                        
+                ),                                                                                                                                                           
+            ));    
+              $this->set('sfms', $sfms); 
+                
         $sadrs = $this->User->Sadr->find('all', array(
             'limit' => 7,
             'contain' => array(),

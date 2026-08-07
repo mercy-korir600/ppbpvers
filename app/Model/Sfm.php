@@ -15,20 +15,48 @@ class Sfm extends AppModel
     public $name = 'Sfm';
     public $actsAs = array('Search.Searchable', 'Containable');
 
-     public $filterArgs = array(                                                                                                                                          
-            'reference_no' => array('type' => 'like', 'encode' => true),                                                                                                     
-            'brand_name'   => array('type' => 'like', 'encode' => true),                                                                                                     
-            'generic_name' => array('type' => 'like', 'encode' => true),                                                                                                     
-            'batch_number' => array('type' => 'like', 'encode' => true),                                                                                                     
-            'range'        => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Sfm.created BETWEEN ? AND ?'),                                     
-            'county_id'    => array('type' => 'value'),                                                                                                                      
-            'sub_county_id'=> array('type' => 'value'),                                                                                                                      
-            'report_type'  => array('type' => 'value'),                                                                                                                      
-            'submitted'    => array('type' => 'value'),                                                                                                                      
-            'start_date'   => array('type' => 'query', 'method' => 'dummy'),                                                                                                 
-            'end_date'     => array('type' => 'query', 'method' => 'dummy'),                                                                                                 
-        );                                                                                                                                                                   
-                                                                                                                                                                             
+     public $filterArgs = array(                                                                                                                                              
+        'reference_no'         => array('type' => 'like', 'encode' => true),                                                                                                 
+        'brand_name'           => array('type' => 'like', 'encode' => true),                                                                                                 
+        'generic_name'         => array('type' => 'like', 'encode' => true),                                                                                                 
+        'batch_number'         => array('type' => 'like', 'encode' => true),                                                                                                 
+        'manufacturer_name'    => array('type' => 'like', 'encode' => true),                                                                                                 
+        'country_of_origin'    => array('type' => 'like', 'encode' => true),                                                                                                 
+        'supplier_name'        => array('type' => 'like', 'encode' => true),                                                                                                 
+        'facility_name'        => array('type' => 'like', 'encode' => true),                                                                                                 
+        'dosage_form'          => array('type' => 'value'),                                                                                                                  
+        'source'               => array('type' => 'value'),                                                                                                                  
+        'county_id'            => array('type' => 'value'),                                                                                                                  
+        'sub_county_id'        => array('type' => 'value'),                                                                                                                  
+        'designation_id'       => array('type' => 'value'),                                                                                                                   
+        'reporter_name'        => array('type' => 'query', 'method' => 'filterReporter'),                                                                                    
+         'report_type'         => array('type' => 'value'),                                                                                                                                                                                                                          
+        'submitted'            => array('type' => 'value'),                                                                                                                  
+        'archived'             => array('type' => 'value'),                                                                                                                  
+        'packaging_anomaly'    => array('type' => 'value'),                                                                                                                  
+        'labeling_discrepancy' => array('type' => 'value'),                                                                                                                  
+        'appearance_change'    => array('type' => 'value'),                                                                                                                  
+        'fake_hologram'        => array('type' => 'value'),                                                                                                                  
+        'unregistered_product' => array('type' => 'value'),                                                                                                                  
+        'range'                => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Sfm.created BETWEEN ? AND ?'),                                 
+        'start_date'           => array('type' => 'query', 'method' => 'dummy'),                                                                                             
+        'end_date'             => array('type' => 'query', 'method' => 'dummy'),                                                                                             
+    );                                                                                                                                                                                                                                  
+             
+    public function filterReporter($data = array())
+    {
+        if (empty($data['reporter_name'])) {
+            return array();
+        }
+        $query = '%' . trim($data['reporter_name']) . '%';
+        return array(
+            'OR' => array(
+                'Sfm.reporter_name LIKE'  => $query,
+                'Sfm.reporter_email LIKE' => $query,
+            )
+        );
+    }   
+                                
          public function makeRangeCondition($data = array())                                                                                                                  
         {                                                                                                                                                            
             if (empty($data['start_date']) && empty($data['end_date'])) {                                                                                                    

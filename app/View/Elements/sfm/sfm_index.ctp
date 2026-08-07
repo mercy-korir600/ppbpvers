@@ -120,20 +120,14 @@
             ));                                                                                                                                                              
             ?>                                                                                                                                                               
           </td>    
-           <td>
-            <?php
-            echo $this->Form->input(
-              'designation_id',
-              array(
-                'div' => false,
-                'empty' => true,
-                'class' => 'input-small',
-                'label' => array('class' => 'required', 'text' => 'Designation')
-              )
-            );
-            ?>
-
-          </td>                                                                                                                                                                                                                                      
+              <td>                                                                                                                                                               
+            <?php echo $this->Form->input('start_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'Start Date', 'label' =>    
+  'Start Date')); ?>                                                                                                                                                         
+          </td>
+          <td>
+            <?php echo $this->Form->input('end_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'End Date', 'label' => 'End   
+  Date')); ?>
+          </td>                                                                                                                                                                                                                                  
             </tr>
             <tr>
                <td>                                                                                                                                                               
@@ -169,47 +163,27 @@
             ));                                                                                                                                                              
             ?>                                                                                                                                                               
           </td> 
+           <td>                                                                                                                                                               
+            <?php echo $this->Form->input('county_id', array('div' => false, 'empty' => '--- Select ---', 'class' => 'span12', 'label' => 'County')); ?>                     
+          </td> 
             </tr>  
 
-            <tr>
-              <td>                                                                                                                                                               
-            <?php echo $this->Form->input('county_id', array('div' => false, 'empty' => '--- Select ---', 'class' => 'span12', 'label' => 'County')); ?>                     
-          </td>                                                                                                                                                 
-          <td>                                                                                                                                                               
-            <?php echo $this->Form->input('start_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'Start Date', 'label' =>    
-  'Start Date')); ?>                                                                                                                                                         
-          </td>
-          <td>
-            <?php echo $this->Form->input('end_date', array('div' => false, 'type' => 'text', 'class' => 'span12 datepicker', 'placeholder' => 'End Date', 'label' => 'End   
-  Date')); ?>
-          </td>
- <td>                                                                                                                                                                     
-      <?php                                                                                                                                                                  
-      echo $this->Form->input('reporter_name', array(                                                                                                                        
-        'div' => false,                                                                                                                                                      
-        'placeholder' => ' Name or Email',                                                                                                                                    
-        'class' => 'span12',                                                                                                                                                 
-        'label' => 'Reporter'                                                                                                                                                
-      ));                                                                                                                                                                    
-      ?>                                                                                                                                                                     
-    </td>  
-            </tr>
  <td>
             <h5>Report Type?</h5>
-            <?php
-            echo $this->Form->input('report_type', array(
-              'options' => array('Initial' => 'Initial', 'Followup' => 'Followup'),
-              'legend' => false,
-              'type' => 'radio'
-            ));
-            ?>
+    <?php
+    echo $this->Form->input('report_type', array(
+      'options' => array('' => 'All', 'Initial' => 'Initial', 'Followup' => 'Followup'),
+      'legend' => false,
+      'type' => 'radio'
+    ));
+    ?>
           </td>                                                                                                                                                                  
         <td>
             <h5>Report Status</h5>
             <?php
 
             echo $this->Form->input('submitted', array(
-              'options' => array('1' => 'UnSubmitted', '2' => 'Submitted'),
+              'options' => array('0' => 'UnSubmitted', '2' => 'Submitted'),
               'legend' => false,
               'type' => 'radio'
             ));
@@ -254,17 +228,46 @@
         'type' => 'checkbox'
     ));
     ?>
-</td>                                                                                                                              
-    <td>                                                                                                                                                                     
+</td> 
+<td>
+            <?php
+            echo $this->Form->input(
+              'designation_id',
+              array(
+                'div' => false,
+                'empty' => true,
+                'class' => 'input-small',
+                'label' => array('class' => 'required', 'text' => 'Designation')
+              )
+            );
+            ?>
+
+          </td>                                                                                                                              
+     <td>                                                                                                                                                                     
       <?php                                                                                                                                                                  
-      echo $this->Form->input('designation_id', array(                                                                                                                       
-        'div' => false,                                                                                                                                                      
-        'empty' => '--- Select Role ---',                                                                                                                                    
-        'class' => 'span12',                                                                                                                                                 
-        'label' => 'Reporter Role'                                                                                                                                           
-      ));                                                                                                                                                                    
+      if (isset($redir) && $redir == 'manager') {                                                                                                                            
+        echo $this->Form->input('reporter_name', array(                                                                                                                      
+          'div' => false,                                                                                                                                                    
+          'placeholder' => ' Name or Email',                                                                                                                                 
+          'class' => 'span12',                                                                                                                                               
+          'label' => 'Reporter'                                                                                                                                              
+        ));                                                                                                                                                                  
+      }                                                                                                                                                                      
       ?>                                                                                                                                                                     
-    </td>                                                                                                                                                                                                                                                                                                                                      
+    </td> 
+    
+           <td>
+            <?php
+            if ($redir == 'manager') { ?>
+              <h6>Archived Status</h6>
+            <?php
+              echo $this->Form->input('archived', [
+                'type' => 'checkbox',
+                'hiddenField' => false,
+                'label' => 'Show',
+              ]);
+            } ?>
+          </td>                                                                                                                                                                                                                                                                                                                                 
 <tr>
 </tr>
              <tr>
@@ -380,10 +383,8 @@
               $i++;                                                                                                                                                                                                                                               
             ?>                                                                                                                                                                                                                                                    
                                                                                                                                                                                        
-    <tr>                                                                                                                                                                     
-      <!-- 1. ID / Index -->                                                                                                                                                 
-      <td><?php echo $i; ?></td>                                                                                                                                             
-                                                                                                                                                                         
+    <tr>                                                                                                                                                 
+      <td><?php echo $i; ?></td>                                                                                                                                        
     <td>                                                                                                                                                                     
       <strong>                                                                                                                                                               
         <?php                                                                                                                                                                
@@ -430,68 +431,73 @@
         }
         ?>
       </td>
-      <td class="actions">                                                                                                                                                     
-      <?php                                                                                                                                                                  
-      $submitted = isset($sfm['Sfm']['submitted']) ? $sfm['Sfm']['submitted'] : 0;                                                                                           
-      if ($submitted < 1):                                                                                                                                                  
-      ?>                                                                                                                                       
-        <?php                                                                                                                                                                
-        echo $this->Html->link(                                                                                                                                              
-          '<i class="icon-pencil"></i> Edit',                                                                                                                                
-          array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']),                                                                                              
-          array('escape' => false, 'class' => 'btn btn-mini btn-warning', 'title' => 'Edit Report')                                                                          
-        );                                                                                                                                                                   
-        echo '&nbsp;';                                                                                                                                                       
-        ?>                                                                                                                                                                   
-                                                                                                                                        
-        <?php                                                                                                                                                                
-        echo $this->Html->link(                                                                                                                                              
+         <td class="actions">
+      <?php if ($redir == 'manager'): ?>
+
+        <?php echo $this->Html->link(
+          '<i class="icon-eye-open"></i> View',
+          array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']),
+          array('escape' => false, 'class' => 'btn btn-mini btn-info', 'title' => 'View Report')
+        ); ?>                                                                                                                                                                
+        &nbsp;                                                                                                                                                    
+        <?php echo $this->Form->postLink(                                                                                                                                    
+          '<i class="icon-copy"></i> Copy',                                                                                                                                  
+          array('controller' => 'sfms', 'action' => 'copy', $sfm['Sfm']['id']),                                                                                              
+          array('escape' => false, 'class' => 'btn btn-mini btn-success', 'title' => 'Copy Report'),                                                                         
+          __('Create a clean copy of report %s to edit?', $sfm['Sfm']['reference_no'])                                                                                       
+        ); ?>
+        &nbsp;                                                                                                                                                               
+                                                                                                                                       
+        <?php if (isset($sfm['Sfm']['archived']) && $sfm['Sfm']['archived'] == 0): ?>                                                                                        
+          <?php echo $this->Html->link(
+            '<i class="icon-folder-close"></i> Archive',
+            array('controller' => 'sfms', 'action' => 'archive', $sfm['Sfm']['id']),
+            array('escape' => false, 'class' => 'btn btn-mini btn-warning', 'title' => 'Archive Report'),
+            __('Are you sure you want to archive report %s?', $sfm['Sfm']['reference_no'])
+          ); ?>                                                                                                                                                               
+        <?php else: ?>                                                                                                                                                       
+          <?php echo $this->Html->link(
+            '<i class="icon-refresh"></i> Restore',
+            array('controller' => 'sfms', 'action' => 'restore_archive', $sfm['Sfm']['id']),
+            array('escape' => false, 'class' => 'btn btn-mini btn-warning', 'title' => 'Restore Report'),
+            __('Are you sure you want to restore report %s?', $sfm['Sfm']['reference_no'])                                                                                   
+          ); ?>                                                                                                                                                              
+        <?php endif; ?>                                                                                                                                                      
+        &nbsp;                                                                                                                                                               
+                                                                                                                                                             
+        <?php echo $this->Html->link(                                                                                                                                        
           '<i class="icon-download-alt"></i> PDF',                                                                                                                           
           array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']),                                                                                        
-          array('escape' => false, 'class' => 'btn btn-mini btn-info', 'title' => 'Export PDF')                                                                              
-        );                                                                                                                                                                   
-        echo '&nbsp;';                                                                                                                                                       
-        ?>                                                                                                                                                                   
-                                                                                                                               
-        <?php                                                                                                                                                                
-        echo $this->Form->postLink(                                                                                                                                          
-          '<i class="icon-trash"></i> Delete',                                                                                                                               
-          array('controller' => 'sfms', 'action' => 'delete', $sfm['Sfm']['id']),                                                                                            
-          array('escape' => false, 'class' => 'btn btn-mini btn-danger', 'title' => 'Delete Report'),                                                                        
-          __('Are you sure you want to delete report %s?', $sfm['Sfm']['reference_no'])                                                                                      
-        );                                                                                                                                                                   
-        ?>                                                                                                                                                                   
+          array('escape' => false, 'class' => 'btn btn-mini', 'title' => 'Export PDF')                                                                                       
+        ); ?>                                                                                                                                                                
                                                                                                                                                                              
       <?php else: ?>                                                                                                                                                         
-                                                                                                                                                        
+          
         <?php                                                                                                                                                                
-        echo $this->Html->link(                                                                                                                                              
-          '<i class="icon-eye-open"></i> View',                                                                                                                              
-          array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']),                                                                                              
-          array('escape' => false, 'class' => 'btn btn-mini btn-info', 'title' => 'View Report')                                                                             
-        );                                                                                                                                                                   
-        echo '&nbsp;';                                                                                                                                                       
-        ?>                                                                                                                                                                   
-                                                                                                                                      
-        <?php                                                                                                                                                                
-        echo $this->Html->link(                                                                                                                                              
-          '<i class="icon-plus"></i> Follow Up',                                                                                                                             
-          array('controller' => 'sfms', 'action' => 'followup', $sfm['Sfm']['id']),                                                                                          
-          array('escape' => false, 'class' => 'btn btn-mini btn-success', 'title' => 'Add Follow Up Report')                                                                 
-        );                                                                                                                                                                   
-        echo '&nbsp;';                                                                                                                                                       
-        ?>                                                                                                                                                                   
-                                                                                                                                              
-        <?php
-        echo $this->Html->link(
-          '<i class="icon-download-alt"></i> PDF',
-          array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']),
-          array('escape' => false, 'class' => 'btn btn-mini', 'title' => 'Export PDF')
-        );
+        $submitted = isset($sfm['Sfm']['submitted']) ? $sfm['Sfm']['submitted'] : 0;                                                                                         
+        if ($submitted < 1):                                                                                                                                                 
+          echo $this->Html->link('<i class="icon-pencil"></i> Edit', array('controller' => 'sfms', 'action' => 'edit', $sfm['Sfm']['id']), array('escape' => false, 'class'  
+  => 'btn btn-mini btn-warning'));                                                                                                                                           
+          echo '&nbsp;';                                                                                                                                                     
+          echo $this->Html->link('<i class="icon-download-alt"></i> PDF', array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']), array('escape' => false,
+  'class' => 'btn btn-mini btn-info'));                                                                                                                                      
+          echo '&nbsp;';                                                                                                                                                     
+          echo $this->Form->postLink('<i class="icon-trash"></i> Delete', array('controller' => 'sfms', 'action' => 'delete', $sfm['Sfm']['id']), array('escape' => false,   
+  'class' => 'btn btn-mini btn-danger'), __('Are you sure?'));                                                                                                               
+        else:                                                                                                                                                                
+          echo $this->Html->link('<i class="icon-eye-open"></i> View', array('controller' => 'sfms', 'action' => 'view', $sfm['Sfm']['id']), array('escape' => false, 'class'
+  => 'btn btn-mini btn-info'));                                                                                                                                              
+          echo '&nbsp;';
+          echo $this->Html->link('<i class="icon-plus"></i> Follow Up', array('controller' => 'sfms', 'action' => 'followup', $sfm['Sfm']['id']), array('escape' => false, 'class'
+  => 'btn btn-mini btn-success'));                                                                                                                                              
+          echo '&nbsp;';
+          echo $this->Html->link('<i class="icon-download-alt"></i> PDF', array('controller' => 'sfms', 'action' => 'export_pdf', $sfm['Sfm']['id']), array('escape' => false,
+  'class' => 'btn btn-mini'));
+        endif;
         ?>
   
       <?php endif; ?>
-    </td>                                                                                                                                                                                                                                     
+    </td>                                                                                                                                                                                                                        
               </tr>                                                                                                                                                                                                                                               
             <?php endforeach; ?>                                                                                                                                                                                                                                  
                                                                                                                                                                                                                                                                   
