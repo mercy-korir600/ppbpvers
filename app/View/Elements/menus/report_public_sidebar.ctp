@@ -125,6 +125,16 @@
                       array('escape' => false));
         ?>
       </li> -->
+       <li class="nav-header"><i class="fa fa-shield" aria-hidden="true"></i> SUSPECTED FALSIFIED MEDICINE</li>                                                                 
+    <li class="<?php echo $this->fetch('sfms-summary'); ?>">                                                                                                                 
+        <?php                                                                                                                                                                
+            echo $this->Html->link(                                                                                                                                          
+                '<i class="fa fa-caret-right" aria-hidden="true"></i> SFM',                                                                                          
+                array('controller' => 'reports', 'action' => 'sfms_summary', 'admin' => false),                                                                              
+                array('escape' => false)                                                                                                                                     
+            );                                                                                                                                                               
+        ?>                                                                                                                                                                   
+    </li>   
       <li class="nav-header"><i class="fa fa-stethoscope" aria-hidden="true"></i> Medical Devices</li>
     
       <li class="<?php echo $this->fetch('devices-summary'); ?>">

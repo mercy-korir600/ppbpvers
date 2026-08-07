@@ -11,7 +11,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Padr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Padr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b', 'Sfm');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -30,6 +30,7 @@ class ReportsController extends AppController
             'index',
             'load_data',
             'summary',
+            'sfms_summary',
             'aefi_summary',
             'pqmps_summary',
             'devices_summary',
@@ -344,6 +345,62 @@ class ReportsController extends AppController
         } else {
             $this->log("❌ Failed to start process", 'error');
         }
+    }
+
+    public function sfms_summary()
+    {
+        $this->loadModel('Sfm');
+
+        $criteria = array('Sfm.submitted >=' => 1, 'Sfm.deleted' => 0);
+
+        if (!empty($this->request->data['Report']['start_date']) && !empty($this->request->data['Report']['end_date'])) {
+            $criteria['Sfm.created between ? and ?'] = array(
+                date('Y-m-d', strtotime($this->request->data['Report']['start_date'])),
+                date('Y-m-d', strtotime($this->request->data['Report']['end_date']))
+            );
+        }
+
+        if ($this->Auth->User('user_type') == 'County Pharmacist') {
+            $criteria['Sfm.county_id'] = $this->Auth->User('county_id');
+        }
+
+        if (!empty($this->request->data['Report']['county_id'])) {
+            $criteria['Sfm.county_id'] = $this->request->data['Report']['county_id'];
+        }
+
+        $geo = $this->Sfm->find('all', array(
+            'fields' => array('County.county_name', 'COUNT(*) as cnt'),
+            'contain' => array('County'),
+            'conditions' => $criteria,
+            'group' => array('County.county_name', 'County.id'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $monthly = $this->Sfm->find('all', array(
+            'fields' => array('DATE_FORMAT(Sfm.created, "%b %Y") as month', 'month(ifnull(Sfm.created, Sfm.created)) as salit', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('DATE_FORMAT(Sfm.created, "%b %Y")', 'salit'),
+            'order' => array('salit'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+
+        $year = $this->Sfm->find('all', array(
+            'fields' => array('year(ifnull(Sfm.created, Sfm.created)) as year', 'COUNT(*) as cnt'),
+            'contain' => array(),
+            'recursive' => -1,
+            'conditions' => $criteria,
+            'group' => array('year(ifnull(Sfm.created, Sfm.created))'),
+            'order' => array('year'),
+            'having' => array('COUNT(*) >' => 0),
+        ));
+        $counties = $this->Sfm->County->find('list', array('order' => 'County.county_name ASC'));
+
+        $this->set(compact('counties', 'geo', 'monthly', 'year'));
+        $this->set('_serialize', array('geo', 'counties', 'monthly', 'year'));
+
+        $this->render('upgrade/sfms_summary');
     }
     public function general()
     {

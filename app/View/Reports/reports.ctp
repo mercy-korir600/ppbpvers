@@ -62,7 +62,20 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
 
             ?>
           </td>
-
+<td>                                                                                                                                                                   
+        <?php                                                                                                                                                                
+        echo $this->Form->input(                                                                                                                                             
+          'county_id',                                                                                                                                                       
+          array(                                                                                                                                                             
+            'div' => false, 'type' => 'select', 'class' => 'span11 unauthorized_index',                                                                                      
+            'label' => array('class' => 'required', 'text' => 'County'),                                                                                                     
+            'empty' => 'All Counties',                                                                                                                                       
+            'options' => isset($counties) ? $counties : array(),                                                                                                             
+            'default' => $this->Session->read('Auth.User.county_id')                                                                                                         
+          )                                                                                                                                                                  
+        );                                                                                                                                                                   
+        ?>                                                                                                                                                                   
+      </td>  
           <td>
             
           <td><?php
@@ -72,6 +85,11 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
               'formnovalidate' => 'formnovalidate',
               'style' => array('margin-bottom: 5px')
             ));
+            echo ' ';                                                                                                                                                            
+        echo $this->Html->link('<i class="icon-refresh"></i> Clear',                                                                                                         
+          array('action' => 'sfms_summary'),                                                                                                                                 
+          array('class' => 'btn btn-default', 'escape' => false, 'style' => array('margin-bottom: 5px'))                                                                     
+        );  
               ?>
           </td>
         </tr>
