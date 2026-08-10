@@ -38,40 +38,34 @@ $header = array(
 	'reporter_date' => 'Report Date',
 	'submitted_date' => 'Date Submitted'
 );
+
+function html_to_plain_text($html) {
+	if ($html === null || $html === '') {
+		return '';
+	}
+
+	// Convert block-level tags to line breaks before stripping
+	$html = preg_replace('/<\s*br\s*\/?>/i', ' ', $html);
+	$html = preg_replace('/<\s*\/p\s*>/i', ' ', $html);
+	$html = preg_replace('/<\s*p[^>]*>/i', '', $html);
+
+	$text = strip_tags($html);
+	$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+	$text = str_replace("\xC2\xA0", ' ', $text); // &nbsp; -> space
+
+	$text = preg_replace('/\s+/', ' ', $text); // collapse all whitespace/newlines to single spaces
+	$text = trim($text);
+
+	return $text;
+}
+
 echo implode(',', $header) . "\n";
 foreach ($data as $csadr) :
-	$content = '';
 	$row = [];
 	foreach ($header as $key => $val) {
-		if (array_key_exists($key, $csadr['Aggregate'])) {
-			$row[$key] = '"' . preg_replace('/"/', '""', $csadr['Aggregate'][$key]) . '"';
-		}
-		// elseif ($key == 'drugs') {
-		// 	foreach ($csadr['Ce2bListOfDrug'] as $sadrListOfDrug) {
-		// 		(isset($row[$key])) ? $row[$key] .= '; ' . $sadrListOfDrug['drug_name'] : $row[$key] = $sadrListOfDrug['drug_name'];
-		// 	}
-		// 	(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
-		// }
-		// elseif ($key == 'brands') {
-		// 	foreach ($csadr['Ce2bListOfDrug'] as $sadrListOfDrug) {
-		// 		(isset($row[$key])) ? $row[$key] .= '; ' . $sadrListOfDrug['brand_name'] : $row[$key] = $sadrListOfDrug['brand_name'];
-		// 	}
-		// 	(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
-		// }
-		// elseif ($key == 'reactions') {
-		// 	foreach ($csadr['Ce2bReaction'] as $reaction) {
-		// 		(isset($row[$key])) ? $row[$key] .= '; ' . $reaction['reaction_name'] : $row[$key] = $reaction['reaction_name'];
-		// 	}
-		// 	(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
-		// } 
-		// elseif ($key == 'outcomes') {
-		// 	foreach ($csadr['Ce2bReaction'] as $reaction) {
-		// 		(isset($row[$key])) ? $row[$key] .= '; ' . $reaction['reaction_outcome_value'] : $row[$key] = $reaction['reaction_outcome_value'];
-		// 	}
-		// 	(isset($row[$key])) ? $row[$key] = '"' . preg_replace('/"/', '""', $row[$key]) . '"' : $row[$key] = '""';
-		// } 
-
-		
+		$value = array_key_exists($key, $csadr['Aggregate']) ? $csadr['Aggregate'][$key] : '';
+		$value = html_to_plain_text($value);
+		$row[$key] = '"' . str_replace('"', '""', $value) . '"';
 	}
 	echo implode(',', $row) . "\n";
 endforeach;

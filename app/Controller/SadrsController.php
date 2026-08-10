@@ -27,7 +27,25 @@ class SadrsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard','manager_bulk_action', 'guest_add', 'guest_edit', 'manager_check_missing');
+        $this->Auth->allow('yellowcard','manager_bulk_action', 'guest_add', 'guest_edit', 'manager_check_missing','manager_reset_reference');
+    }
+
+     public function manager_reset_reference($id = null)
+    {
+        $this->Sadr->id = $id;
+        if (!$this->Sadr->exists()) {
+            throw new NotFoundException(__('Invalid Adverse Event Following Immunization'));
+        }
+        $aefi = $this->Sadr->read(null, $id);
+        if ($aefi['Sadr']['submitted'] > 1) {
+            if (!empty($aefi['Sadr']['reference_no']) && $aefi['Sadr']['reference_no'] == 'new sadr') {
+                $reference = $this->generate_inner_reference();
+                $this->Sadr->saveField('reference_no', $reference);
+            }
+            $aefi = $this->Sadr->read(null, $id);
+            debug( $aefi);
+        }
+        debug( "Not Done");
     }
 
     public function manager_bulk_action() {
