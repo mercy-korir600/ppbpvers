@@ -28,12 +28,22 @@
 		showAnim:'show'
 	});
 	
-	//Disable all md until md checkbox is active
-	$("#mdactivate :input").attr("disabled", true);
-	$("#PqmpMedicalDevice").click(function(){   
-	    $("#mdactivate :input").attr('disabled', !this.checked)
-	});
-	if($("#PqmpMedicalDevice").is(':checked')){ $("#mdactivate :input").attr('disabled', false); }
+	function toggleDeviceOtherSpecify() {
+		$("#PqmpDeviceOtherSpecify").prop(
+			'disabled',
+			!$("#PqmpMedicalDevice").is(':checked') || !$("#PqmpDeviceOther").is(':checked')
+		);
+	}
+
+	function toggleMedicalDeviceFields() {
+		$("#mdactivate :input").prop("disabled", !$("#PqmpMedicalDevice").is(':checked'));
+		toggleDeviceOtherSpecify();
+	}
+
+	// Disable all medical-device complaint fields until the category is selected.
+	$("#PqmpMedicalDevice").on('click', toggleMedicalDeviceFields);
+	$("#PqmpDeviceOther").on('click', toggleDeviceOtherSpecify);
+	toggleMedicalDeviceFields();
 
 	$(".make_radio").click(function(){
 	    $(".make_radio").not(this).attr("checked",false); 
@@ -55,8 +65,8 @@
 	});
 	if($("#PqmpComplaintOther").is(':checked')){ $("#PqmpComplaintOtherSpecify").attr('disabled', false); }
 
-    $("#PqmpProductOther").click(function(){   
-	    $("#PqmpProductSpecify").attr('disabled', !this.checked)
+	$("#PqmpProductOther").click(function(){   
+		$("#PqmpProductSpecify").attr('disabled', !this.checked)
 	});
 	if($("#PqmpProductOther").is(':checked')){ $("#PqmpProductSpecify").attr('disabled', false); }
 

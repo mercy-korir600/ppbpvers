@@ -492,6 +492,24 @@ echo $this->Form->create('Pqmp', array(
 																	<label class="checkbox">',
 					'after' => 'Readings </label></div>',
 				));
+				echo $this->Form->input('device_other', array(
+					'type' => 'checkbox',
+					'before' => '<div class="control-group">',
+					'label' => false, 'div' => false, 'class' => false, 'hiddenField' => false,
+					'between' => '<input type="hidden" value="0" id="PqmpDeviceOther_" name="data[Pqmp][device_other]">
+																	<label class="checkbox">',
+					'after' => 'Other </label>',
+				));
+				echo $this->Form->input('device_other_specify', array(
+					'type' => 'textarea',
+					'class' => 'span11',
+					'rows' => '2',
+					'label' => false,
+					'between' => false,
+					'after' => '<p class="help-block">  </p></div>',
+					'disabled' => true,
+					'placeholder' => 'If other, specify',
+				));
 				?>
 			</div><!--/span-->
 		</div>
