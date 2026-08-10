@@ -716,7 +716,7 @@ class Ce2bsController extends AppController
         $results = $HttpSocket->post(
             Configure::read('vigiflow_api'),
             $html,
-             array('header' => array(
+            array('header' => array(
                 'umc-vigiflow-web-radr-access-key' => Configure::read('vigiflow_key'),
                 'Content-Type' => 'application/xml'
             ))
@@ -1525,8 +1525,8 @@ class Ce2bsController extends AppController
                     $xmlRaw = file_get_contents($destinationPath);
                     $this->Ce2b->saveField('e2b_content', $xmlRaw, false);
 
-                //     debug($xmlRaw);
-                // exit;
+                    //     debug($xmlRaw);
+                    // exit;
 
                     // Optional: save metadata like type or name
                     $this->Ce2b->saveField('submitted', 2);
@@ -1537,7 +1537,7 @@ class Ce2bsController extends AppController
 
             if ($this->Ce2b->saveAssociated($this->request->data, array('validate' => $validate, 'deep' => true))) {
                 if (isset($this->request->data['submitReport'])) {
- 
+
                     try {
                         //populate other parts::::                       
 
@@ -1690,62 +1690,62 @@ class Ce2bsController extends AppController
                 $validate = 'first';
                 // try {
 
-                    // Manipulate R3
-                    $file = $this->request->data['Ce2b']['e2b_file_data'];
-                    $xmlRaw = file_get_contents($file['tmp_name']);
-                    $xmlUtf8 = mb_convert_encoding($xmlRaw, 'UTF-8', 'ISO-8859-1');
+                // Manipulate R3
+                $file = $this->request->data['Ce2b']['e2b_file_data'];
+                $xmlRaw = file_get_contents($file['tmp_name']);
+                $xmlUtf8 = mb_convert_encoding($xmlRaw, 'UTF-8', 'ISO-8859-1');
 
-                    // Remove UTF-8 BOM if present
-                    if (substr($xmlUtf8, 0, 3) === "\xEF\xBB\xBF") {
-                        $xmlUtf8 = substr($xmlUtf8, 3);
-                    }
+                // Remove UTF-8 BOM if present
+                if (substr($xmlUtf8, 0, 3) === "\xEF\xBB\xBF") {
+                    $xmlUtf8 = substr($xmlUtf8, 3);
+                }
 
-                    $xml = Xml::build($xmlUtf8);
-                    $xmlString = $xml->asXML();
-                    // debug($xmlString);
+                $xml = Xml::build($xmlUtf8);
+                $xmlString = $xml->asXML();
+                // debug($xmlString);
+                // exit;
+
+                $xmlString = preg_replace('/[\x{00A0}\x{200B}\x{FEFF}]/u', ' ', $xmlString);
+
+                $this->Ce2b->saveField('e2b_content', $xmlString, false);
+
+                $filePath = WWW_ROOT . 'files' . DS . 'ce2bs' . DS . $file['name'];
+                move_uploaded_file($file['tmp_name'], $filePath);
+
+                $xmlArray = Xml::toArray(Xml::build($filePath));
+
+                $declaration1 = '<?xml version="1.0" encoding="utf-8"?>';
+                $rootElement1 = '<MCCI_IN200100UV01 ITSVersion="XML_1.0" xsi:schemaLocation="urn:hl7-org:v3 http://eudravigilance.ema.europa.eu/XSD/multicacheschemas/MCCI_IN200100UV01.xsd" xmlns="urn:hl7-org:v3" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mif="urn:hl7-org:v3/mif">';
+                $declaration2 = '<?xml version="1.0" encoding="ISO-8859-1"?>';
+                $doctype = '<!DOCTYPE ichicsr SYSTEM "http://eudravigilance.ema.europa.eu/dtd/icsr21xml.dtd">';
+                $rootElement2 = '<ichicsr lang="en">';
+
+
+
+                if (strpos($xmlString, 'MCCI_IN200100UV01') !== false) {
+                    $this->request->data['Ce2b']['e2b_type'] = "R3";
+                    $flattenedData = $this->flattenXml($xmlArray);
+                    $reactions = $this->manipulate_reaction_information($xmlString);
+                    $reactions = $this->map_full_reaction_details($reactions);
+
+                    $this->request->data['Ce2bReaction'] = $reactions;
+                    $this->request->data['Ce2bListOfDrug'] = $this->manipulate_drug_information($xmlString);
+                } else {
+                    $this->request->data['Ce2b']['e2b_type'] = "R2";
+                    $flattenedData = $this->handle_r2_flattened($xmlArray);
+                    // debug($xmlArray);
+                    // debug($flattened);
+                    // debug($flattenedData);
+                    $drugs = $this->manipulate_r2_drugs($flattenedData['Patient']['Drugs']);
+                    $reactions = $this->manipulate_r2_reactions($flattenedData['Patient']['Reactions']);
+                    // debug($drugs);
+                    // debug($reactions);
+                    $this->request->data['Ce2bReaction'] = $reactions;
+                    $this->request->data['Ce2bListOfDrug'] = $drugs;
                     // exit;
-
-                    $xmlString = preg_replace('/[\x{00A0}\x{200B}\x{FEFF}]/u', ' ', $xmlString);
-
-                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
-
-                    $filePath = WWW_ROOT . 'files' . DS . 'ce2bs' . DS . $file['name'];
-                    move_uploaded_file($file['tmp_name'], $filePath);
-
-                    $xmlArray = Xml::toArray(Xml::build($filePath));
-
-                    $declaration1 = '<?xml version="1.0" encoding="utf-8"?>';
-                    $rootElement1 = '<MCCI_IN200100UV01 ITSVersion="XML_1.0" xsi:schemaLocation="urn:hl7-org:v3 http://eudravigilance.ema.europa.eu/XSD/multicacheschemas/MCCI_IN200100UV01.xsd" xmlns="urn:hl7-org:v3" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mif="urn:hl7-org:v3/mif">';
-                    $declaration2 = '<?xml version="1.0" encoding="ISO-8859-1"?>';
-                    $doctype = '<!DOCTYPE ichicsr SYSTEM "http://eudravigilance.ema.europa.eu/dtd/icsr21xml.dtd">';
-                    $rootElement2 = '<ichicsr lang="en">';
-
-
-
-                    if (strpos($xmlString, 'MCCI_IN200100UV01') !== false) {
-                        $this->request->data['Ce2b']['e2b_type'] = "R3";
-                        $flattenedData = $this->flattenXml($xmlArray);
-                        $reactions = $this->manipulate_reaction_information($xmlString);
-                        $reactions = $this->map_full_reaction_details($reactions);
-
-                        $this->request->data['Ce2bReaction'] = $reactions;
-                        $this->request->data['Ce2bListOfDrug'] = $this->manipulate_drug_information($xmlString);
-                    } else {
-                        $this->request->data['Ce2b']['e2b_type'] = "R2";
-                        $flattenedData = $this->handle_r2_flattened($xmlArray);
-                        // debug($xmlArray);
-                        // debug($flattened);
-                        // debug($flattenedData);
-                        $drugs = $this->manipulate_r2_drugs($flattenedData['Patient']['Drugs']);
-                        $reactions = $this->manipulate_r2_reactions($flattenedData['Patient']['Reactions']);
-                        // debug($drugs);
-                        // debug($reactions);
-                        $this->request->data['Ce2bReaction'] = $reactions;
-                        $this->request->data['Ce2bListOfDrug'] = $drugs;
-                        // exit;
-                    }
-                    $this->Ce2b->saveField('submitted', 2);
-                    $this->Ce2b->saveField('e2b_content', $xmlString, false);
+                }
+                $this->Ce2b->saveField('submitted', 2);
+                $this->Ce2b->saveField('e2b_content', $xmlString, false);
                 // } catch (Exception $e) {
 
                 //     $this->request->data['Ce2b']['e2b_type'] = "R2";
@@ -2406,18 +2406,14 @@ class Ce2bsController extends AppController
     }
     public function generateDesiredDate($input)
     {
-
+        if (empty($input)) {
+            return '';
+        }
 
         try {
-            // Create a DateTime object from the input
             $date = new DateTime($input);
-
-            // Format the DateTime object as YYYY-MM-DD HH:MM:SS
-            $formattedDate = $date->format('Y-m-d H:i:s');
-
-            return $formattedDate;
+            return $date->format('Y-m-d H:i:s');
         } catch (Exception $e) {
-            // Handle exceptions if the input format is invalid
             return '';
         }
     }
@@ -2467,6 +2463,74 @@ class Ce2bsController extends AppController
         if ($this->Ce2b->saveAssociated($data, array('validate' => false, 'deep' => true))) {
             // debug("Drugs Updated");
         }
+    }
+
+    private function fetchFullCe2b($id)
+    {
+        return $this->Ce2b->find('first', array(
+            'conditions' => array('Ce2b.id' => $id),
+            'contain' => array(
+                'Designation',
+                'Ce2bListOfDrug' => array('Route'),
+                'Ce2bReaction',
+                'Attachment',
+                'ExternalComment',
+                'ExternalComment.Attachment',
+                'ReviewComment',
+                'ReviewComment.Attachment'
+            )
+        ));
+    }
+
+    function hl7DateToStandard($value)
+    {
+        if (empty($value)) {
+            return '';
+        }
+
+        // The trailing "|" resets any field NOT present in the format
+        // (e.g. H:i:s when only Ymd is supplied) to zero. Without it,
+        // DateTime::createFromFormat silently fills missing time parts
+        // with the current time instead of 00:00:00 — a common trap.
+        $formats = ['YmdHis|', 'YmdHi|', 'Ymd|'];
+
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $value);
+            if ($date !== false) {
+                return $date->format('Y-m-d H:i:s');
+            }
+        }
+
+        return '';
+    }
+
+    function manipulate_report_dates($cc)
+    {
+        $dates = [
+            'creation_time' => '',
+            'date_first_received' => '',
+        ];
+
+        try {
+            $xml = new SimpleXMLElement($cc);
+            $xml->registerXPathNamespace('ns', 'urn:hl7-org:v3');
+
+            // Report/message creation date
+            $creationNodes = $xml->xpath('//ns:PORR_IN049016UV/ns:creationTime');
+            if (!empty($creationNodes)) {
+                $dates['creation_time'] = $this->hl7DateToStandard((string) $creationNodes[0]['value']);
+            }
+
+            // Date the case was first received (investigationEvent onset)
+            $receivedNodes = $xml->xpath('//ns:investigationEvent/ns:effectiveTime/ns:low');
+            if (!empty($receivedNodes)) {
+                $dates['date_first_received'] =  $this->hl7DateToStandard((string) $receivedNodes[0]['value']);
+            }
+        } catch (Exception $e) {
+            // Leave both dates as empty strings on parse failure
+        }
+
+        return $dates;
     }
     public function general_view($id = null)
     {
@@ -2637,28 +2701,30 @@ class Ce2bsController extends AppController
                 $this->Ce2b->saveField('serious', 1);
             }
 
-            if (empty($ce2b['Ce2bListOfDrug'])) {
+            $needsRefetch = false;
 
+            if (empty($ce2b['Ce2bListOfDrug'])) {
                 $ce2b['Ce2bListOfDrug'] = $drugs;
-                $this->update_r3_latest($id, $ce2b);
-                $ce2b = $this->Ce2b->find('first', array(
-                    'conditions' => array('Ce2b.id' => $id),
-                    'contain' => array('Designation', 'Ce2bListOfDrug' => array('Route'), 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
-                ));
+                $needsRefetch = true;
             }
             if (empty($ce2b['Ce2bReaction'])) {
                 $ce2b['Ce2bReaction'] = $reactions;
+                $needsRefetch = true;
+            }
+
+            if ($needsRefetch) {
                 $this->update_r3_latest($id, $ce2b);
-                $ce2b = $this->Ce2b->find('first', array(
-                    'conditions' => array('Ce2b.id' => $id),
-                    'contain' => array('Designation', 'Ce2bListOfDrug' => array('Route'), 'Ce2bReaction', 'Attachment', 'ExternalComment', 'ExternalComment.Attachment', 'ReviewComment', 'ReviewComment.Attachment')
-                ));
+                $ce2b = $this->fetchFullCe2b($id); // single reusable method
             }
 
 
             $ce2b['Ce2b']['creation_time'] = $this->generateDesiredDate($ce2b['Ce2b']['creation_time']);
             $ce2b['Ce2b']['date_first_received'] = $this->generateDesiredDate($ce2b['Ce2b']['date_first_received']);
-
+            $dates = $this->manipulate_report_dates($filePath);
+            $creation_time       = $dates['creation_time'];       // "2026-07-09 00:00:01"
+            $date_first_received = $dates['date_first_received']; // "2026-06-29 00:00:00"
+            $ce2b['Ce2b']['creation_time'] = $creation_time;
+            $ce2b['Ce2b']['date_first_received'] = $date_first_received;
             // loop though reactions and update the fields
             foreach ($ce2b['Ce2bReaction'] as $key => $reaction) {
                 $ce2b['Ce2bReaction'][$key]['meddra_name'] = $this->getMedraName($reaction['meddra_code']);
