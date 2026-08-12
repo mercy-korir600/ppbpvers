@@ -17,6 +17,7 @@ class Pqmp extends AppModel
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Pqmp.submitted_date BETWEEN ? AND ?'),
        'reportrange' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Pqmp.reporter_date as DATE) BETWEEN ? AND ?'),
         'filter_by' => array('type' => 'query', 'method' => 'dummy'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'facility_name' => array('type' => 'like', 'encode' => true),
@@ -431,6 +432,9 @@ class Pqmp extends AppModel
 
     public function beforeSave($options = array())
     {
+        if (parent::beforeSave($options) === false) {
+            return false;
+        }
         // if (!empty($this->data['Pqmp']['manufacture_date'])) {
         // $this->data['Pqmp']['manufacture_date'] = $this->dateFormatBeforeSave($this->data['Pqmp']['manufacture_date']);
         // }

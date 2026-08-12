@@ -91,6 +91,11 @@ echo $this->Session->flash();
               'hiddenField' => false,
               'label' => 'Filter by date reported',
             ]);
+            echo $this->Form->input('include_followups', [
+              'type' => 'checkbox',
+              'hiddenField' => false,
+              'label' => 'Include follow-ups of matching cases',
+            ]);
             ?>
           </td>
           <td>

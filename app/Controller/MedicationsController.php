@@ -201,6 +201,26 @@ class MedicationsController extends AppController
         else $this->paginate['limit'] = reset($page_options);
 
         $criteria = $this->Medication->parseCriteria($this->passedArgs);
+
+        // Follow-ups/copies keep the original case's reference_no verbatim
+        // (e.g. "ME/2022/0001") but can have a different submitted_date.
+        // When "Include follow-ups" is ticked, widen the range to also
+        // match reference_no for each year the chosen range spans.
+        $rangeKey = 'Medication.submitted_date BETWEEN ? AND ?';
+        if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+            $rangeDates = $criteria[$rangeKey];
+            list($rangeStart, $rangeEnd) = $rangeDates;
+            unset($criteria[$rangeKey]);
+
+            $orConditions = array($rangeKey => $rangeDates);
+            $startYear = (int)date('Y', strtotime($rangeStart));
+            $endYear = (int)date('Y', strtotime($rangeEnd));
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $orConditions[] = array('Medication.reference_no LIKE' => '%ME/' . $year . '%');
+            }
+            $criteria['OR'] = $orConditions;
+        }
+
         // $criteria['Medication.submitted'] = 2;
         //add deleted=false to criteria
         $criteria['Medication.deleted'] = false;

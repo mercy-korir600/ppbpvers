@@ -858,6 +858,26 @@ class Ce2bsController extends AppController
 
 
         $criteria = $this->Ce2b->parseCriteria($this->passedArgs);
+
+        // Follow-ups/copies keep the original case's reference_no verbatim
+        // (e.g. "E2B/2022/0001") but can have a different reporter_date.
+        // When "Include follow-ups" is ticked, widen the range to also
+        // match reference_no for each year the chosen range spans.
+        $rangeKey = 'CAST(Ce2b.reporter_date as DATE) BETWEEN ? AND ?';
+        if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+            $rangeDates = $criteria[$rangeKey];
+            list($rangeStart, $rangeEnd) = $rangeDates;
+            unset($criteria[$rangeKey]);
+
+            $orConditions = array($rangeKey => $rangeDates);
+            $startYear = (int)date('Y', strtotime($rangeStart));
+            $endYear = (int)date('Y', strtotime($rangeEnd));
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $orConditions[] = array('Ce2b.reference_no LIKE' => '%E2B/' . $year . '%');
+            }
+            $criteria['OR'] = $orConditions;
+        }
+
         $criteria['Ce2b.copied !='] = '1';
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {
             $criteria['Ce2b.submitted'] = array(0, 1);

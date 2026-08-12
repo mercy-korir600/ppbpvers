@@ -9,26 +9,67 @@ $this->assign('PADR', 'active');
 	<?php
 	echo $this->Session->flash();
 	?>
-	<div class="row-fluid">
-		<div class="span10">
-			<?php echo $this->element('padr/padr_view'); ?>
-		</div>
-		<div class="span2">
-			<div>
-				<?php
-				echo $this->Html->link(
-					'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
-					array('controller' => 'padrs', 'action' => 'view', 'ext' => 'pdf', $padr['Padr']['id']),
-					array(
-						'class' => 'btn btn-primary btn-block mapop', 'title' => 'Download PDF',
-						'escape' => false,
-						'data-content' => 'Download the pdf version of the report',
-					)
-				);
-				?>
+	<ul class="nav nav-tabs">
+		<?php if (isset($padr['PadrOriginal']['id']) && !empty($padr['PadrOriginal']['id'])) { ?> <li><a href="#formoriginal" data-toggle="tab">Original</a></li> <?php } ?>
+		<li class="active"><a href="#formview" data-toggle="tab"><?php echo (!empty($padr['Padr']['reference_no'])) ? $padr['Padr']['reference_no'] : $padr['Padr']['id']; ?></a></li>
+	</ul>
+
+	<div class="tab-content">
+		<?php if (isset($padr['PadrOriginal']['id']) && !empty($padr['PadrOriginal']['id'])) { ?>
+			<div class="tab-pane" id="formoriginal">
+				<div class="row-fluid">
+					<div class="span10">
+						<?php
+						$opadr = [];
+						foreach ($padr['PadrOriginal'] as $key => $value) {
+							if (is_array($value)) {
+								$opadr[$key] = $value;
+							} else {
+								$opadr['Padr'][$key] = $value;
+							}
+						}
+						echo $this->element('padr/padr_view', ['padr' => $opadr]);
+						?>
+					</div>
+					<div class="span2">
+						<?php
+						echo $this->Html->link(
+							'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
+							array('controller' => 'padrs', 'action' => 'view', 'ext' => 'pdf', $padr['PadrOriginal']['id']),
+							array(
+								'class' => 'btn btn-primary btn-block mapop', 'title' => 'Download PDF',
+								'escape' => false,
+								'data-content' => 'Download the pdf version of the report',
+							)
+						);
+						?>
+						<hr>
+					</div>
+				</div>
 			</div>
- 
-			<hr>
+		<?php } ?>
+		<div class="tab-pane active" id="formview">
+			<div class="row-fluid">
+				<div class="span10">
+					<?php echo $this->element('padr/padr_view'); ?>
+				</div>
+				<div class="span2">
+					<div>
+						<?php
+						echo $this->Html->link(
+							'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF',
+							array('controller' => 'padrs', 'action' => 'view', 'ext' => 'pdf', $padr['Padr']['id']),
+							array(
+								'class' => 'btn btn-primary btn-block mapop', 'title' => 'Download PDF',
+								'escape' => false,
+								'data-content' => 'Download the pdf version of the report',
+							)
+						);
+						?>
+					</div>
+					<hr>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>

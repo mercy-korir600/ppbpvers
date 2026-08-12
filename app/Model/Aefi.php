@@ -22,6 +22,7 @@ class Aefi extends AppModel
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aefi.submitted_date as DATE) BETWEEN ? AND ?'),
         'reportrange' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aefi.reporter_date as DATE) BETWEEN ? AND ?'),
         'filter_by' => array('type' => 'query', 'method' => 'dummy'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'month' => array('type' => 'query', 'method' => 'dummy'),
@@ -661,6 +662,9 @@ class Aefi extends AppModel
 
     public function beforeSave($options = array())
     {
+        if (parent::beforeSave($options) === false) {
+            return false;
+        }
         if (!empty($this->data['Aefi']['date_of_birth'])) {
             $this->data['Aefi']['date_of_birth'] = implode('-', $this->data['Aefi']['date_of_birth']);
         } else {

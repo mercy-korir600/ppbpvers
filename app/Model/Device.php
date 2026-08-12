@@ -18,6 +18,7 @@ class Device extends AppModel
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Device.submitted_date BETWEEN ? AND ?'),
         'reportrange' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Device.reporter_date as DATE) BETWEEN ? AND ?'),
         'filter_by' => array('type' => 'query', 'method' => 'dummy'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'mah' => array('type' => 'query', 'method' => 'findByMarketAuthority', 'encode' => true),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
@@ -435,6 +436,9 @@ class Device extends AppModel
 
     public function beforeSave($options = array())
     {
+        if (parent::beforeSave($options) === false) {
+            return false;
+        }
         if (!empty($this->data['Device']['explant_date'])) {
             $this->data['Device']['explant_date'] = $this->dateFormatBeforeSave($this->data['Device']['explant_date']);
         }

@@ -62,6 +62,25 @@ class PadrsController extends AppController
 
         $criteria = $this->Padr->parseCriteria($this->passedArgs);
 
+        // Follow-ups/copies keep the original case's reference_no verbatim
+        // (e.g. "PADR/2022/0001") but can have a different created date.
+        // When "Include follow-ups" is ticked, widen the range to also
+        // match reference_no for each year the chosen range spans.
+        $rangeKey = 'CAST(Padr.created as DATE) BETWEEN ? AND ?';
+        if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+            $rangeDates = $criteria[$rangeKey];
+            list($rangeStart, $rangeEnd) = $rangeDates;
+            unset($criteria[$rangeKey]);
+
+            $orConditions = array($rangeKey => $rangeDates);
+            $startYear = (int)date('Y', strtotime($rangeStart));
+            $endYear = (int)date('Y', strtotime($rangeEnd));
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $orConditions[] = array('Padr.reference_no LIKE' => '%PADR/' . $year . '%');
+            }
+            $criteria['OR'] = $orConditions;
+        }
+
         $criteria['Padr.copied !='] = '1';
         if (!empty($this->passedArgs['archived'])) {
             $criteria['Padr.archived'] = true;
@@ -171,7 +190,22 @@ class PadrsController extends AppController
             throw new NotFoundException(__('Invalid padr'));
             $this->Flash->error(__('We could not identify the report. Please refer to the acknowledgement email sent by PPB.'));
         }
-        $options = array('conditions' => array('Padr.' . $this->Padr->primaryKey => $id));
+        $options = array(
+            'conditions' => array('Padr.' . $this->Padr->primaryKey => $id),
+            'contain' => array(
+                'PadrListOfMedicine',
+                'County',
+                'SubCounty',
+                'Designation',
+                'Attachment',
+                'PadrOriginal',
+                'PadrOriginal.PadrListOfMedicine',
+                'PadrOriginal.County',
+                'PadrOriginal.SubCounty',
+                'PadrOriginal.Designation',
+                'PadrOriginal.Attachment',
+            ),
+        );
         $padr = $this->Padr->find('first', $options);
         $managers = $this->Padr->User->find('list', array(
             'conditions' => array(
@@ -180,7 +214,7 @@ class PadrsController extends AppController
             )
         ));
 
-        $this->set(['padr' => $this->Padr->find('first', $options), 'managers' => $managers]);
+        $this->set(['padr' => $padr, 'managers' => $managers]);
 
         if (strpos($this->request->url, 'pdf') !== false) {
             $this->pdfConfig = array('filename' => 'PADR_' . $id . '.pdf',  'orientation' => 'portrait');
@@ -872,7 +906,7 @@ class PadrsController extends AppController
         }
         $padr = Hash::remove($padr, 'PadrListOfMedicine.{n}.id'); 
         $data_save = $padr['Padr'];
-        if (isset($sadr['PadrListOfMedicine'])) $data_save['PadrListOfMedicine'] = $sadr['PadrListOfMedicine'];
+        if (isset($padr['PadrListOfMedicine'])) $data_save['PadrListOfMedicine'] = $padr['PadrListOfMedicine'];
         $data_save['padr_id'] = $id;
         $data_save['user_id'] = $this->Auth->User('id');;
         $this->Padr->saveField('copied', 1);

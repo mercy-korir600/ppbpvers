@@ -18,6 +18,7 @@ class Transfusion extends AppModel
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'Transfusion.submitted_date BETWEEN ? AND ?'),
         'reportrange' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Transfusion.reporter_date as DATE) BETWEEN ? AND ?'),
         'filter_by' => array('type' => 'query', 'method' => 'dummy'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'previous_transfusion' => array('type' => 'value'),
@@ -328,6 +329,9 @@ class Transfusion extends AppModel
     }
     public function beforeSave($options = array())
     {
+        if (parent::beforeSave($options) === false) {
+            return false;
+        }
         if (!empty($this->data['Transfusion']['reporter_date'])) {
             $this->data['Transfusion']['reporter_date'] = $this->dateFormatBeforeSave($this->data['Transfusion']['reporter_date']);
         }

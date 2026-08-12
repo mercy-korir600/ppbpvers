@@ -519,6 +519,25 @@ class AggregatesController extends AppController
 
 		$criteria = $this->Aggregate->parseCriteria($this->passedArgs);
 
+		// Follow-ups/copies keep the original case's reference_no verbatim
+		// (e.g. "PSUR/2022/0001") but can have a different submitted_date.
+		// When "Include follow-ups" is ticked, widen the range to also
+		// match reference_no for each year the chosen range spans.
+		$rangeKey = 'CAST(Aggregate.submitted_date as DATE) BETWEEN ? AND ?';
+		if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+			$rangeDates = $criteria[$rangeKey];
+			list($rangeStart, $rangeEnd) = $rangeDates;
+			unset($criteria[$rangeKey]);
+
+			$orConditions = array($rangeKey => $rangeDates);
+			$startYear = (int)date('Y', strtotime($rangeStart));
+			$endYear = (int)date('Y', strtotime($rangeEnd));
+			for ($year = $startYear; $year <= $endYear; $year++) {
+				$orConditions[] = array('Aggregate.reference_no LIKE' => '%PSUR/' . $year . '%');
+			}
+			$criteria['OR'] = $orConditions;
+		}
+
 		if (isset($this->request->query['submitted'])) {
 			if ($this->request->query['submitted'] == 1) {
 				$criteria['Aggregate.submitted'] = array(0, 1);

@@ -25,6 +25,7 @@ class Ce2b extends AppModel
 		'serious' => array('type' => 'value'),
 		'archived' => array('type' => 'value'),
 		'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Ce2b.reporter_date as DATE) BETWEEN ? AND ?'),
+		'include_followups' => array('type' => 'query', 'method' => 'dummy'),
 		'drug_name' => array('type' => 'query', 'method' => 'findByDrugName', 'encode' => true),
 		'inn' => array('type' => 'query', 'method' => 'findByDrugINNName', 'encode' => true),
         'vigiflow' => array('type' => 'query', 'method' => 'findByVigiflowStatus', 'encode' => true),

@@ -551,6 +551,31 @@ $this->manager_index();
 
         $criteria = $this->Sadr->parseCriteria($this->passedArgs);
 
+        // Follow-ups (and manager copies) keep the original case's
+        // reference_no verbatim (e.g. "SADR/2022/0001") but can carry a
+        // different submitted_date - so a plain date-range filter on
+        // submitted_date misses them, while searching "SADR/2022" in the
+        // reference number box finds them all. When the "Include
+        // follow-ups" checkbox is ticked, reproduce that: also match any
+        // report whose reference_no contains "SADR/<year>" for each year
+        // spanned by the chosen range - exactly what a manual reference_no
+        // search for that year would match. Left unchecked (default), the
+        // range stays a strict submitted_date match only.
+        $rangeKey = 'CAST(Sadr.submitted_date as DATE) BETWEEN ? AND ?';
+        if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+            $rangeDates = $criteria[$rangeKey];
+            list($rangeStart, $rangeEnd) = $rangeDates;
+            unset($criteria[$rangeKey]);
+
+            $orConditions = array($rangeKey => $rangeDates);
+            $startYear = (int)date('Y', strtotime($rangeStart));
+            $endYear = (int)date('Y', strtotime($rangeEnd));
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $orConditions[] = array('Sadr.reference_no LIKE' => '%SADR/' . $year . '%');
+            }
+            $criteria['OR'] = $orConditions;
+        }
+
         $criteria['Sadr.copied !='] = '1';
         // check if the user has select unsubmited sadrs
         if (isset($this->request->query['submitted']) && $this->request->query['submitted'] == 1) {

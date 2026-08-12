@@ -16,6 +16,7 @@ class Padr extends AppModel {
 	public $filterArgs = array(
         'reference_no' => array('type' => 'like', 'encode' => true),
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Padr.created as DATE) BETWEEN ? AND ?'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'county_id' => array('type' => 'value'),
@@ -106,6 +107,12 @@ class Padr extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'PadrOriginal' => array(
+			'className' => 'Padr',
+			'foreignKey' => 'padr_id',
+			'dependent' => true,
+			'conditions' => array('PadrOriginal.copied' => '1'),
 		)
 	);
 
@@ -300,6 +307,9 @@ class Padr extends AppModel {
 	}
 
 	public function beforeSave($options = array()) {
+		if (parent::beforeSave($options) === false) {
+			return false;
+		}
 		if (!empty($this->data['Padr']['date_of_birth'])) {
 			$this->data['Padr']['date_of_birth'] = implode('-', $this->data['Padr']['date_of_birth']);
 		} else {

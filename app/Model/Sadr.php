@@ -23,6 +23,7 @@ class Sadr extends AppModel
         'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Sadr.submitted_date as DATE) BETWEEN ? AND ?'),
         'reportrange' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Sadr.reporter_date as DATE) BETWEEN ? AND ?'),
         'filter_by' => array('type' => 'query', 'method' => 'dummy'),
+        'include_followups' => array('type' => 'query', 'method' => 'dummy'),
         'start_date' => array('type' => 'query', 'method' => 'dummy'),
         'end_date' => array('type' => 'query', 'method' => 'dummy'),
         'archived' => array('type' => 'value'),
@@ -754,6 +755,9 @@ class Sadr extends AppModel
 
     public function beforeSave($options = array())
     {
+        if (parent::beforeSave($options) === false) {
+            return false;
+        }
 
         // $now = date('Y-m-d H:i:s');
 

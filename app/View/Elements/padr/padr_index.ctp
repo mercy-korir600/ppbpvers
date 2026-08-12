@@ -93,6 +93,11 @@ echo $this->Session->flash();
                 'placeHolder' => 'End Date'
               )
             );
+            echo $this->Form->input('include_followups', [
+              'type' => 'checkbox',
+              'hiddenField' => false,
+              'label' => 'Include follow-ups of matching cases',
+            ]);
             ?>
           </td>
           <td>

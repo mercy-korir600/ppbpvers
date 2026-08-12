@@ -188,6 +188,26 @@ class TransfusionsController extends AppController
         else $this->paginate['limit'] = reset($page_options);
 
         $criteria = $this->Transfusion->parseCriteria($this->passedArgs);
+
+        // Follow-ups/copies keep the original case's reference_no verbatim
+        // (e.g. "BT/2022/0001") but can have a different submitted_date.
+        // When "Include follow-ups" is ticked, widen the range to also
+        // match reference_no for each year the chosen range spans.
+        $rangeKey = 'Transfusion.submitted_date BETWEEN ? AND ?';
+        if (!empty($this->passedArgs['include_followups']) && !empty($this->passedArgs['range']) && isset($criteria[$rangeKey])) {
+            $rangeDates = $criteria[$rangeKey];
+            list($rangeStart, $rangeEnd) = $rangeDates;
+            unset($criteria[$rangeKey]);
+
+            $orConditions = array($rangeKey => $rangeDates);
+            $startYear = (int)date('Y', strtotime($rangeStart));
+            $endYear = (int)date('Y', strtotime($rangeEnd));
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $orConditions[] = array('Transfusion.reference_no LIKE' => '%BT/' . $year . '%');
+            }
+            $criteria['OR'] = $orConditions;
+        }
+
         // add deleted=false to criteria
         $criteria['Transfusion.deleted'] = false;
         if (!empty($this->passedArgs['archived'])) {

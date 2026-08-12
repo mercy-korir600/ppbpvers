@@ -19,6 +19,7 @@ class Aggregate extends AppModel
 		'brand_name' => array('type' => 'like', 'encode' => true),
 		'inn_name' => array('type' => 'like', 'encode' => true),
 		'range' => array('type' => 'expression', 'method' => 'makeRangeCondition', 'field' => 'CAST(Aggregate.submitted_date as DATE) BETWEEN ? AND ?'),
+		'include_followups' => array('type' => 'query', 'method' => 'dummy'),
 		'start_date' => array('type' => 'query', 'method' => 'dummy'),
 		'archived' => array('type' => 'value'),
 		'date_of_birth' => array('type' => 'value'),
