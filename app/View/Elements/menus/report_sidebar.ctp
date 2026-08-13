@@ -6,6 +6,14 @@
         ?>
       </li>      
       <li class="divider"></li>
+      <li class="nav-header"><i class="fa fa-list-alt" aria-hidden="true"></i> TOTALS</li>
+      <li class="<?php echo $this->fetch('totals-summary'); ?>">
+      	<?php
+            echo $this->Html->link('<i class="fa fa-caret-right" aria-hidden="true"></i> Aggregate Reports',  array('controller' => 'reports', 'action'=>'totals', 'admin' => false ),
+                      array('escape' => false));
+        ?>
+      </li>
+      <li class="divider"></li>
       <li class="nav-header"><i class="fa fa-ambulance" aria-hidden="true"></i> SUSPECTED ADVERSE DRUG REACTIONS</li>
       <li class="<?php echo $this->fetch('sadr-summary'); ?>">
       	<?php

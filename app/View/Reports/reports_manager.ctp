@@ -60,9 +60,22 @@ if ($this->Session->read('Auth.User.group_id') === '2') $this->Html->script('hig
                 'label' => false, 'placeHolder' => 'End Date'
               )
             );
+            // Only meaningful on the Report Totals page, but harmless
+            // elsewhere - other actions here simply don't read this field.
+            echo $this->Form->input(
+              'include_followups',
+              array(
+                'type' => 'checkbox',
+                'hiddenField' => false,
+                'checked' => !empty($includeFollowups),
+                'label' => 'Include follow-ups of matching cases',
+                'div' => false,
+                'style' => 'margin-left: 10px;',
+              )
+            );
 
             ?>
-          </td> 
+          </td>
           <td><?php
               echo $this->Form->input(
                 'county_id',

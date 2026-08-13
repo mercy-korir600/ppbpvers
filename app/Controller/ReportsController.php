@@ -11,7 +11,7 @@ App::uses('AppController', 'Controller');
  */
 class ReportsController extends AppController
 {
-    public $uses = array('Sadr', 'Padr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b');
+    public $uses = array('Sadr', 'Padr', 'Aefi', 'Saefi', 'Comment', 'Pqmp', 'Device', 'Medication', 'Transfusion', 'Sae', 'Disproportionality', 'DrugDictionary', 'Ce2b', 'Aggregate');
     public $components = array(
         // 'Security' => array('csrfExpires' => '+1 hour', 'validatePost' => false), 
         'Search.Prg',
@@ -165,6 +165,109 @@ class ReportsController extends AppController
         return $count;
     }
 
+
+    /**
+     * Cross-report-type totals for managers: how many SADRs, PADRs, CE2Bs,
+     * SAEFIs, Aggregates (PSURs), Medications, Devices, PQMPs, AEFIs and
+     * Transfusions were submitted, optionally within a date range.
+     *
+     * This lives in the Reports section itself (reachable from the same
+     * "Reports" nav link / sidebar as every other summary page) rather
+     * than as a separate page, and reuses the shared reports_manager
+     * layout's filter form (start_date/end_date/include_followups) the
+     * same way summary(), aefi_summary(), pqmps_summary() etc. do.
+     *
+     * Each report type's count uses exactly the same base criteria as its
+     * own manager_index() (copied != 1, not archived, and - where that
+     * type filters on it - not deleted and submitted in (2,3)), so the
+     * totals shown here match what a manager would count by paging
+     * through each report type's own list with no other filters applied.
+     *
+     * When a date range is given, "Include follow-ups of matching cases"
+     * works the same way it does on each report type's manager_index: a
+     * follow-up/copy keeps its original case's reference_no (e.g.
+     * "SADR/2022/0001") but can have a different submission date, so
+     * checking it widens the count to also include reference_no matches
+     * for each year the chosen range spans - not just the date column.
+     */
+    public function totals()
+    {
+        $rawStartDate = !empty($this->request->data['Report']['start_date']) ? $this->request->data['Report']['start_date'] : null;
+        $rawEndDate = !empty($this->request->data['Report']['end_date']) ? $this->request->data['Report']['end_date'] : null;
+
+        // Normalize the same way every model's makeRangeCondition() does,
+        // so a date typed as "01-01-2022" binds correctly as a MySQL DATE
+        // rather than being passed through as-is.
+        $startDate = !empty($rawStartDate) ? date('Y-m-d', strtotime($rawStartDate)) : null;
+        $endDate = !empty($rawEndDate) ? date('Y-m-d', strtotime($rawEndDate)) : null;
+        $includeFollowups = !empty($this->request->data['Report']['include_followups']);
+
+        // model => [label, range SQL fragment, reference_no prefix,
+        // whether that type's manager_index filters .deleted / .submitted]
+        $reportTypes = array(
+            'Sadr' => array('label' => 'SADR', 'rangeField' => 'CAST(Sadr.submitted_date as DATE) BETWEEN ? AND ?', 'refPrefix' => 'SADR/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Padr' => array('label' => 'PADR', 'rangeField' => 'CAST(Padr.created as DATE) BETWEEN ? AND ?', 'refPrefix' => 'PADR/', 'hasDeleted' => false, 'hasSubmitted' => false),
+            'Ce2b' => array('label' => 'CE2B', 'rangeField' => 'CAST(Ce2b.reporter_date as DATE) BETWEEN ? AND ?', 'refPrefix' => 'E2B/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Saefi' => array('label' => 'SAEFI', 'rangeField' => 'CAST(Saefi.submitted_date as DATE) BETWEEN ? AND ?', 'refPrefix' => 'SAEFI/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Aggregate' => array('label' => 'Aggregate (PSUR)', 'rangeField' => 'CAST(Aggregate.submitted_date as DATE) BETWEEN ? AND ?', 'refPrefix' => 'PSUR/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Medication' => array('label' => 'Medication', 'rangeField' => 'Medication.submitted_date BETWEEN ? AND ?', 'refPrefix' => 'ME/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Device' => array('label' => 'Device', 'rangeField' => 'Device.submitted_date BETWEEN ? AND ?', 'refPrefix' => 'MD/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Pqmp' => array('label' => 'PQMP', 'rangeField' => 'Pqmp.submitted_date BETWEEN ? AND ?', 'refPrefix' => 'PQHPT/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Aefi' => array('label' => 'AEFI', 'rangeField' => 'CAST(Aefi.submitted_date as DATE) BETWEEN ? AND ?', 'refPrefix' => 'AEFI/', 'hasDeleted' => true, 'hasSubmitted' => true),
+            'Transfusion' => array('label' => 'Transfusion', 'rangeField' => 'Transfusion.submitted_date BETWEEN ? AND ?', 'refPrefix' => 'BT/', 'hasDeleted' => true, 'hasSubmitted' => true),
+        );
+
+        $totals = array();
+        $grandTotal = 0;
+
+        foreach ($reportTypes as $modelName => $cfg) {
+            $Model = $this->{$modelName};
+            $alias = $Model->alias;
+
+            $conditions = array();
+            $conditions["$alias.copied !="] = '1';
+            $conditions["$alias.archived"] = false;
+            if ($cfg['hasDeleted']) {
+                $conditions["$alias.deleted"] = false;
+            }
+            if ($cfg['hasSubmitted']) {
+                $conditions["$alias.submitted"] = array(2, 3);
+            }
+
+            if (!empty($startDate) && !empty($endDate)) {
+                $rangeDates = array($startDate, $endDate);
+                if ($includeFollowups) {
+                    $orConditions = array($cfg['rangeField'] => $rangeDates);
+                    $startYear = (int)date('Y', strtotime($startDate));
+                    $endYear = (int)date('Y', strtotime($endDate));
+                    for ($year = $startYear; $year <= $endYear; $year++) {
+                        $orConditions[] = array("$alias.reference_no LIKE" => '%' . $cfg['refPrefix'] . $year . '%');
+                    }
+                    $conditions['OR'] = $orConditions;
+                } else {
+                    $conditions[$cfg['rangeField']] = $rangeDates;
+                }
+            }
+
+            $count = (int)$Model->find('count', array('conditions' => $conditions, 'recursive' => -1));
+            $totals[$modelName] = array('label' => $cfg['label'], 'count' => $count);
+            $grandTotal += $count;
+        }
+
+        // The shared reports_manager layout always renders the county
+        // filter dropdown, so populate it the same way summary() does,
+        // even though the totals table itself isn't county-scoped.
+        $counties = $this->Sadr->County->find('list', array('order' => 'County.county_name ASC'));
+
+        $this->set('totals', $totals);
+        $this->set('grandTotal', $grandTotal);
+        $this->set('startDate', $startDate);
+        $this->set('endDate', $endDate);
+        $this->set('rawStartDate', $rawStartDate);
+        $this->set('rawEndDate', $rawEndDate);
+        $this->set('includeFollowups', $includeFollowups);
+        $this->set('counties', $counties);
+    }
 
     public function manager_public_analytics()
     {
