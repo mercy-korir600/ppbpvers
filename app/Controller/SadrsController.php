@@ -27,10 +27,43 @@ class SadrsController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->Auth->allow('yellowcard','manager_bulk_action', 'guest_add', 'guest_edit', 'manager_check_missing','manager_reset_reference');
+        $this->Auth->allow('yellowcard', 'manager_bulk_action', 'manager_confirm_latest', 'guest_add', 'guest_edit', 'manager_check_missing', 'manager_reset_reference');
     }
 
-     public function manager_reset_reference($id = null)
+    public function manager_confirm_latest()
+    {
+
+        $count = $this->Sadr->find('count',  array(
+            'fields' => 'Sadr.reference_no',
+            'conditions' => array(
+                'Sadr.submitted_date BETWEEN ? and ?' => array(date("Y-01-01 00:00:00"), date("Y-m-d H:i:s")),
+                'Sadr.reference_no !=' => 'new'
+            )
+        ));
+        $count++;
+        $count = ($count < 10) ? "0$count" : $count;
+        $reference = 'SADR/' . date('Y') . '/' . $count;
+
+        // Build API response
+        $response = array(
+            'status'  => 'success',
+            'code'    => 200,
+            'data'    => array(
+                'reference_no' => $reference
+            )
+        );
+
+        // Prevent CakePHP from trying to render a view
+        $this->autoRender = false;
+
+        // Set proper JSON header and body
+        $this->response->type('json');
+        $this->response->body(json_encode($response));
+
+        return $this->response;
+    }
+
+    public function manager_reset_reference($id = null)
     {
         $this->Sadr->id = $id;
         if (!$this->Sadr->exists()) {
@@ -43,16 +76,17 @@ class SadrsController extends AppController
                 $this->Sadr->saveField('reference_no', $reference);
             }
             $aefi = $this->Sadr->read(null, $id);
-            debug( $aefi);
+            debug($aefi);
         }
-        debug( "Not Done");
+        debug("Not Done");
     }
 
-    public function manager_bulk_action() {
-// debug($this->request->data);
-// exit;
-$this->manager_index();
-	}
+    public function manager_bulk_action()
+    {
+        // debug($this->request->data);
+        // exit;
+        $this->manager_index();
+    }
 
     public function admin_file_upload()
     {
@@ -594,7 +628,7 @@ $this->manager_index();
         // if (!isset($this->passedArgs['submit'])) $criteria['Sadr.submitted'] = array(2, 3);
         $this->paginate['conditions'] = $criteria;
         $this->paginate['order'] = array('Sadr.submitted_date' => 'desc');
-        $this->paginate['contain'] = array('County','ExternalComment', 'SadrListOfDrug', 'SadrListOfMedicine', 'SadrDescription', 'Designation', 'User');
+        $this->paginate['contain'] = array('County', 'ExternalComment', 'SadrListOfDrug', 'SadrListOfMedicine', 'SadrDescription', 'Designation', 'User');
 
         //in case of csv export
         if (isset($this->request->params['ext']) && $this->request->params['ext'] == 'csv') {
@@ -1018,7 +1052,7 @@ $this->manager_index();
                 'Accept' => 'application/json'
             ))
         );
-            
+
 
         if ($results->isOk()) {
             $body = $results->body;
