@@ -151,30 +151,51 @@ class Sadr extends AppModel
     }
 
     public function findByHasReview($data = [])
-    { 
-        $feedbackVisibleIds = "(
-            SELECT `foreign_key` AS `id` FROM `comments` WHERE `model` = ? AND `category` = ?
-            UNION
-            SELECT `sadrs`.`id` FROM `sadrs`
-            INNER JOIN `comments` ON `comments`.`foreign_key` = `sadrs`.`sadr_id`
-                AND `comments`.`model` = ? AND `comments`.`category` = ?
-            WHERE `sadrs`.`copied` = 2
-        )";
-        $bindings = array('Sadr', 'external', 'Sadr', 'external');
+    {
+        
+        $feedbackForeignKeys = $this->ExternalComment->find('list', array(
+            'fields' => array('ExternalComment.foreign_key', 'ExternalComment.foreign_key'),
+            'conditions' => array(
+                'ExternalComment.model' => 'Sadr',
+                'ExternalComment.category' => 'external',
+            ),
+            'recursive' => -1,
+        ));
+        $feedbackForeignKeys = array_values(array_unique(array_map('intval', $feedbackForeignKeys)));
+
+        $visibleIds = array();
+        if (!empty($feedbackForeignKeys)) {
+            $visibleIds = $this->find('list', array(
+                'fields' => array('Sadr.id', 'Sadr.id'),
+                'conditions' => array(
+                    'OR' => array(
+                        'Sadr.id' => $feedbackForeignKeys,
+                        array(
+                            'Sadr.copied' => 2,
+                            'Sadr.sadr_id' => $feedbackForeignKeys,
+                        ),
+                    ),
+                ),
+                'recursive' => -1,
+            ));
+            $visibleIds = array_values(array_unique(array_map('intval', $visibleIds)));
+        }
 
         $value = isset($data['has_review']) ? $data['has_review'] : null;
 
         if ($value === '0' || $value === 0) {
-            // "No Feedback": reports (or their pre-copy original) that have never received external feedback.
-            return array(
-                $this->alias . '.id NOT IN ' . $feedbackVisibleIds => $bindings,
-            );
+            // "No Feedback": everything except the visible ids resolved above.
+            if (empty($visibleIds)) {
+                return array(); // nobody has feedback at all -> no restriction, show everything
+            }
+            return array($this->alias . '.id NOT IN' => $visibleIds);
         }
 
         // "Feedback Issued" (checked box / '1' / anything else truthy).
-        return array(
-            $this->alias . '.id IN ' . $feedbackVisibleIds => $bindings,
-        );
+        if (empty($visibleIds)) {
+            return array($this->alias . '.id' => 0); // match nothing
+        }
+        return array($this->alias . '.id' => $visibleIds);
     }
 
 
