@@ -156,26 +156,43 @@ class Sadr extends AppModel
         // Issued, '0' = No Feedback) rather than a plain show/hide checkbox, so we
         // need to branch on the value instead of always filtering to "has feedback".
         //
-        // Rather than pulling every matching comment's foreign_key into PHP and
-        // inlining a (potentially several-thousand-item) IN() list - which is what
-        // the previous implementation did and is easy to get wrong / slow down as
-        // the comments table grows - this pushes the "which SADRs have external
-        // feedback" lookup down into a correlated subquery so MySQL does the work.
-        $feedbackSubquery = '(SELECT DISTINCT `foreign_key` FROM `comments` WHERE `model` = ? AND `category` = ?)';
-        $bindings = array('Sadr', 'external');
+        // IMPORTANT - "clean copy" lineage:
+        // Feedback comments are attached (comments.foreign_key) to whatever the
+        // Sadr's id was AT THE TIME the feedback was written. When a manager later
+        // runs "Make a clean copy" (generate_copy()), the ORIGINAL row is marked
+        // copied = 1 and is hidden from this very report (criteria has
+        // Sadr.copied != 1), while a NEW row is inserted with a *different* id and
+        // copied = 2, linked back to the original via sadr_id = <original id>.
+        // Any feedback that was issued before the copy was made still points at
+        // the old (now-hidden) id, so a plain "does *this* row's id have a
+        // comment" check misses it almost every time - which is why this filter
+        // was only ever surfacing a handful of results.
+        //
+        // So a currently-visible row counts as "has feedback" if either:
+        //   - it directly has a comment (its own id is the foreign_key), or
+        //   - it's a clean copy (copied = 2) and the ORIGINAL it was copied from
+        //     (sadr_id) has a comment.
+        // (Copies can't themselves be copied again - generate_copy() refuses to
+        // run on a row that already has copied set - so this is at most one hop.)
+        $feedbackVisibleIds = "(
+            SELECT `id` FROM `sadrs`
+            WHERE `id` IN (SELECT DISTINCT `foreign_key` FROM `comments` WHERE `model` = ? AND `category` = ?)
+               OR (`copied` = 2 AND `sadr_id` IN (SELECT DISTINCT `foreign_key` FROM `comments` WHERE `model` = ? AND `category` = ?))
+        )";
+        $bindings = array('Sadr', 'external', 'Sadr', 'external');
 
         $value = isset($data['has_review']) ? $data['has_review'] : null;
 
         if ($value === '0' || $value === 0) {
-            // "No Feedback": only reports that have never received external feedback.
+            // "No Feedback": reports (or their pre-copy original) that have never received external feedback.
             return array(
-                $this->alias . '.id NOT IN ' . $feedbackSubquery => $bindings,
+                $this->alias . '.id NOT IN ' . $feedbackVisibleIds => $bindings,
             );
         }
 
         // "Feedback Issued" (checked box / '1' / anything else truthy).
         return array(
-            $this->alias . '.id IN ' . $feedbackSubquery => $bindings,
+            $this->alias . '.id IN ' . $feedbackVisibleIds => $bindings,
         );
     }
 
