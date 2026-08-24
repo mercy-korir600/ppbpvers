@@ -107,60 +107,7 @@ $this->Html->css('summary', null, array('inline' => false));
         </div>
     </div>
 </div>
-<hr>
-<div class="row-fluid">
-    <div class="span12">
-        <h4>PQHPTs per Brand Name</h4>
-        <div class="tab">
-            <button class="tablinks" onclick="brandsTab(event, 'brandsChart')" id="brandsOpen">
-                <i class="fa fa-pie-chart"></i> Chart
-            </button>
 
-            <button class="tablinksbrands" onclick="brandsTab(event, 'brandsTable')">
-                <i class="fa fa-table"></i> Table
-            </button>
-        </div>
-
-        <div id="brandsChart" class="tabcontentbrands">
-            <div id="sadrs-brands"></div>
-
-        </div>
-
-        <div id="brandsTable" class="tabcontentbrands">
-            <?php $c = 0; ?>
-            <table class="table table-condensed table-bordered" id="datatablebrands">
-                <thead>
-                    <tr>
-                        <th>Brand Name</th>
-                        <th>PQHPTs</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($brands as $key => $value) {
-                        $count = $value[0]['cnt'];
-                        $c += $count;
-                        echo "<tr>";
-                        echo "<th>" . $value['Pqmp']['brand_name'] . "</th>";
-                        echo "<td>" . $value[0]['cnt'] . "</td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <table class="table table-condensed table-bordered">
-
-                <tbody>
-                    <tr>
-                        <th>Total</th>
-                        <th><?= $c; ?></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
 <hr>
 <div class="row-fluid">
     <div class="span12">
@@ -269,6 +216,60 @@ $this->Html->css('summary', null, array('inline' => false));
     </div>
 
 </div>
+<!-- <hr>
+<div class="row-fluid">
+    <div class="span12">
+        <h4>PQHPTs per Brand Name</h4>
+        <div class="tab">
+            <button class="tablinks" onclick="brandsTab(event, 'brandsChart')" id="brandsOpen">
+                <i class="fa fa-pie-chart"></i> Chart
+            </button>
+
+            <button class="tablinksbrands" onclick="brandsTab(event, 'brandsTable')">
+                <i class="fa fa-table"></i> Table
+            </button>
+        </div>
+
+        <div id="brandsChart" class="tabcontentbrands">
+            <div id="sadrs-brands"></div>
+
+        </div>
+
+        <div id="brandsTable" class="tabcontentbrands">
+            <?php $c = 0; ?>
+            <table class="table table-condensed table-bordered" id="datatablebrands">
+                <thead>
+                    <tr>
+                        <th>Brand Name</th>
+                        <th>PQHPTs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($brands as $key => $value) {
+                        $count = $value[0]['cnt'];
+                        $c += $count;
+                        echo "<tr>";
+                        echo "<th>" . $value['Pqmp']['brand_name'] . "</th>";
+                        echo "<td>" . $value[0]['cnt'] . "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <table class="table table-condensed table-bordered">
+
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <th><?= $c; ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div> -->
 <hr>
 <script type="text/javascript">
     function geoTab(evt, geotabName) {
@@ -299,19 +300,19 @@ $this->Html->css('summary', null, array('inline' => false));
         evt.currentTarget.className += " active";
     }
 
-    function brandsTab(evt, brandstabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontentbrands");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinksbrands");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(brandstabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
+    // function brandsTab(evt, brandstabName) {
+    //     var i, tabcontent, tablinks;
+    //     tabcontent = document.getElementsByClassName("tabcontentbrands");
+    //     for (i = 0; i < tabcontent.length; i++) {
+    //         tabcontent[i].style.display = "none";
+    //     }
+    //     tablinks = document.getElementsByClassName("tablinksbrands");
+    //     for (i = 0; i < tablinks.length; i++) {
+    //         tablinks[i].className = tablinks[i].className.replace(" active", "");
+    //     }
+    //     document.getElementById(brandstabName).style.display = "block";
+    //     evt.currentTarget.className += " active";
+    // }
 
     function generic_nameTab(evt, generic_nametabName) {
         var i, tabcontent, tablinks;
@@ -343,7 +344,7 @@ $this->Html->css('summary', null, array('inline' => false));
     // Get the element with id="defaultOpen" and click on it qualification formulation category complaint medical brands manufacturer supplier country  generic_name country monthly facility
     document.getElementById("geoOpen").click();
     document.getElementById("yearOpen").click();
-    document.getElementById("brandsOpen").click();
+    // document.getElementById("brandsOpen").click();
     document.getElementById("generic_nameOpen").click();
     document.getElementById("monthlyOpen").click();
 
@@ -398,30 +399,30 @@ $this->Html->css('summary', null, array('inline' => false));
         }
     });
 
-    Highcharts.chart('sadrs-brands', {
-        data: {
-            table: 'datatablebrands'
-        },
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: '',
+    // Highcharts.chart('sadrs-brands', {
+    //     data: {
+    //         table: 'datatablebrands'
+    //     },
+    //     chart: {
+    //         type: 'column'
+    //     },
+    //     title: {
+    //         text: '',
 
-        },
-        yAxis: {
-            allowDecimals: false,
-            title: {
-                text: 'Units'
-            }
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    this.point.y + ' ' + this.point.name.toLowerCase();
-            }
-        }
-    });
+    //     },
+    //     yAxis: {
+    //         allowDecimals: false,
+    //         title: {
+    //             text: 'Units'
+    //         }
+    //     },
+    //     tooltip: {
+    //         formatter: function() {
+    //             return '<b>' + this.series.name + '</b><br/>' +
+    //                 this.point.y + ' ' + this.point.name.toLowerCase();
+    //         }
+    //     }
+    // });
 
     Highcharts.chart('sadrs-geo', {
         data: {
