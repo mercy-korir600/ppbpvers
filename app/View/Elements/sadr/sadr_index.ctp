@@ -377,9 +377,14 @@ echo $this->Session->flash();
 
             <?php
               echo $this->Form->input('has_review', [
-                'type' => 'checkbox',
-                'hiddenField' => false,
-                'label' => 'Show',
+                'type' => 'select',
+                'options' => [
+                  '1' => 'Feedback Issued',
+                  '0' => 'No Feedback',
+                ],
+                'empty' => 'All',
+                'label' => false,
+                'class' => 'input-xlarge',
               ]);
             } ?>
           <td>

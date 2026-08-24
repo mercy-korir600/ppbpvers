@@ -152,28 +152,31 @@ class Sadr extends AppModel
 
     public function findByHasReview($data = [])
     {
-        $conditions = [];
+        // The "Feedback Status" filter is now a dropdown ('' = All, '1' = Feedback
+        // Issued, '0' = No Feedback) rather than a plain show/hide checkbox, so we
+        // need to branch on the value instead of always filtering to "has feedback".
+        //
+        // Rather than pulling every matching comment's foreign_key into PHP and
+        // inlining a (potentially several-thousand-item) IN() list - which is what
+        // the previous implementation did and is easy to get wrong / slow down as
+        // the comments table grows - this pushes the "which SADRs have external
+        // feedback" lookup down into a correlated subquery so MySQL does the work.
+        $feedbackSubquery = '(SELECT DISTINCT `foreign_key` FROM `comments` WHERE `model` = ? AND `category` = ?)';
+        $bindings = array('Sadr', 'external');
 
-        $sadrIds = $this->ExternalComment->find('all', [
-            'fields' => ['ExternalComment.foreign_key'],
-            'conditions' => [
-                'ExternalComment.model' => 'Sadr',
-                'ExternalComment.category' => 'external',
-            ],
-            'group' => ['ExternalComment.foreign_key'],
-            'recursive' => -1,
-            'contain' => false
-        ]);
+        $value = isset($data['has_review']) ? $data['has_review'] : null;
 
-        $sadrIdsWithComments = Hash::extract($sadrIds, '{n}.ExternalComment.foreign_key');
-
-        if (!empty($sadrIdsWithComments)) {
-            $conditions[$this->alias . '.id'] = $sadrIdsWithComments;
-        } else {
-            $conditions[$this->alias . '.id'] = 0;
+        if ($value === '0' || $value === 0) {
+            // "No Feedback": only reports that have never received external feedback.
+            return array(
+                $this->alias . '.id NOT IN ' . $feedbackSubquery => $bindings,
+            );
         }
 
-        return $conditions;
+        // "Feedback Issued" (checked box / '1' / anything else truthy).
+        return array(
+            $this->alias . '.id IN ' . $feedbackSubquery => $bindings,
+        );
     }
 
 
