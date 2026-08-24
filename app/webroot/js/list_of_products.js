@@ -38,7 +38,7 @@ $(function() {
         var trWrapper = '\
                   <tr>\
                     <td rowspan="8" class="sailor">{i2}</td>\
-                    <td><input type="hidden" name="data[MedicationProduct][{i}][id]" class="" id="MedicationProduct{i}Id"> Generic name (active ingredient) </td>\
+                    <td><input type="hidden" name="data[MedicationProduct][{i}][id]" class="" id="MedicationProduct{i}Id"> Generic name (active ingredient) <span style="color:red;">*</span> </td>\
                     <td>\
                         <div class="control-group"><input name="data[MedicationProduct][{i}][generic_name_i]" class="span11 autosave-ignore" maxlength="255" type="text" id="MedicationProduct{i}GenericNameI"></div> </td> \
                     <td>\
@@ -47,7 +47,7 @@ $(function() {
                         <button type="button" class="btn btn-danger btn-sm remove-product" value=""> <i class="icon-minus"></i> </button></td>\
                   </tr>\
                   <tr>\
-                    <td>Brand/ Product Name</td>\
+                    <td>Brand/ Product Name <span style="color:red;">*</span></td>\
                     <td>\
                         <div class="control-group"><input name="data[MedicationProduct][{i}][product_name_i]" class="span11 autosave-ignore" maxlength="255" type="text" id="MedicationProduct{i}ProductNameI"></div> </td>\
                     <td>\

@@ -44,7 +44,7 @@
                     <td><?php
                           echo $this->Form->input('MedicationProduct.'.$i.'.id');                          
                         ?>
-                        Generic name (active ingredient)
+                        Generic name (active ingredient) <span style="color:red;">*</span>                                                                               
                     </td>
                     <td>
                         <?php
@@ -67,7 +67,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Brand/ Product Name</td>
+                    <td>Brand/ Product Name<span style="color:red;">*</span></td>
                     <td>
                         <?php
                           echo $this->Form->input('MedicationProduct.'.$i.'.product_name_i', array(

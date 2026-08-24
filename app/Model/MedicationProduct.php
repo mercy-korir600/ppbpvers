@@ -40,19 +40,33 @@ class MedicationProduct extends AppModel {
                 'message'  => 'Please provide product no. 2 (error)'
             ),
         ),
-        // 'dosage_i' => array(
-        //     'notBlank' => array(
-        //         'rule'     => 'notBlank',
-        //         'required' => true,
-        //         'message'  => 'Please provide dose, frequence... 1 (error)'
-        //     ),
-        // ),
-        // 'dosage_ii' => array(
-        //     'notBlank' => array(
-        //         'rule'     => 'notBlank',
-        //         'required' => true,
-        //         'message'  => 'Please provide dose, frequency... 2 (intended)'
-        //     ),
-        // ),
+          'product_name_i' => array(                                                                                                                                       
+                'notBlank' => array(                                                                                                                                         
+                    'rule'     => 'notBlank',                                                                                                                                
+                    'required' => true,                                                                                                                                      
+                    'message'  => 'Please provide Brand/Product Name for product no. 1 (intended)'                                                                           
+                ),                                                                                                                                                           
+            ),                                                                                                                                                               
+            'product_name_ii' => array(                                                                                                                                      
+                'notBlank' => array(                                                                                                                                         
+                    'rule'     => 'notBlank',                                                                                                                                
+                    'required' => true,                                                                                                                                      
+                    'message'  => 'Please provide Brand/Product Name for product no. 2 (error)'                                                                              
+                ),                                                                                                                                                           
+            ),
+       'dosage_i' => array(                                                                                                                                             
+                'notBlank' => array(                                                                                                                                         
+                    'rule'     => 'notBlank',                                                                                                                                
+                    'required' => true,                                                                                                                                      
+                    'message'  => 'Please provide the dose, frequency, duration, route for product no. 1 (intended)'                                                         
+                ),                                                                                                                                                           
+            ),                                                                                                                                                               
+            'dosage_ii' => array(                                                                                                                                            
+                'notBlank' => array(                                                                                                                                         
+                    'rule'     => 'notBlank',                                                                                                                                
+                    'required' => true,                                                                                                                                      
+                    'message'  => 'Please provide the dose, frequency, duration, route for product no. 2 (error)'                                                            
+                ),                                                                                                                                                           
+            ),       
     );
 }
