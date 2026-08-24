@@ -38,7 +38,7 @@ class SadrsController extends AppController
         }
         $aefi = $this->Sadr->read(null, $id);
         if ($aefi['Sadr']['submitted'] > 1) {
-            if (!empty($aefi['Sadr']['reference_no']) && $aefi['Sadr']['reference_no'] == 'new sadr') {
+            if (!empty($aefi['Sadr']['reference_no']) && $aefi['Sadr']['reference_no'] == 'new') {
                 $reference = $this->generate_inner_reference();
                 $this->Sadr->saveField('reference_no', $reference);
             }
