@@ -577,9 +577,9 @@ echo $this->Session->flash();
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'sadrs', 'action' => 'followup', $sadr['Sadr']['id']), array('escape' => false), __('Add a followup report?'));
+                if ($redir == 'reporter' and $this->Session->read('Auth.User.user_type') != 'Public Health Program') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Add follow up report"> <i class="fa fa-facebook" aria-hidden="true"></i> Followup </span>', array('controller' => 'sadrs', 'action' => 'followup', $sadr['Sadr']['id']), array('escape' => false, 'block' => 'postLink'), __('Add a followup report?'));
                 echo "&nbsp;";
-                if ($redir == 'manager' || $redir == 'reviewer') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'sadrs', 'action' => 'download', $sadr['Sadr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false), __('Download E2B?'));
+                if ($redir == 'manager' || $redir == 'reviewer') echo $this->Form->postLink('<span class="label label-inverse tooltipper" data-toggle="tooltip" title="Download E2B file"> <i class="fa fa-etsy" aria-hidden="true"></i> 2 <i class="fa fa-bold" aria-hidden="true"></i> </span>', array('controller' => 'sadrs', 'action' => 'download', $sadr['Sadr']['id'], 'ext' => 'xml', 'manager' => false), array('escape' => false, 'block' => 'postLink'), __('Download E2B?'));
                 echo "&nbsp;";
                 if (($redir == 'manager' || $redir == 'reviewer') && empty($sadr['Sadr']['vigiflow_ref']) && $sadr['Sadr']['copied'] == 2) echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="Send to vigiflow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Vigiflow </span>',
@@ -594,7 +594,7 @@ echo $this->Session->flash();
                   array('escape' => false)
                 );
                 echo "&nbsp;";
-                if (($redir == 'manager' || $redir == 'reviewer') && $sadr['Sadr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'sadrs', 'action' => 'copy', $sadr['Sadr']['id']), array('escape' => false), __('Create a clean copy to edit?'));
+                if (($redir == 'manager' || $redir == 'reviewer') && $sadr['Sadr']['copied'] == 0) echo $this->Form->postLink('<span class="badge badge-success tooltipper" data-toggle="tooltip" title="Copy & Edit"> <i class="fa fa-copy" aria-hidden="true"></i> Copy </span>', array('controller' => 'sadrs', 'action' => 'copy', $sadr['Sadr']['id']), array('escape' => false, 'block' => 'postLink'), __('Create a clean copy to edit?'));
                 if ($redir == 'manager' && $sadr['Sadr']['archived'] == 0)  echo $this->Html->link(
                   '<span class="label label-warning tooltipper" title="Archive"><i class="fa fa-refresh" aria-hidden="true"></i> Archive </span>',
                   array('controller' => 'sadrs', 'action' => 'archive', $sadr['Sadr']['id']),
@@ -654,6 +654,7 @@ echo $this->Session->flash();
       'style' => 'margin-bottom: 5px'
     ]); ?>
     <?php echo $this->Form->end(); ?>
+    <?php echo $this->fetch('postLink'); ?>
   </div>
 </div>
 
