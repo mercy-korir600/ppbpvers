@@ -1855,7 +1855,32 @@ class SadrsController extends AppController
         }
         $sadr = $this->Sadr->read(null, $id);
 
+        // WHO 2022 audit recommendation: mandatory reporter login/contact details
+        // discourage HCPs from reporting poor-quality products. For guest (anonymous)
+        // reporting, the reporter's own identifying/contact fields are optional -
+        // relax "required" on the model in-memory (this request only) so neither the
+        // rendered form's HTML5 required attribute nor server-side validation blocks
+        // submission when they're left blank. Clinical fields (reaction, drug,
+        // outcome, seriousness, etc.) are untouched and remain required.
+        $guestOptionalFields = array('reporter_name', 'reporter_email', 'reporter_phone', 'designation_id');
+        foreach ($guestOptionalFields as $optionalField) {
+            if (isset($this->Sadr->validate[$optionalField])) {
+                foreach ($this->Sadr->validate[$optionalField] as &$optionalRule) {
+                    $optionalRule['required'] = false;
+                    $optionalRule['allowEmpty'] = true;
+                }
+                unset($optionalRule);
+            }
+        }
+
         if ($this->request->is('post') || $this->request->is('put')) {
+            // When left blank, default the reporter email to PPB's official
+            // pharmacovigilance mailbox so downstream email/notification jobs and
+            // the E2B export still have a valid contact address.
+            if (empty($this->request->data['Sadr']['reporter_email'])) {
+                $this->request->data['Sadr']['reporter_email'] = 'pv@ppb.go.ke';
+            }
+
             $validate = false;
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';

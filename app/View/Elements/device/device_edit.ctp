@@ -787,25 +787,45 @@
             <div class="row-fluid">
                 <div class="span6">
                     <?php
+                        $isGuestReport = ($this->request->params['action'] === 'guest_edit');
                         echo $this->Form->input('reporter_name', array(
-                            'div' => array('class' => 'control-group required'),
-                            'label' => array('class' => 'control-label required', 'text' => 'Name of Person Reporting <span style="color:red;">*</span>'),
+                            'div' => array('class' => 'control-group' . ($isGuestReport ? '' : ' required')),
+                            'label' => array(
+                                'class' => 'control-label' . ($isGuestReport ? '' : ' required'),
+                                'text' => 'Name of Person Reporting' . ($isGuestReport ? ' <span class="muted">(optional)</span>' : ' <span style="color:red;">*</span>')
+                            ),
+                            'required' => !$isGuestReport,
                         ));
                         echo $this->Form->input('reporter_email', array(
                             'type' => 'email',
-                            'div' => array('class' => 'control-group required'),
-                            'label' => array('class' => 'control-label required', 'text' => 'E-MAIL ADDRESS <span style="color:red;">*</span>')
+                            'div' => array('class' => 'control-group' . ($isGuestReport ? '' : ' required')),
+                            'label' => array(
+                                'class' => 'control-label' . ($isGuestReport ? '' : ' required'),
+                                'text' => 'E-MAIL ADDRESS' . ($isGuestReport ? ' <span class="muted">(optional)</span>' : ' <span style="color:red;">*</span>')
+                            ),
+                            'required' => !$isGuestReport,
+                            'placeholder' => $isGuestReport ? 'Leave blank to use PPB\'s official email (pv@ppb.go.ke)' : '',
                         ));
                         
                     ?>
                 </div><!--/span-->
                 <div class="span6">
                     <?php
-                        echo $this->Form->input('designation_id',
-                                array('label' => array('class' => 'control-label required', 'text' => 'DESIGNATION'.' <span style="color:red;">*</span>'), 'empty'=>true ));
+                        echo $this->Form->input('designation_id', array(
+                            'label' => array(
+                                'class' => 'control-label' . ($isGuestReport ? '' : ' required'),
+                                'text' => 'DESIGNATION' . ($isGuestReport ? ' <span class="muted">(optional)</span>' : ' <span style="color:red;">*</span>')
+                            ),
+                            'required' => !$isGuestReport,
+                            'empty' => true,
+                        ));
                         echo $this->Form->input('reporter_phone', array(
                             'div' => array('class' => 'control-group'),
-                            'label' => array('class' => 'control-label required', 'text' => 'PHONE NO. <span style="color:red;">*</span>')
+                            'label' => array(
+                                'class' => 'control-label' . ($isGuestReport ? '' : ' required'),
+                                'text' => 'PHONE NO.' . ($isGuestReport ? ' <span class="muted">(optional)</span>' : ' <span style="color:red;">*</span>')
+                            ),
+                            'required' => !$isGuestReport,
                         ));
                         
                         echo $this->Form->input('reporter_date', array(

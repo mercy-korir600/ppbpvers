@@ -2433,9 +2433,32 @@ class AefisController extends AppController
         }
         $aefi = $this->Aefi->read(null, $id);
 
+        // WHO 2022 audit recommendation: don't force anonymous/guest reporters to
+        // supply identifying contact details. Relax "required" on the model
+        // in-memory (this request only) so neither the rendered form's HTML5
+        // required attribute nor server-side validation blocks submission when
+        // these fields are left blank. Clinical fields stay required.
+        $guestOptionalFields = array('reporter_name', 'reporter_email', 'reporter_phone', 'designation_id');
+        foreach ($guestOptionalFields as $optionalField) {
+            if (isset($this->Aefi->validate[$optionalField])) {
+                foreach ($this->Aefi->validate[$optionalField] as &$optionalRule) {
+                    $optionalRule['required'] = false;
+                    $optionalRule['allowEmpty'] = true;
+                }
+                unset($optionalRule);
+            }
+        }
+
         if ($this->request->is('post') || $this->request->is('put')) {
 
             $validate = false;
+
+            // When left blank, default the reporter email to PPB's official
+            // pharmacovigilance mailbox so downstream email/notification jobs
+            // still have a valid contact address.
+            if (empty($this->request->data['Aefi']['reporter_email'])) {
+                $this->request->data['Aefi']['reporter_email'] = 'pv@ppb.go.ke';
+            }
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';
             }

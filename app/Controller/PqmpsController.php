@@ -1977,8 +1977,34 @@ class PqmpsController extends AppController
         }
         $pqmp = $this->Pqmp->read(null, $id);
 
+        // WHO 2022 audit recommendation: don't force anonymous/guest reporters to
+        // supply identifying contact details. Relax "required" on the model
+        // in-memory (this request only) so neither the rendered form's HTML5
+        // required attribute nor server-side validation blocks submission when
+        // these fields are left blank. Clinical fields stay required. Note: the
+        // facility-phone/reporter-phone "at least one contact method" check below
+        // is left in place - it lets PPB trace a poor-quality product complaint
+        // and isn't reporter-identifying personal data the way name/email are.
+        $guestOptionalFields = array('reporter_name', 'reporter_email', 'reporter_phone', 'designation_id');
+        foreach ($guestOptionalFields as $optionalField) {
+            if (isset($this->Pqmp->validate[$optionalField])) {
+                foreach ($this->Pqmp->validate[$optionalField] as &$optionalRule) {
+                    $optionalRule['required'] = false;
+                    $optionalRule['allowEmpty'] = true;
+                }
+                unset($optionalRule);
+            }
+        }
+
         if ($this->request->is('post') || $this->request->is('put')) {
             $validate = false;
+
+            // When left blank, default the reporter email to PPB's official
+            // pharmacovigilance mailbox so downstream email/notification jobs
+            // still have a valid contact address.
+            if (empty($this->request->data['Pqmp']['reporter_email'])) {
+                $this->request->data['Pqmp']['reporter_email'] = 'pv@ppb.go.ke';
+            }
             if (isset($this->request->data['submitReport'])) {
                 $facility_phone = $this->request->data['Pqmp']['facility_phone'];
                 $reporter_phone = $this->request->data['Pqmp']['reporter_phone'];
@@ -2083,24 +2109,24 @@ class PqmpsController extends AppController
                         if ($pqmp['Pqmp']['adverse_reaction'] == "Yes") {
                             if ($pqmp['Pqmp']['medicinal_product'] || $pqmp['Pqmp']['herbal_product'] || $pqmp['Pqmp']['cosmeceuticals']) {
                                 $this->Session->setFlash(__($message1), 'alerts/flash_success');
-                                $this->redirect(array('controller' => 'sadrs', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
+                                $this->redirect(array('controller' => 'sadrs', 'action' => 'guest_add', $this->Pqmp->id));
                             }
                             if ($pqmp['Pqmp']['blood_products']) {
                                 $this->Session->setFlash(__($message2), 'alerts/flash_success');
-                                $this->redirect(array('controller' => 'transfusions', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
+                                $this->redirect(array('controller' => 'transfusions', 'action' => 'guest_add', $this->Pqmp->id));
                             }
                             if ($pqmp['Pqmp']['medical_device']) {
                                 $this->Session->setFlash(__($message3), 'alerts/flash_success');
-                                $this->redirect(array('controller' => 'devices', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
+                                $this->redirect(array('controller' => 'devices', 'action' => 'guest_add', $this->Pqmp->id));
                             }
                             if ($pqmp['Pqmp']['product_vaccine']) {
                                 $this->Session->setFlash(__($message4), 'alerts/flash_success');
-                                $this->redirect(array('controller' => 'aefis', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
+                                $this->redirect(array('controller' => 'aefis', 'action' => 'guest_add', $this->Pqmp->id));
                             }
                         }
                         if ($pqmp['Pqmp']['medication_error'] == "Yes") {
                             $this->Session->setFlash(__($message5), 'alerts/flash_success');
-                            $this->redirect(array('controller' => 'medications', 'action' => 'guest_add', $this->Pqmp->id, 'reporter' => true));
+                            $this->redirect(array('controller' => 'medications', 'action' => 'guest_add', $this->Pqmp->id));
                         }
                         $this->Session->setFlash(__('The Poor-Quality Health Products and Technologies has been submitted to PPB'), 'alerts/flash_success');
                         $this->redirect(array('controller' => 'pages', 'action' => 'home'));
