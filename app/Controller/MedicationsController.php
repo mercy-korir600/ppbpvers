@@ -1171,7 +1171,7 @@ class MedicationsController extends AppController
             // pharmacovigilance mailbox so downstream email/notification jobs
             // still have a valid contact address.
             if (empty($this->request->data['Medication']['reporter_email'])) {
-                $this->request->data['Medication']['reporter_email'] = 'pv@ppb.go.ke';
+                $this->request->data['Medication']['reporter_email'] = 'pms@ppb.go.ke';
             }
             if (isset($this->request->data['submitReport'])) {
                 $validate = 'first';

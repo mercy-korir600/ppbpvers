@@ -1878,7 +1878,7 @@ class SadrsController extends AppController
             // pharmacovigilance mailbox so downstream email/notification jobs and
             // the E2B export still have a valid contact address.
             if (empty($this->request->data['Sadr']['reporter_email'])) {
-                $this->request->data['Sadr']['reporter_email'] = 'pv@ppb.go.ke';
+                $this->request->data['Sadr']['reporter_email'] = 'pms@ppb.go.ke';
             }
 
             $validate = false;

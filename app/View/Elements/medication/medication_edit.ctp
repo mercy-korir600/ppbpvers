@@ -616,7 +616,7 @@
                                 'text' => 'E-MAIL ADDRESS' . ($isGuestReport ? ' <span class="muted">(optional)</span>' : ' <span style="color:red;">*</span>')
                             ),
                             'required' => !$isGuestReport,
-                            'placeholder' => $isGuestReport ? 'Leave blank to use PPB\'s official email (pv@ppb.go.ke)' : '',
+                            'placeholder' => $isGuestReport ? 'Leave blank to use PPB\'s official email (pms@ppb.go.ke)' : '',
                         ));
                         
                     ?>
